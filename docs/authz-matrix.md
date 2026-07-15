@@ -1,7 +1,7 @@
 # PAZ OS Authorization Matrix
 
 This document must stay in sync with `supabase/seed/authz.sql`. CI
-(`scripts/check-authz-matrix.ts`) fails the build if a permission key exists
+(`scripts/check-authz-matrix.mjs`) fails the build if a permission key exists
 in one but not the other.
 
 **Current phase:** Foundation — identity, authz, and admin only. Publishing,
@@ -43,5 +43,5 @@ dependency order.
 1. Add the row to `supabase/seed/authz.sql` (`authz.permissions`, plus
    `authz.role_permissions` for whichever roles should have it).
 2. Add the matching row to this table.
-3. `pnpm db:reset` locally and confirm `scripts/check-authz-matrix.ts`
+3. `pnpm db:reset` locally and confirm `scripts/check-authz-matrix.mjs`
    passes before opening a PR — CI runs it again regardless.

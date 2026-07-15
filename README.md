@@ -18,8 +18,8 @@ This repository is under active construction, in dependency order:
 ✅ Identity                (identity.people, merge, erasure, auth linkage)
 ✅ Authorization           (authz roles/permissions/RLS helpers, MFA gate)
 ✅ Audit                   (append-only audit_log, generic trigger)
-⏳ Authentication (frontend sign-in, session, ProtectedRoute) — next
-⏳ Media, CMS/Publishing, Website, Programmes, Membership, Events, CRM, Analytics
+✅ Authentication          (sign-in, session context, ProtectedRoute, staff MFA enrollment)
+⏳ Media, CMS/Publishing, Website, Programmes, Membership, Events, CRM, Analytics — next
 ```
 
 Do not build ahead of this list — see `docs/adr/034-partial-rebuild.md` and

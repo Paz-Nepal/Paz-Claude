@@ -47,6 +47,10 @@ enable_signup = true
 enroll_enabled = true
 verify_enabled = true
 
+[auth.hook.custom_access_token]
+enabled = true
+uri = "pg-functions://postgres/authz/custom_access_token_hook"
+
 [storage]
 enabled = true
 file_size_limit = "50MiB"

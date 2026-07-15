@@ -28,7 +28,7 @@ function extractDocPermissionKeys(markdown) {
   // Permission keys always follow domain.entity.action (at least one dot);
   // role keys (e.g. `super_admin`) do not, so the dot requirement is what
   // keeps this from matching the Roles table above the Permissions table.
-  const keys = [...markdown.matchAll(/^\| `([a-z0-9_]+\.[a-z0-9_.]+)` \|/gm)].map((m) => m[1]);
+  const keys = [...markdown.matchAll(/^\| `([a-z0-9_]+\.[a-z0-9_.]+)`\s*\|/gm)].map((m) => m[1]);
   return new Set(keys);
 }
 

@@ -20,4 +20,15 @@ describe("Button", () => {
     render(<Button disabled>Save changes</Button>);
     expect(screen.getByRole("button", { name: "Save changes" })).toBeDisabled();
   });
+
+  it("renders as its child via asChild without crashing Radix Slot (regression: loading's falsy sibling node broke Slot's single-child requirement)", () => {
+    render(
+      <Button asChild>
+        <a href="/somewhere">Go</a>
+      </Button>,
+    );
+    const link = screen.getByRole("link", { name: "Go" });
+    expect(link).toBeInTheDocument();
+    expect(link.tagName).toBe("A");
+  });
 });

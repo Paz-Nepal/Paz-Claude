@@ -4,3 +4,9 @@ export { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./com
 export { StatePanel, type StatePanelProps } from "./components/state-panel";
 export { Input, type InputProps } from "./components/input";
 export { Field, type FieldProps } from "./components/field";
+export {
+  RichText,
+  type RichTextProps,
+  type RichTextNode,
+  type RichTextMark,
+} from "./components/rich-text";

@@ -90,6 +90,86 @@ export type Database = {
       [_ in never]: never;
     };
     Views: {
+      desk_items: {
+        Row: {
+          author: string | null;
+          author_name: string | null;
+          id: string | null;
+          published_at: string | null;
+          slug: string | null;
+          status: Database["publishing"]["Enums"]["item_status"] | null;
+          title: string | null;
+          type: Database["publishing"]["Enums"]["item_type"] | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          author?: string | null;
+          author_name?: never;
+          id?: string | null;
+          published_at?: string | null;
+          slug?: string | null;
+          status?: Database["publishing"]["Enums"]["item_status"] | null;
+          title?: string | null;
+          type?: Database["publishing"]["Enums"]["item_type"] | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          author?: string | null;
+          author_name?: never;
+          id?: string | null;
+          published_at?: string | null;
+          slug?: string | null;
+          status?: Database["publishing"]["Enums"]["item_status"] | null;
+          title?: string | null;
+          type?: Database["publishing"]["Enums"]["item_type"] | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "items_author_fkey";
+            columns: ["author"];
+            isOneToOne: false;
+            referencedRelation: "my_profile";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      media_library: {
+        Row: {
+          alt: string | null;
+          created_at: string | null;
+          credit: string | null;
+          height: number | null;
+          id: string | null;
+          mime_type: string | null;
+          size_bytes: number | null;
+          storage_path: string | null;
+          width: number | null;
+        };
+        Insert: {
+          alt?: string | null;
+          created_at?: string | null;
+          credit?: string | null;
+          height?: number | null;
+          id?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          storage_path?: string | null;
+          width?: number | null;
+        };
+        Update: {
+          alt?: string | null;
+          created_at?: string | null;
+          credit?: string | null;
+          height?: number | null;
+          id?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          storage_path?: string | null;
+          width?: number | null;
+        };
+        Relationships: [];
+      };
       my_profile: {
         Row: {
           avatar_path: string | null;
@@ -126,8 +206,145 @@ export type Database = {
         };
         Relationships: [];
       };
+      published_items: {
+        Row: {
+          author_name: string | null;
+          featured_media_alt: string | null;
+          featured_media_path: string | null;
+          id: string | null;
+          published_at: string | null;
+          slug: string | null;
+          subtitle: string | null;
+          summary: string | null;
+          title: string | null;
+          type: Database["publishing"]["Enums"]["item_type"] | null;
+        };
+        Relationships: [];
+      };
+      settings: {
+        Row: {
+          description: string | null;
+          key: string | null;
+          updated_at: string | null;
+          value: Json | null;
+        };
+        Insert: {
+          description?: string | null;
+          key?: string | null;
+          updated_at?: string | null;
+          value?: Json | null;
+        };
+        Update: {
+          description?: string | null;
+          key?: string | null;
+          updated_at?: string | null;
+          value?: Json | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
+      get_item: {
+        Args: { p_id: string };
+        Returns: {
+          author: string;
+          author_name: string;
+          body: Json;
+          body_schema_version: number;
+          featured_media: string;
+          featured_media_path: string;
+          id: string;
+          published_at: string;
+          slug: string;
+          status: Database["publishing"]["Enums"]["item_status"];
+          subtitle: string;
+          summary: string;
+          tags: string[];
+          title: string;
+          type: Database["publishing"]["Enums"]["item_type"];
+          updated_at: string;
+        }[];
+      };
+      get_published_item: {
+        Args: {
+          p_slug: string;
+          p_type: Database["publishing"]["Enums"]["item_type"];
+        };
+        Returns: {
+          author_name: string;
+          body: Json;
+          body_schema_version: number;
+          featured_media_alt: string;
+          featured_media_path: string;
+          id: string;
+          published_at: string;
+          slug: string;
+          subtitle: string;
+          summary: string;
+          tags: string[];
+          title: string;
+          type: Database["publishing"]["Enums"]["item_type"];
+        }[];
+      };
+      my_permissions: { Args: never; Returns: string[] };
+      register_media: {
+        Args: {
+          p_alt: string;
+          p_credit: string;
+          p_height: number;
+          p_mime_type: string;
+          p_size_bytes: number;
+          p_storage_path: string;
+          p_width: number;
+        };
+        Returns: string;
+      };
+      save_item: {
+        Args: {
+          p_body: Json;
+          p_featured_media: string;
+          p_id: string;
+          p_slug: string;
+          p_subtitle: string;
+          p_summary: string;
+          p_title: string;
+          p_type: Database["publishing"]["Enums"]["item_type"];
+        };
+        Returns: string;
+      };
+      search_published: {
+        Args: { q: string };
+        Returns: {
+          author_name: string | null;
+          featured_media_alt: string | null;
+          featured_media_path: string | null;
+          id: string | null;
+          published_at: string | null;
+          slug: string | null;
+          subtitle: string | null;
+          summary: string | null;
+          title: string | null;
+          type: Database["publishing"]["Enums"]["item_type"] | null;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "published_items";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
+      set_item_tags: {
+        Args: { p_item: string; p_tags: string[] };
+        Returns: undefined;
+      };
+      site_info: { Args: never; Returns: Json };
+      transition_item: {
+        Args: {
+          p_id: string;
+          p_to: Database["publishing"]["Enums"]["item_status"];
+        };
+        Returns: Database["publishing"]["Enums"]["item_status"];
+      };
       update_my_profile: {
         Args: {
           p_bio?: string;
@@ -152,6 +369,10 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      update_setting: {
+        Args: { p_key: string; p_value: Json };
+        Returns: undefined;
       };
     };
     Enums: {
@@ -383,6 +604,7 @@ export type Database = {
     };
     Functions: {
       canonical_person: { Args: { p_person: string }; Returns: string };
+      display_name: { Args: { p_person: string }; Returns: string };
       erase_person: {
         Args: { p_actor: string; p_person: string };
         Returns: undefined;
@@ -435,16 +657,242 @@ export type Database = {
   };
   publishing: {
     Tables: {
-      [_ in never]: never;
+      item_revisions: {
+        Row: {
+          body: Json;
+          body_schema_version: number;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          item_id: string;
+          kind: string;
+          revision_no: number;
+          title: string;
+        };
+        Insert: {
+          body: Json;
+          body_schema_version: number;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          item_id: string;
+          kind: string;
+          revision_no: number;
+          title: string;
+        };
+        Update: {
+          body?: Json;
+          body_schema_version?: number;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          item_id?: string;
+          kind?: string;
+          revision_no?: number;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "item_revisions_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      item_tags: {
+        Row: {
+          item_id: string;
+          tag_id: string;
+        };
+        Insert: {
+          item_id: string;
+          tag_id: string;
+        };
+        Update: {
+          item_id?: string;
+          tag_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "item_tags_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "item_tags_tag_id_fkey";
+            columns: ["tag_id"];
+            isOneToOne: false;
+            referencedRelation: "tags";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      items: {
+        Row: {
+          archived_at: string | null;
+          author: string;
+          body: Json;
+          body_schema_version: number;
+          created_at: string;
+          featured_media: string | null;
+          id: string;
+          published_at: string | null;
+          search_tsv: unknown;
+          slug: string;
+          status: Database["publishing"]["Enums"]["item_status"];
+          subtitle: string | null;
+          summary: string | null;
+          title: string;
+          type: Database["publishing"]["Enums"]["item_type"];
+          updated_at: string;
+        };
+        Insert: {
+          archived_at?: string | null;
+          author: string;
+          body?: Json;
+          body_schema_version?: number;
+          created_at?: string;
+          featured_media?: string | null;
+          id?: string;
+          published_at?: string | null;
+          search_tsv?: unknown;
+          slug: string;
+          status?: Database["publishing"]["Enums"]["item_status"];
+          subtitle?: string | null;
+          summary?: string | null;
+          title: string;
+          type: Database["publishing"]["Enums"]["item_type"];
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          author?: string;
+          body?: Json;
+          body_schema_version?: number;
+          created_at?: string;
+          featured_media?: string | null;
+          id?: string;
+          published_at?: string | null;
+          search_tsv?: unknown;
+          slug?: string;
+          status?: Database["publishing"]["Enums"]["item_status"];
+          subtitle?: string | null;
+          summary?: string | null;
+          title?: string;
+          type?: Database["publishing"]["Enums"]["item_type"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "items_featured_media_fkey";
+            columns: ["featured_media"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      media: {
+        Row: {
+          alt: string | null;
+          created_at: string;
+          created_by: string;
+          credit: string | null;
+          height: number | null;
+          id: string;
+          mime_type: string;
+          size_bytes: number | null;
+          storage_path: string;
+          width: number | null;
+        };
+        Insert: {
+          alt?: string | null;
+          created_at?: string;
+          created_by: string;
+          credit?: string | null;
+          height?: number | null;
+          id?: string;
+          mime_type: string;
+          size_bytes?: number | null;
+          storage_path: string;
+          width?: number | null;
+        };
+        Update: {
+          alt?: string | null;
+          created_at?: string;
+          created_by?: string;
+          credit?: string | null;
+          height?: number | null;
+          id?: string;
+          mime_type?: string;
+          size_bytes?: number | null;
+          storage_path?: string;
+          width?: number | null;
+        };
+        Relationships: [];
+      };
+      tags: {
+        Row: {
+          id: string;
+          name: string;
+          slug: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          slug: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          slug?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      body_text: { Args: { p_body: Json }; Returns: string };
+      transition_item: {
+        Args: {
+          p_item: string;
+          p_to: Database["publishing"]["Enums"]["item_status"];
+        };
+        Returns: {
+          archived_at: string | null;
+          author: string;
+          body: Json;
+          body_schema_version: number;
+          created_at: string;
+          featured_media: string | null;
+          id: string;
+          published_at: string | null;
+          search_tsv: unknown;
+          slug: string;
+          status: Database["publishing"]["Enums"]["item_status"];
+          subtitle: string | null;
+          summary: string | null;
+          title: string;
+          type: Database["publishing"]["Enums"]["item_type"];
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "items";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
     };
     Enums: {
-      [_ in never]: never;
+      item_status: "draft" | "in_review" | "published" | "archived";
+      item_type: "article" | "page" | "paper" | "dispatch" | "pigeon_post";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -589,6 +1037,9 @@ export const Constants = {
     Enums: {},
   },
   publishing: {
-    Enums: {},
+    Enums: {
+      item_status: ["draft", "in_review", "published", "archived"],
+      item_type: ["article", "page", "paper", "dispatch", "pigeon_post"],
+    },
   },
 } as const;

@@ -13,7 +13,12 @@ const SEED_PATH = "supabase/seed/authz.sql";
 const DOC_PATH = "docs/authz-matrix.md";
 
 function extractSeedPermissionKeys(sql) {
-  const match = sql.match(/insert into authz\.permissions \(key, description\) values([\s\S]*?);/);
+  // Stop at the statement's `on conflict` clause, not at the first `;` —
+  // a semicolon inside a description string would silently truncate the
+  // parse (found the hard way).
+  const match = sql.match(
+    /insert into authz\.permissions \(key, description\) values([\s\S]*?)\non conflict/,
+  );
   if (!match) {
     throw new Error(`Could not find an "insert into authz.permissions" block in ${SEED_PATH}`);
   }

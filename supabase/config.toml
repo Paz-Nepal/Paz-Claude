@@ -43,6 +43,13 @@ additional_redirect_urls = ["http://127.0.0.1:3000"]
 jwt_expiry = 3600
 enable_signup = true
 
+# Kept explicit so `supabase config push` never silently downgrades these to
+# CLI defaults (it did once — caught in the push diff and restored).
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m0s"
+otp_length = 8
+
 [auth.mfa.totp]
 enroll_enabled = true
 verify_enabled = true

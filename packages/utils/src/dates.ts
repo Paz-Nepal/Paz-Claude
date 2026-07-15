@@ -23,6 +23,20 @@ export function formatKathmanduTime(instant: Date | string): string {
   return `${displayFormatter.format(date)} (Asia/Kathmandu)`;
 }
 
+const dateOnlyFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: PAZ_TIME_ZONE,
+  dateStyle: "medium",
+});
+
+/**
+ * Date-only display in Kathmandu local time, without the zone suffix — for
+ * dense surfaces (tables, bylines) where the full labeled form is noise.
+ */
+export function formatKathmanduDate(instant: Date | string): string {
+  const date = typeof instant === "string" ? new Date(instant) : instant;
+  return dateOnlyFormatter.format(date);
+}
+
 /** True when `end` is strictly after `start` — mirrors the DB check constraints (see 0003 migration). */
 export function isValidRange(start: Date | string, end: Date | string): boolean {
   const startMs = typeof start === "string" ? Date.parse(start) : start.getTime();

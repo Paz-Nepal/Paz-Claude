@@ -31,8 +31,32 @@ insert into authz.permissions (key, description) values
   ('authz.user_role.grant', 'Grant or revoke a role from a person.'),
   ('admin.settings.read', 'View institutional settings.'),
   ('admin.settings.manage', 'Change institutional settings.'),
-  ('admin.audit_log.read', 'View the audit log.')
+  ('admin.audit_log.read', 'View the audit log.'),
+  ('publishing.item.read', 'Read every item regardless of status or author (the editorial desk view).'),
+  ('publishing.item.create', 'Create items and edit one''s own drafts.'),
+  ('publishing.item.update', 'Edit any item at any workflow stage and send items back to draft.'),
+  ('publishing.item.publish', 'Publish an item, or restore an archived one.'),
+  ('publishing.item.archive', 'Archive a published item.'),
+  ('publishing.media.read', 'Browse the media library.'),
+  ('publishing.media.create', 'Upload media and register it in the library.'),
+  ('publishing.media.manage', 'Edit any media''s alt/credit metadata.')
 on conflict (key) do nothing;
+
+-- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
+-- own their drafts and cannot publish).
+insert into authz.role_permissions (role_key, permission_key) values
+  ('editor', 'publishing.item.read'),
+  ('editor', 'publishing.item.create'),
+  ('editor', 'publishing.item.update'),
+  ('editor', 'publishing.item.publish'),
+  ('editor', 'publishing.item.archive'),
+  ('editor', 'publishing.media.read'),
+  ('editor', 'publishing.media.create'),
+  ('editor', 'publishing.media.manage'),
+  ('author', 'publishing.item.create'),
+  ('author', 'publishing.media.read'),
+  ('author', 'publishing.media.create')
+on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.
 -- (When a new domain migration adds permissions, it grants them to the

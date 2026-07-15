@@ -57,13 +57,22 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         {...props}
       >
-        {loading && (
-          <span
-            className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-            aria-hidden="true"
-          />
+        {asChild ? (
+          // Radix Slot requires exactly one child element — no sibling
+          // spinner, even a falsy one (`loading && …` is still a second
+          // child node as far as Slot's React.Children.only check goes).
+          children
+        ) : (
+          <>
+            {loading && (
+              <span
+                className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+                aria-hidden="true"
+              />
+            )}
+            {children}
+          </>
         )}
-        {children}
       </Comp>
     );
   },

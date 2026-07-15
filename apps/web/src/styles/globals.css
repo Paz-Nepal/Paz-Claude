@@ -48,3 +48,41 @@
     }
   }
 }
+
+/* Long-form body copy: applied to both the public renderer (RichText) and
+   the editor's editable surface so what you write is what readers see. */
+@layer components {
+  .rich-text {
+    @apply text-base leading-relaxed;
+  }
+  .rich-text > * + * {
+    @apply mt-4;
+  }
+  .rich-text h2 {
+    @apply mt-8 text-2xl;
+  }
+  .rich-text h3 {
+    @apply mt-6 text-xl;
+  }
+  .rich-text h4 {
+    @apply mt-6 text-lg;
+  }
+  .rich-text blockquote {
+    @apply border-brand text-muted-foreground border-l-2 pl-4 italic;
+  }
+  .rich-text ul {
+    @apply list-disc pl-6;
+  }
+  .rich-text ol {
+    @apply list-decimal pl-6;
+  }
+  .rich-text li + li {
+    @apply mt-1;
+  }
+  .rich-text a {
+    @apply text-brand underline underline-offset-2;
+  }
+  .rich-text hr {
+    @apply border-border my-8;
+  }
+}

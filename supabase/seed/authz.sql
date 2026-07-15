@@ -45,7 +45,12 @@ insert into authz.permissions (key, description) values
   ('membership.application.decide', 'Accept or decline a membership application.'),
   ('membership.member.read', 'View the member roster.'),
   ('membership.member.manage', 'Change a member''s status (lapse, pause, resign, honorary).'),
-  ('membership.term.manage', 'Record payment against a membership term.')
+  ('membership.term.manage', 'Record payment against a membership term.'),
+  ('programs.venue.manage', 'Create or edit venues.'),
+  ('programs.program.read', 'View inactive/cancelled programs and sessions (the admin listing).'),
+  ('programs.program.manage', 'Create or edit programs and sessions.'),
+  ('programs.registration.read', 'View a session''s registration roster.'),
+  ('programs.registration.manage', 'Cancel another person''s registration; mark attendance.')
 on conflict (key) do nothing;
 
 -- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
@@ -77,6 +82,20 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('membership_manager', 'membership.term.manage'),
   ('finance', 'membership.member.read'),
   ('finance', 'membership.term.manage')
+on conflict do nothing;
+
+-- Program Manager owns venues/programs/sessions/roster. Volunteer gets a
+-- narrow slice (registration read + attendance marking only) — matches the
+-- role's own description: "narrow, time-boxed grants via expires_at",
+-- e.g. day-of-event check-in access.
+insert into authz.role_permissions (role_key, permission_key) values
+  ('program_manager', 'programs.venue.manage'),
+  ('program_manager', 'programs.program.read'),
+  ('program_manager', 'programs.program.manage'),
+  ('program_manager', 'programs.registration.read'),
+  ('program_manager', 'programs.registration.manage'),
+  ('volunteer', 'programs.registration.read'),
+  ('volunteer', 'programs.registration.manage')
 on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.

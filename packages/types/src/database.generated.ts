@@ -90,6 +90,87 @@ export type Database = {
       [_ in never]: never;
     };
     Views: {
+      admin_program_sessions: {
+        Row: {
+          capacity: number | null;
+          ends_at: string | null;
+          id: string | null;
+          program_id: string | null;
+          program_title: string | null;
+          registered_count: number | null;
+          starts_at: string | null;
+          status: Database["programs"]["Enums"]["session_status"] | null;
+          venue_id: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sessions_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_programs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sessions_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "programs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sessions_venue_id_fkey";
+            columns: ["venue_id"];
+            isOneToOne: false;
+            referencedRelation: "venues";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_programs: {
+        Row: {
+          active: boolean | null;
+          description_item: string | null;
+          id: string | null;
+          member_only: boolean | null;
+          slug: string | null;
+          summary: string | null;
+          title: string | null;
+        };
+        Insert: {
+          active?: boolean | null;
+          description_item?: string | null;
+          id?: string | null;
+          member_only?: boolean | null;
+          slug?: string | null;
+          summary?: string | null;
+          title?: string | null;
+        };
+        Update: {
+          active?: boolean | null;
+          description_item?: string | null;
+          id?: string | null;
+          member_only?: boolean | null;
+          slug?: string | null;
+          summary?: string | null;
+          title?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "programs_description_item_fkey";
+            columns: ["description_item"];
+            isOneToOne: false;
+            referencedRelation: "desk_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "programs_description_item_fkey";
+            columns: ["description_item"];
+            isOneToOne: false;
+            referencedRelation: "published_items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       desk_items: {
         Row: {
           author: string | null;
@@ -341,6 +422,92 @@ export type Database = {
         };
         Relationships: [];
       };
+      my_registrations: {
+        Row: {
+          ends_at: string | null;
+          id: string | null;
+          program_slug: string | null;
+          program_title: string | null;
+          registered_at: string | null;
+          session_id: string | null;
+          starts_at: string | null;
+          status: Database["programs"]["Enums"]["registration_status"] | null;
+        };
+        Relationships: [];
+      };
+      program_sessions: {
+        Row: {
+          capacity: number | null;
+          ends_at: string | null;
+          id: string | null;
+          member_only: boolean | null;
+          program_id: string | null;
+          program_slug: string | null;
+          program_title: string | null;
+          registered_count: number | null;
+          starts_at: string | null;
+          status: Database["programs"]["Enums"]["session_status"] | null;
+          venue_name: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sessions_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_programs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sessions_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "programs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      programs: {
+        Row: {
+          description_item: string | null;
+          id: string | null;
+          member_only: boolean | null;
+          slug: string | null;
+          summary: string | null;
+          title: string | null;
+        };
+        Insert: {
+          description_item?: string | null;
+          id?: string | null;
+          member_only?: boolean | null;
+          slug?: string | null;
+          summary?: string | null;
+          title?: string | null;
+        };
+        Update: {
+          description_item?: string | null;
+          id?: string | null;
+          member_only?: boolean | null;
+          slug?: string | null;
+          summary?: string | null;
+          title?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "programs_description_item_fkey";
+            columns: ["description_item"];
+            isOneToOne: false;
+            referencedRelation: "desk_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "programs_description_item_fkey";
+            columns: ["description_item"];
+            isOneToOne: false;
+            referencedRelation: "published_items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       published_items: {
         Row: {
           author_name: string | null;
@@ -377,8 +544,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      venues: {
+        Row: {
+          address: string | null;
+          capacity: number | null;
+          id: string | null;
+          name: string | null;
+        };
+        Insert: {
+          address?: string | null;
+          capacity?: number | null;
+          id?: string | null;
+          name?: string | null;
+        };
+        Update: {
+          address?: string | null;
+          capacity?: number | null;
+          id?: string | null;
+          name?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
+      cancel_my_registration: {
+        Args: { p_registration: string };
+        Returns: undefined;
+      };
       decide_membership_application: {
         Args: { p_application: string; p_decision: string; p_notes?: string };
         Returns: Database["membership"]["Enums"]["application_status"];
@@ -425,6 +617,10 @@ export type Database = {
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
+      mark_attendance: {
+        Args: { p_attended: boolean; p_registration: string };
+        Returns: Database["programs"]["Enums"]["registration_status"];
+      };
       member_terms: {
         Args: { p_member: string };
         Returns: Database["membership"]["Tables"]["terms"]["Row"][];
@@ -439,6 +635,15 @@ export type Database = {
       record_payment: {
         Args: { p_amount_cents: number; p_term: string };
         Returns: boolean;
+      };
+      register_for_session: {
+        Args: {
+          p_email: string;
+          p_full_name: string;
+          p_phone: string;
+          p_session: string;
+        };
+        Returns: Database["programs"]["Enums"]["registration_status"];
       };
       register_media: {
         Args: {
@@ -465,6 +670,28 @@ export type Database = {
         };
         Returns: string;
       };
+      save_program: {
+        Args: {
+          p_description_item: string;
+          p_id: string;
+          p_member_only: boolean;
+          p_slug: string;
+          p_summary: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      save_session: {
+        Args: {
+          p_capacity: number;
+          p_ends_at: string;
+          p_id: string;
+          p_program_id: string;
+          p_starts_at: string;
+          p_venue_id: string;
+        };
+        Returns: string;
+      };
       search_published: {
         Args: { q: string };
         Returns: {
@@ -485,6 +712,16 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      session_roster: {
+        Args: { p_session: string };
+        Returns: {
+          person_email: string;
+          person_name: string;
+          registered_at: string;
+          registration_id: string;
+          status: Database["programs"]["Enums"]["registration_status"];
+        }[];
       };
       set_item_tags: {
         Args: { p_item: string; p_tags: string[] };
@@ -1042,16 +1279,190 @@ export type Database = {
   };
   programs: {
     Tables: {
-      [_ in never]: never;
+      programs: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          description_item: string | null;
+          id: string;
+          member_only: boolean;
+          slug: string;
+          summary: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          description_item?: string | null;
+          id?: string;
+          member_only?: boolean;
+          slug: string;
+          summary?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          description_item?: string | null;
+          id?: string;
+          member_only?: boolean;
+          slug?: string;
+          summary?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      registrations: {
+        Row: {
+          attended_at: string | null;
+          id: string;
+          person_id: string;
+          registered_at: string;
+          session_id: string;
+          status: Database["programs"]["Enums"]["registration_status"];
+        };
+        Insert: {
+          attended_at?: string | null;
+          id?: string;
+          person_id: string;
+          registered_at?: string;
+          session_id: string;
+          status?: Database["programs"]["Enums"]["registration_status"];
+        };
+        Update: {
+          attended_at?: string | null;
+          id?: string;
+          person_id?: string;
+          registered_at?: string;
+          session_id?: string;
+          status?: Database["programs"]["Enums"]["registration_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "registrations_session_id_fkey";
+            columns: ["session_id"];
+            isOneToOne: false;
+            referencedRelation: "sessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      sessions: {
+        Row: {
+          capacity: number;
+          ends_at: string;
+          id: string;
+          program_id: string;
+          starts_at: string;
+          status: Database["programs"]["Enums"]["session_status"];
+          venue_id: string | null;
+        };
+        Insert: {
+          capacity: number;
+          ends_at: string;
+          id?: string;
+          program_id: string;
+          starts_at: string;
+          status?: Database["programs"]["Enums"]["session_status"];
+          venue_id?: string | null;
+        };
+        Update: {
+          capacity?: number;
+          ends_at?: string;
+          id?: string;
+          program_id?: string;
+          starts_at?: string;
+          status?: Database["programs"]["Enums"]["session_status"];
+          venue_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "sessions_program_id_fkey";
+            columns: ["program_id"];
+            isOneToOne: false;
+            referencedRelation: "programs";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "sessions_venue_id_fkey";
+            columns: ["venue_id"];
+            isOneToOne: false;
+            referencedRelation: "venues";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      venues: {
+        Row: {
+          address: string | null;
+          capacity: number | null;
+          id: string;
+          name: string;
+        };
+        Insert: {
+          address?: string | null;
+          capacity?: number | null;
+          id?: string;
+          name: string;
+        };
+        Update: {
+          address?: string | null;
+          capacity?: number | null;
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      cancel_registration: {
+        Args: { p_registration: string };
+        Returns: undefined;
+      };
+      mark_attendance: {
+        Args: { p_attended: boolean; p_registration: string };
+        Returns: {
+          attended_at: string | null;
+          id: string;
+          person_id: string;
+          registered_at: string;
+          session_id: string;
+          status: Database["programs"]["Enums"]["registration_status"];
+        };
+        SetofOptions: {
+          from: "*";
+          to: "registrations";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      register: {
+        Args: { p_person: string; p_session: string };
+        Returns: {
+          attended_at: string | null;
+          id: string;
+          person_id: string;
+          registered_at: string;
+          session_id: string;
+          status: Database["programs"]["Enums"]["registration_status"];
+        };
+        SetofOptions: {
+          from: "*";
+          to: "registrations";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
     };
     Enums: {
-      [_ in never]: never;
+      registration_status: "registered" | "waitlisted" | "cancelled" | "attended" | "no_show";
+      session_status: "scheduled" | "cancelled" | "completed";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1439,7 +1850,10 @@ export const Constants = {
     },
   },
   programs: {
-    Enums: {},
+    Enums: {
+      registration_status: ["registered", "waitlisted", "cancelled", "attended", "no_show"],
+      session_status: ["scheduled", "cancelled", "completed"],
+    },
   },
   publishing: {
     Enums: {

@@ -70,6 +70,32 @@ const MemberDetailPage = React.lazy(() =>
     default: m.MemberDetailPage,
   })),
 );
+const CalendarPage = React.lazy(() =>
+  import("@/modules/programs/pages/calendar-page").then((m) => ({ default: m.CalendarPage })),
+);
+const ProgramPage = React.lazy(() =>
+  import("@/modules/programs/pages/program-page").then((m) => ({ default: m.ProgramPage })),
+);
+const MyRegistrationsPage = React.lazy(() =>
+  import("@/modules/programs/pages/my-registrations-page").then((m) => ({
+    default: m.MyRegistrationsPage,
+  })),
+);
+const AdminProgramsPage = React.lazy(() =>
+  import("@/modules/programs/pages/admin-programs-page").then((m) => ({
+    default: m.AdminProgramsPage,
+  })),
+);
+const ProgramEditorPage = React.lazy(() =>
+  import("@/modules/programs/pages/program-editor-page").then((m) => ({
+    default: m.ProgramEditorPage,
+  })),
+);
+const SessionRosterPage = React.lazy(() =>
+  import("@/modules/programs/pages/session-roster-page").then((m) => ({
+    default: m.SessionRosterPage,
+  })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -84,6 +110,13 @@ export const router = createBrowserRouter([
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
       { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
+      { path: "programmes", element: withSuspense(<CalendarPage />) },
+      { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
+      {
+        path: "my-registrations",
+        element: withSuspense(<ProtectedRoute requireMfa={false} />),
+        children: [{ index: true, element: withSuspense(<MyRegistrationsPage />) }],
+      },
       { path: "sign-in", element: withSuspense(<SignInPage />) },
       // CMS-controlled top-level pages (/about, /visit, …). Static routes
       // above always win route ranking over this dynamic segment.
@@ -128,6 +161,16 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: withSuspense(<MembersPage />) },
               { path: ":id", element: withSuspense(<MemberDetailPage />) },
+            ],
+          },
+          {
+            path: "programmes",
+            element: withSuspense(<ProtectedRoute permission="programs.program.read" />),
+            children: [
+              { index: true, element: withSuspense(<AdminProgramsPage />) },
+              { path: "new", element: withSuspense(<ProgramEditorPage />) },
+              { path: "sessions/:id", element: withSuspense(<SessionRosterPage />) },
+              { path: ":id", element: withSuspense(<ProgramEditorPage />) },
             ],
           },
           {

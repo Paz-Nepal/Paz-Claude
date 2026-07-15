@@ -51,6 +51,11 @@ dependency order.
 | `membership.member.read`        | super_admin, administrator, membership_manager, finance | View the member roster                                 |
 | `membership.member.manage`      | super_admin, administrator, membership_manager          | Change a member's status                               |
 | `membership.term.manage`        | super_admin, administrator, membership_manager, finance | Record payment against a membership term               |
+| `programs.venue.manage`         | super_admin, administrator, program_manager             | Create or edit venues                                  |
+| `programs.program.read`         | super_admin, administrator, program_manager             | View inactive/cancelled programs and sessions          |
+| `programs.program.manage`       | super_admin, administrator, program_manager             | Create or edit programs and sessions                   |
+| `programs.registration.read`    | super_admin, administrator, program_manager, volunteer  | View a session's registration roster                   |
+| `programs.registration.manage`  | super_admin, administrator, program_manager, volunteer  | Cancel a registration; mark attendance                 |
 
 ## Adding a new permission
 

@@ -8,6 +8,7 @@ const NAV: Array<{ to: string; label: string; permission: string }> = [
   { to: "/admin/media", label: "Media", permission: "publishing.media.read" },
   { to: "/admin/applications", label: "Applications", permission: "membership.application.read" },
   { to: "/admin/members", label: "Members", permission: "membership.member.read" },
+  { to: "/admin/programmes", label: "Programmes", permission: "programs.program.read" },
   { to: "/admin/settings", label: "Settings", permission: "admin.settings.read" },
 ];
 

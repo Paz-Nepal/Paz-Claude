@@ -170,6 +170,141 @@ export type Database = {
         };
         Relationships: [];
       };
+      member_directory: {
+        Row: {
+          display_name: string | null;
+          id: string | null;
+          joined_on: string | null;
+          tier_key: string | null;
+        };
+        Insert: {
+          display_name?: never;
+          id?: string | null;
+          joined_on?: string | null;
+          tier_key?: string | null;
+        };
+        Update: {
+          display_name?: never;
+          id?: string | null;
+          joined_on?: string | null;
+          tier_key?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "membership_tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      members: {
+        Row: {
+          directory_opt_in: boolean | null;
+          id: string | null;
+          joined_on: string | null;
+          member_email: string | null;
+          member_name: string | null;
+          member_no: string | null;
+          status: Database["membership"]["Enums"]["member_status"] | null;
+          tier_key: string | null;
+        };
+        Insert: {
+          directory_opt_in?: boolean | null;
+          id?: string | null;
+          joined_on?: string | null;
+          member_email?: never;
+          member_name?: never;
+          member_no?: string | null;
+          status?: Database["membership"]["Enums"]["member_status"] | null;
+          tier_key?: string | null;
+        };
+        Update: {
+          directory_opt_in?: boolean | null;
+          id?: string | null;
+          joined_on?: string | null;
+          member_email?: never;
+          member_name?: never;
+          member_no?: string | null;
+          status?: Database["membership"]["Enums"]["member_status"] | null;
+          tier_key?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "membership_tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      membership_applications: {
+        Row: {
+          applicant_email: string | null;
+          applicant_name: string | null;
+          decided_at: string | null;
+          decision_notes: string | null;
+          id: string | null;
+          motivation: string | null;
+          status: Database["membership"]["Enums"]["application_status"] | null;
+          submitted_at: string | null;
+          tier_key: string | null;
+        };
+        Insert: {
+          applicant_email?: never;
+          applicant_name?: never;
+          decided_at?: string | null;
+          decision_notes?: string | null;
+          id?: string | null;
+          motivation?: string | null;
+          status?: Database["membership"]["Enums"]["application_status"] | null;
+          submitted_at?: string | null;
+          tier_key?: string | null;
+        };
+        Update: {
+          applicant_email?: never;
+          applicant_name?: never;
+          decided_at?: string | null;
+          decision_notes?: string | null;
+          id?: string | null;
+          motivation?: string | null;
+          status?: Database["membership"]["Enums"]["application_status"] | null;
+          submitted_at?: string | null;
+          tier_key?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "applications_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "membership_tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      membership_tiers: {
+        Row: {
+          annual_fee_cents: number | null;
+          description: string | null;
+          key: string | null;
+          name: string | null;
+        };
+        Insert: {
+          annual_fee_cents?: number | null;
+          description?: string | null;
+          key?: string | null;
+          name?: string | null;
+        };
+        Update: {
+          annual_fee_cents?: number | null;
+          description?: string | null;
+          key?: string | null;
+          name?: string | null;
+        };
+        Relationships: [];
+      };
       my_profile: {
         Row: {
           avatar_path: string | null;
@@ -244,6 +379,10 @@ export type Database = {
       };
     };
     Functions: {
+      decide_membership_application: {
+        Args: { p_application: string; p_decision: string; p_notes?: string };
+        Returns: Database["membership"]["Enums"]["application_status"];
+      };
       get_item: {
         Args: { p_id: string };
         Returns: {
@@ -286,7 +425,21 @@ export type Database = {
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
+      member_terms: {
+        Args: { p_member: string };
+        Returns: Database["membership"]["Tables"]["terms"]["Row"][];
+        SetofOptions: {
+          from: "*";
+          to: "terms";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
+      };
       my_permissions: { Args: never; Returns: string[] };
+      record_payment: {
+        Args: { p_amount_cents: number; p_term: string };
+        Returns: boolean;
+      };
       register_media: {
         Args: {
           p_alt: string;
@@ -337,13 +490,31 @@ export type Database = {
         Args: { p_item: string; p_tags: string[] };
         Returns: undefined;
       };
+      set_member_status: {
+        Args: { p_member: string; p_status: string };
+        Returns: Database["membership"]["Enums"]["member_status"];
+      };
       site_info: { Args: never; Returns: Json };
+      submit_membership_application: {
+        Args: {
+          p_email: string;
+          p_full_name: string;
+          p_motivation: string;
+          p_phone: string;
+          p_tier_key: string;
+        };
+        Returns: string;
+      };
       transition_item: {
         Args: {
           p_id: string;
           p_to: Database["publishing"]["Enums"]["item_status"];
         };
         Returns: Database["publishing"]["Enums"]["item_status"];
+      };
+      update_my_directory_opt_in: {
+        Args: { p_opt_in: boolean };
+        Returns: undefined;
       };
       update_my_profile: {
         Args: {
@@ -605,6 +776,7 @@ export type Database = {
     Functions: {
       canonical_person: { Args: { p_person: string }; Returns: string };
       display_name: { Args: { p_person: string }; Returns: string };
+      email_for: { Args: { p_person: string }; Returns: string };
       erase_person: {
         Args: { p_actor: string; p_person: string };
         Returns: undefined;
@@ -623,16 +795,246 @@ export type Database = {
   };
   membership: {
     Tables: {
-      [_ in never]: never;
+      applications: {
+        Row: {
+          decided_at: string | null;
+          decided_by: string | null;
+          decision_notes: string | null;
+          id: string;
+          motivation: string | null;
+          person_id: string;
+          status: Database["membership"]["Enums"]["application_status"];
+          submitted_at: string;
+          tier_key: string;
+        };
+        Insert: {
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_notes?: string | null;
+          id?: string;
+          motivation?: string | null;
+          person_id: string;
+          status?: Database["membership"]["Enums"]["application_status"];
+          submitted_at?: string;
+          tier_key: string;
+        };
+        Update: {
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_notes?: string | null;
+          id?: string;
+          motivation?: string | null;
+          person_id?: string;
+          status?: Database["membership"]["Enums"]["application_status"];
+          submitted_at?: string;
+          tier_key?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "applications_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      members: {
+        Row: {
+          created_at: string;
+          directory_opt_in: boolean;
+          id: string;
+          joined_on: string;
+          member_no: string;
+          person_id: string;
+          status: Database["membership"]["Enums"]["member_status"];
+          tier_key: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          directory_opt_in?: boolean;
+          id?: string;
+          joined_on?: string;
+          member_no: string;
+          person_id: string;
+          status?: Database["membership"]["Enums"]["member_status"];
+          tier_key: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          directory_opt_in?: boolean;
+          id?: string;
+          joined_on?: string;
+          member_no?: string;
+          person_id?: string;
+          status?: Database["membership"]["Enums"]["member_status"];
+          tier_key?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      terms: {
+        Row: {
+          amount_cents: number;
+          created_at: string;
+          ends_on: string;
+          id: string;
+          member_id: string;
+          paid_at: string | null;
+          recorded_by: string | null;
+          starts_on: string;
+          tier_key: string;
+        };
+        Insert: {
+          amount_cents: number;
+          created_at?: string;
+          ends_on: string;
+          id?: string;
+          member_id: string;
+          paid_at?: string | null;
+          recorded_by?: string | null;
+          starts_on: string;
+          tier_key: string;
+        };
+        Update: {
+          amount_cents?: number;
+          created_at?: string;
+          ends_on?: string;
+          id?: string;
+          member_id?: string;
+          paid_at?: string | null;
+          recorded_by?: string | null;
+          starts_on?: string;
+          tier_key?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "terms_member_id_fkey";
+            columns: ["member_id"];
+            isOneToOne: false;
+            referencedRelation: "members";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "terms_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "tiers";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
+      tiers: {
+        Row: {
+          active: boolean;
+          annual_fee_cents: number;
+          description: string | null;
+          key: string;
+          name: string;
+        };
+        Insert: {
+          active?: boolean;
+          annual_fee_cents: number;
+          description?: string | null;
+          key: string;
+          name: string;
+        };
+        Update: {
+          active?: boolean;
+          annual_fee_cents?: number;
+          description?: string | null;
+          key?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      decide_application: {
+        Args: {
+          p_application: string;
+          p_decision: Database["membership"]["Enums"]["application_status"];
+          p_notes?: string;
+        };
+        Returns: {
+          decided_at: string | null;
+          decided_by: string | null;
+          decision_notes: string | null;
+          id: string;
+          motivation: string | null;
+          person_id: string;
+          status: Database["membership"]["Enums"]["application_status"];
+          submitted_at: string;
+          tier_key: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "applications";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      next_member_no: { Args: never; Returns: string };
+      record_payment: {
+        Args: { p_amount_cents: number; p_term: string };
+        Returns: {
+          amount_cents: number;
+          created_at: string;
+          ends_on: string;
+          id: string;
+          member_id: string;
+          paid_at: string | null;
+          recorded_by: string | null;
+          starts_on: string;
+          tier_key: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "terms";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      set_member_status: {
+        Args: {
+          p_member: string;
+          p_status: Database["membership"]["Enums"]["member_status"];
+        };
+        Returns: {
+          created_at: string;
+          directory_opt_in: boolean;
+          id: string;
+          joined_on: string;
+          member_no: string;
+          person_id: string;
+          status: Database["membership"]["Enums"]["member_status"];
+          tier_key: string;
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "members";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
     };
     Enums: {
-      [_ in never]: never;
+      application_status: "pending" | "accepted" | "declined" | "withdrawn";
+      member_status: "active" | "lapsed" | "paused" | "resigned" | "honorary";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1031,7 +1433,10 @@ export const Constants = {
     Enums: {},
   },
   membership: {
-    Enums: {},
+    Enums: {
+      application_status: ["pending", "accepted", "declined", "withdrawn"],
+      member_status: ["active", "lapsed", "paused", "resigned", "honorary"],
+    },
   },
   programs: {
     Enums: {},

@@ -51,6 +51,25 @@ const ArticlePage = React.lazy(() =>
 const CmsPage = React.lazy(() =>
   import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
 );
+const ApplyPage = React.lazy(() =>
+  import("@/modules/membership/pages/apply-page").then((m) => ({ default: m.ApplyPage })),
+);
+const DirectoryPage = React.lazy(() =>
+  import("@/modules/membership/pages/directory-page").then((m) => ({ default: m.DirectoryPage })),
+);
+const ApplicationsPage = React.lazy(() =>
+  import("@/modules/membership/pages/applications-page").then((m) => ({
+    default: m.ApplicationsPage,
+  })),
+);
+const MembersPage = React.lazy(() =>
+  import("@/modules/membership/pages/members-page").then((m) => ({ default: m.MembersPage })),
+);
+const MemberDetailPage = React.lazy(() =>
+  import("@/modules/membership/pages/member-detail-page").then((m) => ({
+    default: m.MemberDetailPage,
+  })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -63,6 +82,8 @@ export const router = createBrowserRouter([
       { index: true, element: <HomePage /> },
       { path: "journal", element: withSuspense(<JournalPage />) },
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
+      { path: "membership/apply", element: withSuspense(<ApplyPage />) },
+      { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
       { path: "sign-in", element: withSuspense(<SignInPage />) },
       // CMS-controlled top-level pages (/about, /visit, …). Static routes
       // above always win route ranking over this dynamic segment.
@@ -95,6 +116,19 @@ export const router = createBrowserRouter([
             path: "media",
             element: withSuspense(<ProtectedRoute permission="publishing.media.read" />),
             children: [{ index: true, element: withSuspense(<MediaPage />) }],
+          },
+          {
+            path: "applications",
+            element: withSuspense(<ProtectedRoute permission="membership.application.read" />),
+            children: [{ index: true, element: withSuspense(<ApplicationsPage />) }],
+          },
+          {
+            path: "members",
+            element: withSuspense(<ProtectedRoute permission="membership.member.read" />),
+            children: [
+              { index: true, element: withSuspense(<MembersPage />) },
+              { path: ":id", element: withSuspense(<MemberDetailPage />) },
+            ],
           },
           {
             path: "settings",

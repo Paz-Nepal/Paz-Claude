@@ -3,6 +3,7 @@ export { Badge, type BadgeProps } from "./components/badge";
 export { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./components/card";
 export { StatePanel, type StatePanelProps } from "./components/state-panel";
 export { Input, type InputProps } from "./components/input";
+export { Textarea, type TextareaProps } from "./components/textarea";
 export { Field, type FieldProps } from "./components/field";
 export {
   RichText,

@@ -31,6 +31,9 @@ export function PublicLayout() {
             <NavLink to="/journal" className={navLinkClass}>
               Journal
             </NavLink>
+            <NavLink to="/membership/apply" className={navLinkClass}>
+              Membership
+            </NavLink>
             {(pages.data ?? []).map((page) => (
               <NavLink key={page.id} to={`/${page.slug}`} className={navLinkClass}>
                 {page.title}

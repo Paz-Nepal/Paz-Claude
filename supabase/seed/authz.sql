@@ -39,7 +39,13 @@ insert into authz.permissions (key, description) values
   ('publishing.item.archive', 'Archive a published item.'),
   ('publishing.media.read', 'Browse the media library.'),
   ('publishing.media.create', 'Upload media and register it in the library.'),
-  ('publishing.media.manage', 'Edit any media''s alt/credit metadata.')
+  ('publishing.media.manage', 'Edit any media''s alt/credit metadata.'),
+  ('membership.tier.manage', 'Create or edit membership tiers and fees.'),
+  ('membership.application.read', 'View the membership application queue.'),
+  ('membership.application.decide', 'Accept or decline a membership application.'),
+  ('membership.member.read', 'View the member roster.'),
+  ('membership.member.manage', 'Change a member''s status (lapse, pause, resign, honorary).'),
+  ('membership.term.manage', 'Record payment against a membership term.')
 on conflict (key) do nothing;
 
 -- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
@@ -56,6 +62,21 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('author', 'publishing.item.create'),
   ('author', 'publishing.media.read'),
   ('author', 'publishing.media.create')
+on conflict do nothing;
+
+-- Membership Manager owns the full applications->members->terms lifecycle;
+-- Finance only records payments and needs read access to know who they're
+-- recording a payment for (Build Readiness Review, Roles table: "no
+-- content access").
+insert into authz.role_permissions (role_key, permission_key) values
+  ('membership_manager', 'membership.tier.manage'),
+  ('membership_manager', 'membership.application.read'),
+  ('membership_manager', 'membership.application.decide'),
+  ('membership_manager', 'membership.member.read'),
+  ('membership_manager', 'membership.member.manage'),
+  ('membership_manager', 'membership.term.manage'),
+  ('finance', 'membership.member.read'),
+  ('finance', 'membership.term.manage')
 on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.

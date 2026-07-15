@@ -113,7 +113,14 @@ create function identity.handle_new_auth_user()
 returns trigger
 language plpgsql
 security definer
-set search_path = identity, pg_temp
+-- `public` is required here (not just `identity`): `citext` has no explicit
+-- target schema in migration 0001's `create extension`, so it installs into
+-- whichever schema is first in the creating session's default search_path
+-- -- `public`, both on Supabase Cloud and local/Docker Postgres. A pinned
+-- search_path that omits it can create the schema/table (DDL runs under the
+-- session's own search_path) but fails at runtime resolving the bare
+-- `citext` type name inside this function body.
+set search_path = identity, public, pg_temp
 as $$
 declare
   v_email citext;
@@ -166,7 +173,9 @@ create function identity.merge_people(p_survivor uuid, p_duplicate uuid, p_actor
 returns void
 language plpgsql
 security definer
-set search_path = identity, admin, pg_temp
+-- `public` needed for the same reason as handle_new_auth_user() above:
+-- this function casts to `::citext`, which lives in `public`.
+set search_path = identity, admin, public, pg_temp
 as $$
 declare
   fk record;

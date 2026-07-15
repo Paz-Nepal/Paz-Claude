@@ -1,0 +1,10 @@
+{
+  "extends": "@paz/config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"]
+}

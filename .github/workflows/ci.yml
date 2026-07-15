@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  SUPABASE_DB_URL: postgresql://postgres:postgres@127.0.0.1:54322/postgres
+
+jobs:
+  lint-typecheck-unit:
+    name: Lint, typecheck, unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+
+      - name: Dependency audit
+        run: pnpm audit --audit-level=high
+
+      - name: Format check
+        run: pnpm format:check
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit + component tests
+        run: pnpm test
+
+      - name: Build (bundle budget enforced by Vite/Lighthouse config)
+        run: pnpm build
+
+  database:
+    name: Database — migrations, pgTAP, drift, authz matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase (runs every migration from zero + reference seed)
+        run: supabase start
+
+      - name: pgTAP suite
+        run: bash scripts/test-db.sh
+
+      - name: Confirm no schema drift (dashboard-vs-migrations)
+        run: supabase db diff --local --schema identity,authz,admin,api | tee /tmp/diff.txt && [ ! -s /tmp/diff.txt ]
+
+      - name: authz matrix sync check
+        run: node scripts/check-authz-matrix.mjs
+
+      - name: Regenerate types and fail if stale
+        run: |
+          supabase gen types typescript --local \
+            --schema identity,authz,admin,api,publishing,programs,membership,crm,hospitality \
+            > /tmp/database.generated.ts
+          diff -u packages/types/src/database.generated.ts /tmp/database.generated.ts
+
+  # Playwright critical-journey tests are added once there is a first real
+  # journey to test (Authentication phase, next). Introducing an empty
+  # Playwright job now would be placeholder architecture — the exact thing
+  # the execution rules prohibit — so it is deliberately not stubbed here.

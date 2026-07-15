@@ -1,0 +1,22 @@
+# Architecture Decision Records
+
+ADR-1 through ADR-14 are recorded in the Architecture Blueprint (§14). ADR-15
+through ADR-34 were made during the Build Readiness Review to close gaps
+found there. Individual files in this directory exist for the ADRs that have
+been **implemented** as of the current phase; the rest remain recorded in
+the Build Readiness Review's register and get their own file the phase they
+land in code, so a file existing here always means "this is built," not
+merely "this was decided."
+
+| ADR                            | Title                                                                 | Status                                                            |
+| ------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| 001–014                        | See Architecture Blueprint §14                                        | Foundational, all phases                                          |
+| [015](./015-person-merge.md)   | Duplicate person handling & merge process                             | **Implemented** (`0003_identity.sql`)                             |
+| 016                            | Anonymous visitors are not people                                     | **Implemented** (identity schema design; no shadow records exist) |
+| [017](./017-erasure.md)        | Account deletion & erasure specification                              | **Implemented** (`0003_identity.sql`, `docs/policies/erasure.md`) |
+| 018                            | Former members                                                        | Pending — lands with the membership migration                     |
+| 019                            | Relationship history                                                  | Pending — lands with the CRM migration                            |
+| 020–029                        | Content, membership, CRM decisions                                    | Pending — land with their respective migrations                   |
+| [032](./032-api-versioning.md) | API surface versioning                                                | **Implemented** (`api` schema convention, `0005_api_schema.sql`)  |
+| 033                            | No global frontend state library; Zustand pre-approved if ever needed | **Implemented** (`app/providers.tsx`)                             |
+| 034                            | Partial rebuild of the legacy Horizons prototype                      | **Implemented** (this repository)                                 |

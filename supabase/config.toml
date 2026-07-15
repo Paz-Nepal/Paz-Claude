@@ -1,0 +1,55 @@
+project_id = "paz-os"
+
+[api]
+enabled = true
+port = 54321
+# Only the curated `api` schema (plus PostgREST's required `public`) is
+# exposed to PostgREST. Every domain schema (identity, authz, publishing,
+# programs, membership, crm, hospitality, admin, analytics) is reachable
+# only through views/functions in `api`, through Edge Functions using the
+# service role, or through direct database access for migrations/ops.
+# (Architecture Blueprint §5.1; Build Readiness Review §3.1.)
+schemas = ["public", "api"]
+extra_search_path = ["public"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+# Only reference data (roles/permissions) runs via `supabase db reset` /
+# `supabase start`, in every environment including production. Synthetic
+# fixture data (fake people/content for local development) lives in
+# supabase/seed/synthetic.sql and is applied explicitly via
+# `psql -f supabase/seed/synthetic.sql`, never automatically — see
+# docs/runbooks/environments.md. This split is what makes it structurally
+# impossible for a `supabase db reset` run against production to seed fake
+# people into a real institution's database.
+sql_paths = ["./seed/authz.sql"]
+
+[db.pooler]
+enabled = false
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[edge_runtime]
+enabled = true

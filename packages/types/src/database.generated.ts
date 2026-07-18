@@ -215,6 +215,41 @@ export type Database = {
           },
         ];
       };
+      interactions: {
+        Row: {
+          created_at: string | null;
+          created_by_name: string | null;
+          id: string | null;
+          occurred_at: string | null;
+          relationship_id: string | null;
+          summary: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          created_by_name?: never;
+          id?: string | null;
+          occurred_at?: string | null;
+          relationship_id?: string | null;
+          summary?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          created_by_name?: never;
+          id?: string | null;
+          occurred_at?: string | null;
+          relationship_id?: string | null;
+          summary?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "interactions_relationship_id_fkey";
+            columns: ["relationship_id"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       media_library: {
         Row: {
           alt: string | null;
@@ -435,6 +470,53 @@ export type Database = {
         };
         Relationships: [];
       };
+      organizations: {
+        Row: {
+          created_at: string | null;
+          id: string | null;
+          kind: string | null;
+          name: string | null;
+          notes: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          name?: string | null;
+          notes?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          name?: string | null;
+          notes?: string | null;
+        };
+        Relationships: [];
+      };
+      pledges: {
+        Row: {
+          acknowledged_at: string | null;
+          anonymous: boolean | null;
+          id: string | null;
+          notes: string | null;
+          pledged_amount_cents: number | null;
+          pledged_on: string | null;
+          received_amount_cents: number | null;
+          received_on: string | null;
+          relationship_id: string | null;
+          subject_name: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pledges_relationship_id_fkey";
+            columns: ["relationship_id"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       program_sessions: {
         Row: {
           capacity: number | null;
@@ -523,6 +605,44 @@ export type Database = {
         };
         Relationships: [];
       };
+      relationships: {
+        Row: {
+          ended_on: string | null;
+          id: string | null;
+          kind: string | null;
+          notes: string | null;
+          org_id: string | null;
+          owner_name: string | null;
+          person_id: string | null;
+          started_on: string | null;
+          status: Database["crm"]["Enums"]["relationship_status"] | null;
+          subject_name: string | null;
+          superseded_by: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "relationships_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "relationships_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "my_profile";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "relationships_superseded_by_fkey";
+            columns: ["superseded_by"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       settings: {
         Row: {
           description: string | null;
@@ -567,6 +687,7 @@ export type Database = {
       };
     };
     Functions: {
+      acknowledge_pledge: { Args: { p_id: string }; Returns: undefined };
       cancel_my_registration: {
         Args: { p_registration: string };
         Returns: undefined;
@@ -574,6 +695,17 @@ export type Database = {
       decide_membership_application: {
         Args: { p_application: string; p_decision: string; p_notes?: string };
         Returns: Database["membership"]["Enums"]["application_status"];
+      };
+      end_relationship: {
+        Args: { p_id: string; p_superseded_by?: string };
+        Returns: undefined;
+      };
+      find_person_by_email: {
+        Args: { p_email: string };
+        Returns: {
+          display_name: string;
+          id: string;
+        }[];
       };
       get_item: {
         Args: { p_id: string };
@@ -617,6 +749,14 @@ export type Database = {
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
+      log_interaction: {
+        Args: {
+          p_occurred_at?: string;
+          p_relationship_id: string;
+          p_summary: string;
+        };
+        Returns: string;
+      };
       mark_attendance: {
         Args: { p_attended: boolean; p_registration: string };
         Returns: Database["programs"]["Enums"]["registration_status"];
@@ -635,6 +775,10 @@ export type Database = {
       record_payment: {
         Args: { p_amount_cents: number; p_term: string };
         Returns: boolean;
+      };
+      record_pledge_receipt: {
+        Args: { p_id: string; p_received_amount_cents: number };
+        Returns: undefined;
       };
       register_for_session: {
         Args: {
@@ -670,6 +814,20 @@ export type Database = {
         };
         Returns: string;
       };
+      save_organization: {
+        Args: { p_id: string; p_kind: string; p_name: string; p_notes: string };
+        Returns: string;
+      };
+      save_pledge: {
+        Args: {
+          p_anonymous: boolean;
+          p_id: string;
+          p_notes: string;
+          p_pledged_amount_cents: number;
+          p_relationship_id: string;
+        };
+        Returns: string;
+      };
       save_program: {
         Args: {
           p_description_item: string;
@@ -678,6 +836,17 @@ export type Database = {
           p_slug: string;
           p_summary: string;
           p_title: string;
+        };
+        Returns: string;
+      };
+      save_relationship: {
+        Args: {
+          p_id: string;
+          p_kind: string;
+          p_notes: string;
+          p_org_id: string;
+          p_owner_person: string;
+          p_person_id: string;
         };
         Returns: string;
       };
@@ -907,7 +1076,207 @@ export type Database = {
   };
   crm: {
     Tables: {
-      [_ in never]: never;
+      interactions: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          occurred_at: string;
+          relationship_id: string;
+          summary: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          occurred_at?: string;
+          relationship_id: string;
+          summary: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          occurred_at?: string;
+          relationship_id?: string;
+          summary?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "interactions_relationship_id_fkey";
+            columns: ["relationship_id"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      org_people: {
+        Row: {
+          org_id: string;
+          person_id: string;
+          role: string | null;
+        };
+        Insert: {
+          org_id: string;
+          person_id: string;
+          role?: string | null;
+        };
+        Update: {
+          org_id?: string;
+          person_id?: string;
+          role?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "org_people_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      organizations: {
+        Row: {
+          created_at: string;
+          id: string;
+          kind: string | null;
+          name: string;
+          notes: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          kind?: string | null;
+          name: string;
+          notes?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          kind?: string | null;
+          name?: string;
+          notes?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      pledges: {
+        Row: {
+          acknowledged_at: string | null;
+          acknowledged_by: string | null;
+          anonymous: boolean;
+          created_at: string;
+          id: string;
+          notes: string | null;
+          pledged_amount_cents: number;
+          pledged_on: string;
+          received_amount_cents: number | null;
+          received_on: string | null;
+          relationship_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          anonymous?: boolean;
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          pledged_amount_cents: number;
+          pledged_on?: string;
+          received_amount_cents?: number | null;
+          received_on?: string | null;
+          relationship_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          acknowledged_at?: string | null;
+          acknowledged_by?: string | null;
+          anonymous?: boolean;
+          created_at?: string;
+          id?: string;
+          notes?: string | null;
+          pledged_amount_cents?: number;
+          pledged_on?: string;
+          received_amount_cents?: number | null;
+          received_on?: string | null;
+          relationship_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pledges_relationship_id_fkey";
+            columns: ["relationship_id"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      relationships: {
+        Row: {
+          created_at: string;
+          ended_on: string | null;
+          id: string;
+          kind: string;
+          notes: string | null;
+          org_id: string | null;
+          owner_person: string | null;
+          person_id: string | null;
+          started_on: string;
+          status: Database["crm"]["Enums"]["relationship_status"];
+          superseded_by: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          ended_on?: string | null;
+          id?: string;
+          kind: string;
+          notes?: string | null;
+          org_id?: string | null;
+          owner_person?: string | null;
+          person_id?: string | null;
+          started_on?: string;
+          status?: Database["crm"]["Enums"]["relationship_status"];
+          superseded_by?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          ended_on?: string | null;
+          id?: string;
+          kind?: string;
+          notes?: string | null;
+          org_id?: string | null;
+          owner_person?: string | null;
+          person_id?: string | null;
+          started_on?: string;
+          status?: Database["crm"]["Enums"]["relationship_status"];
+          superseded_by?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "relationships_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "relationships_superseded_by_fkey";
+            columns: ["superseded_by"];
+            isOneToOne: false;
+            referencedRelation: "relationships";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -916,7 +1285,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      relationship_status: "active" | "ended";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1835,7 +2204,9 @@ export const Constants = {
     Enums: {},
   },
   crm: {
-    Enums: {},
+    Enums: {
+      relationship_status: ["active", "ended"],
+    },
   },
   hospitality: {
     Enums: {},

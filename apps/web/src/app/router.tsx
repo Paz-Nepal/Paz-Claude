@@ -96,6 +96,20 @@ const SessionRosterPage = React.lazy(() =>
     default: m.SessionRosterPage,
   })),
 );
+const OrganizationsPage = React.lazy(() =>
+  import("@/modules/crm/pages/organizations-page").then((m) => ({ default: m.OrganizationsPage })),
+);
+const RelationshipsPage = React.lazy(() =>
+  import("@/modules/crm/pages/relationships-page").then((m) => ({ default: m.RelationshipsPage })),
+);
+const RelationshipDetailPage = React.lazy(() =>
+  import("@/modules/crm/pages/relationship-detail-page").then((m) => ({
+    default: m.RelationshipDetailPage,
+  })),
+);
+const PledgesPage = React.lazy(() =>
+  import("@/modules/crm/pages/pledges-page").then((m) => ({ default: m.PledgesPage })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -172,6 +186,24 @@ export const router = createBrowserRouter([
               { path: "sessions/:id", element: withSuspense(<SessionRosterPage />) },
               { path: ":id", element: withSuspense(<ProgramEditorPage />) },
             ],
+          },
+          {
+            path: "organizations",
+            element: withSuspense(<ProtectedRoute permission="crm.organization.read" />),
+            children: [{ index: true, element: withSuspense(<OrganizationsPage />) }],
+          },
+          {
+            path: "relationships",
+            element: withSuspense(<ProtectedRoute permission="crm.relationship.read" />),
+            children: [
+              { index: true, element: withSuspense(<RelationshipsPage />) },
+              { path: ":id", element: withSuspense(<RelationshipDetailPage />) },
+            ],
+          },
+          {
+            path: "pledges",
+            element: withSuspense(<ProtectedRoute permission="crm.pledge.read" />),
+            children: [{ index: true, element: withSuspense(<PledgesPage />) }],
           },
           {
             path: "settings",

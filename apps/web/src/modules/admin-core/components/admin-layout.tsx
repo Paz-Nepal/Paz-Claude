@@ -9,6 +9,9 @@ const NAV: Array<{ to: string; label: string; permission: string }> = [
   { to: "/admin/applications", label: "Applications", permission: "membership.application.read" },
   { to: "/admin/members", label: "Members", permission: "membership.member.read" },
   { to: "/admin/programmes", label: "Programmes", permission: "programs.program.read" },
+  { to: "/admin/organizations", label: "Organizations", permission: "crm.organization.read" },
+  { to: "/admin/relationships", label: "Relationships", permission: "crm.relationship.read" },
+  { to: "/admin/pledges", label: "Pledges", permission: "crm.pledge.read" },
   { to: "/admin/settings", label: "Settings", permission: "admin.settings.read" },
 ];
 

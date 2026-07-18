@@ -56,6 +56,13 @@ dependency order.
 | `programs.program.manage`       | super_admin, administrator, program_manager             | Create or edit programs and sessions                   |
 | `programs.registration.read`    | super_admin, administrator, program_manager, volunteer  | View a session's registration roster                   |
 | `programs.registration.manage`  | super_admin, administrator, program_manager, volunteer  | Cancel a registration; mark attendance                 |
+| `crm.organization.read`         | super_admin, administrator, membership_manager          | View institutional organizations                       |
+| `crm.organization.manage`       | super_admin, administrator, membership_manager          | Create or edit organizations and their people          |
+| `crm.relationship.read`         | super_admin, administrator, membership_manager, finance | View institutional relationships                       |
+| `crm.relationship.manage`       | super_admin, administrator, membership_manager          | Create, edit, or end a relationship                    |
+| `crm.interaction.create`        | super_admin, administrator, membership_manager          | Log an interaction against a relationship              |
+| `crm.pledge.read`               | super_admin, administrator, finance                     | View pledges                                           |
+| `crm.pledge.manage`             | super_admin, administrator, finance                     | Record, receipt, or acknowledge a pledge               |
 
 ## Adding a new permission
 

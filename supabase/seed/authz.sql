@@ -50,7 +50,14 @@ insert into authz.permissions (key, description) values
   ('programs.program.read', 'View inactive/cancelled programs and sessions (the admin listing).'),
   ('programs.program.manage', 'Create or edit programs and sessions.'),
   ('programs.registration.read', 'View a session''s registration roster.'),
-  ('programs.registration.manage', 'Cancel another person''s registration; mark attendance.')
+  ('programs.registration.manage', 'Cancel another person''s registration; mark attendance.'),
+  ('crm.organization.read', 'View institutional organizations.'),
+  ('crm.organization.manage', 'Create or edit organizations and their people.'),
+  ('crm.relationship.read', 'View institutional relationships.'),
+  ('crm.relationship.manage', 'Create, edit, or end a relationship.'),
+  ('crm.interaction.create', 'Log an interaction against a relationship.'),
+  ('crm.pledge.read', 'View pledges.'),
+  ('crm.pledge.manage', 'Record, receipt, or acknowledge a pledge.')
 on conflict (key) do nothing;
 
 -- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
@@ -96,6 +103,22 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('program_manager', 'programs.registration.manage'),
   ('volunteer', 'programs.registration.read'),
   ('volunteer', 'programs.registration.manage')
+on conflict do nothing;
+
+-- No dedicated CRM role exists in the architecture doc. Institutional
+-- relationships overlap naturally with membership_manager's remit; finance
+-- needs relationship + pledge access to record and acknowledge gifts
+-- against the right relationship (their existing scope is "financial
+-- views + payment recording, no content access").
+insert into authz.role_permissions (role_key, permission_key) values
+  ('membership_manager', 'crm.organization.read'),
+  ('membership_manager', 'crm.organization.manage'),
+  ('membership_manager', 'crm.relationship.read'),
+  ('membership_manager', 'crm.relationship.manage'),
+  ('membership_manager', 'crm.interaction.create'),
+  ('finance', 'crm.relationship.read'),
+  ('finance', 'crm.pledge.read'),
+  ('finance', 'crm.pledge.manage')
 on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.

@@ -22,7 +22,8 @@ This repository is under active construction, in dependency order:
 ✅ Media, CMS/Publishing, Website (editorial desk, workflow, public site)
 ✅ Membership                (applications, decisions, members, terms, payments, directory)
 ✅ Programmes                (venues, sessions, registration, waitlist, attendance)
-⏳ CRM, Hospitality, Analytics — next
+✅ CRM                       (organizations, relationships, interactions, pledges)
+⏳ Hospitality, Analytics — next
 ```
 
 Do not build ahead of this list — see `docs/adr/034-partial-rebuild.md` and

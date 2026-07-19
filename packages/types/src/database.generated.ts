@@ -593,15 +593,49 @@ export type Database = {
       published_items: {
         Row: {
           author_name: string | null;
+          deposit_ref: string | null;
           featured_media_alt: string | null;
           featured_media_path: string | null;
           id: string | null;
           published_at: string | null;
           slug: string | null;
           subtitle: string | null;
+          subtitle_ne: string | null;
           summary: string | null;
+          summary_ne: string | null;
           title: string | null;
+          title_ne: string | null;
           type: Database["publishing"]["Enums"]["item_type"] | null;
+        };
+        Relationships: [];
+      };
+      record_entries: {
+        Row: {
+          deposit_number: string | null;
+          deposited_at: string | null;
+          entry_type: Database["publishing"]["Enums"]["item_type"] | null;
+          id: string | null;
+          link: string | null;
+          provenance: string | null;
+          title: string | null;
+        };
+        Insert: {
+          deposit_number?: string | null;
+          deposited_at?: string | null;
+          entry_type?: Database["publishing"]["Enums"]["item_type"] | null;
+          id?: string | null;
+          link?: string | null;
+          provenance?: string | null;
+          title?: string | null;
+        };
+        Update: {
+          deposit_number?: string | null;
+          deposited_at?: string | null;
+          entry_type?: Database["publishing"]["Enums"]["item_type"] | null;
+          id?: string | null;
+          link?: string | null;
+          provenance?: string | null;
+          title?: string | null;
         };
         Relationships: [];
       };
@@ -707,6 +741,62 @@ export type Database = {
           id: string;
         }[];
       };
+      get_annual: {
+        Args: { p_slug: string };
+        Returns: {
+          contents: string;
+          deposit_ref: string;
+          id: string;
+          pdf_path: string;
+          slug: string;
+          title: string;
+          title_ne: string;
+          year: number;
+        }[];
+      };
+      get_brief: {
+        Args: { p_slug: string };
+        Returns: {
+          body: Json;
+          body_ne: Json;
+          deposit_ref: string;
+          id: string;
+          issue_date: string;
+          issue_no: number;
+          slug: string;
+          tags: string[];
+          title: string;
+          title_ne: string;
+        }[];
+      };
+      get_dispatch: {
+        Args: { p_slug: string };
+        Returns: {
+          body: Json;
+          body_ne: Json;
+          deposit_ref: string;
+          id: string;
+          issue_date: string;
+          issue_no: number;
+          slug: string;
+          tags: string[];
+          title: string;
+          title_ne: string;
+        }[];
+      };
+      get_event: {
+        Args: { p_slug: string };
+        Returns: {
+          body: Json;
+          body_ne: Json;
+          event_date: string;
+          id: string;
+          location: string;
+          slug: string;
+          title: string;
+          title_ne: string;
+        }[];
+      };
       get_item: {
         Args: { p_id: string };
         Returns: {
@@ -728,6 +818,37 @@ export type Database = {
           updated_at: string;
         }[];
       };
+      get_paper: {
+        Args: { p_slug: string };
+        Returns: {
+          abstract: string;
+          body: Json;
+          body_ne: Json;
+          deposit_ref: string;
+          id: string;
+          license: string;
+          paper_no: number;
+          pdf_path: string;
+          published_at: string;
+          slug: string;
+          sources_note: string;
+          tags: string[];
+          title: string;
+          title_ne: string;
+        }[];
+      };
+      get_pigeon_post: {
+        Args: { p_slug: string };
+        Returns: {
+          deposit_ref: string;
+          edition_no: string;
+          id: string;
+          pdf_path: string;
+          slug: string;
+          title: string;
+          title_ne: string;
+        }[];
+      };
       get_published_item: {
         Args: {
           p_slug: string;
@@ -736,16 +857,21 @@ export type Database = {
         Returns: {
           author_name: string;
           body: Json;
+          body_ne: Json;
           body_schema_version: number;
+          deposit_ref: string;
           featured_media_alt: string;
           featured_media_path: string;
           id: string;
           published_at: string;
           slug: string;
           subtitle: string;
+          subtitle_ne: string;
           summary: string;
+          summary_ne: string;
           tags: string[];
           title: string;
+          title_ne: string;
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
@@ -865,14 +991,18 @@ export type Database = {
         Args: { q: string };
         Returns: {
           author_name: string | null;
+          deposit_ref: string | null;
           featured_media_alt: string | null;
           featured_media_path: string | null;
           id: string | null;
           published_at: string | null;
           slug: string | null;
           subtitle: string | null;
+          subtitle_ne: string | null;
           summary: string | null;
+          summary_ne: string | null;
           title: string | null;
+          title_ne: string | null;
           type: Database["publishing"]["Enums"]["item_type"] | null;
         }[];
         SetofOptions: {

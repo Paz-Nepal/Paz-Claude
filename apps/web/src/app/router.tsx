@@ -51,6 +51,49 @@ const ArticlePage = React.lazy(() =>
 const CmsPage = React.lazy(() =>
   import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
 );
+const PapersIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/papers-index-page").then((m) => ({
+    default: m.PapersIndexPage,
+  })),
+);
+const PaperPage = React.lazy(() =>
+  import("@/modules/site/pages/paper-page").then((m) => ({ default: m.PaperPage })),
+);
+const BriefIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/brief-index-page").then((m) => ({ default: m.BriefIndexPage })),
+);
+const BriefPage = React.lazy(() =>
+  import("@/modules/site/pages/brief-page").then((m) => ({ default: m.BriefPage })),
+);
+const DispatchIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/dispatch-index-page").then((m) => ({
+    default: m.DispatchIndexPage,
+  })),
+);
+const DispatchPage = React.lazy(() =>
+  import("@/modules/site/pages/dispatch-page").then((m) => ({ default: m.DispatchPage })),
+);
+const PigeonPostIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/pigeon-post-index-page").then((m) => ({
+    default: m.PigeonPostIndexPage,
+  })),
+);
+const PigeonPostPage = React.lazy(() =>
+  import("@/modules/site/pages/pigeon-post-page").then((m) => ({
+    default: m.PigeonPostPage,
+  })),
+);
+const AnnualIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/annual-index-page").then((m) => ({
+    default: m.AnnualIndexPage,
+  })),
+);
+const AnnualPage = React.lazy(() =>
+  import("@/modules/site/pages/annual-page").then((m) => ({ default: m.AnnualPage })),
+);
+const RecordPage = React.lazy(() =>
+  import("@/modules/site/pages/record-page").then((m) => ({ default: m.RecordPage })),
+);
 const ApplyPage = React.lazy(() =>
   import("@/modules/membership/pages/apply-page").then((m) => ({ default: m.ApplyPage })),
 );
@@ -120,6 +163,23 @@ export const router = createBrowserRouter([
     element: <PublicLayout />,
     children: [
       { index: true, element: <HomePage /> },
+      // Named-series routes (spec §3). React Router ranks static path
+      // segments above the dynamic ":slug" catch-all further down
+      // regardless of declaration order, so these can't collide with a
+      // CMS-authored page slug of the same name -- but staff still
+      // shouldn't title an institutional page "Record", "Papers", etc.,
+      // since that page would simply become unreachable at its own path.
+      { path: "papers", element: withSuspense(<PapersIndexPage />) },
+      { path: "papers/:slug", element: withSuspense(<PaperPage />) },
+      { path: "brief", element: withSuspense(<BriefIndexPage />) },
+      { path: "brief/:slug", element: withSuspense(<BriefPage />) },
+      { path: "dispatch", element: withSuspense(<DispatchIndexPage />) },
+      { path: "dispatch/:slug", element: withSuspense(<DispatchPage />) },
+      { path: "pigeon-post", element: withSuspense(<PigeonPostIndexPage />) },
+      { path: "pigeon-post/:slug", element: withSuspense(<PigeonPostPage />) },
+      { path: "annual", element: withSuspense(<AnnualIndexPage />) },
+      { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
+      { path: "record", element: withSuspense(<RecordPage />) },
       { path: "journal", element: withSuspense(<JournalPage />) },
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },

@@ -1,6 +1,7 @@
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, type PublishedItemDetail } from "../api/use-site";
+import { useLanguage, pickLang, pickLangDoc } from "../language";
 
 /**
  * Shared rendering for any published item's full view (article or page):
@@ -14,6 +15,9 @@ export function PublishedBody({
   item: PublishedItemDetail;
   showByline: boolean;
 }) {
+  const { lang } = useLanguage();
+  const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;
+
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
       {item.featured_media_path && (
@@ -24,8 +28,12 @@ export function PublishedBody({
         />
       )}
       <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-4xl">{item.title}</h1>
-        {item.subtitle && <p className="text-muted-foreground text-xl">{item.subtitle}</p>}
+        <h1 className="font-serif text-4xl">{pickLang(item.title ?? "", item.title_ne, lang)}</h1>
+        {item.subtitle && (
+          <p className="text-muted-foreground text-xl">
+            {pickLang(item.subtitle, item.subtitle_ne, lang)}
+          </p>
+        )}
         {showByline && (
           <p className="text-muted-foreground text-sm">
             {item.author_name}
@@ -33,7 +41,7 @@ export function PublishedBody({
           </p>
         )}
       </header>
-      <RichText doc={item.body as RichTextNode} className="rich-text" />
+      {body && <RichText doc={body} className="rich-text" />}
       {item.tags && item.tags.length > 0 && (
         <p className="text-muted-foreground border-t pt-4 text-sm">{item.tags.join(" · ")}</p>
       )}

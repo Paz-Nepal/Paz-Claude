@@ -53,9 +53,13 @@ export interface SaveItemInput {
   type: ItemType;
   slug: string;
   title: string;
+  titleNe: string | null;
   subtitle: string | null;
+  subtitleNe: string | null;
   summary: string | null;
+  summaryNe: string | null;
   body: unknown;
+  bodyNe: unknown;
   featuredMedia: string | null;
   tags: string[];
 }
@@ -71,9 +75,13 @@ export function useSaveItem() {
           p_type: input.type,
           p_slug: input.slug,
           p_title: input.title,
+          p_title_ne: input.titleNe,
           p_subtitle: input.subtitle,
+          p_subtitle_ne: input.subtitleNe,
           p_summary: input.summary,
+          p_summary_ne: input.summaryNe,
           p_body: input.body,
+          p_body_ne: input.bodyNe,
           p_featured_media: input.featuredMedia,
         }),
       );
@@ -107,6 +115,136 @@ export function useTransitionItem() {
     },
   });
 }
+
+/** Deposits a Paper/Brief/Dispatch/Pigeon Post/Annual: assigns the
+ * permanent deposit_ref, publishes it, and writes its Record entry, all
+ * in one call (publishing.deposit_item). Rejected by the database for
+ * any other type (spec §2: the Record indexes exactly these five). */
+export function useDepositItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await api().rpc("deposit_item", { p_id: id });
+      if (error) throw toAppError(error);
+      return data;
+    },
+    onSuccess: (_status, id) => {
+      void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["item", id] });
+      void queryClient.invalidateQueries({ queryKey: ["record-entries"] });
+    },
+  });
+}
+
+export function useDiscardDraft() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await api().rpc("discard_draft", { p_id: id });
+      if (error) throw toAppError(error);
+    },
+    onSuccess: (_void, id) => {
+      void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["item", id] });
+    },
+  });
+}
+
+export interface PaperDetailsInput {
+  p_item: string;
+  p_abstract: string | null;
+  p_pdf_media: string | null;
+  p_license: string;
+  p_sources_note: string | null;
+}
+
+export interface IssueDetailsInput {
+  p_item: string;
+  p_issue_date: string | null;
+}
+
+export interface PigeonPostDetailsInput {
+  p_item: string;
+  p_edition_no: string;
+  p_pdf_media: string | null;
+}
+
+export interface AnnualDetailsInput {
+  p_item: string;
+  p_year: number;
+  p_contents: string | null;
+  p_pdf_media: string | null;
+}
+
+export interface EventDetailsInput {
+  p_item: string;
+  p_event_date: string;
+  p_location: string | null;
+}
+
+/** One save hook per series (matching the one-function-per-series api
+ * surface, 0029) -- written out separately rather than a single generic
+ * dispatcher, since PostgREST's `.rpc()` overloads resolve per literal
+ * function name and don't unify cleanly under a type parameter. A Pigeon
+ * Post form has no author field to send because PigeonPostDetailsInput
+ * has no property for one. */
+function useSaveDetailsMutation<Input extends { p_item: string }>(
+  rpc: (input: Input) => PromiseLike<{ error: unknown }>,
+) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: Input) => {
+      const { error } = await rpc(input);
+      if (error) throw toAppError(error);
+    },
+    onSuccess: (_void, input) => {
+      void queryClient.invalidateQueries({ queryKey: ["item", input.p_item] });
+    },
+  });
+}
+
+export const useSavePaperDetails = () =>
+  useSaveDetailsMutation<PaperDetailsInput>((input) =>
+    api().rpc(
+      "save_paper_details",
+      asArgs<Database["api"]["Functions"]["save_paper_details"]["Args"]>(input),
+    ),
+  );
+export const useSaveBriefDetails = () =>
+  useSaveDetailsMutation<IssueDetailsInput>((input) =>
+    api().rpc(
+      "save_brief_details",
+      asArgs<Database["api"]["Functions"]["save_brief_details"]["Args"]>(input),
+    ),
+  );
+export const useSaveDispatchDetails = () =>
+  useSaveDetailsMutation<IssueDetailsInput>((input) =>
+    api().rpc(
+      "save_dispatch_details",
+      asArgs<Database["api"]["Functions"]["save_dispatch_details"]["Args"]>(input),
+    ),
+  );
+export const useSavePigeonPostDetails = () =>
+  useSaveDetailsMutation<PigeonPostDetailsInput>((input) =>
+    api().rpc(
+      "save_pigeon_post_details",
+      asArgs<Database["api"]["Functions"]["save_pigeon_post_details"]["Args"]>(input),
+    ),
+  );
+export const useSaveAnnualDetails = () =>
+  useSaveDetailsMutation<AnnualDetailsInput>((input) =>
+    api().rpc(
+      "save_annual_details",
+      asArgs<Database["api"]["Functions"]["save_annual_details"]["Args"]>(input),
+    ),
+  );
+export const useSaveEventDetails = () =>
+  useSaveDetailsMutation<EventDetailsInput>((input) =>
+    api().rpc(
+      "save_event_details",
+      asArgs<Database["api"]["Functions"]["save_event_details"]["Args"]>(input),
+    ),
+  );
 
 export function useMediaLibrary() {
   return useQuery({

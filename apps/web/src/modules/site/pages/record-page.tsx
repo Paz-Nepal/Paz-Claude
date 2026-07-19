@@ -18,8 +18,8 @@ export function RecordPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">The Record</h1>
         <p className="text-muted-foreground">
-          The public deposit index. Every public thing PAZ makes is entered
-          here, in order, and stays.
+          The public deposit index. Every public thing PAZ makes is entered here, in order, and
+          stays.
         </p>
       </header>
 

@@ -28,9 +28,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, next);
   }, []);
 
-  return (
-    <LanguageContext.Provider value={{ lang, setLang }}>{children}</LanguageContext.Provider>
-  );
+  return <LanguageContext.Provider value={{ lang, setLang }}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {

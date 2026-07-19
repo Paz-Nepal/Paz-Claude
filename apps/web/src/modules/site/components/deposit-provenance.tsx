@@ -13,8 +13,7 @@ export function DepositProvenance({
   if (!depositRef) return null;
   return (
     <p className="text-muted-foreground border-t pt-4 text-sm">
-      Kept by the house · Deposited in the Record ({depositRef})
-      {license && <> · {license}</>}
+      Kept by the house · Deposited in the Record ({depositRef}){license && <> · {license}</>}
     </p>
   );
 }

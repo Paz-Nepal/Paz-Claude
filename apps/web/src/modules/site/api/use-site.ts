@@ -61,14 +61,16 @@ export function publicMediaUrl(storagePath: string): string {
 export type PaperDetail = Database["api"]["Functions"]["get_paper"]["Returns"][number];
 export type BriefDetail = Database["api"]["Functions"]["get_brief"]["Returns"][number];
 export type DispatchDetail = Database["api"]["Functions"]["get_dispatch"]["Returns"][number];
-export type PigeonPostDetail =
-  Database["api"]["Functions"]["get_pigeon_post"]["Returns"][number];
+export type PigeonPostDetail = Database["api"]["Functions"]["get_pigeon_post"]["Returns"][number];
 export type AnnualDetail = Database["api"]["Functions"]["get_annual"]["Returns"][number];
 export type RecordEntry = Database["api"]["Views"]["record_entries"]["Row"];
 
 /** One thin fetcher per series (mirrors the api.get_* split) rather than a
  * single generic function with an unused-column shape per call site. */
-function useSeriesDetail<T>(fn: "get_paper" | "get_brief" | "get_dispatch" | "get_pigeon_post" | "get_annual", slug: string | undefined) {
+function useSeriesDetail<T>(
+  fn: "get_paper" | "get_brief" | "get_dispatch" | "get_pigeon_post" | "get_annual",
+  slug: string | undefined,
+) {
   return useQuery({
     queryKey: [fn, slug],
     enabled: Boolean(slug),
@@ -83,8 +85,10 @@ function useSeriesDetail<T>(fn: "get_paper" | "get_brief" | "get_dispatch" | "ge
   });
 }
 
-export const usePaper = (slug: string | undefined) => useSeriesDetail<PaperDetail>("get_paper", slug);
-export const useBrief = (slug: string | undefined) => useSeriesDetail<BriefDetail>("get_brief", slug);
+export const usePaper = (slug: string | undefined) =>
+  useSeriesDetail<PaperDetail>("get_paper", slug);
+export const useBrief = (slug: string | undefined) =>
+  useSeriesDetail<BriefDetail>("get_brief", slug);
 export const useDispatch = (slug: string | undefined) =>
   useSeriesDetail<DispatchDetail>("get_dispatch", slug);
 export const usePigeonPost = (slug: string | undefined) =>

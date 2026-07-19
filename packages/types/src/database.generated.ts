@@ -730,6 +730,11 @@ export type Database = {
         Args: { p_application: string; p_decision: string; p_notes?: string };
         Returns: Database["membership"]["Enums"]["application_status"];
       };
+      deposit_item: {
+        Args: { p_id: string };
+        Returns: Database["publishing"]["Enums"]["item_status"];
+      };
+      discard_draft: { Args: { p_id: string }; Returns: undefined };
       end_relationship: {
         Args: { p_id: string; p_superseded_by?: string };
         Returns: undefined;
@@ -803,7 +808,10 @@ export type Database = {
           author: string;
           author_name: string;
           body: Json;
+          body_ne: Json;
           body_schema_version: number;
+          deposit_ref: string;
+          details: Json;
           featured_media: string;
           featured_media_path: string;
           id: string;
@@ -811,9 +819,12 @@ export type Database = {
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
           subtitle: string;
+          subtitle_ne: string;
           summary: string;
+          summary_ne: string;
           tags: string[];
           title: string;
+          title_ne: string;
           type: Database["publishing"]["Enums"]["item_type"];
           updated_at: string;
         }[];
@@ -927,15 +938,40 @@ export type Database = {
         };
         Returns: string;
       };
+      save_annual_details: {
+        Args: {
+          p_contents: string;
+          p_item: string;
+          p_pdf_media: string;
+          p_year: number;
+        };
+        Returns: undefined;
+      };
+      save_brief_details: {
+        Args: { p_issue_date: string; p_item: string };
+        Returns: undefined;
+      };
+      save_dispatch_details: {
+        Args: { p_issue_date: string; p_item: string };
+        Returns: undefined;
+      };
+      save_event_details: {
+        Args: { p_event_date: string; p_item: string; p_location: string };
+        Returns: undefined;
+      };
       save_item: {
         Args: {
           p_body: Json;
+          p_body_ne: Json;
           p_featured_media: string;
           p_id: string;
           p_slug: string;
           p_subtitle: string;
+          p_subtitle_ne: string;
           p_summary: string;
+          p_summary_ne: string;
           p_title: string;
+          p_title_ne: string;
           p_type: Database["publishing"]["Enums"]["item_type"];
         };
         Returns: string;
@@ -943,6 +979,20 @@ export type Database = {
       save_organization: {
         Args: { p_id: string; p_kind: string; p_name: string; p_notes: string };
         Returns: string;
+      };
+      save_paper_details: {
+        Args: {
+          p_abstract: string;
+          p_item: string;
+          p_license: string;
+          p_pdf_media: string;
+          p_sources_note: string;
+        };
+        Returns: undefined;
+      };
+      save_pigeon_post_details: {
+        Args: { p_edition_no: string; p_item: string; p_pdf_media: string };
+        Returns: undefined;
       };
       save_pledge: {
         Args: {

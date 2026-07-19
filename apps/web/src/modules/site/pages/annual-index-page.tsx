@@ -12,7 +12,11 @@ export function AnnualIndexPage() {
           The cloth-bound flagship, published at the yearly anniversary.
         </p>
       </header>
-      <SeriesIndexList items={items.data} basePath="/annual" emptyTitle="No editions deposited yet." />
+      <SeriesIndexList
+        items={items.data}
+        basePath="/annual"
+        emptyTitle="No editions deposited yet."
+      />
     </div>
   );
 }

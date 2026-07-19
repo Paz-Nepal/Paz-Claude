@@ -10,6 +10,9 @@ export const itemMetadataSchema = z.object({
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, numbers, and hyphens only"),
   subtitle: z.string().trim(),
   summary: z.string().trim(),
+  titleNe: z.string().trim(),
+  subtitleNe: z.string().trim(),
+  summaryNe: z.string().trim(),
   tags: z.string(), // comma-separated in the form; split on save
 });
 

@@ -16,10 +16,7 @@ export function DispatchPage() {
   if (dispatch.isError) {
     return (
       <div className="p-8">
-        <StatePanel
-          title="Couldn't load this."
-          description={toAppError(dispatch.error).message}
-        />
+        <StatePanel title="Couldn't load this." description={toAppError(dispatch.error).message} />
       </div>
     );
   }

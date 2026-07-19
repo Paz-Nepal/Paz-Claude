@@ -33,10 +33,7 @@ export function SeriesIndexList({
     <ul className="flex flex-col gap-6">
       {items.map((item) => (
         <li key={item.id} className="border-b pb-6 last:border-0">
-          <Link
-            to={`${basePath}/${item.slug}`}
-            className="font-serif text-xl hover:underline"
-          >
+          <Link to={`${basePath}/${item.slug}`} className="font-serif text-xl hover:underline">
             {pickLang(item.title ?? "", item.title_ne, lang)}
           </Link>
           {secondary && <div className="text-muted-foreground mt-1 text-sm">{secondary(item)}</div>}

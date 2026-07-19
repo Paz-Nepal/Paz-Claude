@@ -10,7 +10,11 @@ export function PapersIndexPage() {
         <h1 className="font-serif text-3xl">The Paz Papers</h1>
         <p className="text-muted-foreground">Long-form essays. Numbered, permanent.</p>
       </header>
-      <SeriesIndexList items={items.data} basePath="/papers" emptyTitle="No Papers deposited yet." />
+      <SeriesIndexList
+        items={items.data}
+        basePath="/papers"
+        emptyTitle="No Papers deposited yet."
+      />
     </div>
   );
 }

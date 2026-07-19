@@ -18,8 +18,11 @@ const TYPE_LABEL: Record<ItemType, string> = {
   article: "Article",
   page: "Page",
   paper: "PAZ Paper",
+  brief: "Brief",
   dispatch: "Dispatch",
   pigeon_post: "Pigeon Post",
+  annual: "Annual",
+  event: "Event",
 };
 
 export function DeskPage() {

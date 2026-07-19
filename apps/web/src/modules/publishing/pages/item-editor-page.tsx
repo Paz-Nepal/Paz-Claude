@@ -17,8 +17,11 @@ const TYPE_OPTIONS: Array<{ value: ItemType; label: string }> = [
   { value: "article", label: "Article" },
   { value: "page", label: "Page" },
   { value: "paper", label: "PAZ Paper" },
+  { value: "brief", label: "Brief" },
   { value: "dispatch", label: "Dispatch" },
   { value: "pigeon_post", label: "Pigeon Post" },
+  { value: "annual", label: "Annual" },
+  { value: "event", label: "Event" },
 ];
 
 export function ItemEditorPage() {

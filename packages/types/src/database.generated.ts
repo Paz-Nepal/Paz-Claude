@@ -1839,6 +1839,120 @@ export type Database = {
   };
   publishing: {
     Tables: {
+      annual_details: {
+        Row: {
+          contents: string | null;
+          item_id: string;
+          pdf_media: string | null;
+          year: number;
+        };
+        Insert: {
+          contents?: string | null;
+          item_id: string;
+          pdf_media?: string | null;
+          year: number;
+        };
+        Update: {
+          contents?: string | null;
+          item_id?: string;
+          pdf_media?: string | null;
+          year?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "annual_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "annual_details_pdf_media_fkey";
+            columns: ["pdf_media"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      brief_details: {
+        Row: {
+          issue_date: string;
+          issue_no: number;
+          item_id: string;
+        };
+        Insert: {
+          issue_date?: string;
+          issue_no?: number;
+          item_id: string;
+        };
+        Update: {
+          issue_date?: string;
+          issue_no?: number;
+          item_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "brief_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      dispatch_details: {
+        Row: {
+          issue_date: string;
+          issue_no: number;
+          item_id: string;
+        };
+        Insert: {
+          issue_date?: string;
+          issue_no?: number;
+          item_id: string;
+        };
+        Update: {
+          issue_date?: string;
+          issue_no?: number;
+          item_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "dispatch_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      event_details: {
+        Row: {
+          event_date: string;
+          item_id: string;
+          location: string | null;
+        };
+        Insert: {
+          event_date: string;
+          item_id: string;
+          location?: string | null;
+        };
+        Update: {
+          event_date?: string;
+          item_id?: string;
+          location?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "event_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       item_revisions: {
         Row: {
           body: Json;
@@ -1918,17 +2032,25 @@ export type Database = {
           archived_at: string | null;
           author: string;
           body: Json;
+          body_ne: Json | null;
           body_schema_version: number;
           created_at: string;
+          deleted_at: string | null;
+          deposit_ref: string | null;
           featured_media: string | null;
           id: string;
+          previous_version_of: string | null;
           published_at: string | null;
           search_tsv: unknown;
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
           subtitle: string | null;
+          subtitle_ne: string | null;
           summary: string | null;
+          summary_ne: string | null;
+          superseded_by: string | null;
           title: string;
+          title_ne: string | null;
           type: Database["publishing"]["Enums"]["item_type"];
           updated_at: string;
         };
@@ -1936,17 +2058,25 @@ export type Database = {
           archived_at?: string | null;
           author: string;
           body?: Json;
+          body_ne?: Json | null;
           body_schema_version?: number;
           created_at?: string;
+          deleted_at?: string | null;
+          deposit_ref?: string | null;
           featured_media?: string | null;
           id?: string;
+          previous_version_of?: string | null;
           published_at?: string | null;
           search_tsv?: unknown;
           slug: string;
           status?: Database["publishing"]["Enums"]["item_status"];
           subtitle?: string | null;
+          subtitle_ne?: string | null;
           summary?: string | null;
+          summary_ne?: string | null;
+          superseded_by?: string | null;
           title: string;
+          title_ne?: string | null;
           type: Database["publishing"]["Enums"]["item_type"];
           updated_at?: string;
         };
@@ -1954,17 +2084,25 @@ export type Database = {
           archived_at?: string | null;
           author?: string;
           body?: Json;
+          body_ne?: Json | null;
           body_schema_version?: number;
           created_at?: string;
+          deleted_at?: string | null;
+          deposit_ref?: string | null;
           featured_media?: string | null;
           id?: string;
+          previous_version_of?: string | null;
           published_at?: string | null;
           search_tsv?: unknown;
           slug?: string;
           status?: Database["publishing"]["Enums"]["item_status"];
           subtitle?: string | null;
+          subtitle_ne?: string | null;
           summary?: string | null;
+          summary_ne?: string | null;
+          superseded_by?: string | null;
           title?: string;
+          title_ne?: string | null;
           type?: Database["publishing"]["Enums"]["item_type"];
           updated_at?: string;
         };
@@ -1974,6 +2112,20 @@ export type Database = {
             columns: ["featured_media"];
             isOneToOne: false;
             referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "items_previous_version_of_fkey";
+            columns: ["previous_version_of"];
+            isOneToOne: false;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "items_superseded_by_fkey";
+            columns: ["superseded_by"];
+            isOneToOne: false;
+            referencedRelation: "items";
             referencedColumns: ["id"];
           },
         ];
@@ -2017,6 +2169,122 @@ export type Database = {
         };
         Relationships: [];
       };
+      paper_details: {
+        Row: {
+          abstract: string | null;
+          item_id: string;
+          license: string;
+          paper_no: number;
+          pdf_media: string | null;
+          sources_note: string | null;
+        };
+        Insert: {
+          abstract?: string | null;
+          item_id: string;
+          license: string;
+          paper_no?: number;
+          pdf_media?: string | null;
+          sources_note?: string | null;
+        };
+        Update: {
+          abstract?: string | null;
+          item_id?: string;
+          license?: string;
+          paper_no?: number;
+          pdf_media?: string | null;
+          sources_note?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "paper_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "paper_details_pdf_media_fkey";
+            columns: ["pdf_media"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pigeon_post_details: {
+        Row: {
+          edition_no: string;
+          item_id: string;
+          pdf_media: string | null;
+        };
+        Insert: {
+          edition_no: string;
+          item_id: string;
+          pdf_media?: string | null;
+        };
+        Update: {
+          edition_no?: string;
+          item_id?: string;
+          pdf_media?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pigeon_post_details_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: true;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pigeon_post_details_pdf_media_fkey";
+            columns: ["pdf_media"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      record_entries: {
+        Row: {
+          deposit_number: string;
+          deposited_at: string;
+          entry_type: Database["publishing"]["Enums"]["item_type"];
+          id: string;
+          item_id: string;
+          link: string;
+          provenance: string;
+          title: string;
+        };
+        Insert: {
+          deposit_number: string;
+          deposited_at?: string;
+          entry_type: Database["publishing"]["Enums"]["item_type"];
+          id?: string;
+          item_id: string;
+          link: string;
+          provenance: string;
+          title: string;
+        };
+        Update: {
+          deposit_number?: string;
+          deposited_at?: string;
+          entry_type?: Database["publishing"]["Enums"]["item_type"];
+          id?: string;
+          item_id?: string;
+          link?: string;
+          provenance?: string;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "record_entries_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       tags: {
         Row: {
           id: string;
@@ -2041,6 +2309,43 @@ export type Database = {
     };
     Functions: {
       body_text: { Args: { p_body: Json }; Returns: string };
+      deposit_item: {
+        Args: { p_item: string };
+        Returns: {
+          archived_at: string | null;
+          author: string;
+          body: Json;
+          body_ne: Json | null;
+          body_schema_version: number;
+          created_at: string;
+          deleted_at: string | null;
+          deposit_ref: string | null;
+          featured_media: string | null;
+          id: string;
+          previous_version_of: string | null;
+          published_at: string | null;
+          search_tsv: unknown;
+          slug: string;
+          status: Database["publishing"]["Enums"]["item_status"];
+          subtitle: string | null;
+          subtitle_ne: string | null;
+          summary: string | null;
+          summary_ne: string | null;
+          superseded_by: string | null;
+          title: string;
+          title_ne: string | null;
+          type: Database["publishing"]["Enums"]["item_type"];
+          updated_at: string;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "items";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      discard_draft: { Args: { p_item: string }; Returns: undefined };
+      next_deposit_ref: { Args: never; Returns: string };
       transition_item: {
         Args: {
           p_item: string;
@@ -2050,17 +2355,25 @@ export type Database = {
           archived_at: string | null;
           author: string;
           body: Json;
+          body_ne: Json | null;
           body_schema_version: number;
           created_at: string;
+          deleted_at: string | null;
+          deposit_ref: string | null;
           featured_media: string | null;
           id: string;
+          previous_version_of: string | null;
           published_at: string | null;
           search_tsv: unknown;
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
           subtitle: string | null;
+          subtitle_ne: string | null;
           summary: string | null;
+          summary_ne: string | null;
+          superseded_by: string | null;
           title: string;
+          title_ne: string | null;
           type: Database["publishing"]["Enums"]["item_type"];
           updated_at: string;
         };
@@ -2074,7 +2387,8 @@ export type Database = {
     };
     Enums: {
       item_status: "draft" | "in_review" | "published" | "archived";
-      item_type: "article" | "page" | "paper" | "dispatch" | "pigeon_post";
+      item_type:
+        "article" | "page" | "paper" | "dispatch" | "pigeon_post" | "brief" | "annual" | "event";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -2229,7 +2543,16 @@ export const Constants = {
   publishing: {
     Enums: {
       item_status: ["draft", "in_review", "published", "archived"],
-      item_type: ["article", "page", "paper", "dispatch", "pigeon_post"],
+      item_type: [
+        "article",
+        "page",
+        "paper",
+        "dispatch",
+        "pigeon_post",
+        "brief",
+        "annual",
+        "event",
+      ],
     },
   },
 } as const;

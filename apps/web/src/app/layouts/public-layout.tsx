@@ -22,8 +22,18 @@ export function PublicLayout() {
       <div className="flex min-h-screen flex-col">
         <header className="border-b">
           <div className="max-w-wide mx-auto flex flex-wrap items-center justify-between gap-4 px-6 py-4">
-            <Link to="/" className="font-serif text-xl">
+            <Link to="/" className="flex items-baseline gap-2 font-serif text-xl">
               {siteName}
+              {/* Ranjana wordmark: intentionally not built yet (spec §5 —
+                  display-only, SVG or a dedicated font, never live text).
+                  This placeholder just marks it as a known, intended
+                  feature rather than an oversight. */}
+              <span
+                className="text-muted-foreground text-xs font-normal not-italic"
+                title="A Ranjana-script wordmark is planned for this spot."
+              >
+                (mark coming soon)
+              </span>
             </Link>
             <nav aria-label="Main" className="flex flex-wrap items-center gap-5">
               <NavLink to="/" end className={navLinkClass}>
@@ -61,6 +71,9 @@ export function PublicLayout() {
               </NavLink>
               <NavLink to="/reservations" className={navLinkClass}>
                 Reservations
+              </NavLink>
+              <NavLink to="/send-a-pigeon" className={navLinkClass}>
+                Send a pigeon
               </NavLink>
               {(pages.data ?? []).map((page) => (
                 <NavLink key={page.id} to={`/${page.slug}`} className={navLinkClass}>

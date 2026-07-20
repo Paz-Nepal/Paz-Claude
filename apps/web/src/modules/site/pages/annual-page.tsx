@@ -4,6 +4,7 @@ import { toAppError } from "@paz/types";
 import { useAnnual, publicMediaUrl } from "../api/use-site";
 import { useLanguage, pickLang } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 
 export function AnnualPage() {
@@ -25,6 +26,7 @@ export function AnnualPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SupersededBanner basePath="/annual" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.year != null && <p className="text-muted-foreground text-sm">{item.year}</p>}
         <h1 className="font-serif text-4xl">{pickLang(item.title ?? "", item.title_ne, lang)}</h1>

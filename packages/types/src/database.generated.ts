@@ -734,6 +734,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      pigeon_submissions: {
+        Row: {
+          content: string | null;
+          contributor_contact: string | null;
+          contributor_name: string | null;
+          id: string | null;
+          reviewed: boolean | null;
+          reviewed_at: string | null;
+          submitted_at: string | null;
+        };
+        Insert: {
+          content?: string | null;
+          contributor_contact?: string | null;
+          contributor_name?: string | null;
+          id?: string | null;
+          reviewed?: boolean | null;
+          reviewed_at?: string | null;
+          submitted_at?: string | null;
+        };
+        Update: {
+          content?: string | null;
+          contributor_contact?: string | null;
+          contributor_name?: string | null;
+          id?: string | null;
+          reviewed?: boolean | null;
+          reviewed_at?: string | null;
+          submitted_at?: string | null;
+        };
+        Relationships: [];
+      };
       pledges: {
         Row: {
           acknowledged_at: string | null;
@@ -1039,6 +1069,7 @@ export type Database = {
         Returns: undefined;
       };
       cancel_my_reservation: { Args: { p_id: string }; Returns: undefined };
+      create_correction: { Args: { p_original: string }; Returns: string };
       decide_membership_application: {
         Args: { p_application: string; p_decision: string; p_notes?: string };
         Returns: Database["membership"]["Enums"]["application_status"];
@@ -1082,6 +1113,7 @@ export type Database = {
           id: string;
           pdf_path: string;
           slug: string;
+          superseded_by_slug: string;
           title: string;
           title_ne: string;
           year: number;
@@ -1097,6 +1129,7 @@ export type Database = {
           issue_date: string;
           issue_no: number;
           slug: string;
+          superseded_by_slug: string;
           tags: string[];
           title: string;
           title_ne: string;
@@ -1112,6 +1145,7 @@ export type Database = {
           issue_date: string;
           issue_no: number;
           slug: string;
+          superseded_by_slug: string;
           tags: string[];
           title: string;
           title_ne: string;
@@ -1171,6 +1205,7 @@ export type Database = {
           published_at: string;
           slug: string;
           sources_note: string;
+          superseded_by_slug: string;
           tags: string[];
           title: string;
           title_ne: string;
@@ -1184,6 +1219,7 @@ export type Database = {
           id: string;
           pdf_path: string;
           slug: string;
+          superseded_by_slug: string;
           title: string;
           title_ne: string;
         }[];
@@ -1232,6 +1268,10 @@ export type Database = {
       mark_attendance: {
         Args: { p_attended: boolean; p_registration: string };
         Returns: Database["programs"]["Enums"]["registration_status"];
+      };
+      mark_pigeon_submission_reviewed: {
+        Args: { p_id: string };
+        Returns: undefined;
       };
       member_terms: {
         Args: { p_member: string };
@@ -1481,6 +1521,14 @@ export type Database = {
           isOneToOne: false;
           isSetofReturn: true;
         };
+      };
+      send_a_pigeon: {
+        Args: {
+          p_content: string;
+          p_contributor_contact: string;
+          p_contributor_name: string;
+        };
+        Returns: undefined;
       };
       session_roster: {
         Args: { p_session: string };
@@ -3137,6 +3185,39 @@ export type Database = {
           },
         ];
       };
+      pigeon_submissions: {
+        Row: {
+          content: string;
+          contributor_contact: string | null;
+          contributor_name: string | null;
+          id: string;
+          reviewed: boolean;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          submitted_at: string;
+        };
+        Insert: {
+          content: string;
+          contributor_contact?: string | null;
+          contributor_name?: string | null;
+          id?: string;
+          reviewed?: boolean;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          submitted_at?: string;
+        };
+        Update: {
+          content?: string;
+          contributor_contact?: string | null;
+          contributor_name?: string | null;
+          id?: string;
+          reviewed?: boolean;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          submitted_at?: string;
+        };
+        Relationships: [];
+      };
       record_entries: {
         Row: {
           deposit_number: string;
@@ -3202,6 +3283,7 @@ export type Database = {
     };
     Functions: {
       body_text: { Args: { p_body: Json }; Returns: string };
+      create_correction: { Args: { p_original: string }; Returns: string };
       deposit_item: {
         Args: { p_item: string };
         Returns: {
@@ -3239,6 +3321,14 @@ export type Database = {
       };
       discard_draft: { Args: { p_item: string }; Returns: undefined };
       next_deposit_ref: { Args: never; Returns: string };
+      submit_pigeon: {
+        Args: {
+          p_content: string;
+          p_contributor_contact: string;
+          p_contributor_name: string;
+        };
+        Returns: string;
+      };
       transition_item: {
         Args: {
           p_item: string;

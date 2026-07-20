@@ -12,3 +12,6 @@ supabase/.temp/
 
 .DS_Store
 coverage/
+
+# scripts/export-content.mjs output
+export-output/

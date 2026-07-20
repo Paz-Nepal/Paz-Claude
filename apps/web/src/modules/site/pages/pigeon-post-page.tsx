@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePigeonPost, publicMediaUrl } from "../api/use-site";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 
 /** No author_name field is read or rendered anywhere in this page -- there
@@ -25,6 +26,7 @@ export function PigeonPostPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SupersededBanner basePath="/pigeon-post" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.edition_no && <p className="text-muted-foreground text-sm">{item.edition_no}</p>}
         <h1 className="font-serif text-4xl">{item.title}</h1>

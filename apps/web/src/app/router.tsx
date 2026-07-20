@@ -177,6 +177,16 @@ const AdminMenuPage = React.lazy(() =>
 const DashboardPage = React.lazy(() =>
   import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
 );
+const SendAPigeonPage = React.lazy(() =>
+  import("@/modules/site/pages/send-a-pigeon-page").then((m) => ({
+    default: m.SendAPigeonPage,
+  })),
+);
+const PigeonSubmissionsPage = React.lazy(() =>
+  import("@/modules/publishing/pages/pigeon-submissions-page").then((m) => ({
+    default: m.PigeonSubmissionsPage,
+  })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -206,6 +216,7 @@ export const router = createBrowserRouter([
       { path: "record", element: withSuspense(<RecordPage />) },
       { path: "menu", element: withSuspense(<MenuPage />) },
       { path: "reservations", element: withSuspense(<ReservationPage />) },
+      { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
       { path: "journal", element: withSuspense(<JournalPage />) },
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
@@ -306,6 +317,11 @@ export const router = createBrowserRouter([
             path: "hospitality/menu",
             element: withSuspense(<ProtectedRoute permission="hospitality.menu.manage" />),
             children: [{ index: true, element: withSuspense(<AdminMenuPage />) }],
+          },
+          {
+            path: "pigeon-submissions",
+            element: withSuspense(<ProtectedRoute permission="publishing.item.read" />),
+            children: [{ index: true, element: withSuspense(<PigeonSubmissionsPage />) }],
           },
           {
             path: "settings",

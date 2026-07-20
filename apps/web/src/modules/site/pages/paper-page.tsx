@@ -4,6 +4,7 @@ import { toAppError } from "@paz/types";
 import { usePaper, publicMediaUrl } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 
 export function PaperPage() {
@@ -26,6 +27,7 @@ export function PaperPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SupersededBanner basePath="/papers" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.paper_no != null && (
           <p className="text-muted-foreground text-sm">Paz Paper No. {item.paper_no}</p>

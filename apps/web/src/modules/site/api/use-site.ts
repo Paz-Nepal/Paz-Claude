@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
 
@@ -6,6 +6,15 @@ export type PublishedItem = Database["api"]["Views"]["published_items"]["Row"];
 export type PublishedItemDetail =
   Database["api"]["Functions"]["get_published_item"]["Returns"][number];
 export type PublicItemType = Database["publishing"]["Enums"]["item_type"];
+
+/**
+ * `supabase gen types` renders nullable SQL function parameters as
+ * non-nullable TS properties (PostgREST itself accepts null for any of
+ * them). Same sanctioned cast used in every other module's api file.
+ */
+function asArgs<T>(args: Record<keyof T & string, unknown>): T {
+  return args as T;
+}
 
 const api = () => supabase.schema("api");
 
@@ -95,6 +104,30 @@ export const usePigeonPost = (slug: string | undefined) =>
   useSeriesDetail<PigeonPostDetail>("get_pigeon_post", slug);
 export const useAnnual = (slug: string | undefined) =>
   useSeriesDetail<AnnualDetail>("get_annual", slug);
+
+export interface SendAPigeonInput {
+  contributorName: string | null;
+  contributorContact: string | null;
+  content: string;
+}
+
+/** Contributor identity, if given, is staff-only forever (never selected
+ * by any anon-facing view) -- same rule as the published series itself. */
+export function useSendAPigeon() {
+  return useMutation({
+    mutationFn: async (input: SendAPigeonInput) => {
+      const { error } = await api().rpc(
+        "send_a_pigeon",
+        asArgs<Database["api"]["Functions"]["send_a_pigeon"]["Args"]>({
+          p_contributor_name: input.contributorName,
+          p_contributor_contact: input.contributorContact,
+          p_content: input.content,
+        }),
+      );
+      if (error) throw toAppError(error);
+    },
+  });
+}
 
 export function useRecordEntries() {
   return useQuery({

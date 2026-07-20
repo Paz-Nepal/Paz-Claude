@@ -5,6 +5,7 @@ import { formatKathmanduDate } from "@paz/utils";
 import { useBrief } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 
 export function BriefPage() {
@@ -27,6 +28,7 @@ export function BriefPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SupersededBanner basePath="/brief" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.issue_no != null && (
           <p className="text-muted-foreground text-sm">

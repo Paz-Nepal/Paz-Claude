@@ -316,3 +316,45 @@ export function useUploadMedia() {
     },
   });
 }
+
+export type PigeonSubmission = Database["api"]["Views"]["pigeon_submissions"]["Row"];
+
+export function usePigeonSubmissions() {
+  return useQuery({
+    queryKey: ["pigeon-submissions"],
+    queryFn: async () => {
+      const { data, error } = await api().from("pigeon_submissions").select("*");
+      if (error) throw toAppError(error);
+      return data;
+    },
+  });
+}
+
+export function useMarkPigeonSubmissionReviewed() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await api().rpc("mark_pigeon_submission_reviewed", { p_id: id });
+      if (error) throw toAppError(error);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["pigeon-submissions"] });
+    },
+  });
+}
+
+/** The one path to a correction (spec §3: additions, never destruction).
+ * Returns the new draft's id so the caller can navigate straight to it. */
+export function useCreateCorrection() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (originalId: string) => {
+      const { data, error } = await api().rpc("create_correction", { p_original: originalId });
+      if (error) throw toAppError(error);
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+    },
+  });
+}

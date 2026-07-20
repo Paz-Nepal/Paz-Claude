@@ -15,6 +15,11 @@ const DASHBOARD_PERMISSIONS = [
 const NAV: Array<{ to: string; label: string; permissions: string[] }> = [
   { to: "/admin/dashboard", label: "Dashboard", permissions: DASHBOARD_PERMISSIONS },
   { to: "/admin/desk", label: "Desk", permissions: ["publishing.item.create"] },
+  {
+    to: "/admin/pigeon-submissions",
+    label: "Send a pigeon",
+    permissions: ["publishing.item.read"],
+  },
   { to: "/admin/media", label: "Media", permissions: ["publishing.media.read"] },
   {
     to: "/admin/applications",

@@ -9,12 +9,13 @@ import {
   useItem,
   useSaveItem,
   useDiscardDraft,
+  useCreateCorrection,
   type ItemDetail,
   type ItemType,
 } from "../api/use-publishing";
 import { BodyEditor } from "../components/body-editor";
 import { StatusBadge } from "../components/status-badge";
-import { TransitionButtons } from "../components/transition-buttons";
+import { TransitionButtons, DEPOSIT_SERIES } from "../components/transition-buttons";
 import { MediaPicker } from "../components/media-picker";
 import { SeriesDetailsPanel, type SeriesDetails } from "../components/series-details-panel";
 
@@ -52,6 +53,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   const navigate = useNavigate();
   const saveItem = useSaveItem();
   const discardDraft = useDiscardDraft();
+  const createCorrection = useCreateCorrection();
 
   const bodyRef = React.useRef<RichTextNode>((existing?.body as RichTextNode) ?? EMPTY_DOC);
   const bodyNeRef = React.useRef<RichTextNode>((existing?.body_ne as RichTextNode) ?? EMPTY_DOC);
@@ -286,6 +288,45 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
               />
             </div>
           )}
+
+          {/* Non-negotiable §3: deposited content is corrected by
+              addition, never destructive edit — this is the one path to
+              that. Only offered once a deposit_ref exists (i.e. it has
+              actually been deposited, not just published in some other
+              sense) and only for the five Record series. */}
+          {existing?.id &&
+            existing.status === "published" &&
+            existing.deposit_ref &&
+            DEPOSIT_SERIES.includes(existing.type) && (
+              <div className="flex flex-col gap-1.5 border-t pt-4">
+                <span className="text-sm font-medium">Correction</span>
+                <p className="text-muted-foreground text-sm">
+                  Deposited items can&apos;t be edited directly. To correct this one, start a new
+                  version — the original stays exactly as deposited, and readers are shown a link to
+                  the newer version once it&apos;s deposited too.
+                </p>
+                {createCorrection.isError && (
+                  <p role="alert" className="text-destructive text-sm">
+                    {toAppError(createCorrection.error).message}
+                  </p>
+                )}
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="secondary"
+                  loading={createCorrection.isPending}
+                  className="self-start"
+                  onClick={() =>
+                    existing.id &&
+                    createCorrection.mutate(existing.id, {
+                      onSuccess: (newId) => navigate(`/admin/desk/${newId}`),
+                    })
+                  }
+                >
+                  Create correction
+                </Button>
+              </div>
+            )}
         </div>
       </div>
     </form>

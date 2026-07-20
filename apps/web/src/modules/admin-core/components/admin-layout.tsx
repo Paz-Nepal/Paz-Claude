@@ -12,6 +12,13 @@ const NAV: Array<{ to: string; label: string; permission: string }> = [
   { to: "/admin/organizations", label: "Organizations", permission: "crm.organization.read" },
   { to: "/admin/relationships", label: "Relationships", permission: "crm.relationship.read" },
   { to: "/admin/pledges", label: "Pledges", permission: "crm.pledge.read" },
+  {
+    to: "/admin/hospitality/desk",
+    label: "Reservations",
+    permission: "hospitality.reservation.read",
+  },
+  { to: "/admin/hospitality/tables", label: "Tables", permission: "hospitality.service.manage" },
+  { to: "/admin/hospitality/menu", label: "Menu", permission: "hospitality.menu.manage" },
   { to: "/admin/settings", label: "Settings", permission: "admin.settings.read" },
 ];
 

@@ -90,6 +90,120 @@ export type Database = {
       [_ in never]: never;
     };
     Views: {
+      admin_menu_items: {
+        Row: {
+          available: boolean | null;
+          currency: string | null;
+          description: string | null;
+          dietary: Json | null;
+          id: string | null;
+          name: string | null;
+          position: number | null;
+          price_cents: number | null;
+          section_id: string | null;
+        };
+        Insert: {
+          available?: boolean | null;
+          currency?: string | null;
+          description?: string | null;
+          dietary?: Json | null;
+          id?: string | null;
+          name?: string | null;
+          position?: number | null;
+          price_cents?: number | null;
+          section_id?: string | null;
+        };
+        Update: {
+          available?: boolean | null;
+          currency?: string | null;
+          description?: string | null;
+          dietary?: Json | null;
+          id?: string | null;
+          name?: string | null;
+          position?: number | null;
+          price_cents?: number | null;
+          section_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_menu_sections";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "menu_items_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "public_menu";
+            referencedColumns: ["section_id"];
+          },
+        ];
+      };
+      admin_menu_sections: {
+        Row: {
+          id: string | null;
+          menu_id: string | null;
+          name: string | null;
+          position: number | null;
+        };
+        Insert: {
+          id?: string | null;
+          menu_id?: string | null;
+          name?: string | null;
+          position?: number | null;
+        };
+        Update: {
+          id?: string | null;
+          menu_id?: string | null;
+          name?: string | null;
+          position?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "menu_sections_menu_id_fkey";
+            columns: ["menu_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_menus";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "menu_sections_menu_id_fkey";
+            columns: ["menu_id"];
+            isOneToOne: false;
+            referencedRelation: "public_menu";
+            referencedColumns: ["menu_id"];
+          },
+        ];
+      };
+      admin_menus: {
+        Row: {
+          id: string | null;
+          name: string | null;
+          slug: string | null;
+          status: string | null;
+          valid_from: string | null;
+          valid_to: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          name?: string | null;
+          slug?: string | null;
+          status?: string | null;
+          valid_from?: string | null;
+          valid_to?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          name?: string | null;
+          slug?: string | null;
+          status?: string | null;
+          valid_from?: string | null;
+          valid_to?: string | null;
+        };
+        Relationships: [];
+      };
       admin_program_sessions: {
         Row: {
           capacity: number | null;
@@ -211,6 +325,32 @@ export type Database = {
             columns: ["author"];
             isOneToOne: false;
             referencedRelation: "my_profile";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      desk_reservations: {
+        Row: {
+          code: string | null;
+          duration_minutes: number | null;
+          guest_email: string | null;
+          guest_name: string | null;
+          guest_phone: string | null;
+          id: string | null;
+          notes: string | null;
+          occasion: string | null;
+          party_size: number | null;
+          starts_at: string | null;
+          status: Database["hospitality"]["Enums"]["reservation_status"] | null;
+          table_id: string | null;
+          table_name: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reservations_table_id_fkey";
+            columns: ["table_id"];
+            isOneToOne: false;
+            referencedRelation: "tables";
             referencedColumns: ["id"];
           },
         ];
@@ -470,6 +610,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      my_reservations: {
+        Row: {
+          code: string | null;
+          duration_minutes: number | null;
+          guest_name: string | null;
+          id: string | null;
+          occasion: string | null;
+          party_size: number | null;
+          starts_at: string | null;
+          status: Database["hospitality"]["Enums"]["reservation_status"] | null;
+        };
+        Insert: {
+          code?: string | null;
+          duration_minutes?: number | null;
+          guest_name?: string | null;
+          id?: string | null;
+          occasion?: string | null;
+          party_size?: number | null;
+          starts_at?: string | null;
+          status?: Database["hospitality"]["Enums"]["reservation_status"] | null;
+        };
+        Update: {
+          code?: string | null;
+          duration_minutes?: number | null;
+          guest_name?: string | null;
+          id?: string | null;
+          occasion?: string | null;
+          party_size?: number | null;
+          starts_at?: string | null;
+          status?: Database["hospitality"]["Enums"]["reservation_status"] | null;
+        };
+        Relationships: [];
+      };
       organizations: {
         Row: {
           created_at: string | null;
@@ -590,6 +763,24 @@ export type Database = {
           },
         ];
       };
+      public_menu: {
+        Row: {
+          currency: string | null;
+          dietary: Json | null;
+          item_description: string | null;
+          item_id: string | null;
+          item_name: string | null;
+          item_position: number | null;
+          menu_id: string | null;
+          menu_name: string | null;
+          menu_slug: string | null;
+          price_cents: number | null;
+          section_id: string | null;
+          section_name: string | null;
+          section_position: number | null;
+        };
+        Relationships: [];
+      };
       published_items: {
         Row: {
           author_name: string | null;
@@ -677,6 +868,36 @@ export type Database = {
           },
         ];
       };
+      service_periods: {
+        Row: {
+          closed: boolean | null;
+          closes: string | null;
+          id: string | null;
+          on_date: string | null;
+          opens: string | null;
+          seating_interval_minutes: number | null;
+          weekday: number | null;
+        };
+        Insert: {
+          closed?: boolean | null;
+          closes?: string | null;
+          id?: string | null;
+          on_date?: string | null;
+          opens?: string | null;
+          seating_interval_minutes?: number | null;
+          weekday?: number | null;
+        };
+        Update: {
+          closed?: boolean | null;
+          closes?: string | null;
+          id?: string | null;
+          on_date?: string | null;
+          opens?: string | null;
+          seating_interval_minutes?: number | null;
+          weekday?: number | null;
+        };
+        Relationships: [];
+      };
       settings: {
         Row: {
           description: string | null;
@@ -695,6 +916,30 @@ export type Database = {
           key?: string | null;
           updated_at?: string | null;
           value?: Json | null;
+        };
+        Relationships: [];
+      };
+      tables: {
+        Row: {
+          active: boolean | null;
+          id: string | null;
+          name: string | null;
+          seats: number | null;
+          zone: string | null;
+        };
+        Insert: {
+          active?: boolean | null;
+          id?: string | null;
+          name?: string | null;
+          seats?: number | null;
+          zone?: string | null;
+        };
+        Update: {
+          active?: boolean | null;
+          id?: string | null;
+          name?: string | null;
+          seats?: number | null;
+          zone?: string | null;
         };
         Relationships: [];
       };
@@ -726,6 +971,7 @@ export type Database = {
         Args: { p_registration: string };
         Returns: undefined;
       };
+      cancel_my_reservation: { Args: { p_id: string }; Returns: undefined };
       decide_membership_application: {
         Args: { p_application: string; p_decision: string; p_notes?: string };
         Returns: Database["membership"]["Enums"]["application_status"];
@@ -938,6 +1184,19 @@ export type Database = {
         };
         Returns: string;
       };
+      request_reservation: {
+        Args: {
+          p_duration_minutes: number;
+          p_email: string;
+          p_full_name: string;
+          p_notes: string;
+          p_occasion: string;
+          p_party_size: number;
+          p_phone: string;
+          p_starts_at: string;
+        };
+        Returns: string;
+      };
       save_annual_details: {
         Args: {
           p_contents: string;
@@ -973,6 +1232,39 @@ export type Database = {
           p_title: string;
           p_title_ne: string;
           p_type: Database["publishing"]["Enums"]["item_type"];
+        };
+        Returns: string;
+      };
+      save_menu: {
+        Args: {
+          p_id: string;
+          p_name: string;
+          p_slug: string;
+          p_status: string;
+          p_valid_from: string;
+          p_valid_to: string;
+        };
+        Returns: string;
+      };
+      save_menu_item: {
+        Args: {
+          p_available: boolean;
+          p_description: string;
+          p_dietary: Json;
+          p_id: string;
+          p_name: string;
+          p_position: number;
+          p_price_cents: number;
+          p_section_id: string;
+        };
+        Returns: string;
+      };
+      save_menu_section: {
+        Args: {
+          p_id: string;
+          p_menu_id: string;
+          p_name: string;
+          p_position: number;
         };
         Returns: string;
       };
@@ -1037,6 +1329,16 @@ export type Database = {
         };
         Returns: string;
       };
+      save_table: {
+        Args: {
+          p_active: boolean;
+          p_id: string;
+          p_name: string;
+          p_seats: number;
+          p_zone: string;
+        };
+        Returns: string;
+      };
       search_published: {
         Args: { q: string };
         Returns: {
@@ -1079,6 +1381,14 @@ export type Database = {
       set_member_status: {
         Args: { p_member: string; p_status: string };
         Returns: Database["membership"]["Enums"]["member_status"];
+      };
+      set_reservation_status: {
+        Args: {
+          p_id: string;
+          p_status: Database["hospitality"]["Enums"]["reservation_status"];
+          p_table_id: string;
+        };
+        Returns: Database["hospitality"]["Enums"]["reservation_status"];
       };
       site_info: { Args: never; Returns: Json };
       submit_membership_application: {
@@ -1473,16 +1783,301 @@ export type Database = {
   };
   hospitality: {
     Tables: {
-      [_ in never]: never;
+      menu_items: {
+        Row: {
+          available: boolean;
+          currency: string;
+          description: string | null;
+          dietary: Json;
+          id: string;
+          name: string;
+          position: number;
+          price_cents: number | null;
+          section_id: string;
+        };
+        Insert: {
+          available?: boolean;
+          currency?: string;
+          description?: string | null;
+          dietary?: Json;
+          id?: string;
+          name: string;
+          position?: number;
+          price_cents?: number | null;
+          section_id: string;
+        };
+        Update: {
+          available?: boolean;
+          currency?: string;
+          description?: string | null;
+          dietary?: Json;
+          id?: string;
+          name?: string;
+          position?: number;
+          price_cents?: number | null;
+          section_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_section_id_fkey";
+            columns: ["section_id"];
+            isOneToOne: false;
+            referencedRelation: "menu_sections";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      menu_sections: {
+        Row: {
+          id: string;
+          menu_id: string;
+          name: string;
+          position: number;
+        };
+        Insert: {
+          id?: string;
+          menu_id: string;
+          name: string;
+          position?: number;
+        };
+        Update: {
+          id?: string;
+          menu_id?: string;
+          name?: string;
+          position?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "menu_sections_menu_id_fkey";
+            columns: ["menu_id"];
+            isOneToOne: false;
+            referencedRelation: "menus";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      menus: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          slug: string;
+          status: string;
+          updated_at: string;
+          valid_from: string | null;
+          valid_to: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          slug: string;
+          status?: string;
+          updated_at?: string;
+          valid_from?: string | null;
+          valid_to?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          slug?: string;
+          status?: string;
+          updated_at?: string;
+          valid_from?: string | null;
+          valid_to?: string | null;
+        };
+        Relationships: [];
+      };
+      reservations: {
+        Row: {
+          code: string;
+          created_at: string;
+          duration_minutes: number;
+          guest_email: string | null;
+          guest_name: string;
+          guest_phone: string | null;
+          id: string;
+          notes: string | null;
+          occasion: string | null;
+          party_size: number;
+          person_id: string | null;
+          starts_at: string;
+          status: Database["hospitality"]["Enums"]["reservation_status"];
+          table_id: string | null;
+        };
+        Insert: {
+          code: string;
+          created_at?: string;
+          duration_minutes?: number;
+          guest_email?: string | null;
+          guest_name: string;
+          guest_phone?: string | null;
+          id?: string;
+          notes?: string | null;
+          occasion?: string | null;
+          party_size: number;
+          person_id?: string | null;
+          starts_at: string;
+          status?: Database["hospitality"]["Enums"]["reservation_status"];
+          table_id?: string | null;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          duration_minutes?: number;
+          guest_email?: string | null;
+          guest_name?: string;
+          guest_phone?: string | null;
+          id?: string;
+          notes?: string | null;
+          occasion?: string | null;
+          party_size?: number;
+          person_id?: string | null;
+          starts_at?: string;
+          status?: Database["hospitality"]["Enums"]["reservation_status"];
+          table_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reservations_table_id_fkey";
+            columns: ["table_id"];
+            isOneToOne: false;
+            referencedRelation: "tables";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      service_periods: {
+        Row: {
+          closed: boolean;
+          closes: string;
+          id: string;
+          on_date: string | null;
+          opens: string;
+          seating_interval_minutes: number;
+          weekday: number | null;
+        };
+        Insert: {
+          closed?: boolean;
+          closes: string;
+          id?: string;
+          on_date?: string | null;
+          opens: string;
+          seating_interval_minutes?: number;
+          weekday?: number | null;
+        };
+        Update: {
+          closed?: boolean;
+          closes?: string;
+          id?: string;
+          on_date?: string | null;
+          opens?: string;
+          seating_interval_minutes?: number;
+          weekday?: number | null;
+        };
+        Relationships: [];
+      };
+      tables: {
+        Row: {
+          active: boolean;
+          id: string;
+          name: string;
+          seats: number;
+          zone: string | null;
+        };
+        Insert: {
+          active?: boolean;
+          id?: string;
+          name: string;
+          seats: number;
+          zone?: string | null;
+        };
+        Update: {
+          active?: boolean;
+          id?: string;
+          name?: string;
+          seats?: number;
+          zone?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      request_reservation: {
+        Args: {
+          p_duration_minutes: number;
+          p_email: string;
+          p_full_name: string;
+          p_notes: string;
+          p_occasion: string;
+          p_party_size: number;
+          p_phone: string;
+          p_starts_at: string;
+        };
+        Returns: {
+          code: string;
+          created_at: string;
+          duration_minutes: number;
+          guest_email: string | null;
+          guest_name: string;
+          guest_phone: string | null;
+          id: string;
+          notes: string | null;
+          occasion: string | null;
+          party_size: number;
+          person_id: string | null;
+          starts_at: string;
+          status: Database["hospitality"]["Enums"]["reservation_status"];
+          table_id: string | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "reservations";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
+      reservation_span: {
+        Args: { p_duration_minutes: number; p_starts_at: string };
+        Returns: unknown;
+      };
+      set_reservation_status: {
+        Args: {
+          p_id: string;
+          p_status: Database["hospitality"]["Enums"]["reservation_status"];
+          p_table_id: string;
+        };
+        Returns: {
+          code: string;
+          created_at: string;
+          duration_minutes: number;
+          guest_email: string | null;
+          guest_name: string;
+          guest_phone: string | null;
+          id: string;
+          notes: string | null;
+          occasion: string | null;
+          party_size: number;
+          person_id: string | null;
+          starts_at: string;
+          status: Database["hospitality"]["Enums"]["reservation_status"];
+          table_id: string | null;
+        };
+        SetofOptions: {
+          from: "*";
+          to: "reservations";
+          isOneToOne: true;
+          isSetofReturn: false;
+        };
+      };
     };
     Enums: {
-      [_ in never]: never;
+      reservation_status:
+        "requested" | "confirmed" | "seated" | "completed" | "cancelled" | "no_show";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -2703,7 +3298,9 @@ export const Constants = {
     },
   },
   hospitality: {
-    Enums: {},
+    Enums: {
+      reservation_status: ["requested", "confirmed", "seated", "completed", "cancelled", "no_show"],
+    },
   },
   identity: {
     Enums: {},

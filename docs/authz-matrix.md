@@ -19,50 +19,55 @@ dependency order.
 | `author`              | Own drafts only; cannot publish. _(permissions land with the publishing migration)_                             |
 | `program_manager`     | Programs, sessions, registrations, venues. _(permissions land with the programs migration)_                     |
 | `membership_manager`  | Applications, renewals, member records, directory. _(permissions land with the membership migration)_           |
-| `hospitality_manager` | Menu, reservations, service settings. _(permissions land with the hospitality migration)_                       |
+| `hospitality_manager` | Menu, reservations, service settings.                                                                           |
 | `finance`             | Financial views + payment recording; no content access. _(permissions land with the membership/CRM migrations)_ |
 | `volunteer`           | Narrow, time-boxed grants via `expires_at`.                                                                     |
 | `member`              | Member-only content, own profile, own registrations. _(permissions land with the membership migration)_         |
 
 ## Permissions (as of this phase)
 
-| Permission key                  | Granted to                                              | Description                                            |
-| ------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
-| `identity.person.read`          | super_admin, administrator                              | Read any person's profile                              |
-| `identity.person.update`        | super_admin, administrator                              | Update any person's profile fields                     |
-| `identity.person.merge`         | super_admin, administrator                              | Merge a duplicate person into a survivor               |
-| `identity.person.erase`         | super_admin, administrator                              | Execute a staff erasure request                        |
-| `authz.user_role.read`          | super_admin, administrator                              | View who holds which roles                             |
-| `authz.user_role.grant`         | super_admin                                             | Grant or revoke a role (Super-Admin-only, per spec §6) |
-| `admin.settings.read`           | super_admin, administrator                              | View institutional settings                            |
-| `admin.settings.manage`         | super_admin, administrator                              | Change institutional settings                          |
-| `admin.audit_log.read`          | super_admin, administrator                              | View the audit log                                     |
-| `publishing.item.read`          | super_admin, administrator, editor                      | Read every item regardless of status/author (the desk) |
-| `publishing.item.create`        | super_admin, administrator, editor, author              | Create items; edit one's own drafts                    |
-| `publishing.item.update`        | super_admin, administrator, editor                      | Edit any item at any stage; send back to draft         |
-| `publishing.item.publish`       | super_admin, administrator, editor                      | Publish an item, or restore an archived one            |
-| `publishing.item.archive`       | super_admin, administrator, editor                      | Archive a published item                               |
-| `publishing.media.read`         | super_admin, administrator, editor, author              | Browse the media library                               |
-| `publishing.media.create`       | super_admin, administrator, editor, author              | Upload media and register it in the library            |
-| `publishing.media.manage`       | super_admin, administrator, editor                      | Edit any media's alt/credit metadata                   |
-| `membership.tier.manage`        | super_admin, administrator, membership_manager          | Create or edit membership tiers and fees               |
-| `membership.application.read`   | super_admin, administrator, membership_manager          | View the membership application queue                  |
-| `membership.application.decide` | super_admin, administrator, membership_manager          | Accept or decline a membership application             |
-| `membership.member.read`        | super_admin, administrator, membership_manager, finance | View the member roster                                 |
-| `membership.member.manage`      | super_admin, administrator, membership_manager          | Change a member's status                               |
-| `membership.term.manage`        | super_admin, administrator, membership_manager, finance | Record payment against a membership term               |
-| `programs.venue.manage`         | super_admin, administrator, program_manager             | Create or edit venues                                  |
-| `programs.program.read`         | super_admin, administrator, program_manager             | View inactive/cancelled programs and sessions          |
-| `programs.program.manage`       | super_admin, administrator, program_manager             | Create or edit programs and sessions                   |
-| `programs.registration.read`    | super_admin, administrator, program_manager, volunteer  | View a session's registration roster                   |
-| `programs.registration.manage`  | super_admin, administrator, program_manager, volunteer  | Cancel a registration; mark attendance                 |
-| `crm.organization.read`         | super_admin, administrator, membership_manager          | View institutional organizations                       |
-| `crm.organization.manage`       | super_admin, administrator, membership_manager          | Create or edit organizations and their people          |
-| `crm.relationship.read`         | super_admin, administrator, membership_manager, finance | View institutional relationships                       |
-| `crm.relationship.manage`       | super_admin, administrator, membership_manager          | Create, edit, or end a relationship                    |
-| `crm.interaction.create`        | super_admin, administrator, membership_manager          | Log an interaction against a relationship              |
-| `crm.pledge.read`               | super_admin, administrator, finance                     | View pledges                                           |
-| `crm.pledge.manage`             | super_admin, administrator, finance                     | Record, receipt, or acknowledge a pledge               |
+| Permission key                   | Granted to                                              | Description                                            |
+| -------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
+| `identity.person.read`           | super_admin, administrator                              | Read any person's profile                              |
+| `identity.person.update`         | super_admin, administrator                              | Update any person's profile fields                     |
+| `identity.person.merge`          | super_admin, administrator                              | Merge a duplicate person into a survivor               |
+| `identity.person.erase`          | super_admin, administrator                              | Execute a staff erasure request                        |
+| `authz.user_role.read`           | super_admin, administrator                              | View who holds which roles                             |
+| `authz.user_role.grant`          | super_admin                                             | Grant or revoke a role (Super-Admin-only, per spec §6) |
+| `admin.settings.read`            | super_admin, administrator                              | View institutional settings                            |
+| `admin.settings.manage`          | super_admin, administrator                              | Change institutional settings                          |
+| `admin.audit_log.read`           | super_admin, administrator                              | View the audit log                                     |
+| `publishing.item.read`           | super_admin, administrator, editor                      | Read every item regardless of status/author (the desk) |
+| `publishing.item.create`         | super_admin, administrator, editor, author              | Create items; edit one's own drafts                    |
+| `publishing.item.update`         | super_admin, administrator, editor                      | Edit any item at any stage; send back to draft         |
+| `publishing.item.publish`        | super_admin, administrator, editor                      | Publish an item, or restore an archived one            |
+| `publishing.item.archive`        | super_admin, administrator, editor                      | Archive a published item                               |
+| `publishing.media.read`          | super_admin, administrator, editor, author              | Browse the media library                               |
+| `publishing.media.create`        | super_admin, administrator, editor, author              | Upload media and register it in the library            |
+| `publishing.media.manage`        | super_admin, administrator, editor                      | Edit any media's alt/credit metadata                   |
+| `membership.tier.manage`         | super_admin, administrator, membership_manager          | Create or edit membership tiers and fees               |
+| `membership.application.read`    | super_admin, administrator, membership_manager          | View the membership application queue                  |
+| `membership.application.decide`  | super_admin, administrator, membership_manager          | Accept or decline a membership application             |
+| `membership.member.read`         | super_admin, administrator, membership_manager, finance | View the member roster                                 |
+| `membership.member.manage`       | super_admin, administrator, membership_manager          | Change a member's status                               |
+| `membership.term.manage`         | super_admin, administrator, membership_manager, finance | Record payment against a membership term               |
+| `programs.venue.manage`          | super_admin, administrator, program_manager             | Create or edit venues                                  |
+| `programs.program.read`          | super_admin, administrator, program_manager             | View inactive/cancelled programs and sessions          |
+| `programs.program.manage`        | super_admin, administrator, program_manager             | Create or edit programs and sessions                   |
+| `programs.registration.read`     | super_admin, administrator, program_manager, volunteer  | View a session's registration roster                   |
+| `programs.registration.manage`   | super_admin, administrator, program_manager, volunteer  | Cancel a registration; mark attendance                 |
+| `crm.organization.read`          | super_admin, administrator, membership_manager          | View institutional organizations                       |
+| `crm.organization.manage`        | super_admin, administrator, membership_manager          | Create or edit organizations and their people          |
+| `crm.relationship.read`          | super_admin, administrator, membership_manager, finance | View institutional relationships                       |
+| `crm.relationship.manage`        | super_admin, administrator, membership_manager          | Create, edit, or end a relationship                    |
+| `crm.interaction.create`         | super_admin, administrator, membership_manager          | Log an interaction against a relationship              |
+| `crm.pledge.read`                | super_admin, administrator, finance                     | View pledges                                           |
+| `crm.pledge.manage`              | super_admin, administrator, finance                     | Record, receipt, or acknowledge a pledge               |
+| `hospitality.menu.read`          | super_admin, administrator, hospitality_manager         | View draft/unpublished menus and their sections/items  |
+| `hospitality.menu.manage`        | super_admin, administrator, hospitality_manager         | Create or edit menus, sections, and items              |
+| `hospitality.service.manage`     | super_admin, administrator, hospitality_manager         | Edit opening hours and manage tables                   |
+| `hospitality.reservation.read`   | super_admin, administrator, hospitality_manager         | View the reservations desk board and table list        |
+| `hospitality.reservation.manage` | super_admin, administrator, hospitality_manager         | Confirm, seat, complete, or cancel any reservation     |
 
 ## Adding a new permission
 

@@ -153,6 +153,27 @@ const RelationshipDetailPage = React.lazy(() =>
 const PledgesPage = React.lazy(() =>
   import("@/modules/crm/pages/pledges-page").then((m) => ({ default: m.PledgesPage })),
 );
+const MenuPage = React.lazy(() =>
+  import("@/modules/hospitality/pages/menu-page").then((m) => ({ default: m.MenuPage })),
+);
+const ReservationPage = React.lazy(() =>
+  import("@/modules/hospitality/pages/reservation-page").then((m) => ({
+    default: m.ReservationPage,
+  })),
+);
+const HospitalityDeskPage = React.lazy(() =>
+  import("@/modules/hospitality/pages/desk-page").then((m) => ({
+    default: m.HospitalityDeskPage,
+  })),
+);
+const TablesPage = React.lazy(() =>
+  import("@/modules/hospitality/pages/tables-page").then((m) => ({ default: m.TablesPage })),
+);
+const AdminMenuPage = React.lazy(() =>
+  import("@/modules/hospitality/pages/admin-menu-page").then((m) => ({
+    default: m.AdminMenuPage,
+  })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -180,6 +201,8 @@ export const router = createBrowserRouter([
       { path: "annual", element: withSuspense(<AnnualIndexPage />) },
       { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
       { path: "record", element: withSuspense(<RecordPage />) },
+      { path: "menu", element: withSuspense(<MenuPage />) },
+      { path: "reservations", element: withSuspense(<ReservationPage />) },
       { path: "journal", element: withSuspense(<JournalPage />) },
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
@@ -264,6 +287,21 @@ export const router = createBrowserRouter([
             path: "pledges",
             element: withSuspense(<ProtectedRoute permission="crm.pledge.read" />),
             children: [{ index: true, element: withSuspense(<PledgesPage />) }],
+          },
+          {
+            path: "hospitality/desk",
+            element: withSuspense(<ProtectedRoute permission="hospitality.reservation.read" />),
+            children: [{ index: true, element: withSuspense(<HospitalityDeskPage />) }],
+          },
+          {
+            path: "hospitality/tables",
+            element: withSuspense(<ProtectedRoute permission="hospitality.service.manage" />),
+            children: [{ index: true, element: withSuspense(<TablesPage />) }],
+          },
+          {
+            path: "hospitality/menu",
+            element: withSuspense(<ProtectedRoute permission="hospitality.menu.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminMenuPage />) }],
           },
           {
             path: "settings",

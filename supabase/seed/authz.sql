@@ -57,7 +57,12 @@ insert into authz.permissions (key, description) values
   ('crm.relationship.manage', 'Create, edit, or end a relationship.'),
   ('crm.interaction.create', 'Log an interaction against a relationship.'),
   ('crm.pledge.read', 'View pledges.'),
-  ('crm.pledge.manage', 'Record, receipt, or acknowledge a pledge.')
+  ('crm.pledge.manage', 'Record, receipt, or acknowledge a pledge.'),
+  ('hospitality.menu.read', 'View draft/unpublished menus and their sections and items.'),
+  ('hospitality.menu.manage', 'Create or edit menus, sections, and items.'),
+  ('hospitality.service.manage', 'Edit opening hours and manage tables.'),
+  ('hospitality.reservation.read', 'View the reservations desk board and table list.'),
+  ('hospitality.reservation.manage', 'Confirm, seat, complete, or cancel any reservation.')
 on conflict (key) do nothing;
 
 -- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
@@ -119,6 +124,18 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('finance', 'crm.relationship.read'),
   ('finance', 'crm.pledge.read'),
   ('finance', 'crm.pledge.manage')
+on conflict do nothing;
+
+-- Hospitality Manager owns menus/service settings/tables/reservations end
+-- to end -- no separate "read" role exists for this domain (unlike
+-- Volunteer's narrow slice of programs), matching the architecture doc's
+-- single named role for this domain.
+insert into authz.role_permissions (role_key, permission_key) values
+  ('hospitality_manager', 'hospitality.menu.read'),
+  ('hospitality_manager', 'hospitality.menu.manage'),
+  ('hospitality_manager', 'hospitality.service.manage'),
+  ('hospitality_manager', 'hospitality.reservation.read'),
+  ('hospitality_manager', 'hospitality.reservation.manage')
 on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.

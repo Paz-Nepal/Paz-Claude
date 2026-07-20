@@ -23,7 +23,8 @@ This repository is under active construction, in dependency order:
 ✅ Membership                (applications, decisions, members, terms, payments, directory)
 ✅ Programmes                (venues, sessions, registration, waitlist, attendance)
 ✅ CRM                       (organizations, relationships, interactions, pledges)
-⏳ Hospitality, Analytics — next
+✅ Hospitality                (menus, service periods, tables, reservations)
+⏳ Analytics — next
 ```
 
 Do not build ahead of this list — see `docs/adr/034-partial-rebuild.md` and

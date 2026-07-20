@@ -85,6 +85,73 @@ export type Database = {
       [_ in never]: never;
     };
   };
+  analytics: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      editorial_pipeline: {
+        Args: never;
+        Returns: {
+          item_count: number;
+          item_type: Database["publishing"]["Enums"]["item_type"];
+          status: Database["publishing"]["Enums"]["item_status"];
+        }[];
+      };
+      finance_summary: {
+        Args: never;
+        Returns: {
+          cents: number;
+          metric: string;
+        }[];
+      };
+      institution_vitals: {
+        Args: never;
+        Returns: {
+          metric: string;
+          metric_count: number;
+        }[];
+      };
+      membership_funnel: {
+        Args: never;
+        Returns: {
+          metric: string;
+          metric_count: number;
+        }[];
+      };
+      program_fill: {
+        Args: never;
+        Returns: {
+          capacity: number;
+          fill_pct: number;
+          program_title: string;
+          registered_count: number;
+          session_id: string;
+          starts_at: string;
+        }[];
+      };
+      reservation_load: {
+        Args: never;
+        Returns: {
+          cancelled: number;
+          completed: number;
+          confirmed: number;
+          day: string;
+          requested: number;
+          seated: number;
+        }[];
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   api: {
     Tables: {
       [_ in never]: never;
@@ -981,9 +1048,24 @@ export type Database = {
         Returns: Database["publishing"]["Enums"]["item_status"];
       };
       discard_draft: { Args: { p_id: string }; Returns: undefined };
+      editorial_pipeline: {
+        Args: never;
+        Returns: {
+          item_count: number;
+          item_type: Database["publishing"]["Enums"]["item_type"];
+          status: Database["publishing"]["Enums"]["item_status"];
+        }[];
+      };
       end_relationship: {
         Args: { p_id: string; p_superseded_by?: string };
         Returns: undefined;
+      };
+      finance_summary: {
+        Args: never;
+        Returns: {
+          cents: number;
+          metric: string;
+        }[];
       };
       find_person_by_email: {
         Args: { p_email: string };
@@ -1132,6 +1214,13 @@ export type Database = {
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
+      institution_vitals: {
+        Args: never;
+        Returns: {
+          metric: string;
+          metric_count: number;
+        }[];
+      };
       log_interaction: {
         Args: {
           p_occurred_at?: string;
@@ -1154,7 +1243,25 @@ export type Database = {
           isSetofReturn: true;
         };
       };
+      membership_funnel: {
+        Args: never;
+        Returns: {
+          metric: string;
+          metric_count: number;
+        }[];
+      };
       my_permissions: { Args: never; Returns: string[] };
+      program_fill: {
+        Args: never;
+        Returns: {
+          capacity: number;
+          fill_pct: number;
+          program_title: string;
+          registered_count: number;
+          session_id: string;
+          starts_at: string;
+        }[];
+      };
       record_payment: {
         Args: { p_amount_cents: number; p_term: string };
         Returns: boolean;
@@ -1196,6 +1303,17 @@ export type Database = {
           p_starts_at: string;
         };
         Returns: string;
+      };
+      reservation_load: {
+        Args: never;
+        Returns: {
+          cancelled: number;
+          completed: number;
+          confirmed: number;
+          day: string;
+          requested: number;
+          seated: number;
+        }[];
       };
       save_annual_details: {
         Args: {
@@ -3284,6 +3402,9 @@ export type CompositeTypes<
 
 export const Constants = {
   admin: {
+    Enums: {},
+  },
+  analytics: {
     Enums: {},
   },
   api: {

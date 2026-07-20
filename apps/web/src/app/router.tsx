@@ -174,6 +174,9 @@ const AdminMenuPage = React.lazy(() =>
     default: m.AdminMenuPage,
   })),
 );
+const DashboardPage = React.lazy(() =>
+  import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
+);
 
 function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
@@ -232,7 +235,8 @@ export const router = createBrowserRouter([
       {
         element: withSuspense(<AdminLayout />),
         children: [
-          { index: true, element: <Navigate to="/admin/desk" replace /> },
+          { index: true, element: <Navigate to="/admin/dashboard" replace /> },
+          { path: "dashboard", element: withSuspense(<DashboardPage />) },
           {
             path: "desk",
             element: withSuspense(<ProtectedRoute permission="publishing.item.create" />),

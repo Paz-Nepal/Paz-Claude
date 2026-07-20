@@ -62,7 +62,13 @@ insert into authz.permissions (key, description) values
   ('hospitality.menu.manage', 'Create or edit menus, sections, and items.'),
   ('hospitality.service.manage', 'Edit opening hours and manage tables.'),
   ('hospitality.reservation.read', 'View the reservations desk board and table list.'),
-  ('hospitality.reservation.manage', 'Confirm, seat, complete, or cancel any reservation.')
+  ('hospitality.reservation.manage', 'Confirm, seat, complete, or cancel any reservation.'),
+  ('analytics.dashboard.editorial', 'View the editorial pipeline dashboard.'),
+  ('analytics.dashboard.programs', 'View the programme fill-rate dashboard.'),
+  ('analytics.dashboard.membership', 'View the membership funnel dashboard.'),
+  ('analytics.dashboard.hospitality', 'View the reservation load dashboard.'),
+  ('analytics.dashboard.finance', 'View the financial summary dashboard.'),
+  ('analytics.dashboard.vitals', 'View the cross-domain institution vitals panel (aggregates only).')
 on conflict (key) do nothing;
 
 -- Editorial roles (Blueprint §8.1: editors own the full lifecycle; authors
@@ -136,6 +142,18 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('hospitality_manager', 'hospitality.service.manage'),
   ('hospitality_manager', 'hospitality.reservation.read'),
   ('hospitality_manager', 'hospitality.reservation.manage')
+on conflict do nothing;
+
+-- Each dashboard belongs to the one role that already owns that domain's
+-- day-to-day work (Build Readiness Review D-16) -- no separate analytics
+-- role. Institution vitals is Administrator-only (super_admin/administrator
+-- get it via the blanket grant below, same as everything else).
+insert into authz.role_permissions (role_key, permission_key) values
+  ('editor', 'analytics.dashboard.editorial'),
+  ('program_manager', 'analytics.dashboard.programs'),
+  ('membership_manager', 'analytics.dashboard.membership'),
+  ('hospitality_manager', 'analytics.dashboard.hospitality'),
+  ('finance', 'analytics.dashboard.finance')
 on conflict do nothing;
 
 -- Super Admin and Administrator get every permission seeded so far.

@@ -24,8 +24,13 @@ This repository is under active construction, in dependency order:
 ✅ Programmes                (venues, sessions, registration, waitlist, attendance)
 ✅ CRM                       (organizations, relationships, interactions, pledges)
 ✅ Hospitality                (menus, service periods, tables, reservations)
-⏳ Analytics — next
+✅ Analytics                  (per-role dashboards over existing operational data)
 ```
+
+Every domain in the original approved build order is now built. See
+`docs/PAZ_OS_v1.0_Build_Readiness_Review.md` for what's still open beyond
+that list (deferred items each carry their own "deliberately not here"
+note in the migration that touches them).
 
 Do not build ahead of this list — see `docs/adr/034-partial-rebuild.md` and
 the Build Readiness Review for why order matters here.

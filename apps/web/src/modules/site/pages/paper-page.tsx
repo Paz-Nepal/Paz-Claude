@@ -6,6 +6,7 @@ import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
+import { DocumentHead } from "../components/document-head";
 
 export function PaperPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -27,6 +28,15 @@ export function PaperPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <DocumentHead
+        title={pickLang(item.title ?? "", item.title_ne, lang)}
+        description={item.abstract || "A Paz Paper, kept in the Record."}
+        path={`/papers/${item.slug}`}
+        ogType="article"
+        depositRef={item.deposit_ref}
+        license={item.license}
+        seriesName="Paz Papers"
+      />
       <SupersededBanner basePath="/papers" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.paper_no != null && (

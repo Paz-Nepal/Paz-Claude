@@ -5,6 +5,7 @@ import { useProgramSessions } from "@/modules/programs";
 import { usePublishedItems, useSiteInfo } from "../api/use-site";
 import { ArticleCard } from "../components/article-card";
 import { Reveal, Eyebrow, ArrowLink } from "../components/paz-editorial";
+import { DocumentHead } from "../components/document-head";
 
 const ORGANS = [
   {
@@ -34,6 +35,14 @@ export function HomePage() {
 
   return (
     <div>
+      <DocumentHead
+        title={siteName}
+        description={
+          tagline || "A hospitality-led cultural institution in Kathmandu, kept by six organs."
+        }
+        path="/"
+        ogType="website"
+      />
       {/* Hero */}
       <section className="border-border flex flex-col items-center gap-8 border-b py-28 text-center md:py-40">
         <Reveal>

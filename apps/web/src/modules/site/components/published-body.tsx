@@ -3,6 +3,7 @@ import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, type PublishedItemDetail } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { Reveal } from "./paz-editorial";
+import { DocumentHead } from "./document-head";
 
 /**
  * Shared rendering for any published item's full view (article or page):
@@ -20,9 +21,24 @@ export function PublishedBody({
 }) {
   const { lang } = useLanguage();
   const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;
+  const title = pickLang(item.title ?? "", item.title_ne, lang);
+  const description = pickLang(
+    item.summary || item.subtitle || "",
+    item.summary_ne || item.subtitle_ne,
+    lang,
+  );
+  const path = item.type === "article" ? `/journal/${item.slug}` : `/${item.slug}`;
 
   return (
     <article className="flex flex-col">
+      <DocumentHead
+        title={title}
+        description={description || "PAZ, a hospitality-led cultural institution in Kathmandu."}
+        path={path}
+        ogType="article"
+        ogImage={item.featured_media_path ? publicMediaUrl(item.featured_media_path) : null}
+        depositRef={item.deposit_ref}
+      />
       {item.featured_media_path && (
         <div className="w-full overflow-hidden">
           <img

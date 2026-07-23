@@ -7,6 +7,7 @@ import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
+import { DocumentHead } from "../components/document-head";
 
 export function DispatchPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -28,6 +29,18 @@ export function DispatchPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <DocumentHead
+        title={pickLang(item.title ?? "", item.title_ne, lang)}
+        description={
+          item.issue_no != null
+            ? `Dispatch No. ${item.issue_no}, kept in the Record.`
+            : "A Dispatch."
+        }
+        path={`/dispatch/${item.slug}`}
+        ogType="article"
+        depositRef={item.deposit_ref}
+        seriesName="Dispatch"
+      />
       <SupersededBanner basePath="/dispatch" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.issue_no != null && (

@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { PageHero, ArrowLink } from "../components/paz-editorial";
+import { DocumentHead } from "../components/document-head";
 
 /**
  * A real 404, not a silent redirect to the homepage. Work plan Part II, #7:
@@ -11,8 +12,15 @@ import { PageHero, ArrowLink } from "../components/paz-editorial";
  * search.
  */
 export function NotFoundPage() {
+  const { pathname } = useLocation();
   return (
     <div className="flex min-h-[70vh] flex-col">
+      <DocumentHead
+        title="Not found"
+        description="This reference does not resolve. The Record is the authority on everything this house has deposited."
+        path={pathname}
+        noindex
+      />
       <PageHero
         kicker="This reference does not resolve"
         title="Nothing is kept at this address"

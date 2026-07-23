@@ -5,6 +5,7 @@ import { usePigeonPost, publicMediaUrl } from "../api/use-site";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
+import { DocumentHead } from "../components/document-head";
 
 /** No author_name field is read or rendered anywhere in this page -- there
  * is none to read (spec §2/§5: Pigeon Post is anonymous on the page). */
@@ -26,6 +27,14 @@ export function PigeonPostPage() {
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <DocumentHead
+        title={item.title ?? ""}
+        description="A quiet keepsake from Pigeon Post, kept in the Record."
+        path={`/pigeon-post/${item.slug}`}
+        ogType="article"
+        depositRef={item.deposit_ref}
+        seriesName="Pigeon Post"
+      />
       <SupersededBanner basePath="/pigeon-post" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.edition_no && <p className="text-muted-foreground text-sm">{item.edition_no}</p>}

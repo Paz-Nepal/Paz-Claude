@@ -1,0 +1,121 @@
+import * as React from "react";
+
+/**
+ * No server-side rendering yet (work plan Part II, #6 covers that
+ * separately), so this is a plain DOM-effect head manager rather than a
+ * dependency like react-helmet -- one fewer package, and the same
+ * tag-upsert logic a pre-render step would need to replicate anyway.
+ * Every tag it writes carries data-managed so a later page's effect (or a
+ * future pre-render script) can find and replace exactly these tags and
+ * nothing else in <head>.
+ */
+
+export const SITE_URL = "https://paz.com.np";
+
+function upsertMeta(attr: "name" | "property", key: string, content: string) {
+  let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"][data-managed]`);
+  if (!el) {
+    el = document.createElement("meta");
+    el.setAttribute(attr, key);
+    el.setAttribute("data-managed", "");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("content", content);
+}
+
+function removeMeta(attr: "name" | "property", key: string) {
+  document.head.querySelector(`meta[${attr}="${key}"][data-managed]`)?.remove();
+}
+
+function upsertLink(rel: string, href: string) {
+  let el = document.head.querySelector<HTMLLinkElement>(`link[rel="${rel}"][data-managed]`);
+  if (!el) {
+    el = document.createElement("link");
+    el.setAttribute("rel", rel);
+    el.setAttribute("data-managed", "");
+    document.head.appendChild(el);
+  }
+  el.setAttribute("href", href);
+}
+
+function upsertJsonLd(id: string, data: Record<string, unknown> | null) {
+  const existing = document.getElementById(id);
+  if (!data) {
+    existing?.remove();
+    return;
+  }
+  const el = existing ?? document.createElement("script");
+  el.id = id;
+  el.setAttribute("type", "application/ld+json");
+  el.textContent = JSON.stringify(data);
+  if (!existing) document.head.appendChild(el);
+}
+
+export interface DocumentHeadProps {
+  title: string;
+  description: string;
+  /** Site-relative, e.g. "/papers/some-slug". */
+  path: string;
+  ogType?: "website" | "article";
+  ogImage?: string | null;
+  /** Deposited items only: surfaces the deposit number + licence in
+   * structured data (schema.org Article), not just on the visible page. */
+  depositRef?: string | null;
+  license?: string | null;
+  seriesName?: string | null;
+  noindex?: boolean;
+}
+
+export function DocumentHead(props: DocumentHeadProps) {
+  const {
+    title,
+    description,
+    path,
+    ogType = "website",
+    ogImage,
+    depositRef,
+    license,
+    seriesName,
+    noindex,
+  } = props;
+
+  React.useEffect(() => {
+    const fullTitle = title && title !== "PAZ" ? `${title} — PAZ` : "PAZ";
+    const url = `${SITE_URL}${path}`;
+
+    document.title = fullTitle;
+    upsertMeta("name", "description", description);
+    upsertLink("canonical", url);
+    upsertMeta("name", "robots", noindex ? "noindex, follow" : "index, follow");
+
+    upsertMeta("property", "og:title", fullTitle);
+    upsertMeta("property", "og:description", description);
+    upsertMeta("property", "og:type", ogType);
+    upsertMeta("property", "og:url", url);
+    upsertMeta("property", "og:site_name", "PAZ");
+    if (ogImage) upsertMeta("property", "og:image", ogImage);
+    else removeMeta("property", "og:image");
+
+    upsertMeta("name", "twitter:card", ogImage ? "summary_large_image" : "summary");
+    upsertMeta("name", "twitter:title", fullTitle);
+    upsertMeta("name", "twitter:description", description);
+    if (ogImage) upsertMeta("name", "twitter:image", ogImage);
+    else removeMeta("name", "twitter:image");
+
+    if (depositRef) {
+      upsertJsonLd("ld-json-managed", {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: title,
+        identifier: depositRef,
+        url,
+        ...(seriesName ? { isPartOf: { "@type": "PublicationSeries", name: seriesName } } : {}),
+        ...(license ? { license } : {}),
+      });
+    } else {
+      upsertJsonLd("ld-json-managed", null);
+    }
+  }, [title, description, path, ogType, ogImage, depositRef, license, seriesName, noindex]);
+
+  return null;
+}

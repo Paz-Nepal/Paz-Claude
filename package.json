@@ -18,6 +18,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,yml}\"",
     "sitemap": "node scripts/generate-sitemap.mjs apps/web/dist/sitemap.xml",
     "feeds": "node scripts/generate-feeds.mjs apps/web/dist",
+    "prerender": "node scripts/prerender.mjs apps/web/dist",
     "db:diff": "supabase db diff --linked --schema public,identity,authz,admin,api",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local --schema identity,authz,admin,api,publishing,programs,membership,crm,hospitality > packages/types/src/database.generated.ts"

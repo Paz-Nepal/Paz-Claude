@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { usePublishedItems } from "../api/use-site";
+import { DocumentHead } from "../components/document-head";
 
 /**
  * A quiet index, not a feed (spec §2/§3): no images, no summaries, no
@@ -13,6 +14,12 @@ export function PigeonPostIndexPage() {
 
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
+      <DocumentHead
+        title="Pigeon Post"
+        description="The art of noticing. A quiet, anonymous keepsake."
+        path="/pigeon-post"
+        feedPath="/pigeon-post/feed.xml"
+      />
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">Pigeon Post</h1>
         <p className="text-muted-foreground">The art of noticing. A quiet, anonymous keepsake.</p>

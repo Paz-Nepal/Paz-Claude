@@ -6,6 +6,7 @@ import { usePublishedItem, useRecordEntries } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { PageHero, Eyebrow, Reveal } from "../components/paz-editorial";
 import { NotPublished } from "../components/published-body";
+import { DocumentHead } from "../components/document-head";
 
 /**
  * The organ page for "The Record" — institutional description of what
@@ -33,15 +34,20 @@ export function RecordOrganPage() {
 
   const body = pickLangDoc(page.data.body, page.data.body_ne, lang) as RichTextNode | null;
 
+  const title = pickLang(page.data.title ?? "The Record", page.data.title_ne, lang);
+  const subtitle = page.data.subtitle
+    ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang)
+    : undefined;
+
   return (
     <div>
-      <PageHero
-        kicker="An organ of the house"
-        title={pickLang(page.data.title ?? "The Record", page.data.title_ne, lang)}
-        subtitle={
-          page.data.subtitle ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang) : undefined
-        }
+      <DocumentHead
+        title={title}
+        description={subtitle || "The public deposit index — kept, in order, forever."}
+        path="/the-record"
+        feedPath="/the-record/feed.xml"
       />
+      <PageHero kicker="An organ of the house" title={title} subtitle={subtitle} />
       {body && (
         <div className="w-reading py-16">
           <RichText doc={body} className="rich-text" />

@@ -196,6 +196,11 @@ const SendAPigeonPage = React.lazy(() =>
     default: m.SendAPigeonPage,
   })),
 );
+const ResolveNotFoundPage = React.lazy(() =>
+  import("@/modules/site/pages/resolve-not-found-page").then((m) => ({
+    default: m.ResolveNotFoundPage,
+  })),
+);
 const PigeonSubmissionsPage = React.lazy(() =>
   import("@/modules/publishing/pages/pigeon-submissions-page").then((m) => ({
     default: m.PigeonSubmissionsPage,
@@ -255,6 +260,11 @@ export const router = createBrowserRouter([
       // CMS-controlled top-level pages (/about, /visit, …). Static routes
       // above always win route ranking over this dynamic segment.
       { path: ":slug", element: withSuspense(<CmsPage />) },
+      // Anything with more than one path segment that didn't match a route
+      // above (":slug" only ever matches exactly one segment). Rendered
+      // inside PublicLayout on purpose, so a broken link still gets the
+      // site's real header/footer instead of a bare page.
+      { path: "*", element: withSuspense(<ResolveNotFoundPage />) },
     ],
   },
   {
@@ -355,5 +365,7 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  // Non-public, non-matched paths only (e.g. a bad /admin/* link) --
+  // everything under the public layout is handled by its own "*" above.
   { path: "*", element: <Navigate to="/" replace /> },
 ]);

@@ -85,73 +85,6 @@ export type Database = {
       [_ in never]: never;
     };
   };
-  analytics: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      editorial_pipeline: {
-        Args: never;
-        Returns: {
-          item_count: number;
-          item_type: Database["publishing"]["Enums"]["item_type"];
-          status: Database["publishing"]["Enums"]["item_status"];
-        }[];
-      };
-      finance_summary: {
-        Args: never;
-        Returns: {
-          cents: number;
-          metric: string;
-        }[];
-      };
-      institution_vitals: {
-        Args: never;
-        Returns: {
-          metric: string;
-          metric_count: number;
-        }[];
-      };
-      membership_funnel: {
-        Args: never;
-        Returns: {
-          metric: string;
-          metric_count: number;
-        }[];
-      };
-      program_fill: {
-        Args: never;
-        Returns: {
-          capacity: number;
-          fill_pct: number;
-          program_title: string;
-          registered_count: number;
-          session_id: string;
-          starts_at: string;
-        }[];
-      };
-      reservation_load: {
-        Args: never;
-        Returns: {
-          cancelled: number;
-          completed: number;
-          confirmed: number;
-          day: string;
-          requested: number;
-          seated: number;
-        }[];
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   api: {
     Tables: {
       [_ in never]: never;
@@ -1250,6 +1183,7 @@ export type Database = {
           type: Database["publishing"]["Enums"]["item_type"];
         }[];
       };
+      get_redirect: { Args: { p_path: string }; Returns: string };
       institution_vitals: {
         Args: never;
         Returns: {
@@ -3259,6 +3193,24 @@ export type Database = {
           },
         ];
       };
+      redirects: {
+        Row: {
+          created_at: string;
+          new_path: string;
+          old_path: string;
+        };
+        Insert: {
+          created_at?: string;
+          new_path: string;
+          old_path: string;
+        };
+        Update: {
+          created_at?: string;
+          new_path?: string;
+          old_path?: string;
+        };
+        Relationships: [];
+      };
       tags: {
         Row: {
           id: string;
@@ -3320,6 +3272,13 @@ export type Database = {
         };
       };
       discard_draft: { Args: { p_item: string }; Returns: undefined };
+      item_public_path: {
+        Args: {
+          p_slug: string;
+          p_type: Database["publishing"]["Enums"]["item_type"];
+        };
+        Returns: string;
+      };
       next_deposit_ref: { Args: never; Returns: string };
       submit_pigeon: {
         Args: {
@@ -3492,9 +3451,6 @@ export type CompositeTypes<
 
 export const Constants = {
   admin: {
-    Enums: {},
-  },
-  analytics: {
     Enums: {},
   },
   api: {

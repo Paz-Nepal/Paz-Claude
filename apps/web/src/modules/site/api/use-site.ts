@@ -129,6 +129,22 @@ export function useSendAPigeon() {
   });
 }
 
+/** Looks up publishing.redirects for a path the router couldn't otherwise
+ * match -- a slug or series change on a published item never has to become
+ * a broken link (work plan Part II, #7). `null` means no redirect exists,
+ * i.e. this really is a 404, not just "not looked up yet". */
+export function useRedirect(path: string) {
+  return useQuery({
+    queryKey: ["redirect", path],
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { data, error } = await api().rpc("get_redirect", { p_path: path });
+      if (error) throw toAppError(error);
+      return data; // string | null
+    },
+  });
+}
+
 export function useRecordEntries() {
   return useQuery({
     queryKey: ["record-entries"],

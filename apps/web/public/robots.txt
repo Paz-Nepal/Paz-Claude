@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /sign-in
+Disallow: /my-registrations
+
+Sitemap: https://paz.com.np/sitemap.xml

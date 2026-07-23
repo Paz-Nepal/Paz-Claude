@@ -1,0 +1,11 @@
+-- 0031_tombstone.sql
+--
+-- Migration 31 was never written. The sequence jumps from 0030
+-- (hospitality) to 0032 (analytics) in every environment this project has
+-- ever been deployed to -- nothing was reverted, nothing was lost, no
+-- destructive statement ran under this number. This file exists solely so
+-- the numbered, immutable sequence has no unexplained gap for someone to
+-- puzzle over later (work plan Part I, #4: "under 'numbered, immutable once
+-- merged' that gap will cost someone an hour in 2031"). It intentionally
+-- does nothing.
+select 1;

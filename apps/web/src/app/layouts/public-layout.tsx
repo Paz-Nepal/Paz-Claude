@@ -80,18 +80,13 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function Logo({ siteName }: { siteName: string }) {
+  // Ranjana wordmark: intentionally not built yet (spec §5 — display-only,
+  // SVG or a dedicated font, never live text, commissioned separately).
+  // No placeholder text on the live site in the meantime; the name alone
+  // is the wordmark until the mark itself is ready to ship.
   return (
     <Link to="/" className="flex items-baseline gap-2 font-serif text-2xl leading-none">
       {siteName}
-      {/* Ranjana wordmark: intentionally not built yet (spec §5 — display-only,
-          SVG or a dedicated font, never live text). Placeholder marks it as a
-          known, intended feature rather than an oversight. */}
-      <span
-        className="text-muted-foreground font-sans text-[0.65rem] font-normal uppercase tracking-wide"
-        title="A Ranjana-script wordmark is planned for this spot."
-      >
-        mark coming soon
-      </span>
     </Link>
   );
 }
@@ -326,7 +321,7 @@ function Footer({
       </div>
       <div className="w-wide type-small border-border flex flex-col justify-between gap-4 border-t py-8 md:flex-row">
         <p>
-          © {year} {siteName}. Built to endure.
+          © {year} {siteName}. No cookies, no analytics, no reader tracking of any kind.
         </p>
         {contactEmail && (
           <a href={`mailto:${contactEmail}`} className="hover:text-brand transition-colors">

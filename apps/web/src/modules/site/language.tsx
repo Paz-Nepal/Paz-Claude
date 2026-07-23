@@ -28,6 +28,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, next);
   }, []);
 
+  React.useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   return <LanguageContext.Provider value={{ lang, setLang }}>{children}</LanguageContext.Provider>;
 }
 

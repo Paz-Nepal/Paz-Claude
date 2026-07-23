@@ -51,6 +51,20 @@ const ArticlePage = React.lazy(() =>
 const CmsPage = React.lazy(() =>
   import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
 );
+const PressPage = React.lazy(() =>
+  import("@/modules/site/pages/press-page").then((m) => ({ default: m.PressPage })),
+);
+const HousePage = React.lazy(() =>
+  import("@/modules/site/pages/house-page").then((m) => ({ default: m.HousePage })),
+);
+const HearthPage = React.lazy(() =>
+  import("@/modules/site/pages/hearth-page").then((m) => ({ default: m.HearthPage })),
+);
+const RecordOrganPage = React.lazy(() =>
+  import("@/modules/site/pages/record-organ-page").then((m) => ({
+    default: m.RecordOrganPage,
+  })),
+);
 const PapersIndexPage = React.lazy(() =>
   import("@/modules/site/pages/papers-index-page").then((m) => ({
     default: m.PapersIndexPage,
@@ -217,6 +231,15 @@ export const router = createBrowserRouter([
       { path: "menu", element: withSuspense(<MenuPage />) },
       { path: "reservations", element: withSuspense(<ReservationPage />) },
       { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
+      // The six organs. Four have a dedicated hub component that
+      // aggregates related content (Press: the five series; House: Visit;
+      // Hearth: Menu + Reservations; The Record: the deposit index); Guild
+      // and Treasury fall through to the generic CmsPage catch-all below,
+      // same as any other plain institutional page.
+      { path: "press", element: withSuspense(<PressPage />) },
+      { path: "house", element: withSuspense(<HousePage />) },
+      { path: "hearth", element: withSuspense(<HearthPage />) },
+      { path: "the-record", element: withSuspense(<RecordOrganPage />) },
       { path: "journal", element: withSuspense(<JournalPage />) },
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },

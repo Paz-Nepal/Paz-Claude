@@ -11,6 +11,22 @@ export function CalendarPage() {
     <div className="max-w-standard mx-auto flex flex-col gap-8 px-6 py-16">
       <h1 className="font-serif text-3xl">Programme calendar</h1>
 
+      {/* Encounters — the public civic layer (Field Studies, Common Ground,
+          The Chautari) — lives here rather than its own nav entry, per the
+          house's request. /encounters itself is unchanged. */}
+      <Link
+        to="/encounters"
+        className="hover:bg-muted flex items-center justify-between rounded-lg border p-4"
+      >
+        <div>
+          <p className="font-medium">Encounters</p>
+          <p className="text-muted-foreground text-sm">
+            Field Studies, Common Ground, The Chautari — the public civic layer.
+          </p>
+        </div>
+        <span className="text-muted-foreground text-sm">→</span>
+      </Link>
+
       {sessions.isPending && <p className="text-muted-foreground">Loading…</p>}
       {sessions.isError && (
         <StatePanel

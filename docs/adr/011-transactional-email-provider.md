@@ -35,26 +35,31 @@ this ADR if it fails.
 
 ## Why an internal utility instead of calling Resend from each function
 
-Every Edge Function that sends mail (reservations today; membership
-applications, invitations, and programme registrations are the same
-pattern, not yet wired in) would otherwise duplicate template rendering,
-error handling, and audit logging — and a future provider swap would mean
-finding and changing every call site instead of one file. `resend.ts`
-knows Resend's request shape; nothing else does.
+Every Edge Function that sends mail would otherwise duplicate template
+rendering, error handling, and audit logging — and a future provider swap
+would mean finding and changing every call site instead of one file.
+`resend.ts` knows Resend's request shape; nothing else does.
 
 ## Consequences
 
 - Provider swap (Resend → Postmark or elsewhere) touches `resend.ts` only.
-- A new notification (membership decision, renewal notice, registration
-  confirmation) is: one function in `email-templates.ts`, one case in
+- A new notification is: one function in `email-templates.ts`, one case in
   `send-email.ts`'s `render()` switch, and a call to `sendEmail()` from
   whichever Edge Function triggers it — no new provider code.
 - `RESEND_API_KEY` and `EMAIL_FROM` are Edge Function secrets
   (`supabase secrets set`), never `apps/web` environment variables — the
   frontend never talks to the provider directly (`docs/runbooks/environments.md`).
-- Only one flow (hospitality reservation requests) sends real email as of
-  this ADR. Membership applications/invitations, programme registration
-  confirmations, and renewal notices (D-11, D-12, D-13) still need their
-  own Edge Functions wired to this same utility — that is what makes
-  those domains actually notify anyone, not just record state in the
-  database.
+- Flows wired to this utility so far: hospitality reservation requests
+  (`request-reservation`), membership application received
+  (`submit-membership-application`), membership application decided
+  (`decide-membership-application`), and programme session
+  registered/waitlisted (`register-for-session`).
+- Still not wired in, because the underlying decision was explicitly
+  deferred in its own migration and needs more than an email to finish:
+  membership **invitation tokens** (D-12 — `0010_membership.sql` notes
+  the `invited` application state and single-use acceptance token don't
+  exist yet; adding them is a schema change, not just a send) and
+  **renewal notice automation** (D-11 — needs a scheduled job runner,
+  which doesn't exist in this repo yet either). A contact-message
+  function (T-068) was never specified with a page to call it, so there
+  is nothing to wire yet on that front.

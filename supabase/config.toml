@@ -85,3 +85,9 @@ verify_jwt = true
 # membership.decide_application, same layering as the public functions.
 [functions.decide-membership-application]
 verify_jwt = true
+
+# Staff-only in practice (media_objects_insert_staff / publishing.media.create
+# gate the storage write and the register_media RPC respectively), same
+# verify_jwt-is-not-the-permission-check layering as above.
+[functions.ingest-media]
+verify_jwt = true

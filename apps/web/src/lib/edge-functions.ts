@@ -28,7 +28,7 @@ function statusToKind(status: number): AppErrorKind {
  */
 export async function invokeEdgeFunction<T>(
   name: string,
-  body: Record<string, unknown>,
+  body: Record<string, unknown> | FormData,
 ): Promise<T> {
   const { data, error } = (await supabase.functions.invoke<T>(name, { body })) as {
     data: T | null;

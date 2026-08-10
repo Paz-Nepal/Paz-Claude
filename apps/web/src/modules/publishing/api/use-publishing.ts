@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ItemType = Database["publishing"]["Enums"]["item_type"];
 export type ItemStatus = Database["publishing"]["Enums"]["item_status"];
@@ -274,42 +275,22 @@ export function useUploadMedia() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ file, alt, credit }: UploadMediaInput) => {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-      const storagePath = `original/${crypto.randomUUID()}.${ext}`;
+      // Routed through the ingest-media Edge Function, which sniffs the
+      // real file type by magic bytes, strips EXIF, and reads dimensions
+      // from the header server-side — trusting the browser's file.type
+      // and a client-side createImageBitmap decode was exactly the
+      // "uploads currently go straight to storage... hardening lands with
+      // the Edge Function" gap migration 0008 flagged (D-8, T-041).
+      const form = new FormData();
+      form.append("file", file);
+      form.append("alt", alt);
+      if (credit) form.append("credit", credit);
 
-      const { error: uploadError } = await supabase.storage
-        .from("media")
-        .upload(storagePath, file, { contentType: file.type, upsert: false });
-      if (uploadError) throw toAppError(uploadError);
-
-      let width: number | null = null;
-      let height: number | null = null;
-      if (file.type.startsWith("image/")) {
-        try {
-          const bitmap = await createImageBitmap(file);
-          width = bitmap.width;
-          height = bitmap.height;
-          bitmap.close();
-        } catch {
-          // Not decodable client-side (e.g. an SVG in some browsers) —
-          // dimensions stay unknown; nothing depends on them yet.
-        }
-      }
-
-      const { data, error } = await api().rpc(
-        "register_media",
-        asArgs<Database["api"]["Functions"]["register_media"]["Args"]>({
-          p_storage_path: storagePath,
-          p_mime_type: file.type || "application/octet-stream",
-          p_size_bytes: file.size,
-          p_width: width,
-          p_height: height,
-          p_alt: alt,
-          p_credit: credit,
-        }),
-      );
-      if (error) throw toAppError(error);
-      return { id: data, storagePath };
+      const { mediaId, storagePath } = await invokeEdgeFunction<{
+        mediaId: string;
+        storagePath: string;
+      }>("ingest-media", form);
+      return { id: mediaId, storagePath };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["media-library"] });

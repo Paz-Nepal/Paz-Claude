@@ -25,7 +25,7 @@ the staging project.
 ```bash
 supabase start                     # boots local Postgres, Auth, Storage, Studio
 pnpm db:reset                      # runs every migration + supabase/seed/authz.sql from zero
-psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql   # optional: fake people for UI development
+psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql   # optional: fake people + placeholder content for UI development
 pnpm db:types                      # regenerate packages/types/src/database.generated.ts
 pnpm dev                           # apps/web against the local instance
 ```

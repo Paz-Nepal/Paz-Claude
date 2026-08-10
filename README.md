@@ -45,7 +45,7 @@ pnpm install
 supabase start                                          # local Postgres/Auth/Storage/Studio
 cp apps/web/.env.example apps/web/.env.local             # fill in from `supabase start` output
 pnpm db:types                                            # generate packages/types/src/database.generated.ts
-psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql   # optional: fake local users
+psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql   # optional: fake users + placeholder content
 pnpm dev                                                 # http://127.0.0.1:3000
 ```
 

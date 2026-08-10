@@ -51,6 +51,9 @@ const ArticlePage = React.lazy(() =>
 const CmsPage = React.lazy(() =>
   import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
 );
+const SearchPage = React.lazy(() =>
+  import("@/modules/site/pages/search-page").then((m) => ({ default: m.SearchPage })),
+);
 const PressPage = React.lazy(() =>
   import("@/modules/site/pages/press-page").then((m) => ({ default: m.PressPage })),
 );
@@ -240,6 +243,7 @@ export const router = createBrowserRouter([
       { path: "reservations", element: withSuspense(<ReservationPage />) },
       { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
       { path: "contact", element: withSuspense(<ContactPage />) },
+      { path: "search", element: withSuspense(<SearchPage />) },
       // The six organs. Four have a dedicated hub component that
       // aggregates related content (Press: the five series; House: Visit;
       // Hearth: Menu + Reservations; The Record: the deposit index); Guild

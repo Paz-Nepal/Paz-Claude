@@ -155,6 +155,18 @@ function Header({ siteName }: { siteName: string }) {
           <NavLink to="/contact" className={navLinkClass}>
             Contact
           </NavLink>
+          <NavLink to="/search" className={navLinkClass} aria-label="Search">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              className="h-5 w-5"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path strokeLinecap="round" d="m20 20-3.5-3.5" />
+            </svg>
+          </NavLink>
           <LanguageToggle />
         </nav>
         <button
@@ -241,6 +253,9 @@ function Header({ siteName }: { siteName: string }) {
             </Link>
             <Link to="/contact" className="text-foreground/90 py-2 font-serif text-2xl">
               Contact
+            </Link>
+            <Link to="/search" className="text-foreground/90 py-2 font-serif text-2xl">
+              Search
             </Link>
             <div className="mt-4">
               <LanguageToggle />

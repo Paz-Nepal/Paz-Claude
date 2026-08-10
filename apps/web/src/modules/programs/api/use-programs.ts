@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ProgramSummary = Database["api"]["Views"]["programs"]["Row"];
 export type ProgramSession = Database["api"]["Views"]["program_sessions"]["Row"];
@@ -58,17 +59,18 @@ export function useRegisterForSession() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: RegisterInput) => {
-      const { data, error } = await api().rpc(
-        "register_for_session",
-        asArgs<Database["api"]["Functions"]["register_for_session"]["Args"]>({
-          p_session: input.sessionId,
-          p_full_name: input.fullName,
-          p_email: input.email,
-          p_phone: input.phone,
-        }),
-      );
-      if (error) throw toAppError(error);
-      return data;
+      // Routed through the register-for-session Edge Function so the
+      // registrant is told whether they got a seat or landed on the
+      // waitlist, not just left to check back.
+      const { status } = await invokeEdgeFunction<{
+        status: Database["programs"]["Enums"]["registration_status"];
+      }>("register-for-session", {
+        sessionId: input.sessionId,
+        fullName: input.fullName,
+        email: input.email,
+        phone: input.phone,
+      });
+      return status;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["program-sessions"] });

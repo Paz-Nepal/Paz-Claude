@@ -82,3 +82,131 @@ export function renderReservationRequested(data: ReservationRequestedData): Emai
 
   return { subject, text, html };
 }
+
+export interface MembershipApplicationReceivedData {
+  fullName: string;
+  tierName: string;
+}
+
+export function renderMembershipApplicationReceived(
+  data: MembershipApplicationReceivedData,
+): EmailContent {
+  const subject = "We've received your membership application";
+
+  const text = [
+    `Hello ${data.fullName},`,
+    "",
+    `We've received your application for ${data.tierName} membership.`,
+    "",
+    "A person reviews every application — there's no automatic approval. We'll write again once a decision has been made.",
+    "",
+    "— PAZ",
+  ].join("\n");
+
+  const html = wrapHtml(`
+    <p>Hello ${escapeHtml(data.fullName)},</p>
+    <p>We've received your application for <strong>${escapeHtml(data.tierName)}</strong> membership.</p>
+    <p>A person reviews every application — there's no automatic approval. We'll write again once a decision has been made.</p>
+  `);
+
+  return { subject, text, html };
+}
+
+export interface MembershipApplicationDecidedData {
+  fullName: string;
+  tierName: string;
+  decision: "accepted" | "declined";
+  notes?: string | null;
+}
+
+export function renderMembershipApplicationDecided(
+  data: MembershipApplicationDecidedData,
+): EmailContent {
+  if (data.decision === "accepted") {
+    const subject = "Your PAZ membership application has been accepted";
+    const text = [
+      `Hello ${data.fullName},`,
+      "",
+      `Your application for ${data.tierName} membership has been accepted — welcome.`,
+      "",
+      "Your membership record and first term are set up on our end. We'll be in touch with what comes next.",
+      data.notes ? `\nA note from the person who reviewed your application: ${data.notes}` : "",
+      "",
+      "— PAZ",
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const html = wrapHtml(`
+      <p>Hello ${escapeHtml(data.fullName)},</p>
+      <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been accepted — welcome.</p>
+      <p>Your membership record and first term are set up on our end. We'll be in touch with what comes next.</p>
+      ${data.notes ? `<p>A note from the person who reviewed your application: ${escapeHtml(data.notes)}</p>` : ""}
+    `);
+    return { subject, text, html };
+  }
+
+  const subject = "About your PAZ membership application";
+  const text = [
+    `Hello ${data.fullName},`,
+    "",
+    `Your application for ${data.tierName} membership was not accepted this time.`,
+    data.notes ? `\n${data.notes}` : "",
+    "",
+    "You're welcome to apply again in the future.",
+    "",
+    "— PAZ",
+  ]
+    .filter(Boolean)
+    .join("\n");
+  const html = wrapHtml(`
+    <p>Hello ${escapeHtml(data.fullName)},</p>
+    <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership was not accepted this time.</p>
+    ${data.notes ? `<p>${escapeHtml(data.notes)}</p>` : ""}
+    <p>You're welcome to apply again in the future.</p>
+  `);
+  return { subject, text, html };
+}
+
+export interface SessionRegistrationData {
+  fullName: string;
+  programTitle: string;
+  startsAt: string;
+  status: "registered" | "waitlisted";
+}
+
+export function renderSessionRegistration(data: SessionRegistrationData): EmailContent {
+  const when = formatKathmandu(data.startsAt);
+
+  if (data.status === "waitlisted") {
+    const subject = `You're on the waitlist — ${data.programTitle}`;
+    const text = [
+      `Hello ${data.fullName},`,
+      "",
+      `${data.programTitle} on ${when} is full — you're on the waitlist.`,
+      "",
+      "If a seat opens up, you'll be moved in automatically and we'll write to confirm.",
+      "",
+      "— PAZ",
+    ].join("\n");
+    const html = wrapHtml(`
+      <p>Hello ${escapeHtml(data.fullName)},</p>
+      <p><strong>${escapeHtml(data.programTitle)}</strong> on <strong>${escapeHtml(when)}</strong> is full — you're on the waitlist.</p>
+      <p>If a seat opens up, you'll be moved in automatically and we'll write to confirm.</p>
+    `);
+    return { subject, text, html };
+  }
+
+  const subject = `You're registered — ${data.programTitle}`;
+  const text = [
+    `Hello ${data.fullName},`,
+    "",
+    `You're registered for ${data.programTitle} on ${when}.`,
+    "",
+    "— PAZ",
+  ].join("\n");
+  const html = wrapHtml(`
+    <p>Hello ${escapeHtml(data.fullName)},</p>
+    <p>You're registered for <strong>${escapeHtml(data.programTitle)}</strong> on <strong>${escapeHtml(when)}</strong>.</p>
+  `);
+  return { subject, text, html };
+}

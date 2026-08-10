@@ -72,3 +72,16 @@ enabled = true
 # header into the RPC it wraps -- see supabase/functions/request-reservation).
 [functions.request-reservation]
 verify_jwt = true
+
+[functions.submit-membership-application]
+verify_jwt = true
+
+[functions.register-for-session]
+verify_jwt = true
+
+# Staff-only in practice (authz.has_staff_permission checked inside the RPC
+# it wraps), but verify_jwt here still only means "a valid JWT" -- the
+# anon key would pass this flag and then fail the permission check inside
+# membership.decide_application, same layering as the public functions.
+[functions.decide-membership-application]
+verify_jwt = true

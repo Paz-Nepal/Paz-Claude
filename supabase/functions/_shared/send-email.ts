@@ -8,19 +8,32 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendViaResend } from "./resend.ts";
 import {
   EMAIL_TEMPLATE_VERSION,
+  renderMembershipApplicationDecided,
+  renderMembershipApplicationReceived,
   renderReservationRequested,
+  renderSessionRegistration,
+  type MembershipApplicationDecidedData,
+  type MembershipApplicationReceivedData,
   type ReservationRequestedData,
+  type SessionRegistrationData,
 } from "./email-templates.ts";
 
-export type EmailTemplate = {
-  name: "reservation-requested";
-  data: ReservationRequestedData;
-};
+export type EmailTemplate =
+  | { name: "reservation-requested"; data: ReservationRequestedData }
+  | { name: "membership-application-received"; data: MembershipApplicationReceivedData }
+  | { name: "membership-application-decided"; data: MembershipApplicationDecidedData }
+  | { name: "session-registration"; data: SessionRegistrationData };
 
 function render(template: EmailTemplate) {
   switch (template.name) {
     case "reservation-requested":
       return renderReservationRequested(template.data);
+    case "membership-application-received":
+      return renderMembershipApplicationReceived(template.data);
+    case "membership-application-decided":
+      return renderMembershipApplicationDecided(template.data);
+    case "session-registration":
+      return renderSessionRegistration(template.data);
   }
 }
 

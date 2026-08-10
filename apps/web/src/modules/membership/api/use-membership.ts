@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type MembershipTier = Database["api"]["Views"]["membership_tiers"]["Row"];
 export type MembershipApplication = Database["api"]["Views"]["membership_applications"]["Row"];
@@ -9,15 +10,6 @@ export type MemberTerm = Database["membership"]["Tables"]["terms"]["Row"];
 export type MemberDirectoryEntry = Database["api"]["Views"]["member_directory"]["Row"];
 
 const api = () => supabase.schema("api");
-
-/**
- * `supabase gen types` renders nullable SQL function parameters as
- * non-nullable TS properties (PostgREST itself accepts null for any of
- * them) — same gap documented in modules/publishing/api/use-publishing.ts.
- */
-function asArgs<T>(args: Record<keyof T & string, unknown>): T {
-  return args as T;
-}
 
 export function useMembershipTiers() {
   return useQuery({
@@ -60,18 +52,20 @@ export interface SubmitApplicationInput {
 export function useSubmitApplication() {
   return useMutation({
     mutationFn: async (input: SubmitApplicationInput) => {
-      const { data, error } = await api().rpc(
-        "submit_membership_application",
-        asArgs<Database["api"]["Functions"]["submit_membership_application"]["Args"]>({
-          p_full_name: input.fullName,
-          p_email: input.email,
-          p_phone: input.phone,
-          p_tier_key: input.tierKey,
-          p_motivation: input.motivation,
-        }),
+      // Routed through the submit-membership-application Edge Function so
+      // the applicant gets a "we've received it" email on top of the same
+      // database write (Architecture Blueprint §8, two-lane design).
+      const { applicationId } = await invokeEdgeFunction<{ applicationId: string }>(
+        "submit-membership-application",
+        {
+          fullName: input.fullName,
+          email: input.email,
+          phone: input.phone,
+          tierKey: input.tierKey,
+          motivation: input.motivation,
+        },
       );
-      if (error) throw toAppError(error);
-      return data;
+      return applicationId;
     },
   });
 }
@@ -102,16 +96,16 @@ export function useDecideApplication() {
       decision: "accepted" | "declined";
       notes: string | null;
     }) => {
-      const { data, error } = await api().rpc(
-        "decide_membership_application",
-        asArgs<Database["api"]["Functions"]["decide_membership_application"]["Args"]>({
-          p_application: id,
-          p_decision: decision,
-          p_notes: notes,
-        }),
-      );
-      if (error) throw toAppError(error);
-      return data;
+      // Routed through the decide-membership-application Edge Function so
+      // the applicant is told the outcome, not just left to check back.
+      const { status } = await invokeEdgeFunction<{
+        status: Database["membership"]["Enums"]["application_status"];
+      }>("decide-membership-application", {
+        applicationId: id,
+        decision,
+        notes,
+      });
+      return status;
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["membership-applications"] });

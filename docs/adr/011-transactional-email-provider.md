@@ -52,14 +52,15 @@ would mean finding and changing every call site instead of one file.
 - Flows wired to this utility so far: hospitality reservation requests
   (`request-reservation`), membership application received
   (`submit-membership-application`), membership application decided
-  (`decide-membership-application`), and programme session
-  registered/waitlisted (`register-for-session`).
+  (`decide-membership-application`), programme session
+  registered/waitlisted (`register-for-session`), and the contact form
+  (`submit-contact-message`, T-068 — notifies staff, not the submitter;
+  see the comment on `api.submit_contact_message`, migration 0037).
 - Still not wired in, because the underlying decision was explicitly
   deferred in its own migration and needs more than an email to finish:
   membership **invitation tokens** (D-12 — `0010_membership.sql` notes
   the `invited` application state and single-use acceptance token don't
   exist yet; adding them is a schema change, not just a send) and
-  **renewal notice automation** (D-11 — needs a scheduled job runner,
-  which doesn't exist in this repo yet either). A contact-message
-  function (T-068) was never specified with a page to call it, so there
-  is nothing to wire yet on that front.
+  **renewal notice automation** (D-11 — needs a scheduled job runner;
+  `.github/workflows/nightly-backup-export.yml` is a working pattern for
+  one now, but no renewal-notice job has been built on top of it yet).

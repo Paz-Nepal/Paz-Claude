@@ -3,12 +3,13 @@
 Four of the Architecture Blueprint's eight critical journeys (§11.4), covering
 the anonymous/public-visitor paths:
 
-| File                             | Journey                        |
-| -------------------------------- | ------------------------------ |
-| `read-article.spec.ts`           | Read an article                |
-| `programme-registration.spec.ts` | Browse programmes and register |
-| `membership-application.spec.ts` | Apply for membership           |
-| `reservation-request.spec.ts`    | Request a reservation          |
+| File                             | Journey                                              |
+| -------------------------------- | ---------------------------------------------------- |
+| `read-article.spec.ts`           | Read an article                                      |
+| `programme-registration.spec.ts` | Browse programmes and register                       |
+| `membership-application.spec.ts` | Apply for membership                                 |
+| `reservation-request.spec.ts`    | Request a reservation                                |
+| `contact-message.spec.ts`        | Send a contact message (not one of the eight, T-068) |
 
 **Not yet covered** — the four staff/authenticated journeys (staff
 reviews and publishes an item; staff decides an application; confirm a

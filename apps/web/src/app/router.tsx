@@ -196,6 +196,9 @@ const SendAPigeonPage = React.lazy(() =>
     default: m.SendAPigeonPage,
   })),
 );
+const ContactPage = React.lazy(() =>
+  import("@/modules/site/pages/contact-page").then((m) => ({ default: m.ContactPage })),
+);
 const PigeonSubmissionsPage = React.lazy(() =>
   import("@/modules/publishing/pages/pigeon-submissions-page").then((m) => ({
     default: m.PigeonSubmissionsPage,
@@ -231,6 +234,7 @@ export const router = createBrowserRouter([
       { path: "menu", element: withSuspense(<MenuPage />) },
       { path: "reservations", element: withSuspense(<ReservationPage />) },
       { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
+      { path: "contact", element: withSuspense(<ContactPage />) },
       // The six organs. Four have a dedicated hub component that
       // aggregates related content (Press: the five series; House: Visit;
       // Hearth: Menu + Reservations; The Record: the deposit index); Guild

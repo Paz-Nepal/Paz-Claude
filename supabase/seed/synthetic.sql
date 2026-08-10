@@ -38,8 +38,10 @@ on conflict do nothing;
 -- header comment above and docs/runbooks/environments.md).
 -- ---------------------------------------------------------------------
 
--- Institutional pages: nav links (/about, /guild, /treasury, /contact)
--- otherwise 404 as "not published" with nothing to look at locally.
+-- Institutional pages: nav links (/about, /guild, /treasury) otherwise
+-- 404 as "not published" with nothing to look at locally. /contact is a
+-- dedicated route (contact-page.tsx, T-068), not a CMS page, so it is
+-- not seeded here.
 insert into publishing.items (type, status, slug, title, summary, body, author, published_at)
 select
   'page', 'published', v.slug, v.title, v.summary, v.body::jsonb, a.id, now()
@@ -62,12 +64,6 @@ from identity.people a,
       '[PLACEHOLDER] The Treasury',
       '[PLACEHOLDER] What the Treasury is and how giving works.',
       '{"type":"doc","content":[{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"[PLACEHOLDER] The Treasury"}]},{"type":"paragraph","content":[{"type":"text","text":"[PLACEHOLDER] Replace this paragraph with the real Treasury copy through the CMS."}]}]}'
-    ),
-    (
-      'contact',
-      '[PLACEHOLDER] Contact',
-      '[PLACEHOLDER] How to reach PAZ.',
-      '{"type":"doc","content":[{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"[PLACEHOLDER] Contact"}]},{"type":"paragraph","content":[{"type":"text","text":"[PLACEHOLDER] Replace this paragraph with real contact details through the CMS. (No contact-message Edge Function exists yet — T-068 — so this is a static page, not a form, until that is built.)"}]}]}'
     )
   ) as v(slug, title, summary, body)
 where a.auth_user_id = 'd0000000-0000-0000-0000-000000000002'

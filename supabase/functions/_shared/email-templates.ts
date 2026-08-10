@@ -210,3 +210,38 @@ export function renderSessionRegistration(data: SessionRegistrationData): EmailC
   `);
   return { subject, text, html };
 }
+
+export interface ContactMessageReceivedData {
+  fullName: string;
+  email: string;
+  message: string;
+}
+
+/**
+ * Staff-facing, not the submitter -- D-13 scopes automated email to
+ * transactional/membership-lifecycle sends, and a contact message is
+ * neither, so nothing gets sent back to whoever wrote in (see the
+ * comment on api.submit_contact_message, migration 0037).
+ */
+export function renderContactMessageReceived(data: ContactMessageReceivedData): EmailContent {
+  const subject = `New contact message from ${data.fullName}`;
+
+  const text = [
+    `A new message came in through the contact form.`,
+    "",
+    `From: ${data.fullName} <${data.email}>`,
+    "",
+    data.message,
+    "",
+    "Review and reply directly to their email address — this address does not receive replies.",
+  ].join("\n");
+
+  const html = wrapHtml(`
+    <p>A new message came in through the contact form.</p>
+    <p><strong>From:</strong> ${escapeHtml(data.fullName)} &lt;${escapeHtml(data.email)}&gt;</p>
+    <p>${escapeHtml(data.message)}</p>
+    <p>Review and reply directly to their email address — this address does not receive replies.</p>
+  `);
+
+  return { subject, text, html };
+}

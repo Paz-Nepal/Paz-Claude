@@ -91,3 +91,6 @@ verify_jwt = true
 # verify_jwt-is-not-the-permission-check layering as above.
 [functions.ingest-media]
 verify_jwt = true
+
+[functions.submit-contact-message]
+verify_jwt = true

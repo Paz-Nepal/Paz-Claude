@@ -32,6 +32,7 @@ insert into authz.permissions (key, description) values
   ('admin.settings.read', 'View institutional settings.'),
   ('admin.settings.manage', 'Change institutional settings.'),
   ('admin.audit_log.read', 'View the audit log.'),
+  ('admin.contact_message.read', 'View and mark reviewed the public contact-form inbox.'),
   ('publishing.item.read', 'Read every item regardless of status or author (the editorial desk view).'),
   ('publishing.item.create', 'Create items and edit one''s own drafts.'),
   ('publishing.item.update', 'Edit any item at any workflow stage and send items back to draft.'),

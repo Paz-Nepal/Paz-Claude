@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type PublishedItem = Database["api"]["Views"]["published_items"]["Row"];
 export type PublishedItemDetail =
@@ -125,6 +126,29 @@ export function useSendAPigeon() {
         }),
       );
       if (error) throw toAppError(error);
+    },
+  });
+}
+
+export interface SubmitContactMessageInput {
+  fullName: string;
+  email: string;
+  message: string;
+}
+
+/**
+ * Routed through the submit-contact-message Edge Function (not a direct
+ * RPC, unlike send_a_pigeon above) because this flow also notifies staff
+ * by email -- api.submit_contact_message alone only writes the row.
+ */
+export function useSubmitContactMessage() {
+  return useMutation({
+    mutationFn: async (input: SubmitContactMessageInput) => {
+      const { messageId } = await invokeEdgeFunction<{ messageId: string }>(
+        "submit-contact-message",
+        { fullName: input.fullName, email: input.email, message: input.message },
+      );
+      return messageId;
     },
   });
 }

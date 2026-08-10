@@ -11,6 +11,7 @@ interface SubmitApplicationBody {
   phone: string | null;
   tierKey: string;
   motivation: string | null;
+  communicationPreferences: { dispatch: boolean; programs: boolean } | null;
 }
 
 function jsonError(message: string, status: number): Response {
@@ -51,6 +52,7 @@ Deno.serve(async (req) => {
       p_phone: body.phone,
       p_tier_key: body.tierKey,
       p_motivation: body.motivation,
+      p_communication_preferences: body.communicationPreferences,
     });
 
   if (error) {

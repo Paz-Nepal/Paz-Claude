@@ -14,6 +14,8 @@ test("submits a membership application", async ({ page }) => {
   await page.getByLabel("Full name").fill("Playwright Test Applicant");
   await page.getByLabel("Email").fill("playwright-applicant@example.com");
   await page.getByRole("radio").first().check();
+  // T-085/D-13: consent captured on this same form.
+  await page.getByLabel("Send me the Dispatch by email").check();
 
   await page.getByRole("button", { name: "Submit application" }).click();
 

@@ -60,6 +60,7 @@ export interface SubmitApplicationInput {
   phone: string | null;
   tierKey: string;
   motivation: string | null;
+  communicationPreferences: { dispatch: boolean; programs: boolean };
 }
 
 export function useSubmitApplication() {
@@ -76,6 +77,7 @@ export function useSubmitApplication() {
           phone: input.phone,
           tierKey: input.tierKey,
           motivation: input.motivation,
+          communicationPreferences: input.communicationPreferences,
         },
       );
       return applicationId;

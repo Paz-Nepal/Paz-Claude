@@ -18,6 +18,9 @@ const SignInPage = React.lazy(() =>
 const MfaEnrollPage = React.lazy(() =>
   import("@/modules/auth-core/pages/mfa-enroll-page").then((m) => ({ default: m.MfaEnrollPage })),
 );
+const AccountPage = React.lazy(() =>
+  import("@/modules/auth-core/pages/account-page").then((m) => ({ default: m.AccountPage })),
+);
 const ProtectedRoute = React.lazy(() =>
   import("@/modules/auth-core/components/protected-route").then((m) => ({
     default: m.ProtectedRoute,
@@ -264,6 +267,11 @@ export const router = createBrowserRouter([
         path: "my-registrations",
         element: withSuspense(<ProtectedRoute requireMfa={false} />),
         children: [{ index: true, element: withSuspense(<MyRegistrationsPage />) }],
+      },
+      {
+        path: "account",
+        element: withSuspense(<ProtectedRoute requireMfa={false} />),
+        children: [{ index: true, element: withSuspense(<AccountPage />) }],
       },
       { path: "sign-in", element: withSuspense(<SignInPage />) },
       // CMS-controlled top-level pages (/about, /visit, …). Static routes

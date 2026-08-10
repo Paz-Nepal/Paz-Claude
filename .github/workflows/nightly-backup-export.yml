@@ -1,0 +1,36 @@
+name: Nightly backup export
+
+# Architecture Blueprint §9 / Build Readiness Review T-026: "a failed
+# backup pages someone" -- a failed scheduled workflow run already
+# notifies the repository's configured watchers by default; this is that
+# paging mechanism, not an afterthought bolted on separately.
+on:
+  schedule:
+    # 02:15 UTC nightly -- off-peak for both Supabase and R2, and offset
+    # from the top of the hour so it doesn't compete with other scheduled
+    # GitHub Actions jobs across the platform at :00.
+    - cron: "15 2 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  backup-export:
+    name: Dump database, mirror storage, encrypt, upload to R2
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install age and rclone
+        run: sudo apt-get update && sudo apt-get install -y age rclone
+
+      - name: Run nightly-backup-export
+        env:
+          SUPABASE_DB_URL: ${{ secrets.BACKUP_SOURCE_DB_URL }}
+          BACKUP_AGE_PUBLIC_KEY: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.BACKUP_R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.BACKUP_R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.BACKUP_R2_BUCKET }}
+          SUPABASE_S3_ENDPOINT: ${{ secrets.BACKUP_SUPABASE_S3_ENDPOINT }}
+          SUPABASE_S3_ACCESS_KEY_ID: ${{ secrets.BACKUP_SUPABASE_S3_ACCESS_KEY_ID }}
+          SUPABASE_S3_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_SUPABASE_S3_SECRET_ACCESS_KEY }}
+        run: bash scripts/backup-export.sh

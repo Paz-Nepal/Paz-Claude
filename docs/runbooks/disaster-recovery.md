@@ -5,17 +5,22 @@ for: a decision tree, a restore order, and an explicit answer to the
 auth-restore question the Architecture Blueprint left open. It exists
 so a bad night doesn't turn into a bad month of improvising.
 
-**Prerequisite this runbook depends on and does not itself provide:** the
-nightly off-platform export (`nightly-backup-export`: `pg_dump` of every
-schema + a storage object manifest + an incremental storage mirror,
-encrypted, to a second provider under separate credentials — Architecture
-Blueprint §9) is specified but **not yet implemented in this repository**
-(no `scripts/backup-export.*`, no scheduled job). Until it exists and has
-been through at least one quarterly restore drill, everything below is
-the _procedure_ for a disaster this project cannot yet actually survive.
-Building that job is call T-026/T-027 in the Build Readiness Review's
-100-task backlog and should be treated as still P0, not merely "nice to
-finish."
+**Prerequisite this runbook depends on:** the nightly off-platform export
+(`scripts/backup-export.sh`, run by `.github/workflows/nightly-backup-export.yml`:
+`pg_dump` of every schema + a storage object manifest + an incremental
+storage mirror, encrypted with `age`, to Cloudflare R2 under separate
+credentials — Architecture Blueprint §9, ADR-10) now exists in the
+repository, but **has not been run for real** — the R2 bucket, the age
+keypair, and the `BACKUP_*` GitHub Actions secrets it depends on are
+account-level setup this repository cannot do for itself (see ADR-10's
+"still open" section). It also has not yet been through a quarterly
+restore drill (`scripts/restore-verify.sh`,
+`.github/workflows/quarterly-restore-drill.yml`). Until both a real
+backup and a real successful restore drill have happened at least once,
+treat everything below as the _procedure_ for a disaster this project
+cannot yet actually prove it can survive — verifying that is call
+T-026/T-027 in the Build Readiness Review's 100-task backlog and stays
+P0, not merely "nice to finish," until the first drill goes green.
 
 ## 1. Who declares an incident
 

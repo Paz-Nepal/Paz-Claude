@@ -1,0 +1,43 @@
+name: Quarterly restore drill
+
+# Architecture Blueprint §9: "a backup that has never been restored is a
+# hope, not a backup." Restores the latest nightly export into a scratch
+# Postgres service container -- never staging or production -- and runs
+# scripts/restore-verify.sh's sanity checks.
+on:
+  schedule:
+    # 03:00 UTC on the first day of January, April, July, October.
+    - cron: "0 3 1 1,4,7,10 *"
+  workflow_dispatch: {}
+
+jobs:
+  restore-drill:
+    name: Restore latest backup into a scratch database and verify
+    runs-on: ubuntu-latest
+    services:
+      scratch-db:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install age and rclone
+        run: sudo apt-get update && sudo apt-get install -y age rclone
+
+      - name: Run restore-verify against the scratch database
+        env:
+          RESTORE_DB_URL: postgresql://postgres:postgres@127.0.0.1:5432/postgres
+          BACKUP_AGE_PRIVATE_KEY: ${{ secrets.BACKUP_AGE_PRIVATE_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.BACKUP_R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.BACKUP_R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.BACKUP_R2_BUCKET }}
+        run: bash scripts/restore-verify.sh

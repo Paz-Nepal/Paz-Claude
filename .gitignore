@@ -15,5 +15,10 @@ supabase/.temp/
 .DS_Store
 coverage/
 
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+
 # scripts/export-content.mjs output
 export-output/

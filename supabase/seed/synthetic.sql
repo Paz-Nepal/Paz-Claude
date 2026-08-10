@@ -73,6 +73,19 @@ from identity.people a,
 where a.auth_user_id = 'd0000000-0000-0000-0000-000000000002'
 on conflict (type, slug) do nothing;
 
+-- One published article so /journal and the read-an-article journey
+-- (Architecture Blueprint §11.4) aren't empty locally.
+insert into publishing.items (type, status, slug, title, summary, body, author, published_at)
+select
+  'article', 'published', 'placeholder-first-piece',
+  '[PLACEHOLDER] A first piece for the Journal',
+  '[PLACEHOLDER] Summary of a sample article.',
+  '{"type":"doc","content":[{"type":"heading","attrs":{"level":2},"content":[{"type":"text","text":"[PLACEHOLDER] A first piece for the Journal"}]},{"type":"paragraph","content":[{"type":"text","text":"[PLACEHOLDER] Replace this with real writing through the CMS. This row exists so the Journal and article-reading journey render something locally."}]}]}'::jsonb,
+  a.id, now()
+from identity.people a
+where a.auth_user_id = 'd0000000-0000-0000-0000-000000000002'
+on conflict (type, slug) do nothing;
+
 -- Hearth menu: /menu and /hearth otherwise render an empty "nothing
 -- published" state locally.
 insert into hospitality.menus (slug, name, status)

@@ -45,8 +45,11 @@ jobs:
       - name: Unit + component tests
         run: pnpm test
 
-      - name: Build (bundle budget enforced by Vite/Lighthouse config)
+      - name: Build
         run: pnpm build
+
+      - name: Bundle budget (T-071 — JS gate only; see scripts/check-bundle-budget.mjs for what's still open)
+        run: node scripts/check-bundle-budget.mjs
 
   database:
     name: Database — migrations, pgTAP, drift, authz matrix

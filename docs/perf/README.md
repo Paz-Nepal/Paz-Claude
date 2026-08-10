@@ -1,4 +1,26 @@
-# Query Performance Snapshots
+# Performance
+
+## Frontend bundle budget (T-071)
+
+`scripts/check-bundle-budget.mjs` runs in CI after every build and fails
+if the JS a first-time visitor's browser must download before the app
+can render (`apps/web/dist/index.html`'s own `<script>`/`modulepreload`
+tags, gzip bytes) exceeds 200KB. T-071's original target was 150KB;
+current eager JS measures ~163KB — the budget is set above the measured
+baseline so regressions are still caught now, rather than either
+silently passing a target that was never met or failing every build
+until a real reduction pass (further splitting `vendor-supabase`,
+deferring `@tanstack/react-query` off the critical path, etc.) happens.
+Lower the constant in the script as that work lands.
+
+**Not implemented: LCP or any other Lighthouse metric.** T-071 also
+named Largest Contentful Paint as a budget. That needs an actual
+Lighthouse run against a served build (headless Chrome, real paint
+timing) — genuinely different from a static byte-count check, and not
+something to approximate or fake. Left as a real gap, not quietly
+dropped.
+
+## Database query performance snapshots
 
 The Build Readiness Review's RLS production discipline (§3.4, point 5)
 requires `explain (analyze)` snapshots for the ten hottest queries,
@@ -14,7 +36,7 @@ would compare a future regression against numbers that were never real).
 This file exists so that requirement isn't silently dropped: it's a
 documented gap, not an implemented one.
 
-## What to capture, once there's a database to capture it from
+### What to capture, once there's a database to capture it from
 
 Run each query below against a database seeded with realistic volume
 (`supabase/seed/synthetic.sql` at a minimum; a staging-scale anonymized
@@ -42,7 +64,7 @@ as `docs/perf/<query-name>.txt` alongside the query itself:
 10. Whichever admin dashboard query (`analytics` domain) is slowest in
     practice — profile it, don't guess which one from the schema alone.
 
-## What "good" looks like
+### What "good" looks like
 
 Per the initplan idiom (§3.4, point 1): every `authz.has_permission(...)`
 / `authz.has_staff_permission(...)` call inside a policy should show up as

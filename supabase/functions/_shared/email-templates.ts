@@ -245,3 +245,53 @@ export function renderContactMessageReceived(data: ContactMessageReceivedData): 
 
   return { subject, text, html };
 }
+
+export interface MembershipRenewalNoticeData {
+  fullName: string;
+  tierName: string;
+  endsOn: string; // plain calendar date (YYYY-MM-DD), not a timestamp
+  noticeKind: "30d" | "7d";
+}
+
+function formatCalendarDate(isoDate: string): string {
+  // isoDate is a plain date (no time component) -- parsed as UTC midnight
+  // so it renders as the same calendar date everywhere, never shifted a
+  // day by the reader's or server's local timezone.
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(`${isoDate}T00:00:00Z`));
+}
+
+export function renderMembershipRenewalNotice(data: MembershipRenewalNoticeData): EmailContent {
+  const when = formatCalendarDate(data.endsOn);
+  const subject =
+    data.noticeKind === "7d"
+      ? `Reminder: your PAZ membership ends ${when}`
+      : `Your PAZ membership renews soon`;
+
+  const urgencyLine =
+    data.noticeKind === "7d"
+      ? `This is a reminder — your ${data.tierName} membership ends ${when}.`
+      : `Your ${data.tierName} membership ends ${when}.`;
+
+  const text = [
+    `Hello ${data.fullName},`,
+    "",
+    urgencyLine,
+    "",
+    "Renewing keeps your membership continuous — get in touch and we'll record your renewal. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.",
+    "",
+    "— PAZ",
+  ].join("\n");
+
+  const html = wrapHtml(`
+    <p>Hello ${escapeHtml(data.fullName)},</p>
+    <p>${escapeHtml(urgencyLine)}</p>
+    <p>Renewing keeps your membership continuous — get in touch and we'll record your renewal. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.</p>
+  `);
+
+  return { subject, text, html };
+}

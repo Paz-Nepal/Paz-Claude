@@ -59,6 +59,29 @@ the repository. Rotate a key (provider compromise, staff departure with
 access) by regenerating it with the provider and re-running `secrets set`;
 nothing in the function code changes.
 
+## Scheduled jobs (GitHub Actions secrets, not Supabase secrets)
+
+`nightly-backup-export.yml`, `quarterly-restore-drill.yml`, and
+`membership-renewal-notices.yml` run on GitHub's infrastructure, not
+Supabase's, so they need their own secrets in the repository (or an
+environment scoped to just these workflows), separate from the
+`supabase secrets set` values above:
+
+| Secret                                                                       | Used by                      | Purpose                                                                                                  |
+| ---------------------------------------------------------------------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `BACKUP_SOURCE_DB_URL`                                                       | nightly-backup-export        | `pg_dump` source                                                                                         |
+| `BACKUP_AGE_PUBLIC_KEY`                                                      | nightly-backup-export        | encrypt only — see `docs/adr/010-backup-strategy.md`                                                     |
+| `BACKUP_AGE_PRIVATE_KEY`                                                     | quarterly-restore-drill only | decrypt — never given to the nightly job                                                                 |
+| `BACKUP_R2_ACCOUNT_ID` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY` / `_BUCKET` | both backup workflows        | Cloudflare R2 destination                                                                                |
+| `BACKUP_SUPABASE_S3_ENDPOINT` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY`      | nightly-backup-export        | Supabase Storage's S3-compatible source for the media mirror                                             |
+| `SUPABASE_PROJECT_URL`                                                       | membership-renewal-notices   | the deployed project's URL (`https://<ref>.supabase.co`)                                                 |
+| `SUPABASE_SERVICE_ROLE_KEY`                                                  | membership-renewal-notices   | authenticates the workflow to `send-renewal-notices` — see `docs/adr/025-membership-renewal-workflow.md` |
+
+None of these are set yet — every one of these workflows will fail with a
+clear "not configured" error until a Super Admin adds them. That failure
+is deliberate (§10, disaster-recovery.md's "fails loudly rather than
+silently" standard) rather than the workflow silently doing nothing.
+
 ## Promoting a schema change
 
 1. Write a new migration file in `supabase/migrations/`, numbered after the

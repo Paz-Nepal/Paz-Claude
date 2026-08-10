@@ -11,11 +11,13 @@ import {
   renderContactMessageReceived,
   renderMembershipApplicationDecided,
   renderMembershipApplicationReceived,
+  renderMembershipRenewalNotice,
   renderReservationRequested,
   renderSessionRegistration,
   type ContactMessageReceivedData,
   type MembershipApplicationDecidedData,
   type MembershipApplicationReceivedData,
+  type MembershipRenewalNoticeData,
   type ReservationRequestedData,
   type SessionRegistrationData,
 } from "./email-templates.ts";
@@ -25,7 +27,8 @@ export type EmailTemplate =
   | { name: "membership-application-received"; data: MembershipApplicationReceivedData }
   | { name: "membership-application-decided"; data: MembershipApplicationDecidedData }
   | { name: "session-registration"; data: SessionRegistrationData }
-  | { name: "contact-message-received"; data: ContactMessageReceivedData };
+  | { name: "contact-message-received"; data: ContactMessageReceivedData }
+  | { name: "membership-renewal-notice"; data: MembershipRenewalNoticeData };
 
 function render(template: EmailTemplate) {
   switch (template.name) {
@@ -37,6 +40,8 @@ function render(template: EmailTemplate) {
       return renderMembershipApplicationDecided(template.data);
     case "contact-message-received":
       return renderContactMessageReceived(template.data);
+    case "membership-renewal-notice":
+      return renderMembershipRenewalNotice(template.data);
     case "session-registration":
       return renderSessionRegistration(template.data);
   }

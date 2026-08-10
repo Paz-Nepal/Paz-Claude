@@ -26,6 +26,19 @@ export function useMembershipTiers() {
   });
 }
 
+/** D-12: the public acceptance step -- the raw token is the entire credential. */
+export function useAcceptInvitation() {
+  return useMutation({
+    mutationFn: async (token: string) => {
+      const { memberNo } = await invokeEdgeFunction<{ memberNo: string }>(
+        "accept-membership-invitation",
+        { token },
+      );
+      return memberNo;
+    },
+  });
+}
+
 export function useMemberDirectory() {
   return useQuery({
     queryKey: ["member-directory"],
@@ -110,6 +123,29 @@ export function useDecideApplication() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["membership-applications"] });
       void queryClient.invalidateQueries({ queryKey: ["members"] });
+    },
+  });
+}
+
+/**
+ * D-12: invites a pending applicant instead of accepting/declining
+ * outright. `reissue: true` generates a fresh token for an application
+ * already sitting in `invited` (its original link expired) rather than
+ * inviting a `pending` one for the first time -- same Edge Function,
+ * different underlying RPC (see invite-membership-applicant/index.ts).
+ */
+export function useInviteApplication() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reissue }: { id: string; reissue?: boolean }) => {
+      const { invitationId, expiresAt } = await invokeEdgeFunction<{
+        invitationId: string;
+        expiresAt: string;
+      }>("invite-membership-applicant", { applicationId: id, reissue: reissue ?? false });
+      return { invitationId, expiresAt };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["membership-applications"] });
     },
   });
 }

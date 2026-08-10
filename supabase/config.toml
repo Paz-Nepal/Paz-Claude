@@ -102,3 +102,15 @@ verify_jwt = true
 # .github/workflows/membership-renewal-notices.yml.
 [functions.send-renewal-notices]
 verify_jwt = true
+
+# Staff-only in practice (authz.has_staff_permission('membership.application.decide')
+# checked inside invite_applicant/reissue_invitation), same layering as
+# every other staff Edge Function above.
+[functions.invite-membership-applicant]
+verify_jwt = true
+
+# Public: the raw token in the request body is the entire credential,
+# same as a password-reset link -- verify_jwt just needs the anon key,
+# which supabase-js attaches automatically for a signed-out caller.
+[functions.accept-membership-invitation]
+verify_jwt = true

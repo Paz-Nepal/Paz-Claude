@@ -114,6 +114,11 @@ const ApplyPage = React.lazy(() =>
 const DirectoryPage = React.lazy(() =>
   import("@/modules/membership/pages/directory-page").then((m) => ({ default: m.DirectoryPage })),
 );
+const AcceptInvitationPage = React.lazy(() =>
+  import("@/modules/membership/pages/accept-invitation-page").then((m) => ({
+    default: m.AcceptInvitationPage,
+  })),
+);
 const ApplicationsPage = React.lazy(() =>
   import("@/modules/membership/pages/applications-page").then((m) => ({
     default: m.ApplicationsPage,
@@ -248,6 +253,7 @@ export const router = createBrowserRouter([
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
       { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
+      { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
       { path: "programmes", element: withSuspense(<CalendarPage />) },
       { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
       {

@@ -295,3 +295,42 @@ export function renderMembershipRenewalNotice(data: MembershipRenewalNoticeData)
 
   return { subject, text, html };
 }
+
+export interface MembershipInvitationData {
+  fullName: string;
+  tierName: string;
+  acceptUrl: string;
+}
+
+/**
+ * The link is built by the calling Edge Function (invite-membership-
+ * applicant), not here — this file never reads an env var, matching
+ * every other template. acceptUrl carries the raw token as a query
+ * param; that token is the only place this email's contents doubles as
+ * a genuine credential, so it is never logged (send-email.ts only ever
+ * logs template name and recipient domain, never the rendered body).
+ */
+export function renderMembershipInvitation(data: MembershipInvitationData): EmailContent {
+  const subject = "You're invited to join PAZ";
+
+  const text = [
+    `Hello ${data.fullName},`,
+    "",
+    `Your application for ${data.tierName} membership has been reviewed, and we'd like to invite you to join.`,
+    "",
+    `Accept your invitation: ${data.acceptUrl}`,
+    "",
+    "This link is valid for 14 days and can only be used once. If it expires before you use it, write to us and we'll send a new one.",
+    "",
+    "— PAZ",
+  ].join("\n");
+
+  const html = wrapHtml(`
+    <p>Hello ${escapeHtml(data.fullName)},</p>
+    <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been reviewed, and we'd like to invite you to join.</p>
+    <p><a href="${escapeHtml(data.acceptUrl)}">Accept your invitation</a></p>
+    <p>This link is valid for 14 days and can only be used once. If it expires before you use it, write to us and we'll send a new one.</p>
+  `);
+
+  return { subject, text, html };
+}

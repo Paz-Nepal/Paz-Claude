@@ -82,6 +82,31 @@ jobs:
             > /tmp/database.generated.ts
           diff -u packages/types/src/database.generated.ts /tmp/database.generated.ts
 
+  edge-functions:
+    name: Edge Functions — format, lint, typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Formatting for supabase/functions is Prettier's job, same as every
+      # other .ts file in the repo (see the lint-typecheck-unit job's
+      # `pnpm format:check`) -- deliberately not also running `deno fmt`
+      # here, which has its own, sometimes-conflicting opinions.
+      - name: Lint
+        run: deno lint supabase/functions
+
+      - name: Typecheck
+        run: |
+          find supabase/functions -name '*.ts' -not -name '*.test.ts' | \
+            xargs deno check
+
+      - name: Unit tests (pure template/logic modules only — no network)
+        run: deno test --allow-none supabase/functions
+
   # Playwright critical-journey tests are added once there is a first real
   # journey to test (Authentication phase, next). Introducing an empty
   # Playwright job now would be placeholder architecture — the exact thing

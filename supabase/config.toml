@@ -64,3 +64,11 @@ file_size_limit = "50MiB"
 
 [edge_runtime]
 enabled = true
+
+# Public intake functions: called by anyone visiting the site, signed in
+# or not, so verify_jwt only needs to see *a* valid JWT -- the anon key
+# qualifies. authz/RLS, not this flag, is what limits what the call can
+# actually do (the function forwards the caller's own Authorization
+# header into the RPC it wraps -- see supabase/functions/request-reservation).
+[functions.request-reservation]
+verify_jwt = true

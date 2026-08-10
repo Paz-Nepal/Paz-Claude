@@ -8,15 +8,16 @@ the Build Readiness Review's register and get their own file the phase they
 land in code, so a file existing here always means "this is built," not
 merely "this was decided."
 
-| ADR                            | Title                                                                 | Status                                                            |
-| ------------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 001–014                        | See Architecture Blueprint §14                                        | Foundational, all phases                                          |
-| [015](./015-person-merge.md)   | Duplicate person handling & merge process                             | **Implemented** (`0003_identity.sql`)                             |
-| 016                            | Anonymous visitors are not people                                     | **Implemented** (identity schema design; no shadow records exist) |
-| [017](./017-erasure.md)        | Account deletion & erasure specification                              | **Implemented** (`0003_identity.sql`, `docs/policies/erasure.md`) |
-| 018                            | Former members                                                        | Pending — lands with the membership migration                     |
-| 019                            | Relationship history                                                  | Pending — lands with the CRM migration                            |
-| 020–029                        | Content, membership, CRM decisions                                    | Pending — land with their respective migrations                   |
-| [032](./032-api-versioning.md) | API surface versioning                                                | **Implemented** (`api` schema convention, `0005_api_schema.sql`)  |
-| 033                            | No global frontend state library; Zustand pre-approved if ever needed | **Implemented** (`app/providers.tsx`)                             |
-| 034                            | Partial rebuild of the legacy Horizons prototype                      | **Implemented** (this repository)                                 |
+| ADR                                          | Title                                                                 | Status                                                                                                                                        |
+| -------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001–010, 012–014                             | See Architecture Blueprint §14                                        | Foundational, all phases                                                                                                                      |
+| [011](./011-transactional-email-provider.md) | Single transactional email provider behind internal utility           | **Implemented** (`send-email.ts`) — only the reservation flow is wired in so far, see ADR text                                                |
+| [015](./015-person-merge.md)                 | Duplicate person handling & merge process                             | **Implemented** (`0003_identity.sql`)                                                                                                         |
+| 016                                          | Anonymous visitors are not people                                     | **Implemented** (identity schema design; no shadow records exist)                                                                             |
+| [017](./017-erasure.md)                      | Account deletion & erasure specification                              | **Implemented** (`0003_identity.sql`, `docs/policies/erasure.md`)                                                                             |
+| 018                                          | Former members                                                        | **Implemented** — status model landed with `0010_membership.sql`                                                                              |
+| 019                                          | Relationship history                                                  | **Implemented** — `superseded_by` landed with `0020_crm.sql`                                                                                  |
+| 020–029                                      | Content, membership, CRM decisions                                    | **Implemented** — landed with their respective migrations (0008 publishing, 0010 membership, 0020 crm); no individual ADR files split out yet |
+| [032](./032-api-versioning.md)               | API surface versioning                                                | **Implemented** (`api` schema convention, `0005_api_schema.sql`)                                                                              |
+| 033                                          | No global frontend state library; Zustand pre-approved if ever needed | **Implemented** (`app/providers.tsx`)                                                                                                         |
+| 034                                          | Partial rebuild of the legacy Horizons prototype                      | **Implemented** (this repository)                                                                                                             |

@@ -33,6 +33,32 @@ pnpm dev                           # apps/web against the local instance
 `apps/web/.env.example` lists the local URL/anon key `supabase start` prints
 on boot — copy it to `.env.local`.
 
+## Edge Functions & secrets
+
+Edge Functions (`supabase/functions/`) hold provider credentials — the
+outbound-email provider today (ADR-11) — that must never reach the
+frontend bundle or `apps/web/.env*`. They're configured separately:
+
+```bash
+cp supabase/functions/.env.example supabase/functions/.env   # local only, gitignored
+supabase functions serve                                      # runs functions against the local DB, reading that .env
+```
+
+Staging and production secrets are pushed with the Supabase CLI, never
+typed into a dashboard field and never committed:
+
+```bash
+supabase secrets set --env-file supabase/functions/.env.staging --project-ref <staging-ref>
+supabase secrets set --env-file supabase/functions/.env.production --project-ref <production-ref>
+```
+
+Those per-environment `.env.staging` / `.env.production` files live only
+on the machine (or CI secret store) that runs the `secrets set` command —
+`.gitignore`'s `.env.*` rule keeps every variant but `.env.example` out of
+the repository. Rotate a key (provider compromise, staff departure with
+access) by regenerating it with the provider and re-running `secrets set`;
+nothing in the function code changes.
+
 ## Promoting a schema change
 
 1. Write a new migration file in `supabase/migrations/`, numbered after the

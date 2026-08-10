@@ -49,6 +49,10 @@ psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql   # optional: fake local 
 pnpm dev                                                 # http://127.0.0.1:3000
 ```
 
+Edge Functions (`supabase/functions/`) send outbound email and need their
+own local secrets — see `docs/runbooks/environments.md#edge-functions--secrets`
+before working on anything that sends a notification.
+
 Verify everything before you start changing anything:
 
 ```bash

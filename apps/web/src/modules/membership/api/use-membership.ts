@@ -208,3 +208,69 @@ export function useRecordPayment(memberId: string | undefined) {
     },
   });
 }
+
+/**
+ * api.my_membership (0042) isn't in packages/types/src/database.generated.ts
+ * -- it's new this session and `pnpm db:types` was never run against a
+ * live database (same reason every other 0042+ object is hand-typed
+ * here instead). Explicitly self-scoped by person_id, so this returns
+ * at most one row even for a staff caller who also happens to be a
+ * member -- see the view's own comment for why that matters.
+ */
+export interface MyMembership {
+  id: string;
+  member_no: string;
+  tier_key: string;
+  tier_name: string;
+  status: Member["status"];
+  joined_on: string;
+  card_issued_at: string | null;
+}
+
+export function useMyMembership() {
+  return useQuery({
+    queryKey: ["my-membership"],
+    queryFn: async () => {
+      const { membership } = await invokeEdgeFunction<{ membership: MyMembership | null }>(
+        "get-my-membership",
+        {},
+      );
+      return membership;
+    },
+  });
+}
+
+export interface IssuedCard {
+  memberNo: string;
+  token: string;
+  issuedAt: string;
+}
+
+export function useIssueCard() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      return invokeEdgeFunction<IssuedCard>("issue-member-card", {});
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["my-membership"] });
+    },
+  });
+}
+
+export interface VerifiedCard {
+  found: boolean;
+  memberNo?: string;
+  memberName?: string;
+  tierName?: string;
+  status?: string;
+  valid?: boolean;
+}
+
+export function useVerifyCard() {
+  return useMutation({
+    mutationFn: async (token: string) => {
+      return invokeEdgeFunction<VerifiedCard>("verify-member-card", { token });
+    },
+  });
+}

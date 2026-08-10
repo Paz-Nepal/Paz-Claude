@@ -114,3 +114,19 @@ verify_jwt = true
 # which supabase-js attaches automatically for a signed-out caller.
 [functions.accept-membership-invitation]
 verify_jwt = true
+
+# Self-service: any signed-in person may call this to read their own
+# membership record (api.my_membership, 0042, is itself self-scoped).
+[functions.get-my-membership]
+verify_jwt = true
+
+# Self-service: any signed-in member may call this for their own card;
+# api.issue_my_card() itself scopes the write to the caller's own row.
+[functions.issue-member-card]
+verify_jwt = true
+
+# Staff-only in practice (membership.members' members_select_staff RLS
+# policy, checked inside api.verify_member_card itself, same layering as
+# invite-membership-applicant above).
+[functions.verify-member-card]
+verify_jwt = true

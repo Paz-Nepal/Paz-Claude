@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { Button, Field, Input, StatePanel, Textarea } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { readCommunicationPreferences, useMyProfile, useUpdateMyProfile } from "../api/use-profile";
@@ -53,6 +54,9 @@ export function AccountPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">My account</h1>
         <p className="text-muted-foreground">{profile.data?.full_name}</p>
+        <Link to="/membership/card" className="text-sm hover:underline">
+          My membership card
+        </Link>
       </header>
 
       <form

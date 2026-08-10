@@ -138,6 +138,16 @@ const MemberDetailPage = React.lazy(() =>
     default: m.MemberDetailPage,
   })),
 );
+const MemberCardPage = React.lazy(() =>
+  import("@/modules/membership/pages/member-card-page").then((m) => ({
+    default: m.MemberCardPage,
+  })),
+);
+const VerifyCardPage = React.lazy(() =>
+  import("@/modules/membership/pages/verify-card-page").then((m) => ({
+    default: m.VerifyCardPage,
+  })),
+);
 const CalendarPage = React.lazy(() =>
   import("@/modules/programs/pages/calendar-page").then((m) => ({ default: m.CalendarPage })),
 );
@@ -261,6 +271,11 @@ export const router = createBrowserRouter([
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
       { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
       { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
+      {
+        path: "membership/card",
+        element: withSuspense(<ProtectedRoute requireMfa={false} />),
+        children: [{ index: true, element: withSuspense(<MemberCardPage />) }],
+      },
       { path: "programmes", element: withSuspense(<CalendarPage />) },
       { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
       {
@@ -317,6 +332,7 @@ export const router = createBrowserRouter([
             element: withSuspense(<ProtectedRoute permission="membership.member.read" />),
             children: [
               { index: true, element: withSuspense(<MembersPage />) },
+              { path: "verify-card", element: withSuspense(<VerifyCardPage />) },
               { path: ":id", element: withSuspense(<MemberDetailPage />) },
             ],
           },

@@ -11,6 +11,24 @@ Last compiled: 2026-08-13, at commit `7527789` on `claude/paz-os-work-cayqnz`
 card QR code, and the notes half of T-059 — see each item's status
 below for what moved and why).
 
+**Update, same day, after merge into `main` (commit `b593cfe`):** this
+branch was merged into the session that had live Supabase project access.
+Section 1's central premise — "nothing here can be built further without
+a running Supabase project," "never regenerated," "never executed" — no
+longer holds for most of it: `pnpm db:types` has now been run against the
+live project (the hand-written Edge Function response types this note
+told you to replace, e.g. in ADR-26/27, can now be swapped for real
+generated ones), and every migration/pgTAP policy from this branch has
+been applied and, where reachable without Docker, exercised live rather
+than only hand-verified — see the merge commit message for the two real
+bugs that surfaced only once migrations 0048/0049 actually ran (`create
+or replace function` silently creating a second overload instead of
+replacing in place, twice). The pgTAP suite itself still hasn't executed
+anywhere except CI (no local Docker in the merging session either) — that
+part of section 1 stands. T-006/T-007/T-021 (plan tier, staging/prod
+projects, image-transform strategy) and the ADR-10/ADR-25 secrets are
+still genuinely open; nothing below was touched by the merge.
+
 ---
 
 ## 1. Blocked on live infrastructure access

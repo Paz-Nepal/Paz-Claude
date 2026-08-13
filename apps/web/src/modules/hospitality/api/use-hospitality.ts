@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type PublicMenuRow = Database["api"]["Views"]["public_menu"]["Row"];
 export type ServicePeriod = Database["api"]["Views"]["service_periods"]["Row"];
@@ -61,21 +62,22 @@ export interface RequestReservationInput {
 export function useRequestReservation() {
   return useMutation({
     mutationFn: async (input: RequestReservationInput) => {
-      const { data, error } = await api().rpc(
-        "request_reservation",
-        asArgs<Database["api"]["Functions"]["request_reservation"]["Args"]>({
-          p_full_name: input.fullName,
-          p_email: input.email,
-          p_phone: input.phone,
-          p_party_size: input.partySize,
-          p_starts_at: input.startsAt,
-          p_duration_minutes: input.durationMinutes,
-          p_notes: input.notes,
-          p_occasion: input.occasion,
-        }),
-      );
-      if (error) throw toAppError(error);
-      return data; // the reservation code
+      // Routed through the request-reservation Edge Function rather than
+      // the RPC directly — it does the same database write and then
+      // sends the "we've received your request" email (Architecture
+      // Blueprint §8, two-lane design: PostgREST for the write, Edge
+      // Functions for the side effect on top of it).
+      const { code } = await invokeEdgeFunction<{ code: string }>("request-reservation", {
+        fullName: input.fullName,
+        email: input.email,
+        phone: input.phone,
+        partySize: input.partySize,
+        startsAt: input.startsAt,
+        durationMinutes: input.durationMinutes,
+        notes: input.notes,
+        occasion: input.occasion,
+      });
+      return code;
     },
   });
 }

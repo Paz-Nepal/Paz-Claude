@@ -1,3 +1,9 @@
+/* Shared design tokens (colors, radius): apps/web/src/styles/globals.css and
+   the component workshop (packages/ui/.ladle) both import
+   @paz/config/design-tokens.css so a token change can never drift between
+   what ships and what the workshop shows. */
+@import "@paz/config/design-tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,30 +33,7 @@
     U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Tokens carried forward unchanged from the legacy prototype
-   (apps/web/src/index.css) — the calm, editorial palette was already right. */
 @layer base {
-  :root {
-    --background: 40 30% 98%;
-    --foreground: 30 8% 13%;
-    --primary: 30 8% 13%;
-    --primary-foreground: 40 30% 98%;
-    --secondary: 36 18% 93%;
-    --secondary-foreground: 30 8% 13%;
-    --muted: 36 16% 92%;
-    --muted-foreground: 30 6% 42%;
-    --accent: 36 18% 93%;
-    --accent-foreground: 30 8% 13%;
-    --destructive: 0 60% 42%;
-    --destructive-foreground: 40 30% 98%;
-    --border: 34 14% 87%;
-    --input: 34 14% 84%;
-    --ring: 12 52% 42%;
-    --radius: 0.125rem;
-    --brand: 12 52% 42%;
-    --brand-soft: 12 40% 55%;
-  }
-
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }

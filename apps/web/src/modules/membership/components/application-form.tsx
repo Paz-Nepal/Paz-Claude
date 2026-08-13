@@ -15,7 +15,15 @@ export function ApplicationForm() {
     formState: { errors },
   } = useForm<ApplicationInput>({
     resolver: zodResolver(applicationSchema),
-    defaultValues: { fullName: "", email: "", phone: "", tierKey: "", motivation: "" },
+    defaultValues: {
+      fullName: "",
+      email: "",
+      phone: "",
+      tierKey: "",
+      motivation: "",
+      dispatchOptIn: false,
+      programsOptIn: false,
+    },
   });
 
   const onSubmit = handleSubmit((values) => {
@@ -25,6 +33,10 @@ export function ApplicationForm() {
       phone: values.phone || null,
       tierKey: values.tierKey,
       motivation: values.motivation || null,
+      communicationPreferences: {
+        dispatch: values.dispatchOptIn,
+        programs: values.programsOptIn,
+      },
     });
   });
 
@@ -91,6 +103,17 @@ export function ApplicationForm() {
       >
         <Textarea id="motivation" {...register("motivation")} />
       </Field>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-sm font-medium">Stay in touch</legend>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" {...register("dispatchOptIn")} />
+          Send me the Dispatch by email
+        </label>
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" {...register("programsOptIn")} />
+          Send me programme announcements by email
+        </label>
+      </fieldset>
       {submit.isError && (
         <p role="alert" className="text-destructive text-sm">
           {toAppError(submit.error).message}

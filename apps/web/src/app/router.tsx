@@ -18,6 +18,9 @@ const SignInPage = React.lazy(() =>
 const MfaEnrollPage = React.lazy(() =>
   import("@/modules/auth-core/pages/mfa-enroll-page").then((m) => ({ default: m.MfaEnrollPage })),
 );
+const AccountPage = React.lazy(() =>
+  import("@/modules/auth-core/pages/account-page").then((m) => ({ default: m.AccountPage })),
+);
 const ProtectedRoute = React.lazy(() =>
   import("@/modules/auth-core/components/protected-route").then((m) => ({
     default: m.ProtectedRoute,
@@ -50,6 +53,9 @@ const ArticlePage = React.lazy(() =>
 );
 const CmsPage = React.lazy(() =>
   import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
+);
+const SearchPage = React.lazy(() =>
+  import("@/modules/site/pages/search-page").then((m) => ({ default: m.SearchPage })),
 );
 const PressPage = React.lazy(() =>
   import("@/modules/site/pages/press-page").then((m) => ({ default: m.PressPage })),
@@ -114,6 +120,11 @@ const ApplyPage = React.lazy(() =>
 const DirectoryPage = React.lazy(() =>
   import("@/modules/membership/pages/directory-page").then((m) => ({ default: m.DirectoryPage })),
 );
+const AcceptInvitationPage = React.lazy(() =>
+  import("@/modules/membership/pages/accept-invitation-page").then((m) => ({
+    default: m.AcceptInvitationPage,
+  })),
+);
 const ApplicationsPage = React.lazy(() =>
   import("@/modules/membership/pages/applications-page").then((m) => ({
     default: m.ApplicationsPage,
@@ -125,6 +136,16 @@ const MembersPage = React.lazy(() =>
 const MemberDetailPage = React.lazy(() =>
   import("@/modules/membership/pages/member-detail-page").then((m) => ({
     default: m.MemberDetailPage,
+  })),
+);
+const MemberCardPage = React.lazy(() =>
+  import("@/modules/membership/pages/member-card-page").then((m) => ({
+    default: m.MemberCardPage,
+  })),
+);
+const VerifyCardPage = React.lazy(() =>
+  import("@/modules/membership/pages/verify-card-page").then((m) => ({
+    default: m.VerifyCardPage,
   })),
 );
 const CalendarPage = React.lazy(() =>
@@ -201,6 +222,9 @@ const ResolveNotFoundPage = React.lazy(() =>
     default: m.ResolveNotFoundPage,
   })),
 );
+const ContactPage = React.lazy(() =>
+  import("@/modules/site/pages/contact-page").then((m) => ({ default: m.ContactPage })),
+);
 const PigeonSubmissionsPage = React.lazy(() =>
   import("@/modules/publishing/pages/pigeon-submissions-page").then((m) => ({
     default: m.PigeonSubmissionsPage,
@@ -236,6 +260,8 @@ export const router = createBrowserRouter([
       { path: "menu", element: withSuspense(<MenuPage />) },
       { path: "reservations", element: withSuspense(<ReservationPage />) },
       { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
+      { path: "contact", element: withSuspense(<ContactPage />) },
+      { path: "search", element: withSuspense(<SearchPage />) },
       // The six organs. Four have a dedicated hub component that
       // aggregates related content (Press: the five series; House: Visit;
       // Hearth: Menu + Reservations; The Record: the deposit index); Guild
@@ -249,12 +275,23 @@ export const router = createBrowserRouter([
       { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
       { path: "membership/apply", element: withSuspense(<ApplyPage />) },
       { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
+      { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
+      {
+        path: "membership/card",
+        element: withSuspense(<ProtectedRoute requireMfa={false} />),
+        children: [{ index: true, element: withSuspense(<MemberCardPage />) }],
+      },
       { path: "programmes", element: withSuspense(<CalendarPage />) },
       { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
       {
         path: "my-registrations",
         element: withSuspense(<ProtectedRoute requireMfa={false} />),
         children: [{ index: true, element: withSuspense(<MyRegistrationsPage />) }],
+      },
+      {
+        path: "account",
+        element: withSuspense(<ProtectedRoute requireMfa={false} />),
+        children: [{ index: true, element: withSuspense(<AccountPage />) }],
       },
       { path: "sign-in", element: withSuspense(<SignInPage />) },
       // CMS-controlled top-level pages (/about, /visit, …). Static routes
@@ -305,6 +342,7 @@ export const router = createBrowserRouter([
             element: withSuspense(<ProtectedRoute permission="membership.member.read" />),
             children: [
               { index: true, element: withSuspense(<MembersPage />) },
+              { path: "verify-card", element: withSuspense(<VerifyCardPage />) },
               { path: ":id", element: withSuspense(<MemberDetailPage />) },
             ],
           },

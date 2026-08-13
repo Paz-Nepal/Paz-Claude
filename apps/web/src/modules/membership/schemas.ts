@@ -6,6 +6,8 @@ export const applicationSchema = z.object({
   phone: z.string().trim(),
   tierKey: z.string().min(1, "Choose a tier"),
   motivation: z.string().trim(),
+  dispatchOptIn: z.boolean(),
+  programsOptIn: z.boolean(),
 });
 
 export type ApplicationInput = z.infer<typeof applicationSchema>;

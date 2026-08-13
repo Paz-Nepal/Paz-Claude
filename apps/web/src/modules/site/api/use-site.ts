@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type PublishedItem = Database["api"]["Views"]["published_items"]["Row"];
 export type PublishedItemDetail =
@@ -65,6 +66,51 @@ export function usePublishedItem(type: PublicItemType, slug: string | undefined)
 
 export function publicMediaUrl(storagePath: string): string {
   return supabase.storage.from("media").getPublicUrl(storagePath).data.publicUrl;
+}
+
+/**
+ * Where a published item of a given type actually lives. `event` has no
+ * public route yet (api.get_event exists but no page consumes it) and
+ * `page` is the CMS catch-all at the root — both handled by callers via
+ * the null/`/${slug}` cases rather than guessed here.
+ */
+export function publishedItemHref(item: Pick<PublishedItem, "type" | "slug">): string | null {
+  if (!item.slug) return null;
+  switch (item.type) {
+    case "article":
+      return `/journal/${item.slug}`;
+    case "paper":
+      return `/papers/${item.slug}`;
+    case "brief":
+      return `/brief/${item.slug}`;
+    case "dispatch":
+      return `/dispatch/${item.slug}`;
+    case "annual":
+      return `/annual/${item.slug}`;
+    case "pigeon_post":
+      return `/pigeon-post/${item.slug}`;
+    case "page":
+      return `/${item.slug}`;
+    default:
+      return null;
+  }
+}
+
+export function useSearchPublished(q: string) {
+  const query = q.trim();
+  return useQuery({
+    queryKey: ["search-published", query],
+    enabled: query.length > 0,
+    staleTime: 30_000,
+    queryFn: async () => {
+      const { data, error } = await api().rpc(
+        "search_published",
+        asArgs<Database["api"]["Functions"]["search_published"]["Args"]>({ q: query }),
+      );
+      if (error) throw toAppError(error);
+      return data;
+    },
+  });
 }
 
 export type PaperDetail = Database["api"]["Functions"]["get_paper"]["Returns"][number];
@@ -141,6 +187,29 @@ export function useRedirect(path: string) {
       const { data, error } = await api().rpc("get_redirect", { p_path: path });
       if (error) throw toAppError(error);
       return data; // string | null
+    },
+  });
+}
+
+export interface SubmitContactMessageInput {
+  fullName: string;
+  email: string;
+  message: string;
+}
+
+/**
+ * Routed through the submit-contact-message Edge Function (not a direct
+ * RPC, unlike send_a_pigeon above) because this flow also notifies staff
+ * by email -- api.submit_contact_message alone only writes the row.
+ */
+export function useSubmitContactMessage() {
+  return useMutation({
+    mutationFn: async (input: SubmitContactMessageInput) => {
+      const { messageId } = await invokeEdgeFunction<{ messageId: string }>(
+        "submit-contact-message",
+        { fullName: input.fullName, email: input.email, message: input.message },
+      );
+      return messageId;
     },
   });
 }

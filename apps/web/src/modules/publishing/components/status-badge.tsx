@@ -4,6 +4,7 @@ import type { ItemStatus } from "../api/use-publishing";
 const LABEL: Record<ItemStatus, string> = {
   draft: "Draft",
   in_review: "In review",
+  scheduled: "Scheduled",
   published: "Published",
   archived: "Archived",
 };
@@ -11,6 +12,7 @@ const LABEL: Record<ItemStatus, string> = {
 const VARIANT: Record<ItemStatus, "outline" | "secondary" | "default"> = {
   draft: "outline",
   in_review: "secondary",
+  scheduled: "secondary",
   published: "default",
   archived: "outline",
 };

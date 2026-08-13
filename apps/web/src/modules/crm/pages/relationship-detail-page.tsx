@@ -9,6 +9,7 @@ import {
   useLogInteraction,
   useRelationships,
 } from "../api/use-crm";
+import { PersonTimeline } from "../components/person-timeline";
 
 function LogInteractionForm({ relationshipId }: { relationshipId: string }) {
   const [summary, setSummary] = React.useState("");
@@ -117,6 +118,17 @@ export function RelationshipDetailPage() {
           ))}
         </ul>
       </div>
+
+      {relationship.person_id && (
+        <div className="flex flex-col gap-3">
+          <span className="text-sm font-medium">Full timeline</span>
+          <p className="text-muted-foreground text-xs">
+            Every recorded touchpoint with this person across membership, programmes, hospitality,
+            and other relationships — not just this one (D-14).
+          </p>
+          <PersonTimeline personId={relationship.person_id} />
+        </div>
+      )}
     </div>
   );
 }

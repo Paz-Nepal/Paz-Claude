@@ -64,3 +64,99 @@ file_size_limit = "50MiB"
 
 [edge_runtime]
 enabled = true
+
+# Public intake functions: called by anyone visiting the site, signed in
+# or not, so verify_jwt only needs to see *a* valid JWT -- the anon key
+# qualifies. authz/RLS, not this flag, is what limits what the call can
+# actually do (the function forwards the caller's own Authorization
+# header into the RPC it wraps -- see supabase/functions/request-reservation).
+[functions.request-reservation]
+verify_jwt = true
+
+[functions.submit-membership-application]
+verify_jwt = true
+
+[functions.register-for-session]
+verify_jwt = true
+
+# Staff-only in practice (authz.has_staff_permission checked inside the RPC
+# it wraps), but verify_jwt here still only means "a valid JWT" -- the
+# anon key would pass this flag and then fail the permission check inside
+# membership.decide_application, same layering as the public functions.
+[functions.decide-membership-application]
+verify_jwt = true
+
+# Staff-only in practice (media_objects_insert_staff / publishing.media.create
+# gate the storage write and the register_media RPC respectively), same
+# verify_jwt-is-not-the-permission-check layering as above.
+[functions.ingest-media]
+verify_jwt = true
+
+[functions.submit-contact-message]
+verify_jwt = true
+
+# Not a public-facing function at all -- verify_jwt only proves *a* valid
+# JWT was presented (any anon/authenticated token would pass); the
+# function body itself additionally requires the bearer token to equal
+# SUPABASE_SERVICE_ROLE_KEY exactly. Called only by the scheduled job in
+# .github/workflows/membership-renewal-notices.yml.
+[functions.send-renewal-notices]
+verify_jwt = true
+
+# Staff-only in practice (authz.has_staff_permission('membership.application.decide')
+# checked inside invite_applicant/reissue_invitation), same layering as
+# every other staff Edge Function above.
+[functions.invite-membership-applicant]
+verify_jwt = true
+
+# Public: the raw token in the request body is the entire credential,
+# same as a password-reset link -- verify_jwt just needs the anon key,
+# which supabase-js attaches automatically for a signed-out caller.
+[functions.accept-membership-invitation]
+verify_jwt = true
+
+# Self-service: any signed-in person may call this to read their own
+# membership record (api.my_membership, 0042, is itself self-scoped).
+[functions.get-my-membership]
+verify_jwt = true
+
+# Self-service: any signed-in member may call this for their own card;
+# api.issue_my_card() itself scopes the write to the caller's own row.
+[functions.issue-member-card]
+verify_jwt = true
+
+# Staff-only in practice (membership.members' members_select_staff RLS
+# policy, checked inside api.verify_member_card itself, same layering as
+# invite-membership-applicant above).
+[functions.verify-member-card]
+verify_jwt = true
+
+# Staff-only in practice: every category api.person_timeline unions is
+# gated by that table's own staff-only RLS policy.
+[functions.get-person-timeline]
+verify_jwt = true
+
+# Staff-only in practice: item_revisions_select_own/_staff (0008).
+[functions.list-item-revisions]
+verify_jwt = true
+
+[functions.get-item-revision]
+verify_jwt = true
+
+# Staff-only in practice: both the read and the write it performs go
+# through the item/revision tables' own existing RLS policies.
+[functions.restore-item-revision]
+verify_jwt = true
+
+# Not a public-facing function at all -- verify_jwt only proves *a* valid
+# JWT was presented (any anon/authenticated token would pass); the
+# function body itself additionally requires the bearer token to equal
+# SUPABASE_SERVICE_ROLE_KEY exactly. Called only by the scheduled job in
+# .github/workflows/publish-scheduled-items.yml.
+[functions.publish-scheduled]
+verify_jwt = true
+
+# Staff-only in practice: publishing.transition_item's own permission
+# check (item.publish) and human-actor requirement.
+[functions.schedule-item]
+verify_jwt = true

@@ -7,6 +7,7 @@
     "tsconfig.base.json",
     "eslint.config.mjs",
     "tailwind.preset.js",
+    "design-tokens.css",
     ".prettierrc.json"
   ],
   "dependencies": {

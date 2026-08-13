@@ -10,6 +10,7 @@ const STATUS_FILTERS: Array<{ value: ItemStatus | "all"; label: string }> = [
   { value: "all", label: "All" },
   { value: "draft", label: "Drafts" },
   { value: "in_review", label: "In review" },
+  { value: "scheduled", label: "Scheduled" },
   { value: "published", label: "Published" },
   { value: "archived", label: "Archived" },
 ];
@@ -94,6 +95,11 @@ export function DeskPage() {
                     </td>
                     <td className="py-3 pr-4">
                       {item.status && <StatusBadge status={item.status} />}
+                      {item.status === "scheduled" && item.scheduled_for && (
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          Publishes {formatKathmanduDate(item.scheduled_for)}
+                        </p>
+                      )}
                     </td>
                     <td className="text-muted-foreground py-3 pr-4">{item.author_name}</td>
                     <td className="text-muted-foreground py-3">

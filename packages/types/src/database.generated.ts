@@ -47,6 +47,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      contact_messages: {
+        Row: {
+          email: string;
+          full_name: string;
+          id: string;
+          message: string;
+          reviewed: boolean;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          submitted_at: string;
+        };
+        Insert: {
+          email: string;
+          full_name: string;
+          id?: string;
+          message: string;
+          reviewed?: boolean;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          submitted_at?: string;
+        };
+        Update: {
+          email?: string;
+          full_name?: string;
+          id?: string;
+          message?: string;
+          reviewed?: boolean;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          submitted_at?: string;
+        };
+        Relationships: [];
+      };
       settings: {
         Row: {
           description: string | null;
@@ -76,7 +109,16 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      log_system_event: {
+        Args: {
+          p_action: string;
+          p_context: Json;
+          p_entity_id: string;
+          p_entity_schema: string;
+          p_entity_table: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       [_ in never]: never;
@@ -285,12 +327,43 @@ export type Database = {
           },
         ];
       };
+      contact_messages: {
+        Row: {
+          email: string | null;
+          full_name: string | null;
+          id: string | null;
+          message: string | null;
+          reviewed: boolean | null;
+          reviewed_at: string | null;
+          submitted_at: string | null;
+        };
+        Insert: {
+          email?: string | null;
+          full_name?: string | null;
+          id?: string | null;
+          message?: string | null;
+          reviewed?: boolean | null;
+          reviewed_at?: string | null;
+          submitted_at?: string | null;
+        };
+        Update: {
+          email?: string | null;
+          full_name?: string | null;
+          id?: string | null;
+          message?: string | null;
+          reviewed?: boolean | null;
+          reviewed_at?: string | null;
+          submitted_at?: string | null;
+        };
+        Relationships: [];
+      };
       desk_items: {
         Row: {
           author: string | null;
           author_name: string | null;
           id: string | null;
           published_at: string | null;
+          scheduled_for: string | null;
           slug: string | null;
           status: Database["publishing"]["Enums"]["item_status"] | null;
           title: string | null;
@@ -302,6 +375,7 @@ export type Database = {
           author_name?: never;
           id?: string | null;
           published_at?: string | null;
+          scheduled_for?: string | null;
           slug?: string | null;
           status?: Database["publishing"]["Enums"]["item_status"] | null;
           title?: string | null;
@@ -313,6 +387,7 @@ export type Database = {
           author_name?: never;
           id?: string | null;
           published_at?: string | null;
+          scheduled_for?: string | null;
           slug?: string | null;
           status?: Database["publishing"]["Enums"]["item_status"] | null;
           title?: string | null;
@@ -560,6 +635,26 @@ export type Database = {
           name?: string | null;
         };
         Relationships: [];
+      };
+      my_membership: {
+        Row: {
+          card_issued_at: string | null;
+          id: string | null;
+          joined_on: string | null;
+          member_no: string | null;
+          status: Database["membership"]["Enums"]["member_status"] | null;
+          tier_key: string | null;
+          tier_name: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "membership_tiers";
+            referencedColumns: ["key"];
+          },
+        ];
       };
       my_profile: {
         Row: {
@@ -996,6 +1091,10 @@ export type Database = {
       };
     };
     Functions: {
+      accept_membership_invitation: {
+        Args: { p_token: string };
+        Returns: string;
+      };
       acknowledge_pledge: { Args: { p_id: string }; Returns: undefined };
       cancel_my_registration: {
         Args: { p_registration: string };
@@ -1124,6 +1223,20 @@ export type Database = {
           updated_at: string;
         }[];
       };
+      get_item_revision: {
+        Args: { p_id: string };
+        Returns: {
+          body: Json;
+          body_schema_version: number;
+          created_at: string;
+          created_by_name: string;
+          id: string;
+          item_id: string;
+          kind: string;
+          revision_no: number;
+          title: string;
+        }[];
+      };
       get_paper: {
         Args: { p_slug: string };
         Returns: {
@@ -1191,6 +1304,34 @@ export type Database = {
           metric_count: number;
         }[];
       };
+      invite_membership_application: {
+        Args: { p_application: string };
+        Returns: {
+          expires_at: string;
+          invitation_id: string;
+          token: string;
+        }[];
+      };
+      issue_my_card: {
+        Args: never;
+        Returns: {
+          issued_at: string;
+          member_no: string;
+          token: string;
+        }[];
+      };
+      item_revisions: {
+        Args: { p_item: string };
+        Returns: {
+          created_at: string;
+          created_by_name: string;
+          id: string;
+          kind: string;
+          notes: string;
+          revision_no: number;
+          title: string;
+        }[];
+      };
       log_interaction: {
         Args: {
           p_occurred_at?: string;
@@ -1199,12 +1340,30 @@ export type Database = {
         };
         Returns: string;
       };
+      log_system_event: {
+        Args: {
+          p_action: string;
+          p_context: Json;
+          p_entity_id: string;
+          p_entity_schema: string;
+          p_entity_table: string;
+        };
+        Returns: undefined;
+      };
       mark_attendance: {
         Args: { p_attended: boolean; p_registration: string };
         Returns: Database["programs"]["Enums"]["registration_status"];
       };
+      mark_contact_message_reviewed: {
+        Args: { p_id: string };
+        Returns: undefined;
+      };
       mark_pigeon_submission_reviewed: {
         Args: { p_id: string };
+        Returns: undefined;
+      };
+      mark_renewal_notice_sent: {
+        Args: { p_notice_kind: string; p_term: string };
         Returns: undefined;
       };
       member_terms: {
@@ -1225,6 +1384,14 @@ export type Database = {
         }[];
       };
       my_permissions: { Args: never; Returns: string[] };
+      person_timeline: {
+        Args: { p_person: string };
+        Returns: {
+          kind: string;
+          occurred_at: string;
+          summary: string;
+        }[];
+      };
       program_fill: {
         Args: never;
         Returns: {
@@ -1234,6 +1401,14 @@ export type Database = {
           registered_count: number;
           session_id: string;
           starts_at: string;
+        }[];
+      };
+      publish_scheduled_items: {
+        Args: never;
+        Returns: {
+          item_id: string;
+          slug: string;
+          title: string;
         }[];
       };
       record_payment: {
@@ -1265,6 +1440,14 @@ export type Database = {
         };
         Returns: string;
       };
+      reissue_membership_invitation: {
+        Args: { p_application: string };
+        Returns: {
+          expires_at: string;
+          invitation_id: string;
+          token: string;
+        }[];
+      };
       request_reservation: {
         Args: {
           p_duration_minutes: number;
@@ -1288,6 +1471,10 @@ export type Database = {
           requested: number;
           seated: number;
         }[];
+      };
+      restore_item_revision: {
+        Args: { p_revision: string };
+        Returns: undefined;
       };
       save_annual_details: {
         Args: {
@@ -1491,19 +1678,49 @@ export type Database = {
         Returns: Database["hospitality"]["Enums"]["reservation_status"];
       };
       site_info: { Args: never; Returns: Json };
-      submit_membership_application: {
-        Args: {
-          p_email: string;
-          p_full_name: string;
-          p_motivation: string;
-          p_phone: string;
-          p_tier_key: string;
-        };
+      submit_contact_message: {
+        Args: { p_email: string; p_full_name: string; p_message: string };
         Returns: string;
+      };
+      submit_membership_application:
+        | {
+            Args: {
+              p_email: string;
+              p_full_name: string;
+              p_motivation: string;
+              p_phone: string;
+              p_tier_key: string;
+            };
+            Returns: string;
+          }
+        | {
+            Args: {
+              p_communication_preferences?: Json;
+              p_email: string;
+              p_full_name: string;
+              p_motivation: string;
+              p_phone: string;
+              p_tier_key: string;
+            };
+            Returns: string;
+          };
+      terms_due_for_renewal_notice: {
+        Args: never;
+        Returns: {
+          email: string;
+          ends_on: string;
+          full_name: string;
+          member_id: string;
+          notice_kind: string;
+          term_id: string;
+          tier_name: string;
+        }[];
       };
       transition_item: {
         Args: {
           p_id: string;
+          p_notes?: string;
+          p_scheduled_for?: string;
           p_to: Database["publishing"]["Enums"]["item_status"];
         };
         Returns: Database["publishing"]["Enums"]["item_status"];
@@ -1540,6 +1757,16 @@ export type Database = {
       update_setting: {
         Args: { p_key: string; p_value: Json };
         Returns: undefined;
+      };
+      verify_member_card: {
+        Args: { p_token: string };
+        Returns: {
+          member_name: string;
+          member_no: string;
+          status: Database["membership"]["Enums"]["member_status"];
+          tier_name: string;
+          valid: boolean;
+        }[];
       };
     };
     Enums: {
@@ -2320,8 +2547,48 @@ export type Database = {
           },
         ];
       };
+      invitations: {
+        Row: {
+          accepted_at: string | null;
+          application_id: string;
+          created_at: string;
+          created_by: string | null;
+          expires_at: string;
+          id: string;
+          token_hash: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          application_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          expires_at: string;
+          id?: string;
+          token_hash: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          application_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          expires_at?: string;
+          id?: string;
+          token_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "invitations_application_id_fkey";
+            columns: ["application_id"];
+            isOneToOne: true;
+            referencedRelation: "applications";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       members: {
         Row: {
+          card_issued_at: string | null;
+          card_token_hash: string | null;
           created_at: string;
           directory_opt_in: boolean;
           id: string;
@@ -2333,6 +2600,8 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          card_issued_at?: string | null;
+          card_token_hash?: string | null;
           created_at?: string;
           directory_opt_in?: boolean;
           id?: string;
@@ -2344,6 +2613,8 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          card_issued_at?: string | null;
+          card_token_hash?: string | null;
           created_at?: string;
           directory_opt_in?: boolean;
           id?: string;
@@ -2373,6 +2644,8 @@ export type Database = {
           member_id: string;
           paid_at: string | null;
           recorded_by: string | null;
+          renewal_notice_30d_sent_at: string | null;
+          renewal_notice_7d_sent_at: string | null;
           starts_on: string;
           tier_key: string;
         };
@@ -2384,6 +2657,8 @@ export type Database = {
           member_id: string;
           paid_at?: string | null;
           recorded_by?: string | null;
+          renewal_notice_30d_sent_at?: string | null;
+          renewal_notice_7d_sent_at?: string | null;
           starts_on: string;
           tier_key: string;
         };
@@ -2395,6 +2670,8 @@ export type Database = {
           member_id?: string;
           paid_at?: string | null;
           recorded_by?: string | null;
+          renewal_notice_30d_sent_at?: string | null;
+          renewal_notice_7d_sent_at?: string | null;
           starts_on?: string;
           tier_key?: string;
         };
@@ -2444,6 +2721,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_invitation: { Args: { p_token: string }; Returns: string };
       decide_application: {
         Args: {
           p_application: string;
@@ -2468,6 +2746,14 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      invite_applicant: {
+        Args: { p_actor: string; p_application: string };
+        Returns: {
+          expires_at: string;
+          invitation_id: string;
+          token: string;
+        }[];
+      };
       next_member_no: { Args: never; Returns: string };
       record_payment: {
         Args: { p_amount_cents: number; p_term: string };
@@ -2479,6 +2765,8 @@ export type Database = {
           member_id: string;
           paid_at: string | null;
           recorded_by: string | null;
+          renewal_notice_30d_sent_at: string | null;
+          renewal_notice_7d_sent_at: string | null;
           starts_on: string;
           tier_key: string;
         };
@@ -2489,12 +2777,22 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      reissue_invitation: {
+        Args: { p_actor: string; p_application: string };
+        Returns: {
+          expires_at: string;
+          invitation_id: string;
+          token: string;
+        }[];
+      };
       set_member_status: {
         Args: {
           p_member: string;
           p_status: Database["membership"]["Enums"]["member_status"];
         };
         Returns: {
+          card_issued_at: string | null;
+          card_token_hash: string | null;
           created_at: string;
           directory_opt_in: boolean;
           id: string;
@@ -2514,7 +2812,7 @@ export type Database = {
       };
     };
     Enums: {
-      application_status: "pending" | "accepted" | "declined" | "withdrawn";
+      application_status: "pending" | "accepted" | "declined" | "withdrawn" | "invited";
       member_status: "active" | "lapsed" | "paused" | "resigned" | "honorary";
     };
     CompositeTypes: {
@@ -2837,6 +3135,7 @@ export type Database = {
           id: string;
           item_id: string;
           kind: string;
+          notes: string | null;
           revision_no: number;
           title: string;
         };
@@ -2848,6 +3147,7 @@ export type Database = {
           id?: string;
           item_id: string;
           kind: string;
+          notes?: string | null;
           revision_no: number;
           title: string;
         };
@@ -2859,6 +3159,7 @@ export type Database = {
           id?: string;
           item_id?: string;
           kind?: string;
+          notes?: string | null;
           revision_no?: number;
           title?: string;
         };
@@ -2916,6 +3217,7 @@ export type Database = {
           id: string;
           previous_version_of: string | null;
           published_at: string | null;
+          scheduled_for: string | null;
           search_tsv: unknown;
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
@@ -2942,6 +3244,7 @@ export type Database = {
           id?: string;
           previous_version_of?: string | null;
           published_at?: string | null;
+          scheduled_for?: string | null;
           search_tsv?: unknown;
           slug: string;
           status?: Database["publishing"]["Enums"]["item_status"];
@@ -2968,6 +3271,7 @@ export type Database = {
           id?: string;
           previous_version_of?: string | null;
           published_at?: string | null;
+          scheduled_for?: string | null;
           search_tsv?: unknown;
           slug?: string;
           status?: Database["publishing"]["Enums"]["item_status"];
@@ -3251,6 +3555,7 @@ export type Database = {
           id: string;
           previous_version_of: string | null;
           published_at: string | null;
+          scheduled_for: string | null;
           search_tsv: unknown;
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
@@ -3291,6 +3596,8 @@ export type Database = {
       transition_item: {
         Args: {
           p_item: string;
+          p_notes?: string;
+          p_scheduled_for?: string;
           p_to: Database["publishing"]["Enums"]["item_status"];
         };
         Returns: {
@@ -3306,6 +3613,7 @@ export type Database = {
           id: string;
           previous_version_of: string | null;
           published_at: string | null;
+          scheduled_for: string | null;
           search_tsv: unknown;
           slug: string;
           status: Database["publishing"]["Enums"]["item_status"];
@@ -3328,7 +3636,7 @@ export type Database = {
       };
     };
     Enums: {
-      item_status: "draft" | "in_review" | "published" | "archived";
+      item_status: "draft" | "in_review" | "published" | "archived" | "scheduled";
       item_type:
         "article" | "page" | "paper" | "dispatch" | "pigeon_post" | "brief" | "annual" | "event";
     };
@@ -3474,7 +3782,7 @@ export const Constants = {
   },
   membership: {
     Enums: {
-      application_status: ["pending", "accepted", "declined", "withdrawn"],
+      application_status: ["pending", "accepted", "declined", "withdrawn", "invited"],
       member_status: ["active", "lapsed", "paused", "resigned", "honorary"],
     },
   },
@@ -3486,7 +3794,7 @@ export const Constants = {
   },
   publishing: {
     Enums: {
-      item_status: ["draft", "in_review", "published", "archived"],
+      item_status: ["draft", "in_review", "published", "archived", "scheduled"],
       item_type: [
         "article",
         "page",

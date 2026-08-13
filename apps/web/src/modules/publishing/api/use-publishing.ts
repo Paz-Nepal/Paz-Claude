@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ItemType = Database["publishing"]["Enums"]["item_type"];
 export type ItemStatus = Database["publishing"]["Enums"]["item_status"];
@@ -101,15 +102,61 @@ export function useSaveItem() {
   });
 }
 
+/**
+ * Every edge except transitioning *into* 'scheduled' uses a `p_to` value
+ * that's already in the generated enum (draft/in_review/published/
+ * archived — 'scheduled' itself, T-061/0046, isn't). Scheduling has its
+ * own hook (`useScheduleItem`, Edge-Function-backed) below, so this one
+ * stays on the direct, still-typed RPC call. `p_notes`/`p_scheduled_for`
+ * (T-059/0048) render as optional non-nullable `string` in the generated
+ * Args type (same `supabase gen types` quirk noted elsewhere in this
+ * file: nullable SQL params come out non-nullable) -- `undefined`, not
+ * `null`, is what satisfies that under `exactOptionalPropertyTypes`.
+ */
 export function useTransitionItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, to }: { id: string; to: ItemStatus }) => {
-      const { data, error } = await api().rpc("transition_item", { p_id: id, p_to: to });
+    mutationFn: async ({
+      id,
+      to,
+      notes,
+    }: {
+      id: string;
+      to: Exclude<ItemStatus, "scheduled">;
+      notes?: string | null;
+    }) => {
+      const { data, error } = await api().rpc(
+        "transition_item",
+        asArgs<{ p_id: string; p_to: Exclude<ItemStatus, "scheduled">; p_notes?: string }>({
+          p_id: id,
+          p_to: to,
+          p_notes: notes ?? undefined,
+        }),
+      );
       if (error) throw toAppError(error);
       return data;
     },
     onSuccess: (_status, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["item", id] });
+    },
+  });
+}
+
+/**
+ * T-061. Transitioning *into* 'scheduled' needs both the new status
+ * literal and api.transition_item's new p_scheduled_for param (0047),
+ * neither in the generated types (new this session) -- routed through
+ * an Edge Function with a hand-typed request, same reasoning as every
+ * other object added since ADR-26.
+ */
+export function useScheduleItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, scheduledFor }: { id: string; scheduledFor: string }) => {
+      await invokeEdgeFunction<{ ok: true }>("schedule-item", { itemId: id, scheduledFor });
+    },
+    onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
       void queryClient.invalidateQueries({ queryKey: ["item", id] });
     },
@@ -274,42 +321,22 @@ export function useUploadMedia() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ file, alt, credit }: UploadMediaInput) => {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
-      const storagePath = `original/${crypto.randomUUID()}.${ext}`;
+      // Routed through the ingest-media Edge Function, which sniffs the
+      // real file type by magic bytes, strips EXIF, and reads dimensions
+      // from the header server-side — trusting the browser's file.type
+      // and a client-side createImageBitmap decode was exactly the
+      // "uploads currently go straight to storage... hardening lands with
+      // the Edge Function" gap migration 0008 flagged (D-8, T-041).
+      const form = new FormData();
+      form.append("file", file);
+      form.append("alt", alt);
+      if (credit) form.append("credit", credit);
 
-      const { error: uploadError } = await supabase.storage
-        .from("media")
-        .upload(storagePath, file, { contentType: file.type, upsert: false });
-      if (uploadError) throw toAppError(uploadError);
-
-      let width: number | null = null;
-      let height: number | null = null;
-      if (file.type.startsWith("image/")) {
-        try {
-          const bitmap = await createImageBitmap(file);
-          width = bitmap.width;
-          height = bitmap.height;
-          bitmap.close();
-        } catch {
-          // Not decodable client-side (e.g. an SVG in some browsers) —
-          // dimensions stay unknown; nothing depends on them yet.
-        }
-      }
-
-      const { data, error } = await api().rpc(
-        "register_media",
-        asArgs<Database["api"]["Functions"]["register_media"]["Args"]>({
-          p_storage_path: storagePath,
-          p_mime_type: file.type || "application/octet-stream",
-          p_size_bytes: file.size,
-          p_width: width,
-          p_height: height,
-          p_alt: alt,
-          p_credit: credit,
-        }),
-      );
-      if (error) throw toAppError(error);
-      return { id: data, storagePath };
+      const { mediaId, storagePath } = await invokeEdgeFunction<{
+        mediaId: string;
+        storagePath: string;
+      }>("ingest-media", form);
+      return { id: mediaId, storagePath };
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["media-library"] });
@@ -355,6 +382,70 @@ export function useCreateCorrection() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+    },
+  });
+}
+
+/**
+ * T-060. api.item_revisions / get_item_revision / restore_item_revision
+ * (0045) aren't in the generated types (new this session, never
+ * regenerated against a live database) -- hand typed here, same
+ * reasoning as everywhere else since ADR-26.
+ */
+export interface ItemRevisionSummary {
+  id: string;
+  revision_no: number;
+  kind: string;
+  title: string;
+  created_by_name: string | null;
+  created_at: string;
+  /** T-059/0048. Set only on some 'transition' revisions (e.g. a send-back). */
+  notes: string | null;
+}
+
+export interface ItemRevisionDetail extends ItemRevisionSummary {
+  item_id: string;
+  body: unknown;
+  body_schema_version: number;
+}
+
+export function useItemRevisions(itemId: string | undefined) {
+  return useQuery({
+    queryKey: ["item-revisions", itemId],
+    enabled: Boolean(itemId),
+    queryFn: async () => {
+      const { revisions } = await invokeEdgeFunction<{ revisions: ItemRevisionSummary[] }>(
+        "list-item-revisions",
+        { itemId },
+      );
+      return revisions;
+    },
+  });
+}
+
+export function useItemRevision(revisionId: string | undefined) {
+  return useQuery({
+    queryKey: ["item-revision", revisionId],
+    enabled: Boolean(revisionId),
+    queryFn: async () => {
+      const { revision } = await invokeEdgeFunction<{ revision: ItemRevisionDetail | null }>(
+        "get-item-revision",
+        { revisionId },
+      );
+      return revision;
+    },
+  });
+}
+
+export function useRestoreItemRevision(itemId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (revisionId: string) => {
+      await invokeEdgeFunction<{ ok: true }>("restore-item-revision", { revisionId });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["item-revisions", itemId] });
+      void queryClient.invalidateQueries({ queryKey: ["item", itemId] });
     },
   });
 }

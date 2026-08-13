@@ -37,6 +37,7 @@ dependency order.
 | `admin.settings.read`             | super_admin, administrator                              | View institutional settings                            |
 | `admin.settings.manage`           | super_admin, administrator                              | Change institutional settings                          |
 | `admin.audit_log.read`            | super_admin, administrator                              | View the audit log                                     |
+| `admin.contact_message.read`      | super_admin, administrator                              | View/mark-reviewed the public contact-form inbox       |
 | `publishing.item.read`            | super_admin, administrator, editor                      | Read every item regardless of status/author (the desk) |
 | `publishing.item.create`          | super_admin, administrator, editor, author              | Create items; edit one's own drafts                    |
 | `publishing.item.update`          | super_admin, administrator, editor                      | Edit any item at any stage; send back to draft         |

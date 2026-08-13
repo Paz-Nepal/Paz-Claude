@@ -1,9 +1,12 @@
 node_modules/
 dist/
+build/
 .turbo/
 *.tsbuildinfo
 .env
 .env.local
+.env.*
+!.env.example
 *.local
 
 # Supabase local runtime
@@ -12,6 +15,11 @@ supabase/.temp/
 
 .DS_Store
 coverage/
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
 
 # scripts/export-content.mjs output
 export-output/

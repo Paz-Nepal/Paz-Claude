@@ -9,7 +9,12 @@ export function MembersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-serif text-2xl">Members</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-serif text-2xl">Members</h1>
+        <Link to="/admin/members/verify-card" className="text-sm hover:underline">
+          Verify a card
+        </Link>
+      </div>
 
       {members.isPending && <p className="text-muted-foreground">Loading…</p>}
       {members.isError && (

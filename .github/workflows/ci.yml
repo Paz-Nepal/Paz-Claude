@@ -45,8 +45,11 @@ jobs:
       - name: Unit + component tests
         run: pnpm test
 
-      - name: Build (bundle budget enforced by Vite/Lighthouse config)
+      - name: Build
         run: pnpm build
+
+      - name: Bundle budget (T-071 — JS gate only; see scripts/check-bundle-budget.mjs for what's still open)
+        run: node scripts/check-bundle-budget.mjs
 
   database:
     name: Database — migrations, pgTAP, drift, authz matrix
@@ -82,7 +85,109 @@ jobs:
             > /tmp/database.generated.ts
           diff -u packages/types/src/database.generated.ts /tmp/database.generated.ts
 
-  # Playwright critical-journey tests are added once there is a first real
-  # journey to test (Authentication phase, next). Introducing an empty
-  # Playwright job now would be placeholder architecture — the exact thing
-  # the execution rules prohibit — so it is deliberately not stubbed here.
+  edge-functions:
+    name: Edge Functions — format, lint, typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Formatting for supabase/functions is Prettier's job, same as every
+      # other .ts file in the repo (see the lint-typecheck-unit job's
+      # `pnpm format:check`) -- deliberately not also running `deno fmt`
+      # here, which has its own, sometimes-conflicting opinions.
+      - name: Lint
+        run: deno lint supabase/functions
+
+      - name: Typecheck
+        run: |
+          find supabase/functions -name '*.ts' -not -name '*.test.ts' | \
+            xargs deno check
+
+      - name: Unit tests (pure template/logic modules only — no network)
+        run: deno test --allow-none supabase/functions
+
+  e2e:
+    name: Playwright — critical journeys
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # `[edge_runtime] enabled = true` in supabase/config.toml means Edge
+      # Functions are served automatically as part of `supabase start` --
+      # no separate `supabase functions serve`. RESEND_API_KEY/EMAIL_FROM
+      # are deliberately not set here: every journey below tolerates a
+      # failed notification send (see each Edge Function's catch block
+      # around sendEmail()) rather than depending on real provider
+      # credentials existing in CI.
+      - name: Start Supabase (migrations + reference seed + Edge Functions)
+        run: supabase start
+
+      - name: Apply synthetic seed (placeholder content the journeys below read)
+        run: psql "$SUPABASE_DB_URL" -f supabase/seed/synthetic.sql
+
+      - name: Point apps/web at the local Supabase instance
+        run: |
+          eval "$(supabase status -o env)"
+          echo "VITE_SUPABASE_URL=$API_URL" >> apps/web/.env.local
+          echo "VITE_SUPABASE_ANON_KEY=$ANON_KEY" >> apps/web/.env.local
+
+      - name: Install Playwright's Chromium
+        run: pnpm --filter @paz/web exec playwright install --with-deps chromium
+
+      - name: Run critical-journey tests
+        run: pnpm --filter @paz/web test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 14
+
+  component-workshop:
+    name: Component workshop — build + axe accessibility (T-035)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright's Chromium
+        run: pnpm --filter @paz/ui exec playwright install --with-deps chromium
+
+      - name: Build the workshop (packages/ui — every *.stories.tsx)
+        run: pnpm --filter @paz/ui workshop:build
+
+      - name: Accessibility check (axe-core against every story)
+        run: pnpm --filter @paz/ui a11y-check

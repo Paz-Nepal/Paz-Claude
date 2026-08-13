@@ -1,0 +1,43 @@
+name: Membership renewal notices
+
+# D-11: "T-30 days: renewal notice email... one reminder at T-7, none
+# after." Unlike the backup workflows, the actual work (querying terms,
+# sending email) happens inside the deployed send-renewal-notices Edge
+# Function on Supabase's own infrastructure -- this workflow's only job
+# is to trigger it, authenticated as service_role, once a day. A failed
+# scheduled run already notifies this repository's configured watchers by
+# default, same paging mechanism as nightly-backup-export.yml.
+on:
+  schedule:
+    # 04:00 UTC daily -- after the nightly backup export, before most of
+    # Kathmandu's working day (UTC+5:45).
+    - cron: "0 4 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  send-renewal-notices:
+    name: Trigger send-renewal-notices
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the send-renewal-notices Edge Function
+        env:
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_PROJECT_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "SUPABASE_PROJECT_URL / SUPABASE_SERVICE_ROLE_KEY are not set -- see docs/adr/010-backup-strategy.md's 'still open' section for the same class of gap." >&2
+            exit 1
+          fi
+
+          http_status=$(curl -sS -o /tmp/response.json -w '%{http_code}' -X POST \
+            "${SUPABASE_PROJECT_URL}/functions/v1/send-renewal-notices" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json")
+
+          cat /tmp/response.json
+          echo
+
+          if [ "$http_status" -ge 300 ]; then
+            echo "send-renewal-notices returned HTTP ${http_status}" >&2
+            exit 1
+          fi

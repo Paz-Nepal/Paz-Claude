@@ -152,3 +152,16 @@ verify_jwt = true
 # through the item/revision tables' own existing RLS policies.
 [functions.restore-item-revision]
 verify_jwt = true
+
+# Not a public-facing function at all -- verify_jwt only proves *a* valid
+# JWT was presented (any anon/authenticated token would pass); the
+# function body itself additionally requires the bearer token to equal
+# SUPABASE_SERVICE_ROLE_KEY exactly. Called only by the scheduled job in
+# .github/workflows/publish-scheduled-items.yml.
+[functions.publish-scheduled]
+verify_jwt = true
+
+# Staff-only in practice: publishing.transition_item's own permission
+# check (item.publish) and human-actor requirement.
+[functions.schedule-item]
+verify_jwt = true

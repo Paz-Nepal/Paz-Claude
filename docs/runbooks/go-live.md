@@ -74,6 +74,12 @@ supabase functions deploy accept-membership-invitation
 supabase functions deploy get-my-membership
 supabase functions deploy issue-member-card
 supabase functions deploy verify-member-card
+supabase functions deploy resolve-redirect
+supabase functions deploy get-person-timeline
+supabase functions deploy list-item-revisions
+supabase functions deploy get-item-revision
+supabase functions deploy restore-item-revision
+supabase functions deploy publish-scheduled
 ```
 
 (Or `supabase functions deploy` with no name to deploy every function
@@ -146,10 +152,12 @@ hand-verified but never executed until this point.
 
 ## 9. Wire up the scheduled jobs (optional, can wait)
 
-`membership-renewal-notices.yml`, `nightly-backup-export.yml`, and
-`quarterly-restore-drill.yml` are GitHub Actions workflows already in
-`.github/workflows/` — they need the secrets listed in
-`docs/runbooks/environments.md`'s "Scheduled jobs" table added to this
-repository's Actions secrets before they'll do anything. Nothing breaks
-if this is skipped initially; renewal notices and backups just won't run
-until it's done.
+`membership-renewal-notices.yml`, `publish-scheduled-items.yml`,
+`nightly-backup-export.yml`, and `quarterly-restore-drill.yml` are
+GitHub Actions workflows already in `.github/workflows/` — they need the
+secrets listed in `docs/runbooks/environments.md`'s "Scheduled jobs"
+table added to this repository's Actions secrets before they'll do
+anything. Nothing breaks if this is skipped initially; renewal notices,
+scheduled publishing, and backups just won't run until it's done — an
+item scheduled for a future time simply stays scheduled instead of
+publishing on time.

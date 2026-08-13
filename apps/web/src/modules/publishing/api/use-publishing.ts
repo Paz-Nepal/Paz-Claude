@@ -4,8 +4,20 @@ import { supabase } from "@/lib/supabase";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ItemType = Database["publishing"]["Enums"]["item_type"];
-export type ItemStatus = Database["publishing"]["Enums"]["item_status"];
-export type DeskItem = Database["api"]["Views"]["desk_items"]["Row"];
+/**
+ * T-061 added 'scheduled' to publishing.item_status (0046) — not in the
+ * generated enum (new this session, never regenerated against a live
+ * database), so it's unioned in by hand here rather than left off the
+ * type entirely.
+ */
+export type ItemStatus = Database["publishing"]["Enums"]["item_status"] | "scheduled";
+/** `scheduled_for` (T-061, 0047) isn't in the generated view row shape
+ * yet — new column this session, never regenerated against a live
+ * database — unioned in by hand like the ItemStatus addition above. */
+export type DeskItem = Omit<Database["api"]["Views"]["desk_items"]["Row"], "status"> & {
+  status: ItemStatus | null;
+  scheduled_for: string | null;
+};
 export type MediaRow = Database["api"]["Views"]["media_library"]["Row"];
 export type ItemDetail = Database["api"]["Functions"]["get_item"]["Returns"][number];
 
@@ -30,7 +42,10 @@ export function useDeskItems() {
         .select("*")
         .order("updated_at", { ascending: false });
       if (error) throw toAppError(error);
-      return data;
+      // DeskItem adds `scheduled_for` (T-061) over the generated Row shape
+      // (see its own comment) -- the column is really there, PostgREST just
+      // returns it under a type the stale generated Database doesn't know.
+      return data as unknown as DeskItem[];
     },
   });
 }
@@ -102,15 +117,42 @@ export function useSaveItem() {
   });
 }
 
+/**
+ * Every edge except transitioning *into* 'scheduled' uses a `p_to` value
+ * that's already in the generated enum (draft/in_review/published/
+ * archived — 'scheduled' itself, T-061/0046, isn't). Scheduling has its
+ * own hook (`useScheduleItem`, Edge-Function-backed) below, so this one
+ * stays on the direct, still-typed RPC call.
+ */
 export function useTransitionItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, to }: { id: string; to: ItemStatus }) => {
+    mutationFn: async ({ id, to }: { id: string; to: Exclude<ItemStatus, "scheduled"> }) => {
       const { data, error } = await api().rpc("transition_item", { p_id: id, p_to: to });
       if (error) throw toAppError(error);
       return data;
     },
     onSuccess: (_status, { id }) => {
+      void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
+      void queryClient.invalidateQueries({ queryKey: ["item", id] });
+    },
+  });
+}
+
+/**
+ * T-061. Transitioning *into* 'scheduled' needs both the new status
+ * literal and api.transition_item's new p_scheduled_for param (0047),
+ * neither in the generated types (new this session) -- routed through
+ * an Edge Function with a hand-typed request, same reasoning as every
+ * other object added since ADR-26.
+ */
+export function useScheduleItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, scheduledFor }: { id: string; scheduledFor: string }) => {
+      await invokeEdgeFunction<{ ok: true }>("schedule-item", { itemId: id, scheduledFor });
+    },
+    onSuccess: (_data, { id }) => {
       void queryClient.invalidateQueries({ queryKey: ["desk-items"] });
       void queryClient.invalidateQueries({ queryKey: ["item", id] });
     },

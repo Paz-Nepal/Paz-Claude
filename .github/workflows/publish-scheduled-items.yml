@@ -1,0 +1,42 @@
+name: Publish scheduled items
+
+# T-061: an editor can schedule an item (draft/in_review -> 'scheduled',
+# publishing.transition_item) for a future publish time. This workflow's
+# only job is to trigger the deployed publish-scheduled Edge Function,
+# authenticated as service_role, which publishes anything whose
+# scheduled_for has passed -- same "workflow triggers, Edge Function does
+# the work" split as membership-renewal-notices.yml.
+on:
+  schedule:
+    # Every 15 minutes -- frequent enough that "publish at 9am" means
+    # something close to 9am, without polling so often it's wasteful.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  publish-scheduled:
+    name: Trigger publish-scheduled
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the publish-scheduled Edge Function
+        env:
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_PROJECT_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "SUPABASE_PROJECT_URL / SUPABASE_SERVICE_ROLE_KEY are not set -- see docs/adr/010-backup-strategy.md's 'still open' section for the same class of gap." >&2
+            exit 1
+          fi
+
+          http_status=$(curl -sS -o /tmp/response.json -w '%{http_code}' -X POST \
+            "${SUPABASE_PROJECT_URL}/functions/v1/publish-scheduled" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json")
+
+          cat /tmp/response.json
+          echo
+
+          if [ "$http_status" -ge 300 ]; then
+            echo "publish-scheduled returned HTTP ${http_status}" >&2
+            exit 1
+          fi

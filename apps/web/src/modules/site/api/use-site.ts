@@ -159,18 +159,20 @@ export interface SendAPigeonInput {
 
 /** Contributor identity, if given, is staff-only forever (never selected
  * by any anon-facing view) -- same rule as the published series itself. */
+/**
+ * Routed through the send-a-pigeon Edge Function, not a direct RPC:
+ * api.send_a_pigeon is granted to service_role only (migration 0051) so
+ * the Edge Function's rate-limit check is the only path in, not a layer
+ * that a caller hitting PostgREST directly could just skip.
+ */
 export function useSendAPigeon() {
   return useMutation({
     mutationFn: async (input: SendAPigeonInput) => {
-      const { error } = await api().rpc(
-        "send_a_pigeon",
-        asArgs<Database["api"]["Functions"]["send_a_pigeon"]["Args"]>({
-          p_contributor_name: input.contributorName,
-          p_contributor_contact: input.contributorContact,
-          p_content: input.content,
-        }),
-      );
-      if (error) throw toAppError(error);
+      await invokeEdgeFunction<{ ok: true }>("send-a-pigeon", {
+        contributorName: input.contributorName,
+        contributorContact: input.contributorContact,
+        content: input.content,
+      });
     },
   });
 }

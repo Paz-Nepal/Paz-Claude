@@ -2,11 +2,18 @@
 // and notifies staff (not the submitter — see the comment on that
 // function, migration 0037) at the address in api.site_info()'s
 // site.contact_email — the same whitelisted, already-public setting the
-// frontend footer reads (migration 0008), so no service-role access to
-// admin.settings is needed here.
+// frontend footer reads (migration 0008).
+//
+// Uses the service-role key, not the anon key forwarding the caller's
+// Authorization header: api.submit_contact_message is granted to
+// service_role only (migration 0051) precisely so this Edge Function --
+// and the rate-limit check inside it -- is the only path in. A rate
+// limit enforced only here while the RPC stayed anon-callable would be
+// bypassable by calling PostgREST directly.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { sendEmail } from "../_shared/send-email.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 interface SubmitContactMessageBody {
   fullName: string;
@@ -40,9 +47,18 @@ Deno.serve(async (req) => {
   if (!body.email?.trim()) return jsonError("Email is required", 400);
   if (!body.message?.trim()) return jsonError("Message is required", 400);
 
-  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
-    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  const { allowed } = await checkRateLimit(supabase, req, "submit-contact-message", {
+    maxCount: 5,
+    windowMinutes: 60,
   });
+  if (!allowed) {
+    return jsonError("Too many messages. Try again later.", 429);
+  }
 
   const { data: messageId, error } = await supabase.schema("api").rpc("submit_contact_message", {
     p_full_name: body.fullName,

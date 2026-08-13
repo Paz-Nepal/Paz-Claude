@@ -80,6 +80,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      intake_rate_limits: {
+        Row: {
+          endpoint: string;
+          id: number;
+          ip_hash: string;
+          occurred_at: string;
+        };
+        Insert: {
+          endpoint: string;
+          id?: never;
+          ip_hash: string;
+          occurred_at?: string;
+        };
+        Update: {
+          endpoint?: string;
+          id?: never;
+          ip_hash?: string;
+          occurred_at?: string;
+        };
+        Relationships: [];
+      };
       settings: {
         Row: {
           description: string | null;
@@ -109,6 +130,15 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string;
+          p_ip_hash: string;
+          p_max_count?: number;
+          p_window_minutes?: number;
+        };
+        Returns: boolean;
+      };
       log_system_event: {
         Args: {
           p_action: string;
@@ -1101,6 +1131,15 @@ export type Database = {
         Returns: undefined;
       };
       cancel_my_reservation: { Args: { p_id: string }; Returns: undefined };
+      check_rate_limit: {
+        Args: {
+          p_endpoint: string;
+          p_ip_hash: string;
+          p_max_count?: number;
+          p_window_minutes?: number;
+        };
+        Returns: boolean;
+      };
       create_correction: { Args: { p_original: string }; Returns: string };
       decide_membership_application: {
         Args: { p_application: string; p_decision: string; p_notes?: string };
@@ -1682,28 +1721,17 @@ export type Database = {
         Args: { p_email: string; p_full_name: string; p_message: string };
         Returns: string;
       };
-      submit_membership_application:
-        | {
-            Args: {
-              p_email: string;
-              p_full_name: string;
-              p_motivation: string;
-              p_phone: string;
-              p_tier_key: string;
-            };
-            Returns: string;
-          }
-        | {
-            Args: {
-              p_communication_preferences?: Json;
-              p_email: string;
-              p_full_name: string;
-              p_motivation: string;
-              p_phone: string;
-              p_tier_key: string;
-            };
-            Returns: string;
-          };
+      submit_membership_application: {
+        Args: {
+          p_communication_preferences?: Json;
+          p_email: string;
+          p_full_name: string;
+          p_motivation: string;
+          p_phone: string;
+          p_tier_key: string;
+        };
+        Returns: string;
+      };
       terms_due_for_renewal_notice: {
         Args: never;
         Returns: {

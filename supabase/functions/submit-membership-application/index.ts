@@ -1,9 +1,14 @@
 // Public intake for membership applications. Wraps
 // api.submit_membership_application with the "we've received your
 // application" email (Architecture Blueprint §8, two-lane design).
+//
+// Uses the service-role key: api.submit_membership_application is
+// granted to service_role only (migration 0051), so this Edge Function
+// -- and the rate-limit check inside it -- is the only path in.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { sendEmail } from "../_shared/send-email.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 interface SubmitApplicationBody {
   fullName: string;
@@ -40,9 +45,18 @@ Deno.serve(async (req) => {
   if (!body.email?.trim()) return jsonError("Email is required", 400);
   if (!body.tierKey?.trim()) return jsonError("Membership tier is required", 400);
 
-  const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
-    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  const { allowed } = await checkRateLimit(supabase, req, "submit-membership-application", {
+    maxCount: 3,
+    windowMinutes: 60,
   });
+  if (!allowed) {
+    return jsonError("Too many applications submitted. Try again later.", 429);
+  }
 
   const { data: applicationId, error } = await supabase
     .schema("api")

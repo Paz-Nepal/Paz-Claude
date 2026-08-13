@@ -95,6 +95,13 @@ verify_jwt = true
 [functions.submit-contact-message]
 verify_jwt = true
 
+# Public: called from the Pigeon Post form. verify_jwt just needs the
+# anon key, which supabase-js attaches automatically for a signed-out
+# caller -- the function itself now runs as service_role internally
+# (0051), since api.send_a_pigeon is no longer anon-callable directly.
+[functions.send-a-pigeon]
+verify_jwt = true
+
 # Not a public-facing function at all -- verify_jwt only proves *a* valid
 # JWT was presented (any anon/authenticated token would pass); the
 # function body itself additionally requires the bearer token to equal

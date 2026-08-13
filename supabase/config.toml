@@ -140,3 +140,15 @@ verify_jwt = true
 # gated by that table's own staff-only RLS policy.
 [functions.get-person-timeline]
 verify_jwt = true
+
+# Staff-only in practice: item_revisions_select_own/_staff (0008).
+[functions.list-item-revisions]
+verify_jwt = true
+
+[functions.get-item-revision]
+verify_jwt = true
+
+# Staff-only in practice: both the read and the write it performs go
+# through the item/revision tables' own existing RLS policies.
+[functions.restore-item-revision]
+verify_jwt = true

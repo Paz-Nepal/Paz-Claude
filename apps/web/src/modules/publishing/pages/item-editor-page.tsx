@@ -18,6 +18,7 @@ import { StatusBadge } from "../components/status-badge";
 import { TransitionButtons, DEPOSIT_SERIES } from "../components/transition-buttons";
 import { MediaPicker } from "../components/media-picker";
 import { SeriesDetailsPanel, type SeriesDetails } from "../components/series-details-panel";
+import { VersionHistoryPanel } from "../components/version-history-panel";
 
 const EMPTY_DOC: RichTextNode = { type: "doc", content: [] };
 
@@ -329,6 +330,13 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
             )}
         </div>
       </div>
+
+      {existing?.id && (
+        <div className="flex flex-col gap-3 border-t pt-6">
+          <span className="text-sm font-medium">Version history</span>
+          <VersionHistoryPanel itemId={existing.id} />
+        </div>
+      )}
     </form>
   );
 }

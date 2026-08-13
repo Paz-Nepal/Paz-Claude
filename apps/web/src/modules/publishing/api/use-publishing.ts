@@ -339,3 +339,65 @@ export function useCreateCorrection() {
     },
   });
 }
+
+/**
+ * T-060. api.item_revisions / get_item_revision / restore_item_revision
+ * (0045) aren't in the generated types (new this session, never
+ * regenerated against a live database) -- hand typed here, same
+ * reasoning as everywhere else since ADR-26.
+ */
+export interface ItemRevisionSummary {
+  id: string;
+  revision_no: number;
+  kind: string;
+  title: string;
+  created_by_name: string | null;
+  created_at: string;
+}
+
+export interface ItemRevisionDetail extends ItemRevisionSummary {
+  item_id: string;
+  body: unknown;
+  body_schema_version: number;
+}
+
+export function useItemRevisions(itemId: string | undefined) {
+  return useQuery({
+    queryKey: ["item-revisions", itemId],
+    enabled: Boolean(itemId),
+    queryFn: async () => {
+      const { revisions } = await invokeEdgeFunction<{ revisions: ItemRevisionSummary[] }>(
+        "list-item-revisions",
+        { itemId },
+      );
+      return revisions;
+    },
+  });
+}
+
+export function useItemRevision(revisionId: string | undefined) {
+  return useQuery({
+    queryKey: ["item-revision", revisionId],
+    enabled: Boolean(revisionId),
+    queryFn: async () => {
+      const { revision } = await invokeEdgeFunction<{ revision: ItemRevisionDetail | null }>(
+        "get-item-revision",
+        { revisionId },
+      );
+      return revision;
+    },
+  });
+}
+
+export function useRestoreItemRevision(itemId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (revisionId: string) => {
+      await invokeEdgeFunction<{ ok: true }>("restore-item-revision", { revisionId });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["item-revisions", itemId] });
+      void queryClient.invalidateQueries({ queryKey: ["item", itemId] });
+    },
+  });
+}

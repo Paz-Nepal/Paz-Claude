@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Input } from "@paz/ui";
+import { Button, Input, Textarea } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { kathmanduInputToUtcIso } from "@paz/utils";
 import { useAuthorization } from "@/modules/auth-core";
@@ -42,12 +42,8 @@ const ACTIONS: Record<ItemStatus, Action[]> = {
     },
   ],
   in_review: [
-    {
-      to: "draft",
-      label: "Send back to draft",
-      permission: "publishing.item.update",
-      variant: "secondary",
-    },
+    // "Send back to draft" moved to SendBackControl below -- it offers
+    // an optional note (T-059), so it isn't a plain single-click action.
     {
       to: "published",
       label: "Publish",
@@ -135,6 +131,60 @@ function ScheduleControl({ itemId }: { itemId: string }) {
   );
 }
 
+/** T-059. Not offered via the plain ACTIONS map above because a
+ * send-back optionally carries a note for the author, so it needs a
+ * text field, not just a click. */
+function SendBackControl({ itemId }: { itemId: string }) {
+  const [open, setOpen] = React.useState(false);
+  const [notes, setNotes] = React.useState("");
+  const transition = useTransitionItem();
+
+  if (!open) {
+    return (
+      <Button type="button" variant="secondary" onClick={() => setOpen(true)}>
+        Send back to draft
+      </Button>
+    );
+  }
+
+  return (
+    <form
+      className="flex flex-1 flex-col gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        transition.mutate(
+          { id: itemId, to: "draft", notes: notes.trim() || null },
+          { onSuccess: () => setOpen(false) },
+        );
+      }}
+    >
+      <label htmlFor="send-back-notes" className="text-muted-foreground text-sm">
+        Note for the author (optional)
+      </label>
+      <Textarea
+        id="send-back-notes"
+        rows={2}
+        placeholder="What needs to change before this is ready for review again?"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+      />
+      <div className="flex items-center gap-2">
+        <Button type="submit" size="sm" loading={transition.isPending}>
+          Send back
+        </Button>
+        <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>
+      </div>
+      {transition.isError && (
+        <p role="alert" className="text-destructive text-sm">
+          {toAppError(transition.error).message}
+        </p>
+      )}
+    </form>
+  );
+}
+
 /** Series the Record indexes (spec §2) -- publishing.deposit_item()
  * rejects every other type, so these are the only ones offered "Deposit"
  * instead of a plain "Publish". */
@@ -166,10 +216,12 @@ export function TransitionButtons({
     !isDepositSeries &&
     (status === "draft" || status === "in_review") &&
     permissions.includes("publishing.item.publish");
-  if (available.length === 0 && !canSchedule) return null;
+  const canSendBack = status === "in_review" && permissions.includes("publishing.item.update");
+  if (available.length === 0 && !canSchedule && !canSendBack) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {canSendBack && <SendBackControl itemId={itemId} />}
       {canSchedule && <ScheduleControl itemId={itemId} />}
       {available.map((action) => {
         // draft/in_review -> published is a deposit for the five series

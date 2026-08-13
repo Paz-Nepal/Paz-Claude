@@ -53,6 +53,12 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
               </span>
             </button>
 
+            {rev.notes && (
+              <p className="text-muted-foreground border-t px-3 py-2 text-sm italic">
+                “{rev.notes}”
+              </p>
+            )}
+
             {isOpen && (
               <div className="flex flex-col gap-3 border-t p-3">
                 {preview.isPending && <p className="text-muted-foreground text-sm">Loading…</p>}

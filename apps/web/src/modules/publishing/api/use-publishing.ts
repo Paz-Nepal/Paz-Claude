@@ -122,13 +122,30 @@ export function useSaveItem() {
  * that's already in the generated enum (draft/in_review/published/
  * archived — 'scheduled' itself, T-061/0046, isn't). Scheduling has its
  * own hook (`useScheduleItem`, Edge-Function-backed) below, so this one
- * stays on the direct, still-typed RPC call.
+ * stays on the direct, still-typed RPC call. `notes` (T-059/0048) is
+ * cast through `asArgs` the same way every other stale-type gap in this
+ * file is — the generated Args type doesn't have `p_notes` yet either.
  */
 export function useTransitionItem() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, to }: { id: string; to: Exclude<ItemStatus, "scheduled"> }) => {
-      const { data, error } = await api().rpc("transition_item", { p_id: id, p_to: to });
+    mutationFn: async ({
+      id,
+      to,
+      notes,
+    }: {
+      id: string;
+      to: Exclude<ItemStatus, "scheduled">;
+      notes?: string | null;
+    }) => {
+      const { data, error } = await api().rpc(
+        "transition_item",
+        asArgs<{ p_id: string; p_to: Exclude<ItemStatus, "scheduled">; p_notes?: string | null }>({
+          p_id: id,
+          p_to: to,
+          p_notes: notes ?? null,
+        }),
+      );
       if (error) throw toAppError(error);
       return data;
     },
@@ -395,6 +412,8 @@ export interface ItemRevisionSummary {
   title: string;
   created_by_name: string | null;
   created_at: string;
+  /** T-059/0048. Set only on some 'transition' revisions (e.g. a send-back). */
+  notes: string | null;
 }
 
 export interface ItemRevisionDetail extends ItemRevisionSummary {

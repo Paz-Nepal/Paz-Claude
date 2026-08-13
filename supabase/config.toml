@@ -135,3 +135,8 @@ verify_jwt = true
 # needs the anon key, which supabase-js attaches automatically.
 [functions.resolve-redirect]
 verify_jwt = true
+
+# Staff-only in practice: every category api.person_timeline unions is
+# gated by that table's own staff-only RLS policy.
+[functions.get-person-timeline]
+verify_jwt = true

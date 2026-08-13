@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type Organization = Database["api"]["Views"]["organizations"]["Row"];
 export type Relationship = Database["api"]["Views"]["relationships"]["Row"];
@@ -216,5 +217,30 @@ export function useAcknowledgePledge() {
       if (error) throw toAppError(error);
     },
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: ["pledges"] }),
+  });
+}
+
+/**
+ * T-095/D-14. api.person_timeline (0044) isn't in the generated types
+ * (new this session, never regenerated against a live database) -- hand
+ * typed here, same reasoning as everywhere else since ADR-26.
+ */
+export interface PersonTimelineEvent {
+  occurred_at: string;
+  kind: string;
+  summary: string;
+}
+
+export function usePersonTimeline(personId: string | undefined) {
+  return useQuery({
+    queryKey: ["person-timeline", personId],
+    enabled: Boolean(personId),
+    queryFn: async () => {
+      const { events } = await invokeEdgeFunction<{ events: PersonTimelineEvent[] }>(
+        "get-person-timeline",
+        { personId },
+      );
+      return events;
+    },
   });
 }

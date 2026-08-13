@@ -79,16 +79,21 @@ replace view` — the same append-only-column restriction as functions).
 
 ## Still open
 
-- **Deposit-series scheduling is UI-only blocked**, not database-
-  enforced — see the "Decision" section above. A determined caller using
-  the API directly could still put a deposit-series item into
-  `'scheduled'` status, and if the automated job later published it, it
-  would end up "published" with no `deposit_ref` and no Record entry.
-  Closing this properly means either teaching `publish_scheduled_items`
-  to special-case deposit types (calling the deposit logic without a
-  human actor) or adding a database-level check — deferred rather than
-  risking a change to `deposit_item`/`transition_item` without a live
-  database to verify it against.
-- **`pnpm db:types` has not been run** and **nothing here has been
-  executed against a live database** — same caveat as everything else
-  this session; see `docs/remaining-work.md` §1.
+Both items below were closed in migration `0050_block_deposit_series_scheduling.sql`,
+after this branch was merged into a session with live Supabase access
+(see `docs/remaining-work.md`'s update note at the top):
+
+- ~~**Deposit-series scheduling is UI-only blocked**, not database-
+  enforced.~~ **Closed.** `publishing.transition_item`'s
+  `draft/in_review -> scheduled` edge now rejects the five deposit types
+  (paper/brief/dispatch/pigeon_post/annual) outright, rather than
+  teaching the automated job to fabricate a deposit with no human actor
+  — the safer of the two options this ADR named. A deposit-series item
+  still reaches `published` immediately via `deposit_item()` exactly as
+  before; only the `scheduled` path is closed to it. Verified live:
+  applied against the linked project, `create function` (not
+  `create or replace`) so it doesn't repeat the arity-overload mistake
+  documented in `0048`/`0049`.
+- ~~**`pnpm db:types` has not been run** and **nothing here has been
+  executed against a live database**.~~ **Resolved** by the merge —
+  see `docs/remaining-work.md`.

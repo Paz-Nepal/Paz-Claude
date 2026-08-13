@@ -6,7 +6,10 @@ Readiness Review's `T-001`–`T-100` list (§9) and every ADR's own "Still
 open" section — not by re-reading the task list alone. Grouped by why
 it's still open, since that determines who can close it and how.
 
-Last compiled: 2026-08-13, at commit `c79586c` on `claude/paz-os-work-cayqnz`.
+Last compiled: 2026-08-13, at commit `7527789` on `claude/paz-os-work-cayqnz`
+(revised after closing T-049, T-060, T-061, T-095, T-047, the digital
+card QR code, and the notes half of T-059 — see each item's status
+below for what moved and why).
 
 ---
 
@@ -28,65 +31,62 @@ other section below.
 
 ---
 
-## 2. Deliberately deferred — now actually unblockable
+## 2. Deliberately deferred — now closed
 
 These were explicitly deferred in the original migrations pending a
-decision that later work in this session has, in practice, already made.
-Worth revisiting before assuming they still need T-006.
+decision that later work in this session had, in practice, already made.
+Both are now built.
 
-- **T-061 — scheduled publishing UI + `publish-scheduled` job.**
-  `0008_publishing.sql`'s own header says this "needs the job runner
-  decision from T-006." That decision has since been made, just not
-  written down as such: `send-renewal-notices` (ADR-25) and the two
-  backup workflows (ADR-10) all use GitHub Actions cron instead of
-  `pg_cron`, and the Architecture Blueprint itself says the
-  `publish-scheduled` design "already tolerates either." Building this
-  now would mean: a `scheduled_for timestamptz` column + a `scheduled`
-  `item_status` value (own migration, per the enum-isolation rule), a
-  cron-triggered Edge Function mirroring `send-renewal-notices`'
-  shape, and a scheduling UI in the item editor labeled Asia/Kathmandu
-  per the task's own note.
-- **T-049 — redirects + slug-change trigger.** Deferred "until the
-  prerender pipeline" (0008's header) — but the table, trigger, and a
-  redirect check in the public router don't actually depend on
-  prerendering existing first; that dependency was assumed, not
-  structural. Could be built as a standalone piece.
+- ~~**T-061 — scheduled publishing UI + `publish-scheduled` job.**~~
+  **Closed.** `0008_publishing.sql`'s own header said this "needs the
+  job runner decision from T-006" — that decision was already made in
+  practice (`send-renewal-notices`/ADR-25 and the two backup workflows/
+  ADR-10 all use GitHub Actions cron, not `pg_cron`). Built as
+  `'scheduled'` item status (`0046`), three new `transition_item` edges
+  (`0047`), `api.publish_scheduled_items()` (service-role only, no
+  human actor required), `schedule-item`/`publish-scheduled` Edge
+  Functions, and `publish-scheduled-items.yml` (every 15 minutes). See
+  ADR-31 for what's still UI-only (deposit-series exclusion).
+- ~~**T-049 — redirects + slug-change trigger.**~~ **Closed.** The
+  "needs the prerender pipeline first" dependency (0008's header) was
+  assumed, not structural — built as `publishing.redirects` +
+  `items_slug_redirect` trigger + `api.resolve_redirect`, wired into
+  all 7 published-content page types via `NotPublishedOrRedirect`.
 
 ---
 
 ## 3. Real gaps — buildable now, no external blocker
 
-Ordered roughly by size.
-
-- **T-060 — version history UI.** `publishing.item_revisions` has
-  existed since `0008` (every save already writes a revision row via
-  trigger) with zero frontend consumer. A revision list + diff view +
-  "restore as new" action in the item editor is pure frontend work
-  against data that already exists.
+- ~~**T-060 — version history UI.**~~ **Closed.** `api.item_revisions`/
+  `get_item_revision`/`restore_item_revision` (`0045`) + `VersionHistoryPanel`
+  in the item editor. No structural diff between revisions (comparing
+  two ProseMirror docs field-by-field is separate, larger work) — see
+  ADR-30.
 - **T-059 — review flow: inline comments, decision panel, send-back
-  note.** `publishing.transition_item()` takes no notes/comment
-  parameter at all today — `transition-buttons.tsx` is a bare
-  approve/reject action with no text field. Needs a schema decision
-  (a notes column on the transition call vs. a proper comments table)
-  before any UI.
-- **T-048 — autosave coalescing.** The `item_revisions` migration's own
-  comment says "today every save is 'manual'" — autosave (`kind =
-'autosave'`, coalesced writes rather than one row per keystroke-driven
-  save) was explicitly left for later. Needs both a debounced save path
-  in `item-editor-page.tsx` and a coalescing rule in the write function
-  (don't create a new row per autosave tick within some window).
-- **T-095 (frontend half) — CRM person timeline UI.**
-  `api.person_timeline` exists (`0020_crm.sql`); no admin page reads it.
-  Same "backend built, zero frontend consumer" shape as `api.my_profile`
-  and `api.my_membership` were before this session — worth checking the
-  rest of the API surface for more of these before assuming this is the
-  last one.
-- **T-047 — pgTAP transition-matrix coverage.** `supabase/tests/publishing/02_items_rls.sql`
-  has one incidental "bad status insert should fail" assertion, not the
-  full legal/illegal edge matrix the task calls for (draft→in_review,
-  in_review→published, published→archived, archived→draft, and every
-  illegal skip like draft→published directly — permission-checked per
-  edge, per role).
+  note.** **Partially closed.** The send-back-note half is done:
+  `transition_item`/`api.transition_item` take an optional `p_notes`
+  (`0048`), stored on the transition's revision and shown in
+  `VersionHistoryPanel`; `SendBackControl` replaces the old plain-click
+  "Send back to draft" with an inline optional-note form. **Inline
+  comments anchored to a position in the document are not built** —
+  that needs a position-anchoring scheme resilient to concurrent edits
+  plus its own UI, a meaningfully larger piece of work. See ADR-35.
+- **T-048 — autosave coalescing.** **Deliberately not attempted.** The
+  natural implementation point is `publishing.capture_revision`, the
+  trigger every save/transition/restore already depends on — extending
+  it to coalesce autosave writes is a change to core, shared logic that
+  isn't safely verifiable without a live database to test against (same
+  reasoning as the deposit-series scheduling exclusion in ADR-31). See
+  ADR-35 "Still open." Still needs: a debounced save path in
+  `item-editor-page.tsx` and a coalescing rule in the write function.
+- ~~**T-095 (frontend half) — CRM person timeline UI.**~~ **Closed.**
+  `api.person_timeline` (`0044`) + `PersonTimeline` component, wired
+  into the relationship detail page. See ADR-29.
+- ~~**T-047 — pgTAP transition-matrix coverage.**~~ **Closed.**
+  `supabase/tests/publishing/07_transition_matrix.sql` — all 6 legal
+  edges (allow + deny, matched to the exact permission each requires)
+  and all 6 illegal edges (rejected by the state machine itself, not a
+  missing grant).
 - **T-088 (partial) — concurrency/race test for `programs.register()`.**
   Capacity/waitlist locking exists in the function; `supabase/tests/programs/01_rls.sql`
   only covers RLS, not a genuine concurrent-registration race. pgTAP's
@@ -117,13 +117,9 @@ scope by the user ("deployment stays with me").
   ("cookieless," what gets counted, retention) that wasn't made by the
   original planning docs either — flagged there as needing sign-off
   before building, not silently skipped.
-- **Digital card QR/barcode** (ADR-27 "Still open"). No image-generation
-  dependency was available to add blind earlier in this session — worth
-  reconsidering now that this same session proved a real `playwright`
-  install and headless Chromium both work end-to-end here (used for the
-  component-workshop accessibility gate, ADR-28). A QR library is a much
-  smaller ask than a browser automation stack; this is more "wasn't
-  revisited" than "structurally blocked" at this point.
+- ~~**Digital card QR/barcode**~~ **Closed.** Added `qrcode.react`;
+  `member-card-page.tsx` now renders a `QRCodeSVG` of the verification
+  token next to the existing text code. ADR-27 updated.
 
 ---
 
@@ -144,6 +140,18 @@ so they're visible in one place instead of five files.
   Chrome to measure honestly, deliberately not approximated.
 - **No `explain (analyze)` query snapshots** (`docs/perf/README.md`) —
   needs a database with realistic data volume to profile against.
+- **Deposit-series scheduling is a UI-only guard, not database-enforced**
+  (ADR-31 "Still open") — a caller using the API directly could still
+  schedule a Paper/Brief/Dispatch/Pigeon Post/Annual item, which would
+  publish without a `deposit_ref` or Record entry.
+- **`session-form.tsx`'s datetime handling** uses
+  `new Date(value).toISOString()` (browser-local timezone) rather than
+  the `kathmanduInputToUtcIso()` helper added for scheduled publishing
+  (ADR-31) — only correct by coincidence when the browser's local zone
+  happens to be Kathmandu's. Not touched, to avoid an unrelated
+  behavior change to already-shipped code.
+- **No structural diff in the version history UI** (ADR-30) — revisions
+  are shown in full, not as a field-by-field comparison.
 
 ---
 

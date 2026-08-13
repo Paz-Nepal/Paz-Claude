@@ -4,7 +4,7 @@ import { toAppError } from "@paz/types";
 import { usePigeonPost, publicMediaUrl } from "../api/use-site";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { NotPublishedOrRedirect } from "../components/published-body";
 
 /** No author_name field is read or rendered anywhere in this page -- there
  * is none to read (spec §2/§5: Pigeon Post is anonymous on the page). */
@@ -20,7 +20,7 @@ export function PigeonPostPage() {
       </div>
     );
   }
-  if (!post.data) return <NotPublished />;
+  if (!post.data) return <NotPublishedOrRedirect type="pigeon_post" slug={slug} />;
 
   const item = post.data;
 

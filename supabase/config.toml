@@ -130,3 +130,8 @@ verify_jwt = true
 # invite-membership-applicant above).
 [functions.verify-member-card]
 verify_jwt = true
+
+# Public: called by not-found pages before giving up. verify_jwt just
+# needs the anon key, which supabase-js attaches automatically.
+[functions.resolve-redirect]
+verify_jwt = true

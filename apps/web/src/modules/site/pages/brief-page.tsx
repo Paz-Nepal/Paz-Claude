@@ -6,7 +6,7 @@ import { useBrief } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { NotPublishedOrRedirect } from "../components/published-body";
 
 export function BriefPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -21,7 +21,7 @@ export function BriefPage() {
       </div>
     );
   }
-  if (!brief.data) return <NotPublished />;
+  if (!brief.data) return <NotPublishedOrRedirect type="brief" slug={slug} />;
 
   const item = brief.data;
   const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;

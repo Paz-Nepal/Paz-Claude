@@ -5,7 +5,7 @@ import { useAnnual, publicMediaUrl } from "../api/use-site";
 import { useLanguage, pickLang } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { NotPublishedOrRedirect } from "../components/published-body";
 
 export function AnnualPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,7 +20,7 @@ export function AnnualPage() {
       </div>
     );
   }
-  if (!annual.data) return <NotPublished />;
+  if (!annual.data) return <NotPublishedOrRedirect type="annual" slug={slug} />;
 
   const item = annual.data;
 

@@ -1,6 +1,13 @@
+import { Navigate } from "react-router-dom";
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { formatKathmanduDate } from "@paz/utils";
-import { publicMediaUrl, type PublishedItemDetail } from "../api/use-site";
+import {
+  publicMediaUrl,
+  publishedItemHref,
+  useResolveRedirect,
+  type PublicItemType,
+  type PublishedItemDetail,
+} from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { Reveal } from "./paz-editorial";
 
@@ -69,4 +76,27 @@ export function NotPublished() {
       />
     </div>
   );
+}
+
+/**
+ * T-049. Drop-in replacement for `<NotPublished />` on any page that
+ * looks up a single item by (type, slug): checks whether the slug used
+ * to point somewhere before showing the dead-end state, so a renamed
+ * item's old links keep working instead of 404ing.
+ */
+export function NotPublishedOrRedirect({
+  type,
+  slug,
+}: {
+  type: PublicItemType;
+  slug: string | undefined;
+}) {
+  const redirect = useResolveRedirect(type, slug, true);
+
+  if (redirect.data) {
+    const href = publishedItemHref({ type, slug: redirect.data });
+    if (href) return <Navigate to={href} replace />;
+  }
+  if (redirect.isPending) return null;
+  return <NotPublished />;
 }

@@ -6,7 +6,7 @@ import { useDispatch } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { NotPublishedOrRedirect } from "../components/published-body";
 
 export function DispatchPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -21,7 +21,7 @@ export function DispatchPage() {
       </div>
     );
   }
-  if (!dispatch.data) return <NotPublished />;
+  if (!dispatch.data) return <NotPublishedOrRedirect type="dispatch" slug={slug} />;
 
   const item = dispatch.data;
   const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;

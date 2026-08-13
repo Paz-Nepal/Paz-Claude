@@ -5,7 +5,7 @@ import { usePaper, publicMediaUrl } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { NotPublishedOrRedirect } from "../components/published-body";
 
 export function PaperPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -20,7 +20,7 @@ export function PaperPage() {
       </div>
     );
   }
-  if (!paper.data) return <NotPublished />;
+  if (!paper.data) return <NotPublishedOrRedirect type="paper" slug={slug} />;
 
   const item = paper.data;
   const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;

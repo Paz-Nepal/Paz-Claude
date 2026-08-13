@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
-import { PublishedBody, NotPublished } from "../components/published-body";
+import { PublishedBody, NotPublishedOrRedirect } from "../components/published-body";
 
 export function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
@@ -16,6 +16,6 @@ export function ArticlePage() {
       </div>
     );
   }
-  if (!item.data) return <NotPublished />;
+  if (!item.data) return <NotPublishedOrRedirect type="article" slug={slug} />;
   return <PublishedBody item={item.data} showByline />;
 }

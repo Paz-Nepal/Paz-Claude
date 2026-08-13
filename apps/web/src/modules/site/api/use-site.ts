@@ -209,3 +209,28 @@ export function useRecordEntries() {
     },
   });
 }
+
+/**
+ * T-049. Called by not-found pages before actually giving up: does this
+ * (type, slug) used to point at content that's since been renamed?
+ * `enabled` lets a caller skip the request until it actually knows the
+ * primary lookup came back empty, rather than firing on every render.
+ */
+export function useResolveRedirect(
+  type: PublicItemType,
+  slug: string | undefined,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: ["resolve-redirect", type, slug],
+    enabled: enabled && Boolean(slug),
+    staleTime: 60_000,
+    queryFn: async () => {
+      const { newSlug } = await invokeEdgeFunction<{ newSlug: string | null }>("resolve-redirect", {
+        itemType: type,
+        oldSlug: slug,
+      });
+      return newSlug;
+    },
+  });
+}

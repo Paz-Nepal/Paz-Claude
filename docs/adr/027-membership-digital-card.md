@@ -26,12 +26,16 @@ design, made now rather than left further deferred.
   card. Reissuing (`api.issue_my_card`, callable any time) overwrites
   the hash, immediately invalidating the previous code — no history of
   past codes is kept, matching invitations' "one row, replaced in place."
-- **No QR/barcode.** This environment has no image-generation dependency
-  available to add, and adding one blind (untested against a real build)
-  isn't something to commit to a repository the user will host
-  elsewhere. The verification code is a 12-character hex string (6
-  bytes, `gen_random_bytes`) — short enough to read aloud or retype by
-  hand. See "Still open."
+- **QR encodes the raw token as plain text, nothing more.** `qrcode.react`'s
+  `QRCodeSVG` renders it client-side next to the text code (added once
+  this session had already proven a working `playwright`/Chromium install
+  here, making a much smaller client-side SVG-rendering dependency a
+  reasonable ask by comparison). A handheld scanner acting as a
+  keyboard-wedge device just types the code into `verify-card-page`'s
+  existing text input — no scanning-specific code needed on the staff
+  side. The verification code itself is still a 12-character hex string
+  (6 bytes, `gen_random_bytes`) either way, so nothing changes for a
+  member who reads or retypes it by hand instead.
 - **Verification is staff-authenticated, not public.** `api.verify_member_card`
   is `security invoker`, relying entirely on `membership.members`' own
   `members_select_staff` RLS policy (`membership.member.read`, which
@@ -84,11 +88,6 @@ design, made now rather than left further deferred.
 
 ## Still open
 
-- **No QR/barcode.** The verification code is text-only. A future pass
-  with a real build environment (able to install and actually exercise
-  an image/QR-generation dependency) could render it as a scannable code
-  on the card page; the underlying token format doesn't need to change
-  for that, since it's already just an opaque string.
 - **`pnpm db:types` has not been run** and **nothing here has been
   executed against a live database.** The status/permission logic is
   hand-verified against the migration's own schema and covered by

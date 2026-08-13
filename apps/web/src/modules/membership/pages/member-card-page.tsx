@@ -1,3 +1,4 @@
+import { QRCodeSVG } from "qrcode.react";
 import { Button, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduDate } from "@paz/utils";
@@ -5,10 +6,10 @@ import { useIssueCard, useMyMembership } from "../api/use-membership";
 import { MemberStatusBadge } from "../components/member-status-badge";
 
 /**
- * T-083. No QR/barcode rendering — no image-generation dependency is
- * available to add in this environment — so the verification code is
- * shown as text a member reads to staff or types into the verify tool.
- * See docs/adr/027-membership-digital-card.md "Still open".
+ * T-083. The QR encodes the raw verification code as plain text, nothing
+ * more — a handheld scanner acting as a keyboard-wedge device just types
+ * it into the same field verify-card-page's text input already reads, no
+ * scanning-specific code needed on that side.
  */
 export function MemberCardPage() {
   const membership = useMyMembership();
@@ -82,13 +83,23 @@ export function MemberCardPage() {
       )}
 
       {canIssue && issue.data && (
-        <div className="flex flex-col gap-2 rounded-lg border p-6">
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">Verification code</p>
-          <p className="font-mono text-3xl tracking-widest">{issue.data.token}</p>
-          <p className="text-muted-foreground text-sm">
-            This code is shown once. Issue a new one any time — the old code stops working
-            immediately.
-          </p>
+        <div className="flex flex-col items-start gap-4 rounded-lg border p-6 sm:flex-row sm:items-center">
+          <QRCodeSVG
+            value={issue.data.token}
+            size={128}
+            className="shrink-0"
+            title="Membership verification code"
+          />
+          <div className="flex flex-col gap-2">
+            <p className="text-muted-foreground text-xs uppercase tracking-wide">
+              Verification code
+            </p>
+            <p className="font-mono text-3xl tracking-widest">{issue.data.token}</p>
+            <p className="text-muted-foreground text-sm">
+              Scan the code or show/read the text to staff. It&rsquo;s shown once here — issue a new
+              one any time, which immediately stops the old one working.
+            </p>
+          </div>
         </div>
       )}
 

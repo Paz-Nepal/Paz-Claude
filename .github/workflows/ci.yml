@@ -164,3 +164,30 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 14
+
+  component-workshop:
+    name: Component workshop — build + axe accessibility (T-035)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright's Chromium
+        run: pnpm --filter @paz/ui exec playwright install --with-deps chromium
+
+      - name: Build the workshop (packages/ui — every *.stories.tsx)
+        run: pnpm --filter @paz/ui workshop:build
+
+      - name: Accessibility check (axe-core against every story)
+        run: pnpm --filter @paz/ui a11y-check

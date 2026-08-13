@@ -1,0 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap");
+/* Same token source apps/web/src/styles/globals.css imports — the
+   workshop renders components with the real palette, not a copy that can
+   drift from it. */
+@import "@paz/config/design-tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-background text-foreground font-sans antialiased;
+}

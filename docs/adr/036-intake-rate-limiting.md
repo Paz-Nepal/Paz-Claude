@@ -1,8 +1,8 @@
 # ADR-36: IP-based rate limiting on public intake endpoints
 
-**Status:** Implemented and verified live (migrations `0051`-`0057`;
+**Status:** Implemented and verified live (migrations `0051`-`0058`;
 Edge Functions `send-a-pigeon` (new), `submit-contact-message`,
-`submit-membership-application`).
+`submit-membership-application`, `accept-membership-invitation`).
 
 ## Decision
 
@@ -43,9 +43,20 @@ Closing this properly, therefore, meant making the Edge Function the
   (deleted opportunistically inside `check_rate_limit`, not a separate
   cron job for what is, by volume, a tiny table).
 - Limits: 5/hour for pigeon post and contact, 3/hour for membership
-  applications (a more deliberate, lower-volume action) — reasonable
+  applications (a more deliberate, lower-volume action), 10/hour for
+  invitation acceptance (tighter than volume alone would suggest — this
+  one is guarding token brute-forcing, not just spam) — reasonable
   defaults, easy to retune later since they're plain function arguments,
   not schema.
+- `api.accept_membership_invitation` (D-12) got the same treatment
+  (`0058`): it's the other genuinely public, unauthenticated endpoint in
+  this group, and the raw token _is_ the credential, so a rate limit here
+  is a real brute-force mitigation, not just an anti-spam floor.
+  `verify_member_card` (ADR-27, digital card verification) was
+  deliberately left out — it was already `authenticated`-only, not
+  anon-callable, and further gated by staff-permission RLS internally, a
+  meaningfully lower risk profile (as `docs/remaining-work.md` already
+  noted before this ADR existed).
 
 This is a floor underneath every public intake path, not a replacement
 for Cloudflare Turnstile on the pigeon intake specifically (still
@@ -87,3 +98,6 @@ function` arity-overload mistake already found and fixed in
   key, unrelated to and not replaced by this.
 - Limits are a single global figure per endpoint, not tiered by caller
   reputation or adjustable without a deploy.
+- `verify_member_card` (digital card verification) has no rate limit —
+  deliberately deferred, see above, given its already-narrower risk
+  profile.

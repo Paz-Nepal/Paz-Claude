@@ -146,16 +146,20 @@ scope by the user ("deployment stays with me").
 Each already has a line in its own ADR's "Still open" — collected here
 so they're visible in one place instead of five files.
 
-- ~~**No rate limiting** on the contact form, pigeon post, and membership
-  application.~~ **Closed for those three** — see ADR-36: a real
-  IP-based limit, enforced at the only place a real client IP is ever
-  visible (the Edge Function each now runs behind exclusively; the
-  underlying RPCs are service_role-only as of `0051`). Surfaced two real
-  bugs along the way (a duplicate function overload leaving a bypass
-  live, and `service_role` never having schema-level `USAGE` grants at
-  all) — both fixed, see the ADR. **Still open**: membership invitation
-  acceptance (ADR-26) and digital card verification (ADR-27, though
-  staff-auth-gated so lower risk) — same shape of gap, not yet closed.
+- ~~**No rate limiting** on the contact form, pigeon post, membership
+  application, and membership invitation acceptance.~~ **Closed for all
+  four** — see ADR-36: a real IP-based limit, enforced at the only place
+  a real client IP is ever visible (the Edge Function each now runs
+  behind exclusively; the underlying RPCs are service_role-only as of
+  `0051`/`0058`). Invitation acceptance got a tighter window (10/hour)
+  since the raw token is the entire credential — this one is a
+  brute-force mitigation, not just an anti-spam floor. Surfaced three
+  real bugs along the way (two duplicate function overloads each leaving
+  a bypass live, and `service_role` never having schema-level `USAGE`
+  grants at all) — all fixed, see the ADR. **Still open**: digital card
+  verification (ADR-27) — deliberately deferred, already
+  `authenticated`-only and staff-permission-gated, a meaningfully lower
+  risk profile than the four closed here.
 - **Component workshop coverage is the shell**, not every real state a
   consuming page constructs (ADR-28) — e.g. `Field` wired to a live
   `react-hook-form` validation error, `RichText` against real seed

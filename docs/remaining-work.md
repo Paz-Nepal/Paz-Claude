@@ -106,14 +106,24 @@ Both are now built.
   and all 6 illegal edges (rejected by the state machine itself, not a
   missing grant).
 - **T-088 (partial) — concurrency/race test for `programs.register()`.**
-  Capacity/waitlist locking exists in the function; `supabase/tests/programs/01_rls.sql`
-  only covers RLS, not a genuine concurrent-registration race. pgTAP's
-  single-transaction-rollback model can't really simulate two
-  connections racing each other — this may need a different tool
-  (a small script opening two real connections against a local Supabase
-  instance) rather than another pgTAP file, which is itself worth
-  deciding explicitly rather than silently declaring "done" with an RLS
-  test that doesn't test what T-088 asked for.
+  Capacity/waitlist locking exists in the function (`select ... for
+update` on the session row before the capacity check — architecturally
+  sound); `supabase/tests/programs/01_rls.sql` only covers RLS, not a
+  genuine concurrent-registration race. pgTAP's single-transaction-
+  rollback model can't really simulate two connections racing each
+  other.
+  **Attempted, blocked on tooling/credentials, not on difficulty**: the
+  session with live database access has no Postgres connection string,
+  no `SUPABASE_SERVICE_ROLE_KEY`, and no real authenticated test user on
+  the live project (correctly — these are secrets it shouldn't have) —
+  so there's no way to open genuinely concurrent connections against it.
+  `supabase db query` (the one available tool) doesn't support real
+  parallel invocations either: five backgrounded calls hung rather than
+  racing. Test setup/teardown (a capacity-2 session, five contending
+  people) was built and cleanly removed; the actual concurrent-call step
+  was never run rather than faked. Needs either a local `supabase start`
+  instance (no Docker in this environment) or someone with the service
+  role key / DB password running a small two-connection script by hand.
 
 ---
 

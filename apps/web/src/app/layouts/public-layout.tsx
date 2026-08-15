@@ -367,15 +367,23 @@ function Footer({
           </div>
         ))}
       </div>
-      <div className="w-wide type-small border-border flex flex-col justify-between gap-4 border-t py-8 md:flex-row">
+      <div className="w-wide type-small border-border flex flex-col justify-between gap-4 border-t py-8 md:flex-row md:items-center">
         <p>
           © {year} {siteName}. No cookies, no analytics, no reader tracking of any kind.
         </p>
-        {contactEmail && (
-          <a href={`mailto:${contactEmail}`} className="hover:text-brand transition-colors">
-            {contactEmail}
-          </a>
-        )}
+        <div className="flex items-center gap-4">
+          <Link to={localize("/privacy")} className="hover:text-brand transition-colors">
+            Privacy
+          </Link>
+          <Link to={localize("/terms")} className="hover:text-brand transition-colors">
+            Terms
+          </Link>
+          {contactEmail && (
+            <a href={`mailto:${contactEmail}`} className="hover:text-brand transition-colors">
+              {contactEmail}
+            </a>
+          )}
+        </div>
       </div>
     </footer>
   );

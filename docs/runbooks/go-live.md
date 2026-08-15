@@ -68,22 +68,40 @@ supabase functions deploy decide-membership-application
 supabase functions deploy register-for-session
 supabase functions deploy ingest-media
 supabase functions deploy submit-contact-message
+supabase functions deploy send-a-pigeon
 supabase functions deploy send-renewal-notices
 supabase functions deploy invite-membership-applicant
 supabase functions deploy accept-membership-invitation
 supabase functions deploy get-my-membership
 supabase functions deploy issue-member-card
 supabase functions deploy verify-member-card
-supabase functions deploy resolve-redirect
 supabase functions deploy get-person-timeline
 supabase functions deploy list-item-revisions
 supabase functions deploy get-item-revision
 supabase functions deploy restore-item-revision
+supabase functions deploy schedule-item
 supabase functions deploy publish-scheduled
+supabase functions deploy initiate-esewa-payment
+supabase functions deploy esewa-payment-callback
+supabase functions deploy initiate-khalti-payment
+supabase functions deploy khalti-payment-callback
 ```
 
 (Or `supabase functions deploy` with no name to deploy every function
-listed in `supabase/config.toml` at once.)
+listed in `supabase/config.toml` at once — the simplest way to keep this
+list from going stale again as new functions are added.)
+
+There is no `resolve-redirect` function — redirects are resolved by a
+direct `api.get_redirect` RPC call from the browser
+(`apps/web/src/modules/site/api/use-site.ts`'s `useRedirect`), not an
+Edge Function. An earlier version of this list included one; it never
+existed.
+
+The four `esewa-`/`khalti-` payment functions (ADR-37) are safe to
+deploy with no live effect: each returns `501` until its gateway secrets
+(step 5 below) are actually set. Skip deploying them if you'd rather not
+have payment endpoints live at all until there's a real merchant
+account — nothing else in this runbook depends on them.
 
 ## 5. Set Edge Function secrets
 
@@ -93,6 +111,12 @@ supabase secrets set RESEND_API_KEY=<your real Resend key> \
   PUBLIC_SITE_URL=https://your-real-domain \
   --project-ref <your-project-ref>
 ```
+
+Payments (eSewa/Khalti, ADR-37) are separate and optional — only set
+these once you have real merchant accounts for either gateway;
+`supabase/functions/.env.example` documents every variable each needs.
+Until then, leave them unset — the functions stay deployed but inert
+(`501`).
 
 Get a `RESEND_API_KEY` from resend.com after verifying your sending
 domain (ADR-11) — outbound email (reservation/application/invitation/
@@ -140,6 +164,17 @@ resolve to the same `index.html` the router then reads, or a direct link
 to any non-home page will 404 at the host level before React ever runs.
 (Most static hosts call this "SPA fallback" or "rewrite all routes to
 index.html" — check your host's docs for the exact setting name.)
+
+## 7a. Publish the Privacy Policy and Terms of Service pages
+
+The footer links to `/privacy` and `/terms` unconditionally — until a
+`page`-type item exists at each of those slugs, both links 404. Sign in
+with the staff account from step 3, create two pages in the editorial
+desk with slugs `privacy` and `terms`, and paste in the draft copy from
+`docs/policies/privacy-policy.md` and `docs/policies/terms-of-service.md`
+— **read each file's own header first**: both are explicitly drafts
+grounded in what this codebase actually does, not reviewed by counsel.
+Have them reviewed before publishing if that review hasn't happened yet.
 
 ## 8. Smoke-test against the real project
 

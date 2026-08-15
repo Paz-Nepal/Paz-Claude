@@ -13,12 +13,25 @@ until a real reduction pass (further splitting `vendor-supabase`,
 deferring `@tanstack/react-query` off the critical path, etc.) happens.
 Lower the constant in the script as that work lands.
 
-**Not implemented: LCP or any other Lighthouse metric.** T-071 also
-named Largest Contentful Paint as a budget. That needs an actual
-Lighthouse run against a served build (headless Chrome, real paint
-timing) — genuinely different from a static byte-count check, and not
-something to approximate or fake. Left as a real gap, not quietly
-dropped.
+## LCP budget (T-071's other half)
+
+`scripts/check-lcp-budget.mjs` runs in CI (the `e2e` job, after the
+critical-journey tests, reusing the Chromium Playwright already
+installs there) and fails if Largest Contentful Paint against a real
+served build (`vite preview`, headless Chromium) exceeds 2500ms — Core
+Web Vitals' own "good" LCP threshold. It uses a real
+`PerformanceObserver('largest-contentful-paint')`, the same primitive
+Lighthouse and CrUX measure with, rather than a full Lighthouse run
+(no network throttling, no TBT/CLS) — LCP is the metric T-071 actually
+named. Measured baseline on this codebase: ~150-200ms (unthrottled
+localhost, so a floor, not a real-network estimate) — plenty of
+headroom before 2500ms, which is intentional: the budget exists to
+catch a regression (a newly-eager hero image, a render-blocking font,
+a bundle-weight jump), not to be a tight target on localhost numbers
+that don't reflect a real visitor's network.
+
+Run locally with `pnpm lcp` (builds nothing itself — run `pnpm build`
+first, same as `pnpm exec node scripts/check-bundle-budget.mjs`).
 
 ## Database query performance snapshots
 

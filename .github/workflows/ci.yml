@@ -158,6 +158,12 @@ jobs:
       - name: Run critical-journey tests
         run: pnpm --filter @paz/web test:e2e
 
+      - name: Build (for the LCP check below)
+        run: pnpm --filter @paz/web build
+
+      - name: LCP budget (T-071's Lighthouse/LCP half — see scripts/check-lcp-budget.mjs)
+        run: pnpm lcp
+
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      playwright-core:
+        specifier: ^1.48.0
+        version: 1.62.1
       prettier:
         specifier: ^3.3.0
         version: 3.9.5

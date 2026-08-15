@@ -146,6 +146,17 @@ function renderDoc(doc) {
   return doc.content.map(renderNode).join("");
 }
 
+// An empty ProseMirror doc ({type: "doc", content: []}) is truthy as an
+// object but renders nothing -- CMS items get one seeded on creation for
+// every bilingual field, whether or not anyone's actually translated it
+// yet, so "the field exists" and "someone wrote something" are different
+// questions. Only the second one should trigger a Nepali variant.
+function hasNeContent(detail) {
+  if (detail.title_ne?.trim()) return true;
+  if (Array.isArray(detail.body_ne?.content) && detail.body_ne.content.length > 0) return true;
+  return false;
+}
+
 // ---------------------------------------------------------------------
 // Path + head-tag conventions -- mirror apps/web/src/app/router.tsx and
 // apps/web/src/modules/site/components/document-head.tsx. Kept as string
@@ -160,9 +171,11 @@ const SERIES = {
   annual: { path: "annual", name: "Annual", fn: "get_annual" },
 };
 
-function buildHead({ title, description, path, ogType, depositRef, license, seriesName }) {
+function buildHead({ title, description, path, ogType, depositRef, license, seriesName, lang }) {
   const fullTitle = title && title !== "PAZ" ? `${escapeHtml(title)} — PAZ` : "PAZ";
-  const url = `${SITE_URL}${path}`;
+  const nePath = path === "/" ? "/ne" : `/ne${path}`;
+  const localizedPath = lang === "ne" ? nePath : path;
+  const url = `${SITE_URL}${localizedPath}`;
   const desc = escapeHtml(
     description || "PAZ, a hospitality-led cultural institution in Kathmandu.",
   );
@@ -170,6 +183,9 @@ function buildHead({ title, description, path, ogType, depositRef, license, seri
     `<title>${fullTitle}</title>`,
     `<meta name="description" content="${desc}" />`,
     `<link rel="canonical" href="${url}" />`,
+    `<link rel="alternate" hreflang="en" href="${SITE_URL}${path}" />`,
+    `<link rel="alternate" hreflang="ne" href="${SITE_URL}${nePath}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${SITE_URL}${path}" />`,
     `<meta name="robots" content="index, follow" />`,
     `<meta property="og:title" content="${fullTitle}" />`,
     `<meta property="og:description" content="${desc}" />`,
@@ -195,12 +211,14 @@ function buildHead({ title, description, path, ogType, depositRef, license, seri
   return tags.join("\n    ");
 }
 
-function writeRoute(baseHtml, distDir, path, headHtml, bodyHtml) {
+function writeRoute(baseHtml, distDir, path, headHtml, bodyHtml, lang = "en") {
   let html = baseHtml
     .replace(/<title>.*?<\/title>/s, "")
     .replace("</head>", `${headHtml}\n  </head>`);
   html = html.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`);
-  const outDir = join(distDir, path.replace(/^\//, ""));
+  if (lang === "ne") html = html.replace('<html lang="en">', '<html lang="ne">');
+  const routePath = lang === "ne" ? `/ne${path === "/" ? "" : path}` : path;
+  const outDir = join(distDir, routePath.replace(/^\//, ""));
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "index.html"), html, "utf8");
 }
@@ -220,6 +238,7 @@ function itemBodyHtml({ title, byline, bodyDoc, depositRef, license }) {
 async function main() {
   const baseHtml = readFileSync(join(DIST_DIR, "index.html"), "utf8");
   let count = 0;
+  let neCount = 0;
 
   const items = await selectFrom("published_items", "select=type,slug&order=published_at.desc");
 
@@ -237,6 +256,7 @@ async function main() {
         depositRef: detail.deposit_ref,
         license: detail.license,
         seriesName: series.name,
+        lang: "en",
       });
       const body = itemBodyHtml({
         title: detail.title,
@@ -247,6 +267,32 @@ async function main() {
       });
       writeRoute(baseHtml, DIST_DIR, path, head, body);
       count++;
+
+      // Only pre-render a Nepali variant when there's actually translated
+      // content -- a page that's byte-identical to its English sibling
+      // except the URL is thin/duplicate content, not a real translation,
+      // and would only confuse a search engine rather than help one.
+      if (hasNeContent(detail)) {
+        const neHead = buildHead({
+          title: detail.title_ne || detail.title,
+          description: detail.abstract || null,
+          path,
+          ogType: "article",
+          depositRef: detail.deposit_ref,
+          license: detail.license,
+          seriesName: series.name,
+          lang: "ne",
+        });
+        const neBody = itemBodyHtml({
+          title: detail.title_ne || detail.title,
+          byline: type === "paper" ? "A Paz Paper" : null,
+          bodyDoc: detail.body_ne || detail.body,
+          depositRef: detail.deposit_ref,
+          license: detail.license,
+        });
+        writeRoute(baseHtml, DIST_DIR, path, neHead, neBody, "ne");
+        neCount++;
+      }
     } else if (type === "page" || type === "article") {
       const detail = await callRpc("get_published_item", { p_type: type, p_slug: slug });
       if (!detail) continue;
@@ -257,6 +303,7 @@ async function main() {
         path,
         ogType: "article",
         depositRef: detail.deposit_ref,
+        lang: "en",
       });
       const body = itemBodyHtml({
         title: detail.title,
@@ -266,10 +313,31 @@ async function main() {
       });
       writeRoute(baseHtml, DIST_DIR, path, head, body);
       count++;
+
+      if (hasNeContent(detail)) {
+        const neHead = buildHead({
+          title: detail.title_ne || detail.title,
+          description: detail.summary_ne || detail.summary || detail.subtitle || null,
+          path,
+          ogType: "article",
+          depositRef: detail.deposit_ref,
+          lang: "ne",
+        });
+        const neBody = itemBodyHtml({
+          title: detail.title_ne || detail.title,
+          byline: type === "article" ? detail.author_name : null,
+          bodyDoc: detail.body_ne || detail.body,
+          depositRef: detail.deposit_ref,
+        });
+        writeRoute(baseHtml, DIST_DIR, path, neHead, neBody, "ne");
+        neCount++;
+      }
     }
   }
 
-  console.log(`Pre-rendered ${count} static page(s) into ${DIST_DIR}/<path>/index.html`);
+  console.log(
+    `Pre-rendered ${count} static page(s) into ${DIST_DIR}/<path>/index.html, plus ${neCount} Nepali variant(s) into ${DIST_DIR}/ne/<path>/index.html (only where translated content actually exists).`,
+  );
 }
 
 main().catch((err) => {

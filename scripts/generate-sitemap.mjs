@@ -78,16 +78,32 @@ const STATIC_ROUTES = [
   { path: "/send-a-pigeon", priority: "0.4" },
 ];
 
-function urlEntry(loc, lastmod, priority) {
-  return [
-    "  <url>",
-    `    <loc>${loc}</loc>`,
-    lastmod ? `    <lastmod>${lastmod}</lastmod>` : null,
-    priority ? `    <priority>${priority}</priority>` : null,
-    "  </url>",
-  ]
-    .filter(Boolean)
-    .join("\n");
+// Every path exists in both languages (the "/ne" tree mirrors the bare
+// tree exactly, apps/web/src/app/router.tsx) -- one <url> entry per
+// language, each carrying xhtml:link alternates pointing at the other, so
+// a search engine sees them as translations of the same page rather than
+// two unrelated URLs (work plan Part III, #17).
+function urlEntry(bare, lastmod, priority) {
+  const nePath = bare === "/" ? "/ne" : `/ne${bare}`;
+  const en = `${SITE_URL}${bare}`;
+  const ne = `${SITE_URL}${nePath}`;
+  const altLinks = [
+    `    <xhtml:link rel="alternate" hreflang="en" href="${en}" />`,
+    `    <xhtml:link rel="alternate" hreflang="ne" href="${ne}" />`,
+    `    <xhtml:link rel="alternate" hreflang="x-default" href="${en}" />`,
+  ].join("\n");
+  const entry = (loc) =>
+    [
+      "  <url>",
+      `    <loc>${loc}</loc>`,
+      lastmod ? `    <lastmod>${lastmod}</lastmod>` : null,
+      priority ? `    <priority>${priority}</priority>` : null,
+      altLinks,
+      "  </url>",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  return [entry(en), entry(ne)].join("\n");
 }
 
 async function main() {
@@ -103,8 +119,7 @@ async function main() {
   // kept distinct from /record on purpose) doesn't produce a duplicate
   // <url> entry -- the static route wins since it's inserted first.
   const seen = new Map();
-  for (const r of STATIC_ROUTES)
-    seen.set(r.path, urlEntry(`${SITE_URL}${r.path}`, null, r.priority));
+  for (const r of STATIC_ROUTES) seen.set(r.path, urlEntry(r.path, null, r.priority));
 
   for (const item of items) {
     const prefix = SERIES_PATH[item.type];
@@ -112,21 +127,23 @@ async function main() {
     // /<slug> via the generic catch-all route.
     const path = prefix ? `/${prefix}/${item.slug}` : `/${item.slug}`;
     if (seen.has(path)) continue;
-    seen.set(path, urlEntry(`${SITE_URL}${path}`, item.published_at?.slice(0, 10), "0.6"));
+    seen.set(path, urlEntry(path, item.published_at?.slice(0, 10), "0.6"));
   }
 
   const entries = [...seen.values()];
 
   const xml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
     ...entries,
     "</urlset>",
     "",
   ].join("\n");
 
   writeFileSync(OUT_FILE, xml, "utf8");
-  console.log(`Wrote ${entries.length} URLs (${items.length} from the Record/press/journal).`);
+  console.log(
+    `Wrote ${entries.length * 2} URLs (en+ne pairs for ${entries.length} paths, ${items.length} from the Record/press/journal).`,
+  );
 }
 
 main().catch((err) => {

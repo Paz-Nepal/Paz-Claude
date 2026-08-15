@@ -2,11 +2,12 @@ import { useParams } from "react-router-dom";
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePaper, publicMediaUrl } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 import { DocumentHead } from "../components/document-head";
+import { TranslationNotice } from "../components/translation-notice";
 
 export function PaperPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -56,6 +57,7 @@ export function PaperPage() {
           Download the typeset PDF
         </a>
       )}
+      {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
       {item.sources_note && (
         <p className="text-muted-foreground text-sm">Sources: {item.sources_note}</p>

@@ -3,10 +3,17 @@ import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduDate } from "@paz/utils";
 import { usePublishedItem, useRecordEntries } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import {
+  useLanguage,
+  pickLang,
+  pickLangDoc,
+  useLocalizedPath,
+  isUntranslatedDoc,
+} from "../language";
 import { PageHero, Eyebrow, Reveal } from "../components/paz-editorial";
 import { NotPublished } from "../components/published-body";
 import { DocumentHead } from "../components/document-head";
+import { TranslationNotice } from "../components/translation-notice";
 
 /**
  * The organ page for "The Record" — institutional description of what
@@ -21,6 +28,7 @@ export function RecordOrganPage() {
   const page = usePublishedItem("page", "the-record");
   const entries = useRecordEntries();
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
 
   if (page.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
   if (page.isError) {
@@ -48,9 +56,10 @@ export function RecordOrganPage() {
         feedPath="/the-record/feed.xml"
       />
       <PageHero kicker="An organ of the house" title={title} subtitle={subtitle} />
-      {body && (
+      {(isUntranslatedDoc(page.data.body_ne, lang) || body) && (
         <div className="w-reading py-16">
-          <RichText doc={body} className="rich-text" />
+          {isUntranslatedDoc(page.data.body_ne, lang) && <TranslationNotice />}
+          {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}
 
@@ -84,7 +93,7 @@ export function RecordOrganPage() {
                       {entry.deposited_at ? ` · ${formatKathmanduDate(entry.deposited_at)}` : ""}
                     </span>
                     {entry.link ? (
-                      <Link to={entry.link} className="link-underline font-serif text-lg">
+                      <Link to={localize(entry.link)} className="link-underline font-serif text-lg">
                         {entry.title}
                       </Link>
                     ) : (

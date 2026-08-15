@@ -235,74 +235,97 @@ function withSuspense(element: React.ReactNode) {
   return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
 }
 
+/**
+ * The whole public route tree, generated once and mounted twice (English
+ * at "/", Nepali at "/ne") -- work plan Part III, #17: "Nepali has no
+ * URL... a Nepali reading of a Paper cannot be linked, shared, indexed,
+ * archived, or cited." Every route (including transactional ones like
+ * /reservations that have no translated content of their own) gets a /ne
+ * counterpart rather than picking and choosing, so every existing
+ * internal link keeps working once uniformly lang-prefixed
+ * (useLocalizedPath) -- classifying "content" vs "chrome" routes here
+ * would just be a second place those two lists could drift apart. UI
+ * chrome (nav labels, buttons) stays English-only under both prefixes,
+ * per the standing decision to defer full bilingual chrome -- only
+ * content fields (title_ne, body_ne, …) actually render in Nepali.
+ */
+function publicRouteChildren() {
+  return [
+    { index: true, element: <HomePage /> },
+    // Named-series routes (spec §3). React Router ranks static path
+    // segments above the dynamic ":slug" catch-all further down
+    // regardless of declaration order, so these can't collide with a
+    // CMS-authored page slug of the same name -- but staff still
+    // shouldn't title an institutional page "Record", "Papers", etc.,
+    // since that page would simply become unreachable at its own path.
+    { path: "papers", element: withSuspense(<PapersIndexPage />) },
+    { path: "papers/:slug", element: withSuspense(<PaperPage />) },
+    { path: "brief", element: withSuspense(<BriefIndexPage />) },
+    { path: "brief/:slug", element: withSuspense(<BriefPage />) },
+    { path: "dispatch", element: withSuspense(<DispatchIndexPage />) },
+    { path: "dispatch/:slug", element: withSuspense(<DispatchPage />) },
+    { path: "pigeon-post", element: withSuspense(<PigeonPostIndexPage />) },
+    { path: "pigeon-post/:slug", element: withSuspense(<PigeonPostPage />) },
+    { path: "annual", element: withSuspense(<AnnualIndexPage />) },
+    { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
+    { path: "record", element: withSuspense(<RecordPage />) },
+    { path: "menu", element: withSuspense(<MenuPage />) },
+    { path: "reservations", element: withSuspense(<ReservationPage />) },
+    { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
+    { path: "contact", element: withSuspense(<ContactPage />) },
+    { path: "search", element: withSuspense(<SearchPage />) },
+    // The six organs. Four have a dedicated hub component that
+    // aggregates related content (Press: the five series; House: Visit;
+    // Hearth: Menu + Reservations; The Record: the deposit index); Guild
+    // and Treasury fall through to the generic CmsPage catch-all below,
+    // same as any other plain institutional page.
+    { path: "press", element: withSuspense(<PressPage />) },
+    { path: "house", element: withSuspense(<HousePage />) },
+    { path: "hearth", element: withSuspense(<HearthPage />) },
+    { path: "the-record", element: withSuspense(<RecordOrganPage />) },
+    { path: "journal", element: withSuspense(<JournalPage />) },
+    { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
+    { path: "membership/apply", element: withSuspense(<ApplyPage />) },
+    { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
+    { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
+    {
+      path: "membership/card",
+      element: withSuspense(<ProtectedRoute requireMfa={false} />),
+      children: [{ index: true, element: withSuspense(<MemberCardPage />) }],
+    },
+    { path: "programmes", element: withSuspense(<CalendarPage />) },
+    { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
+    {
+      path: "my-registrations",
+      element: withSuspense(<ProtectedRoute requireMfa={false} />),
+      children: [{ index: true, element: withSuspense(<MyRegistrationsPage />) }],
+    },
+    {
+      path: "account",
+      element: withSuspense(<ProtectedRoute requireMfa={false} />),
+      children: [{ index: true, element: withSuspense(<AccountPage />) }],
+    },
+    { path: "sign-in", element: withSuspense(<SignInPage />) },
+    // CMS-controlled top-level pages (/about, /visit, …). Static routes
+    // above always win route ranking over this dynamic segment.
+    { path: ":slug", element: withSuspense(<CmsPage />) },
+    // Anything with more than one path segment that didn't match a route
+    // above (":slug" only ever matches exactly one segment). Rendered
+    // inside PublicLayout on purpose, so a broken link still gets the
+    // site's real header/footer instead of a bare page.
+    { path: "*", element: withSuspense(<ResolveNotFoundPage />) },
+  ];
+}
+
 export const router = createBrowserRouter([
   {
-    element: <PublicLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      // Named-series routes (spec §3). React Router ranks static path
-      // segments above the dynamic ":slug" catch-all further down
-      // regardless of declaration order, so these can't collide with a
-      // CMS-authored page slug of the same name -- but staff still
-      // shouldn't title an institutional page "Record", "Papers", etc.,
-      // since that page would simply become unreachable at its own path.
-      { path: "papers", element: withSuspense(<PapersIndexPage />) },
-      { path: "papers/:slug", element: withSuspense(<PaperPage />) },
-      { path: "brief", element: withSuspense(<BriefIndexPage />) },
-      { path: "brief/:slug", element: withSuspense(<BriefPage />) },
-      { path: "dispatch", element: withSuspense(<DispatchIndexPage />) },
-      { path: "dispatch/:slug", element: withSuspense(<DispatchPage />) },
-      { path: "pigeon-post", element: withSuspense(<PigeonPostIndexPage />) },
-      { path: "pigeon-post/:slug", element: withSuspense(<PigeonPostPage />) },
-      { path: "annual", element: withSuspense(<AnnualIndexPage />) },
-      { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
-      { path: "record", element: withSuspense(<RecordPage />) },
-      { path: "menu", element: withSuspense(<MenuPage />) },
-      { path: "reservations", element: withSuspense(<ReservationPage />) },
-      { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
-      { path: "contact", element: withSuspense(<ContactPage />) },
-      { path: "search", element: withSuspense(<SearchPage />) },
-      // The six organs. Four have a dedicated hub component that
-      // aggregates related content (Press: the five series; House: Visit;
-      // Hearth: Menu + Reservations; The Record: the deposit index); Guild
-      // and Treasury fall through to the generic CmsPage catch-all below,
-      // same as any other plain institutional page.
-      { path: "press", element: withSuspense(<PressPage />) },
-      { path: "house", element: withSuspense(<HousePage />) },
-      { path: "hearth", element: withSuspense(<HearthPage />) },
-      { path: "the-record", element: withSuspense(<RecordOrganPage />) },
-      { path: "journal", element: withSuspense(<JournalPage />) },
-      { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
-      { path: "membership/apply", element: withSuspense(<ApplyPage />) },
-      { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
-      { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
-      {
-        path: "membership/card",
-        element: withSuspense(<ProtectedRoute requireMfa={false} />),
-        children: [{ index: true, element: withSuspense(<MemberCardPage />) }],
-      },
-      { path: "programmes", element: withSuspense(<CalendarPage />) },
-      { path: "programmes/:slug", element: withSuspense(<ProgramPage />) },
-      {
-        path: "my-registrations",
-        element: withSuspense(<ProtectedRoute requireMfa={false} />),
-        children: [{ index: true, element: withSuspense(<MyRegistrationsPage />) }],
-      },
-      {
-        path: "account",
-        element: withSuspense(<ProtectedRoute requireMfa={false} />),
-        children: [{ index: true, element: withSuspense(<AccountPage />) }],
-      },
-      { path: "sign-in", element: withSuspense(<SignInPage />) },
-      // CMS-controlled top-level pages (/about, /visit, …). Static routes
-      // above always win route ranking over this dynamic segment.
-      { path: ":slug", element: withSuspense(<CmsPage />) },
-      // Anything with more than one path segment that didn't match a route
-      // above (":slug" only ever matches exactly one segment). Rendered
-      // inside PublicLayout on purpose, so a broken link still gets the
-      // site's real header/footer instead of a bare page.
-      { path: "*", element: withSuspense(<ResolveNotFoundPage />) },
-    ],
+    element: <PublicLayout lang="en" />,
+    children: publicRouteChildren(),
+  },
+  {
+    path: "ne",
+    element: <PublicLayout lang="ne" />,
+    children: publicRouteChildren(),
   },
   {
     path: "/admin/mfa-enroll",

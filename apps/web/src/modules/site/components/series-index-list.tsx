@@ -1,7 +1,7 @@
 import type * as React from "react";
 import { Link } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
-import { useLanguage, pickLang } from "../language";
+import { useLanguage, pickLang, useLocalizedPath } from "../language";
 import type { PublishedItem } from "../api/use-site";
 
 /**
@@ -23,6 +23,7 @@ export function SeriesIndexList({
   secondary?: (item: PublishedItem) => React.ReactNode;
 }) {
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
 
   if (!items) return null;
   if (items.length === 0) {
@@ -33,7 +34,10 @@ export function SeriesIndexList({
     <ul className="flex flex-col gap-6">
       {items.map((item) => (
         <li key={item.id} className="border-b pb-6 last:border-0">
-          <Link to={`${basePath}/${item.slug}`} className="font-serif text-xl hover:underline">
+          <Link
+            to={localize(`${basePath}/${item.slug}`)}
+            className="font-serif text-xl hover:underline"
+          >
             {pickLang(item.title ?? "", item.title_ne, lang)}
           </Link>
           {secondary && <div className="text-muted-foreground mt-1 text-sm">{secondary(item)}</div>}

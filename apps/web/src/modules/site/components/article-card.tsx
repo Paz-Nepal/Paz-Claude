@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, type PublishedItem } from "../api/use-site";
-import { useLanguage, pickLang } from "../language";
+import { useLanguage, pickLang, useLocalizedPath } from "../language";
 
 export function ArticleCard({ item }: { item: PublishedItem }) {
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
   return (
     <article className="flex flex-col gap-2">
-      <Link to={`/journal/${item.slug}`} className="group flex flex-col gap-2">
+      <Link to={localize(`/journal/${item.slug}`)} className="group flex flex-col gap-2">
         {item.featured_media_path && (
           <img
             src={publicMediaUrl(item.featured_media_path)}

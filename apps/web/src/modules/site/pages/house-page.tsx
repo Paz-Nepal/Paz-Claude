@@ -1,9 +1,10 @@
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { PageHero, Eyebrow, Reveal } from "../components/paz-editorial";
 import { NotPublished } from "../components/published-body";
+import { TranslationNotice } from "../components/translation-notice";
 
 export function HousePage() {
   const page = usePublishedItem("page", "house");
@@ -34,9 +35,10 @@ export function HousePage() {
           page.data.subtitle ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang) : undefined
         }
       />
-      {body && (
+      {(isUntranslatedDoc(page.data.body_ne, lang) || body) && (
         <div className="w-reading py-16">
-          <RichText doc={body} className="rich-text" />
+          {isUntranslatedDoc(page.data.body_ne, lang) && <TranslationNotice />}
+          {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}
 
@@ -49,9 +51,10 @@ export function HousePage() {
                 {pickLang(visit.data.title ?? "Visit", visit.data.title_ne, lang)}
               </h2>
             </Reveal>
-            {visitBody && (
+            {(isUntranslatedDoc(visit.data?.body_ne, lang) || visitBody) && (
               <div className="mt-8">
-                <RichText doc={visitBody} className="rich-text" />
+                {isUntranslatedDoc(visit.data?.body_ne, lang) && <TranslationNotice />}
+                {visitBody && <RichText doc={visitBody} className="rich-text" />}
               </div>
             )}
           </div>

@@ -1,9 +1,17 @@
+import { Link } from "react-router-dom";
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems, type PublicItemType } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import {
+  useLanguage,
+  pickLang,
+  pickLangDoc,
+  isUntranslatedDoc,
+  useLocalizedPath,
+} from "../language";
 import { PageHero, Eyebrow, ArrowLink, Reveal } from "../components/paz-editorial";
 import { NotPublished } from "../components/published-body";
+import { TranslationNotice } from "../components/translation-notice";
 
 const SERIES = [
   { type: "paper" as const, label: "Papers", to: "/papers" },
@@ -16,6 +24,7 @@ const SERIES = [
 function SeriesFeed({ type, label, to }: { type: PublicItemType; label: string; to: string }) {
   const items = usePublishedItems(type);
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
   const recent = (items.data ?? []).slice(0, 3);
 
   return (
@@ -30,9 +39,12 @@ function SeriesFeed({ type, label, to }: { type: PublicItemType; label: string; 
         <ul className="flex flex-col gap-2">
           {recent.map((item) => (
             <li key={item.id}>
-              <a href={`${to}/${item.slug}`} className="link-underline font-serif text-lg">
+              <Link
+                to={localize(`${to}/${item.slug}`)}
+                className="link-underline font-serif text-lg"
+              >
                 {pickLang(item.title ?? "", item.title_ne, lang)}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -66,9 +78,10 @@ export function PressPage() {
           page.data.subtitle ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang) : undefined
         }
       />
-      {body && (
+      {(isUntranslatedDoc(page.data.body_ne, lang) || body) && (
         <div className="w-reading py-16">
-          <RichText doc={body} className="rich-text" />
+          {isUntranslatedDoc(page.data.body_ne, lang) && <TranslationNotice />}
+          {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}
 

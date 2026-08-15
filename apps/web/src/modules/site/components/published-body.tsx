@@ -1,9 +1,10 @@
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, type PublishedItemDetail } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { Reveal } from "./paz-editorial";
 import { DocumentHead } from "./document-head";
+import { TranslationNotice } from "./translation-notice";
 
 /**
  * Shared rendering for any published item's full view (article or page):
@@ -67,6 +68,7 @@ export function PublishedBody({
         )}
       </header>
       <div className="w-reading py-16">
+        {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
         {body && <RichText doc={body} className="rich-text" />}
         {item.tags && item.tags.length > 0 && (
           <p className="type-small border-border mt-8 border-t pt-4">{item.tags.join(" · ")}</p>

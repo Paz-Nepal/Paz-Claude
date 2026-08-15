@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { PageHero, ArrowLink } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
+import { useLocalizedPath } from "../language";
 
 /**
  * A real 404, not a silent redirect to the homepage. Work plan Part II, #7:
@@ -13,6 +14,7 @@ import { DocumentHead } from "../components/document-head";
  */
 export function NotFoundPage() {
   const { pathname } = useLocation();
+  const localize = useLocalizedPath();
   return (
     <div className="flex min-h-[70vh] flex-col">
       <DocumentHead
@@ -37,7 +39,7 @@ export function NotFoundPage() {
         </div>
         <p className="type-small border-border border-t pt-6">
           Have a link that used to work?{" "}
-          <Link to="/contact" className="link-underline">
+          <Link to={localize("/contact")} className="link-underline">
             Tell us
           </Link>
           , so we can point it to the right place.

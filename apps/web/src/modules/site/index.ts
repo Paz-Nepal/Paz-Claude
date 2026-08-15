@@ -5,5 +5,6 @@ export { CmsPage } from "./pages/cms-page";
 export { ContactPage } from "./pages/contact-page";
 export { SearchPage } from "./pages/search-page";
 export { useSiteInfo, usePublishedItems } from "./api/use-site";
-export { LanguageProvider, useLanguage } from "./language";
+export { LanguageProvider, useLanguage, useLocalizedPath, useOtherLanguagePath } from "./language";
+export type { Lang } from "./language";
 export { LanguageToggle } from "./components/language-toggle";

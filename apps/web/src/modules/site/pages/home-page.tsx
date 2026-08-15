@@ -6,6 +6,7 @@ import { usePublishedItems, useSiteInfo } from "../api/use-site";
 import { ArticleCard } from "../components/article-card";
 import { Reveal, Eyebrow, ArrowLink } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
+import { useLocalizedPath } from "../language";
 
 const ORGANS = [
   {
@@ -28,6 +29,7 @@ export function HomePage() {
   const siteInfo = useSiteInfo();
   const articles = usePublishedItems("article");
   const sessions = useProgramSessions();
+  const localize = useLocalizedPath();
 
   const siteName = siteInfo.data?.["site.name"] ?? "PAZ";
   const tagline = siteInfo.data?.["site.tagline"];
@@ -57,7 +59,7 @@ export function HomePage() {
         <Reveal delay={280}>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-6">
             <Link
-              to="/house"
+              to={localize("/house")}
               className="type-caption border-foreground hover:bg-foreground hover:text-background inline-flex items-center gap-2 border px-8 py-4 transition-colors"
             >
               Visit the House
@@ -85,7 +87,7 @@ export function HomePage() {
             upcoming.map((s, i) => (
               <Reveal key={s.id} delay={i * 60}>
                 <Link
-                  to={`/programmes/${s.program_slug}`}
+                  to={localize(`/programmes/${s.program_slug}`)}
                   className="border-border group flex items-start gap-6 border-t py-6"
                 >
                   <div className="text-center">
@@ -151,7 +153,7 @@ export function HomePage() {
           <div className="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
             {ORGANS.map((organ, i) => (
               <Reveal key={organ.to} delay={i * 70}>
-                <Link to={organ.to} className="group flex flex-col gap-2">
+                <Link to={localize(organ.to)} className="group flex flex-col gap-2">
                   <h3 className="type-h3 group-hover:text-brand transition-colors">
                     {organ.label}
                   </h3>

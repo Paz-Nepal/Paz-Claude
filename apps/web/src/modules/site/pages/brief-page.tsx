@@ -3,11 +3,12 @@ import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduDate } from "@paz/utils";
 import { useBrief } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc } from "../language";
+import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { NotPublished } from "../components/published-body";
 import { DocumentHead } from "../components/document-head";
+import { TranslationNotice } from "../components/translation-notice";
 
 export function BriefPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -49,6 +50,7 @@ export function BriefPage() {
         )}
         <h1 className="font-serif text-4xl">{pickLang(item.title ?? "", item.title_ne, lang)}</h1>
       </header>
+      {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
       <DepositProvenance depositRef={item.deposit_ref} />
     </article>

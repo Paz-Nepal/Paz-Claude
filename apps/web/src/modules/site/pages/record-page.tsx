@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduDate } from "@paz/utils";
 import { useRecordEntries } from "../api/use-site";
+import { useLocalizedPath } from "../language";
 
 /**
  * The spine of the site (spec §2/§59): every public deposit, in order,
@@ -12,6 +13,7 @@ import { useRecordEntries } from "../api/use-site";
  */
 export function RecordPage() {
   const entries = useRecordEntries();
+  const localize = useLocalizedPath();
 
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
@@ -43,7 +45,7 @@ export function RecordPage() {
                   {entry.deposited_at ? ` · ${formatKathmanduDate(entry.deposited_at)}` : ""}
                 </span>
                 {entry.link ? (
-                  <Link to={entry.link} className="font-medium hover:underline">
+                  <Link to={localize(entry.link)} className="font-medium hover:underline">
                     {entry.title}
                   </Link>
                 ) : (

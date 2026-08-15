@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { useLocalizedPath } from "../language";
 
 /**
  * Shared editorial-site presentational primitives, ported from the
@@ -66,6 +67,7 @@ export function ArrowLink({
   children: React.ReactNode;
   external?: boolean;
 }) {
+  const localize = useLocalizedPath();
   const className =
     "group inline-flex items-center gap-2 type-caption text-brand hover:text-foreground transition-colors";
   if (external) {
@@ -77,7 +79,7 @@ export function ArrowLink({
     );
   }
   return (
-    <Link to={to} className={className}>
+    <Link to={localize(to)} className={className}>
       {children}
       <ArrowRightIcon />
     </Link>

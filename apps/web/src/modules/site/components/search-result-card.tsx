@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, publishedItemHref, type PublishedItem } from "../api/use-site";
-import { useLanguage, pickLang } from "../language";
+import { useLanguage, pickLang, useLocalizedPath } from "../language";
 
 const TYPE_LABELS: Record<PublishedItem["type"] & string, string> = {
   article: "Journal",
@@ -16,6 +16,7 @@ const TYPE_LABELS: Record<PublishedItem["type"] & string, string> = {
 
 export function SearchResultCard({ item }: { item: PublishedItem }) {
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
   const href = publishedItemHref(item);
   const title = pickLang(item.title ?? "", item.title_ne, lang);
 
@@ -48,7 +49,7 @@ export function SearchResultCard({ item }: { item: PublishedItem }) {
   return (
     <article className="flex flex-col gap-2">
       {href ? (
-        <Link to={href} className="group flex flex-col gap-2">
+        <Link to={localize(href)} className="group flex flex-col gap-2">
           {body}
         </Link>
       ) : (

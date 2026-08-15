@@ -1,6 +1,12 @@
 import * as React from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
-import { useSiteInfo, LanguageProvider, LanguageToggle } from "@/modules/site";
+import {
+  useSiteInfo,
+  LanguageProvider,
+  LanguageToggle,
+  useLocalizedPath,
+  type Lang,
+} from "@/modules/site";
 
 /**
  * Public site chrome. The primary nav is deliberately curated, not
@@ -12,6 +18,11 @@ import { useSiteInfo, LanguageProvider, LanguageToggle } from "@/modules/site";
  * institution's own request. A newly published institutional page still
  * needs a line added here to appear in nav — a small ongoing cost, traded
  * for a nav that reads as a considered structure rather than a page list.
+ *
+ * Every `to=`/`href=` target in this file is routed through
+ * `useLocalizedPath()` (aliased `localize` below) so nav/footer links stay
+ * on the current language's "/ne" prefix instead of silently dropping a
+ * Nepali reader back into English mid-click.
  */
 const PRESS_ITEMS = [
   { to: "/papers", label: "Papers" },
@@ -25,6 +36,7 @@ const PRESS_ITEMS = [
 function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
+  const localize = useLocalizedPath();
 
   React.useEffect(() => {
     if (!open) return;
@@ -49,7 +61,7 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
       {open && (
         <div className="bg-background border-border absolute left-0 top-full z-50 mt-3 flex min-w-40 flex-col gap-1 border p-2 shadow-lg">
           <NavLink
-            to="/press"
+            to={localize("/press")}
             end
             onClick={() => {
               setOpen(false);
@@ -63,7 +75,7 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
           {PRESS_ITEMS.map((item) => (
             <NavLink
               key={item.to}
-              to={item.to}
+              to={localize(item.to)}
               onClick={() => {
                 setOpen(false);
                 onNavigate?.();
@@ -80,12 +92,13 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function Logo({ siteName }: { siteName: string }) {
+  const localize = useLocalizedPath();
   // Ranjana wordmark: intentionally not built yet (spec §5 — display-only,
   // SVG or a dedicated font, never live text, commissioned separately).
   // No placeholder text on the live site in the meantime; the name alone
   // is the wordmark until the mark itself is ready to ship.
   return (
-    <Link to="/" className="flex items-baseline gap-2 font-serif text-2xl leading-none">
+    <Link to={localize("/")} className="flex items-baseline gap-2 font-serif text-2xl leading-none">
       {siteName}
     </Link>
   );
@@ -95,6 +108,7 @@ function Header({ siteName }: { siteName: string }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [scrolled, setScrolled] = React.useState(false);
   const { pathname } = useLocation();
+  const localize = useLocalizedPath();
 
   React.useEffect(() => setMobileOpen(false), [pathname]);
   React.useEffect(() => {
@@ -116,41 +130,41 @@ function Header({ siteName }: { siteName: string }) {
       <div className="w-wide flex h-20 items-center justify-between">
         <Logo siteName={siteName} />
         <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
-          <NavLink to="/" end className={navLinkClass}>
+          <NavLink to={localize("/")} end className={navLinkClass}>
             Home
           </NavLink>
-          <NavLink to="/about" className={navLinkClass}>
+          <NavLink to={localize("/about")} className={navLinkClass}>
             About
           </NavLink>
-          <NavLink to="/house" className={navLinkClass}>
+          <NavLink to={localize("/house")} className={navLinkClass}>
             The House
           </NavLink>
-          <NavLink to="/hearth" className={navLinkClass}>
+          <NavLink to={localize("/hearth")} className={navLinkClass}>
             The Hearth
           </NavLink>
           <PressMenu />
-          <NavLink to="/guild" className={navLinkClass}>
+          <NavLink to={localize("/guild")} className={navLinkClass}>
             The Guild
           </NavLink>
-          <NavLink to="/the-record" className={navLinkClass}>
+          <NavLink to={localize("/the-record")} className={navLinkClass}>
             The Record
           </NavLink>
-          <NavLink to="/treasury" className={navLinkClass}>
+          <NavLink to={localize("/treasury")} className={navLinkClass}>
             The Treasury
           </NavLink>
-          <NavLink to="/programmes" className={navLinkClass}>
+          <NavLink to={localize("/programmes")} className={navLinkClass}>
             Programmes
           </NavLink>
-          <NavLink to="/membership/apply" className={navLinkClass}>
+          <NavLink to={localize("/membership/apply")} className={navLinkClass}>
             Membership
           </NavLink>
-          <NavLink to="/journal" className={navLinkClass}>
+          <NavLink to={localize("/journal")} className={navLinkClass}>
             Journal
           </NavLink>
-          <NavLink to="/contact" className={navLinkClass}>
+          <NavLink to={localize("/contact")} className={navLinkClass}>
             Contact
           </NavLink>
-          <NavLink to="/search" className={navLinkClass} aria-label="Search">
+          <NavLink to={localize("/search")} className={navLinkClass} aria-label="Search">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -204,52 +218,70 @@ function Header({ siteName }: { siteName: string }) {
             </button>
           </div>
           <nav className="w-wide mt-4 flex flex-1 flex-col gap-1 pb-12">
-            <Link to="/about" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/about")} className="text-foreground/90 py-2 font-serif text-2xl">
               About
             </Link>
-            <Link to="/house" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/house")} className="text-foreground/90 py-2 font-serif text-2xl">
               The House
             </Link>
-            <Link to="/hearth" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/hearth")} className="text-foreground/90 py-2 font-serif text-2xl">
               The Hearth
             </Link>
             <p className="text-muted-foreground mb-1 mt-2 font-sans text-xs uppercase tracking-[0.14em]">
               The Press
             </p>
-            <Link to="/press" className="text-foreground/90 py-1 pl-4 font-serif text-xl">
+            <Link
+              to={localize("/press")}
+              className="text-foreground/90 py-1 pl-4 font-serif text-xl"
+            >
               Overview
             </Link>
             {PRESS_ITEMS.map((item) => (
               <Link
                 key={item.to}
-                to={item.to}
+                to={localize(item.to)}
                 className="text-foreground/90 py-1 pl-4 font-serif text-xl"
               >
                 {item.label}
               </Link>
             ))}
-            <Link to="/guild" className="text-foreground/90 mt-2 py-2 font-serif text-2xl">
+            <Link
+              to={localize("/guild")}
+              className="text-foreground/90 mt-2 py-2 font-serif text-2xl"
+            >
               The Guild
             </Link>
-            <Link to="/the-record" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link
+              to={localize("/the-record")}
+              className="text-foreground/90 py-2 font-serif text-2xl"
+            >
               The Record
             </Link>
-            <Link to="/treasury" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link
+              to={localize("/treasury")}
+              className="text-foreground/90 py-2 font-serif text-2xl"
+            >
               The Treasury
             </Link>
-            <Link to="/programmes" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link
+              to={localize("/programmes")}
+              className="text-foreground/90 py-2 font-serif text-2xl"
+            >
               Programmes
             </Link>
-            <Link to="/membership/apply" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link
+              to={localize("/membership/apply")}
+              className="text-foreground/90 py-2 font-serif text-2xl"
+            >
               Membership
             </Link>
-            <Link to="/journal" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/journal")} className="text-foreground/90 py-2 font-serif text-2xl">
               Journal
             </Link>
-            <Link to="/contact" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/contact")} className="text-foreground/90 py-2 font-serif text-2xl">
               Contact
             </Link>
-            <Link to="/search" className="text-foreground/90 py-2 font-serif text-2xl">
+            <Link to={localize("/search")} className="text-foreground/90 py-2 font-serif text-2xl">
               Search
             </Link>
             <div className="mt-4">
@@ -270,6 +302,7 @@ function Footer({
   contactEmail: string | undefined;
 }) {
   const year = new Date().getFullYear();
+  const localize = useLocalizedPath();
   const columns = [
     {
       heading: "Visit",
@@ -323,7 +356,7 @@ function Footer({
               {col.links.map(([label, to]) => (
                 <li key={to}>
                   <Link
-                    to={to}
+                    to={localize(to)}
                     className="text-foreground/80 hover:text-brand font-sans text-sm transition-colors"
                   >
                     {label}
@@ -348,13 +381,13 @@ function Footer({
   );
 }
 
-export function PublicLayout() {
+export function PublicLayout({ lang }: { lang: Lang }) {
   const siteInfo = useSiteInfo();
   const siteName = siteInfo.data?.["site.name"] ?? "PAZ";
   const contactEmail = siteInfo.data?.["site.contact_email"];
 
   return (
-    <LanguageProvider>
+    <LanguageProvider lang={lang}>
       <div className="flex min-h-screen flex-col">
         <Header siteName={siteName} />
         <main className="flex-1">

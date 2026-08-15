@@ -29,6 +29,21 @@ part of section 1 stands. T-006/T-007/T-021 (plan tier, staging/prod
 projects, image-transform strategy) and the ADR-10/ADR-25 secrets are
 still genuinely open; nothing below was touched by the merge.
 
+**Update, 2026-08-15:** closed T-035's still-open note (Field/RichText now
+have real-validation/seed-data stories, ADR-28), T-060's still-open note
+(structural diff, ADR-30), T-071's still-open Lighthouse/LCP half
+(`scripts/check-lcp-budget.mjs`, `docs/perf/README.md`), added
+Devanagari-aware full-text search (migration `0059`), and added the
+bilingual `/ne/` route tree with hreflang/canonical tags. Also built
+online payment scaffolding (eSewa/Khalti, migrations `0060`/`0061`, 4
+Edge Functions, ADR-37) **ahead of** the Architecture Blueprint's own
+Phase 3 scoping ("deliberately deferred rather than half-built", §4.4) —
+asked the user directly given the direct conflict with that stated
+principle, and built it at their explicit choice. See ADR-37 for every
+caveat: it has never run against a real eSewa/Khalti endpoint, no
+merchant account exists for either gateway yet, and it needs a real
+security review before Phase 3 is actually reached.
+
 ---
 
 ## 1. Blocked on live infrastructure access

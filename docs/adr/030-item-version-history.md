@@ -50,10 +50,16 @@ give it an API surface at all.
 
 ## Still open
 
-- **No structural diff between two revisions** — a person compares by
-  reading both, not by seeing exactly what changed. A real diff (or even
-  a coarse one — paragraph-level add/remove) is a legitimate follow-up
-  once there's a stronger case for it than "the task list mentioned it."
 - **`pnpm db:types` has not been run** and **nothing here has been
   executed against a live database** — same caveat as everything else
   this session; see `docs/remaining-work.md` §1.
+
+### Resolved since this ADR was written
+
+- **Structural diff between two revisions**: `VersionHistoryPanel` now
+  shows a block-level diff (paragraph/heading/list-item granularity)
+  against the immediately preceding revision by default, with the full
+  rendered content still available behind a details/summary toggle. See
+  `apps/web/src/modules/publishing/lib/revision-diff.ts` and its
+  component; not its own ADR since the "still open" note above already
+  scoped and named this piece of work.

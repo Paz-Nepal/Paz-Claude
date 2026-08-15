@@ -95,15 +95,19 @@ Both are now built.
   in the item editor. No structural diff between revisions (comparing
   two ProseMirror docs field-by-field is separate, larger work) — see
   ADR-30.
-- **T-059 — review flow: inline comments, decision panel, send-back
-  note.** **Partially closed.** The send-back-note half is done:
+- ~~**T-059 — review flow: inline comments, decision panel, send-back
+  note.**~~ **Closed.** The send-back-note half:
   `transition_item`/`api.transition_item` take an optional `p_notes`
   (`0048`), stored on the transition's revision and shown in
   `VersionHistoryPanel`; `SendBackControl` replaces the old plain-click
-  "Send back to draft" with an inline optional-note form. **Inline
-  comments anchored to a position in the document are not built** —
-  that needs a position-anchoring scheme resilient to concurrent edits
-  plus its own UI, a meaningfully larger piece of work. See ADR-35.
+  "Send back to draft" with an inline optional-note form. Inline
+  comments: migration `0063`/`0064` add block-anchored comments
+  (index + text snapshot, resilient to edits elsewhere in the document
+  shifting indices — real character-position anchoring would be a much
+  larger OT/CRDT-adjacent piece of work, deliberately not attempted) and
+  `CommentsPanel` in the item editor. Verified live against the linked
+  project: posted, RLS-denied for an outsider, read and resolved by
+  staff. See ADR-35.
 - ~~**T-048 — autosave coalescing.**~~ **Closed.** Migration `0062`
   extends `publishing.capture_revision` (the trigger every
   save/transition/restore depends on) to coalesce repeated autosave

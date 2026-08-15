@@ -76,12 +76,13 @@ handling. T-048 is left untouched and stays open in
 
 ## Still open
 
-- **Inline/anchored comments** (the rest of T-059's original scope) —
-  not started; would need a position-anchoring scheme resilient to
-  concurrent edits, plus its own UI.
 - **`pnpm db:types` has not been run** and **nothing here has been
   executed against a live database** — same caveat as everything else
   this session; see `docs/remaining-work.md` §1.
+- **Real cursor/character-position anchoring** was deliberately not
+  attempted (see "Resolved" below for what was built instead) — that
+  would be a genuine OT/CRDT-adjacent concern, meaningfully larger than
+  this ADR's scope.
 
 ### Resolved since this ADR was written
 
@@ -99,3 +100,23 @@ handling. T-048 is left untouched and stays open in
   manual save created its own fresh checkpoint, and a third autosave
   tick after that started a new revision rather than overwriting the
   checkpoint — see migration `0062`'s own header for the full test.
+- **Inline/anchored comments (the rest of T-059)**: migration `0063`
+  adds `publishing.item_comments` (block-level anchoring, not
+  character-position — see the "Still open" note above for why) plus
+  `add`/`resolve` functions and RLS matching `item_revisions`' own
+  own-author/staff read split; `0064` joins `identity.display_name` for the
+  list response, matching `api.item_revisions`' existing shape. Anchored
+  by block index _and_ a text snapshot together: the frontend
+  (`comments-panel.tsx`, reusing `revision-diff.ts`'s `flattenBlocks`)
+  tries the recorded index first, falls back to searching the whole
+  document by text if that block no longer matches (something else was
+  inserted/removed/reordered), and shows the comment as attached to
+  "removed content" — never deletes it — if the text isn't found at all.
+  Comments are append-only (no edit/delete grant on the table, matching
+  `item_revisions`); resolving is a separate security-definer function,
+  not a direct UPDATE. Verified live against the linked project: posted
+  a comment as staff, confirmed RLS hides it from a caller with no
+  publishing role, confirmed staff can read and resolve it. Three new
+  Edge Functions (`list-item-comments`, `add-item-comment`,
+  `resolve-item-comment`), same ADR-26 reasoning as everything else new
+  this session.

@@ -20,6 +20,7 @@ import { TransitionButtons, DEPOSIT_SERIES } from "../components/transition-butt
 import { MediaPicker } from "../components/media-picker";
 import { SeriesDetailsPanel, type SeriesDetails } from "../components/series-details-panel";
 import { VersionHistoryPanel } from "../components/version-history-panel";
+import { CommentsPanel } from "../components/comments-panel";
 
 const EMPTY_DOC: RichTextNode = { type: "doc", content: [] };
 
@@ -386,6 +387,17 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
             )}
         </div>
       </div>
+
+      {existing?.id && (
+        <div className="flex flex-col gap-3 border-t pt-6">
+          <span className="text-sm font-medium">Comments</span>
+          <p className="text-muted-foreground -mt-1 text-xs">
+            Anchored to the last saved version — save first if you&apos;ve made changes you want to
+            comment against.
+          </p>
+          <CommentsPanel itemId={existing.id} body={existing.body as RichTextNode | null} />
+        </div>
+      )}
 
       {existing?.id && (
         <div className="flex flex-col gap-3 border-t pt-6">

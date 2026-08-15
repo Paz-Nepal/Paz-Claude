@@ -477,3 +477,64 @@ export function useRestoreItemRevision(itemId: string | undefined) {
     },
   });
 }
+
+/**
+ * T-059. api.item_comments / add_item_comment / resolve_item_comment
+ * (0063/0064) aren't in the generated types (new this session) -- hand
+ * typed here, same reasoning as item revisions above. block_index +
+ * anchor_text together let the frontend re-locate a comment's block even
+ * after edits shift indices elsewhere in the document -- see 0063's own
+ * header and RevisionDiff's flattenBlocks (revision-diff.ts), which
+ * CommentsPanel reuses for the same block-splitting logic.
+ */
+export interface ItemComment {
+  id: string;
+  block_index: number;
+  anchor_text: string;
+  body: string;
+  author_name: string | null;
+  resolved_at: string | null;
+  resolved_by_name: string | null;
+  created_at: string;
+}
+
+export function useItemComments(itemId: string | undefined) {
+  return useQuery({
+    queryKey: ["item-comments", itemId],
+    enabled: Boolean(itemId),
+    queryFn: async () => {
+      const { comments } = await invokeEdgeFunction<{ comments: ItemComment[] }>(
+        "list-item-comments",
+        { itemId },
+      );
+      return comments;
+    },
+  });
+}
+
+export function useAddItemComment(itemId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { blockIndex: number; anchorText: string; body: string }) => {
+      await invokeEdgeFunction<{ comment: ItemComment }>("add-item-comment", {
+        itemId,
+        ...input,
+      });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["item-comments", itemId] });
+    },
+  });
+}
+
+export function useResolveItemComment(itemId: string | undefined) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (commentId: string) => {
+      await invokeEdgeFunction<{ comment: ItemComment }>("resolve-item-comment", { commentId });
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["item-comments", itemId] });
+    },
+  });
+}

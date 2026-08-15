@@ -82,6 +82,9 @@ supabase functions deploy restore-item-revision
 supabase functions deploy schedule-item
 supabase functions deploy publish-scheduled
 supabase functions deploy autosave-item
+supabase functions deploy list-item-comments
+supabase functions deploy add-item-comment
+supabase functions deploy resolve-item-comment
 supabase functions deploy initiate-esewa-payment
 supabase functions deploy esewa-payment-callback
 supabase functions deploy initiate-khalti-payment

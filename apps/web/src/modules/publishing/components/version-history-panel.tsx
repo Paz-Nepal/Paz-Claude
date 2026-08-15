@@ -3,19 +3,22 @@ import { Badge, Button, RichText, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduTime } from "@paz/utils";
 import { useItemRevision, useItemRevisions, useRestoreItemRevision } from "../api/use-publishing";
+import { RevisionDiff } from "./revision-diff";
 
 /**
- * T-060. No structural diff — comparing two ProseMirror documents
- * field-by-field is a meaningfully larger piece of work than this pass
- * covers — this shows each past revision's full rendered content so an
- * editor can read and compare by eye, and restore it as the item's
- * current content (which itself becomes a new revision, never rewriting
- * history).
+ * T-060, structural diff added for T-037. Each revision shows both its
+ * full rendered content and a block-level diff against the revision
+ * immediately before it (see revision-diff.tsx for what "structural"
+ * means here), so an editor can restore it as the item's current content
+ * (which itself becomes a new revision, never rewriting history).
  */
 export function VersionHistoryPanel({ itemId }: { itemId: string }) {
   const revisions = useItemRevisions(itemId);
   const [openId, setOpenId] = React.useState<string | null>(null);
   const preview = useItemRevision(openId ?? undefined);
+  const openIndex = revisions.data?.findIndex((r) => r.id === openId) ?? -1;
+  const prevRevisionId = openIndex >= 0 ? revisions.data?.[openIndex + 1]?.id : undefined;
+  const prevPreview = useItemRevision(prevRevisionId);
   const restore = useRestoreItemRevision(itemId);
 
   if (revisions.isPending) return <p className="text-muted-foreground text-sm">Loading…</p>;
@@ -65,12 +68,36 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
                 {preview.data && (
                   <>
                     <p className="font-serif text-lg">{preview.data.title}</p>
-                    <div className="max-h-64 overflow-y-auto rounded border p-3">
-                      <RichText
-                        doc={preview.data.body as RichTextNode}
-                        className="rich-text text-sm"
-                      />
+                    <div>
+                      <p className="text-muted-foreground mb-1 text-xs uppercase">
+                        {prevRevisionId
+                          ? "Changed from the previous revision"
+                          : "First recorded revision"}
+                      </p>
+                      {prevRevisionId && prevPreview.isPending ? (
+                        <p className="text-muted-foreground text-sm">Loading…</p>
+                      ) : (
+                        <RevisionDiff
+                          title={preview.data.title}
+                          prevTitle={prevRevisionId ? prevPreview.data?.title : undefined}
+                          body={preview.data.body as RichTextNode}
+                          prevBody={
+                            prevRevisionId ? (prevPreview.data?.body as RichTextNode) : undefined
+                          }
+                        />
+                      )}
                     </div>
+                    <details>
+                      <summary className="text-muted-foreground cursor-pointer text-xs uppercase">
+                        Full rendered content
+                      </summary>
+                      <div className="mt-2 max-h-64 overflow-y-auto rounded border p-3">
+                        <RichText
+                          doc={preview.data.body as RichTextNode}
+                          className="rich-text text-sm"
+                        />
+                      </div>
+                    </details>
                     {!isLatest && (
                       <>
                         {restore.isError && (

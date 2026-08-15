@@ -79,9 +79,23 @@ handling. T-048 is left untouched and stays open in
 - **Inline/anchored comments** (the rest of T-059's original scope) —
   not started; would need a position-anchoring scheme resilient to
   concurrent edits, plus its own UI.
-- **Autosave** (T-048) — not started; needs a safe, verified change to
-  `publishing.capture_revision` or a parallel draft-snapshot path that
-  doesn't touch it, against a live database.
 - **`pnpm db:types` has not been run** and **nothing here has been
   executed against a live database** — same caveat as everything else
   this session; see `docs/remaining-work.md` §1.
+
+### Resolved since this ADR was written
+
+- **Autosave (T-048)**: migration `0062` adds `publishing.autosave_item`
+  (a separate write path from `api.save_item`, RLS-authorized the same
+  way) and coalescing logic in `publishing.capture_revision` itself —
+  repeated autosave ticks update the most recent revision in place
+  (same actor, within 10 minutes, itself an autosave) instead of each
+  inserting its own, while a manual save is completely unaffected: same
+  insert-a-fresh-revision behavior as before this migration, byte for
+  byte. `item-editor-page.tsx` debounces 3s after the last title/body
+  change (English or Nepali) and calls the new `autosave-item` Edge
+  Function. Verified live against the linked project (not just
+  hand-verified): two autosave ticks coalesced into one revision, a
+  manual save created its own fresh checkpoint, and a third autosave
+  tick after that started a new revision rather than overwriting the
+  checkpoint — see migration `0062`'s own header for the full test.

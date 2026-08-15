@@ -8,6 +8,7 @@ import { itemMetadataSchema, slugify, type ItemMetadataInput } from "../schemas"
 import {
   useItem,
   useSaveItem,
+  useAutosaveItem,
   useDiscardDraft,
   useCreateCorrection,
   type ItemDetail,
@@ -50,14 +51,19 @@ export function ItemEditorPage() {
   return <ItemEditorForm key={id ?? "new"} existing={item.data ?? null} />;
 }
 
+const AUTOSAVE_DEBOUNCE_MS = 3_000;
+
 function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   const navigate = useNavigate();
   const saveItem = useSaveItem();
+  const autosaveItem = useAutosaveItem();
   const discardDraft = useDiscardDraft();
   const createCorrection = useCreateCorrection();
 
   const bodyRef = React.useRef<RichTextNode>((existing?.body as RichTextNode) ?? EMPTY_DOC);
   const bodyNeRef = React.useRef<RichTextNode>((existing?.body_ne as RichTextNode) ?? EMPTY_DOC);
+  const autosaveTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [lastAutosavedAt, setLastAutosavedAt] = React.useState<Date | null>(null);
   const [featuredMediaId, setFeaturedMediaId] = React.useState<string | null>(
     existing?.featured_media ?? null,
   );
@@ -71,6 +77,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
     handleSubmit,
     watch,
     setValue,
+    getValues,
     formState: { errors },
   } = useForm<ItemMetadataInput>({
     resolver: zodResolver(itemMetadataSchema),
@@ -88,6 +95,42 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   });
 
   const selectedType = watch("type");
+
+  // Only an *existing* item can autosave -- a new, unsaved item has no
+  // id to write against, and creating one is what the Save button is
+  // for. Debounced 3s after the last change to either title or body
+  // (English or Nepali); publishing.autosave_item + capture_revision
+  // (0062) coalesce repeated ticks into one revision rather than
+  // flooding version history.
+  const scheduleAutosave = React.useCallback(() => {
+    if (!existing?.id) return;
+    if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    autosaveTimerRef.current = setTimeout(() => {
+      autosaveItem.mutate(
+        {
+          id: existing.id,
+          title: getValues("title"),
+          titleNe: getValues("titleNe") || null,
+          body: bodyRef.current,
+          bodyNe: bodyNeRef.current,
+        },
+        { onSuccess: () => setLastAutosavedAt(new Date()) },
+      );
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }, [existing?.id, autosaveItem, getValues]);
+
+  React.useEffect(() => {
+    const subscription = watch((_value, { name }) => {
+      if (name === "title" || name === "titleNe") scheduleAutosave();
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, scheduleAutosave]);
+
+  React.useEffect(() => {
+    return () => {
+      if (autosaveTimerRef.current) clearTimeout(autosaveTimerRef.current);
+    };
+  }, []);
 
   const onSubmit = handleSubmit((values) => {
     saveItem.mutate(
@@ -127,7 +170,18 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
           <h1 className="font-serif text-2xl">{existing ? "Edit item" : "New item"}</h1>
           {existing?.status && <StatusBadge status={existing.status} />}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          {existing?.id && (
+            <span className="text-muted-foreground text-xs">
+              {autosaveItem.isPending
+                ? "Autosaving…"
+                : autosaveItem.isError
+                  ? "Autosave failed — use Save"
+                  : lastAutosavedAt
+                    ? `Autosaved ${lastAutosavedAt.toLocaleTimeString()}`
+                    : null}
+            </span>
+          )}
           {existing?.id && existing.status === "draft" && (
             <Button
               type="button"
@@ -207,6 +261,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
               initialContent={bodyRef.current}
               onChange={(doc) => {
                 bodyRef.current = doc;
+                scheduleAutosave();
               }}
             />
           </div>
@@ -216,6 +271,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
               initialContent={bodyNeRef.current}
               onChange={(doc) => {
                 bodyNeRef.current = doc;
+                scheduleAutosave();
               }}
             />
           </div>

@@ -102,6 +102,34 @@ export function useSaveItem() {
   });
 }
 
+export interface AutosaveItemInput {
+  id: string;
+  title: string;
+  titleNe: string | null;
+  body: unknown;
+  bodyNe: unknown;
+}
+
+/**
+ * T-048. Debounced background save for an *existing* item's title/body
+ * only -- distinct from useSaveItem, which the Save button keeps using
+ * unchanged. publishing.autosave_item (0062) coalesces repeated autosave
+ * ticks into a single revision rather than flooding the version history
+ * panel with one snapshot per tick; a manual save still always creates
+ * its own fresh checkpoint. See that migration for the full reasoning.
+ */
+export function useAutosaveItem() {
+  return useMutation({
+    mutationFn: async (input: AutosaveItemInput) => {
+      await invokeEdgeFunction<{ ok: true }>("autosave-item", { ...input });
+    },
+    // Deliberately no query invalidation on success -- refetching
+    // ["item", id] after every autosave tick would reset the body
+    // editors' uncontrolled state mid-typing. The next manual save,
+    // navigation, or page reload picks up fresh data normally.
+  });
+}
+
 /**
  * Every edge except transitioning *into* 'scheduled' uses a `p_to` value
  * that's already in the generated enum (draft/in_review/published/

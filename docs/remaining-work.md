@@ -104,14 +104,16 @@ Both are now built.
   comments anchored to a position in the document are not built** —
   that needs a position-anchoring scheme resilient to concurrent edits
   plus its own UI, a meaningfully larger piece of work. See ADR-35.
-- **T-048 — autosave coalescing.** **Deliberately not attempted.** The
-  natural implementation point is `publishing.capture_revision`, the
-  trigger every save/transition/restore already depends on — extending
-  it to coalesce autosave writes is a change to core, shared logic that
-  isn't safely verifiable without a live database to test against (same
-  reasoning as the deposit-series scheduling exclusion in ADR-31). See
-  ADR-35 "Still open." Still needs: a debounced save path in
-  `item-editor-page.tsx` and a coalescing rule in the write function.
+- ~~**T-048 — autosave coalescing.**~~ **Closed.** Migration `0062`
+  extends `publishing.capture_revision` (the trigger every
+  save/transition/restore depends on) to coalesce repeated autosave
+  writes into a single revision, gated behind a transaction-local flag
+  only the new `publishing.autosave_item` path sets — a manual save is
+  completely unaffected. `item-editor-page.tsx` debounces 3s after the
+  last title/body change. Verified live against the linked project
+  (two ticks coalesced, a manual save created its own checkpoint, a
+  third tick started a fresh revision) — see ADR-35 and migration
+  `0062`'s own header.
 - ~~**T-095 (frontend half) — CRM person timeline UI.**~~ **Closed.**
   `api.person_timeline` (`0044`) + `PersonTimeline` component, wired
   into the relationship detail page. See ADR-29.

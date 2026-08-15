@@ -144,6 +144,9 @@ importers:
       globals:
         specifier: ^15.9.0
         version: 15.15.0
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@3.4.19)
 
   packages/types:
     devDependencies:
@@ -169,6 +172,9 @@ importers:
       '@axe-core/playwright':
         specifier: ^4.13.0
         version: 4.13.0(playwright-core@1.62.1)
+      '@hookform/resolvers':
+        specifier: ^3.9.0
+        version: 3.10.0(react-hook-form@7.81.0(react@18.3.1))
       '@ladle/react':
         specifier: ^5.1.1
         version: 5.1.1(@types/node@20.19.43)(@types/react@18.3.31)(jiti@1.21.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
@@ -196,6 +202,9 @@ importers:
       postcss:
         specifier: ^8.4.47
         version: 8.5.19
+      react-hook-form:
+        specifier: ^7.53.0
+        version: 7.81.0(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.13
         version: 3.4.19
@@ -205,6 +214,9 @@ importers:
       vitest:
         specifier: ^2.1.0
         version: 2.1.9(@types/node@20.19.43)(jsdom@25.0.1)(msw@2.15.0(@types/node@20.19.43)(typescript@5.9.3))
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
 
   packages/utils:
     dependencies:

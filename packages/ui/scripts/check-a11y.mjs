@@ -9,11 +9,18 @@
  */
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = 4173;
-const BASE_URL = `http://127.0.0.1:${PORT}`;
+// "localhost", not the literal 127.0.0.1: some environments' preview
+// servers bind [::1] (IPv6) only, which an explicit IPv4 address won't
+// resolve to (confirmed for `vite preview`; ladle preview isn't assumed
+// safe either).
+const BASE_URL = `http://localhost:${PORT}`;
 
 function waitForServer(url, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
@@ -39,7 +46,21 @@ async function main() {
     throw new Error("build/meta.json has no stories — did `pnpm ladle build` run first?");
   }
 
-  const server = spawn("pnpm", ["exec", "ladle", "preview", "--port", String(PORT)], {
+  // Invoked as `node <ladle bin>` directly, not `pnpm exec ladle` --
+  // on Windows, `pnpm` resolves to pnpm.cmd, which node's spawn() can't
+  // exec without shell:true, and shell:true then makes killing the
+  // parent process not kill the real ladle process underneath it.
+  const ladleBin = path.join(
+    __dirname,
+    "..",
+    "node_modules",
+    "@ladle",
+    "react",
+    "lib",
+    "cli",
+    "cli.js",
+  );
+  const server = spawn(process.execPath, [ladleBin, "preview", "--port", String(PORT)], {
     stdio: "ignore",
   });
 

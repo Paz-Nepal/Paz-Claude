@@ -79,12 +79,36 @@ doesn't exist at .../chromium_headless_shell-1234/...` — the pre-installed
 
 ## Still open
 
-- Coverage is the shell of `@paz/ui`'s current eight components, not
-  every state a consuming page constructs (e.g. `Field` wired to a real
-  `react-hook-form` error, `RichText` against every article actually in
-  the seed data). New components should get a story as part of adding
-  them, the same discipline this repo already applies to RLS policies
-  needing pgTAP coverage — not enforced by tooling here, just convention.
+- New components should get a story as part of adding them, the same
+  discipline this repo already applies to RLS policies needing pgTAP
+  coverage — not enforced by tooling here, just convention.
+
+### Resolved since this ADR was written
+
+- `Field` now has a `WithFormValidation` story wired to real
+  `react-hook-form` + `zod` + `@hookform/resolvers` validation (the same
+  stack apps/web's real forms use) — submit-with-errors and
+  clears-on-correction are both exercised live, not simulated with a
+  hardcoded `error` prop. `react-hook-form`/`zod`/`@hookform/resolvers`
+  were added to `packages/ui`'s devDependencies for this — dev-only,
+  nothing shipped in the package's runtime bundle.
+- `RichText` now has a `SeedData` story rendering the four `body` docs
+  copied verbatim from `supabase/seed/synthetic.sql`, labeled by source
+  row, so a renderer regression against real seed-shaped content (not
+  just the hand-built kitchen-sink `Basic` doc) would surface here.
+- Found and fixed two bugs while wiring the above, both pre-existing and
+  unrelated to this change: `packages/ui/scripts/check-a11y.mjs` spawned
+  `pnpm exec ladle preview` via `spawn("pnpm", …)`, which fails outright
+  on Windows (`pnpm` resolves to a `.cmd` wrapper `child_process.spawn`
+  can't exec without `shell: true`, and `shell: true` then breaks
+  `server.kill()` cleanup) — fixed by spawning `node <ladle's own bin
+file>` directly. Separately, `ladle serve` (dev mode only — `ladle
+build` was unaffected) failed with `Cannot find module
+'tailwindcss-animate'`: `packages/config/tailwind.preset.js` requires
+  it but `@paz/config`'s own `package.json` never declared it as a
+  dependency, so pnpm's per-package `node_modules` isolation didn't
+  guarantee it was resolvable from that file's real location — fixed by
+  adding it to `@paz/config`'s `dependencies`.
 - The axe run is slow in this environment (~20s/story — fresh navigation
   plus a full accessibility-tree scan each time, not cached or
   parallelized). Fine for 13 stories in CI; worth revisiting (parallel

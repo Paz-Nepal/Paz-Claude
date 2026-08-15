@@ -1,0 +1,82 @@
+name: Uptime check
+
+# Architecture Blueprint §10: "Uptime monitoring (public site, API, auth)
+# with alerting to staff; status transparency handled with a simple status
+# note process, not a marketing-grade status page." Named explicitly,
+# never built until now.
+#
+# Same alerting mechanism as every other scheduled workflow in this repo
+# (nightly-backup-export.yml, membership-renewal-notices.yml): a failed
+# scheduled GitHub Actions run already notifies the repository's watchers
+# by default -- that notification path IS the paging mechanism here, not
+# a separate emailer to build and leave unverified. See
+# docs/adr/010-backup-strategy.md for the same reasoning applied to
+# backups.
+on:
+  schedule:
+    # Every 10 minutes. Frequent enough to catch a real outage quickly,
+    # infrequent enough not to spam GitHub's own free Actions minutes or
+    # the failure-notification inbox with false starts from a single
+    # slow response.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    name: Check public site, database, and auth
+    runs-on: ubuntu-latest
+    steps:
+      - name: Public site
+        env:
+          PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
+        run: |
+          if [ -z "$PUBLIC_SITE_URL" ]; then
+            echo "PUBLIC_SITE_URL is not set -- see docs/runbooks/environments.md's 'Scheduled jobs' table. This check cannot run until it is." >&2
+            exit 1
+          fi
+          http_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 "$PUBLIC_SITE_URL/")
+          echo "Public site: HTTP $http_status"
+          if [ "$http_status" -ge 300 ]; then
+            echo "Public site returned HTTP $http_status" >&2
+            exit 1
+          fi
+
+      - name: Database (PostgREST)
+        env:
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_PROJECT_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "SUPABASE_PROJECT_URL / SUPABASE_ANON_KEY are not set -- see docs/runbooks/environments.md's 'Scheduled jobs' table." >&2
+            exit 1
+          fi
+          # PostgREST's own root responds with its OpenAPI description
+          # when it can reach Postgres, and a 5xx when it can't -- this
+          # is a real database-reachability check, not just "is the URL
+          # up."
+          http_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 \
+            "$SUPABASE_PROJECT_URL/rest/v1/" \
+            -H "apikey: $SUPABASE_ANON_KEY")
+          echo "Database (PostgREST): HTTP $http_status"
+          if [ "$http_status" -ge 300 ]; then
+            echo "PostgREST returned HTTP $http_status" >&2
+            exit 1
+          fi
+
+      - name: Auth
+        env:
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+        run: |
+          if [ -z "$SUPABASE_PROJECT_URL" ]; then
+            echo "SUPABASE_PROJECT_URL is not set -- see docs/runbooks/environments.md's 'Scheduled jobs' table." >&2
+            exit 1
+          fi
+          # GoTrue's own health endpoint -- a real liveness check, not a
+          # guess at some other route responding.
+          http_status=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 15 \
+            "$SUPABASE_PROJECT_URL/auth/v1/health")
+          echo "Auth: HTTP $http_status"
+          if [ "$http_status" -ge 300 ]; then
+            echo "Auth health check returned HTTP $http_status" >&2
+            exit 1
+          fi

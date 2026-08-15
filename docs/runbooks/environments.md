@@ -62,25 +62,34 @@ nothing in the function code changes.
 ## Scheduled jobs (GitHub Actions secrets, not Supabase secrets)
 
 `nightly-backup-export.yml`, `quarterly-restore-drill.yml`,
-`membership-renewal-notices.yml`, and `publish-scheduled-items.yml` run
-on GitHub's infrastructure, not Supabase's, so they need their own
-secrets in the repository (or an environment scoped to just these
-workflows), separate from the `supabase secrets set` values above:
+`membership-renewal-notices.yml`, `publish-scheduled-items.yml`, and
+`uptime-check.yml` run on GitHub's infrastructure, not Supabase's, so
+they need their own secrets in the repository (or an environment scoped
+to just these workflows), separate from the `supabase secrets set`
+values above:
 
-| Secret                                                                       | Used by                                             | Purpose                                                                                                                                                                   |
-| ---------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BACKUP_SOURCE_DB_URL`                                                       | nightly-backup-export                               | `pg_dump` source                                                                                                                                                          |
-| `BACKUP_AGE_PUBLIC_KEY`                                                      | nightly-backup-export                               | encrypt only — see `docs/adr/010-backup-strategy.md`                                                                                                                      |
-| `BACKUP_AGE_PRIVATE_KEY`                                                     | quarterly-restore-drill only                        | decrypt — never given to the nightly job                                                                                                                                  |
-| `BACKUP_R2_ACCOUNT_ID` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY` / `_BUCKET` | both backup workflows                               | Cloudflare R2 destination                                                                                                                                                 |
-| `BACKUP_SUPABASE_S3_ENDPOINT` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY`      | nightly-backup-export                               | Supabase Storage's S3-compatible source for the media mirror                                                                                                              |
-| `SUPABASE_PROJECT_URL`                                                       | membership-renewal-notices, publish-scheduled-items | the deployed project's URL (`https://<ref>.supabase.co`)                                                                                                                  |
-| `SUPABASE_SERVICE_ROLE_KEY`                                                  | membership-renewal-notices, publish-scheduled-items | authenticates the workflow to `send-renewal-notices` / `publish-scheduled` — see `docs/adr/025-membership-renewal-workflow.md` and `docs/adr/031-scheduled-publishing.md` |
+| Secret                                                                       | Used by                                             | Purpose                                                                                                                                                                                                |
+| ---------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `BACKUP_SOURCE_DB_URL`                                                       | nightly-backup-export                               | `pg_dump` source                                                                                                                                                                                       |
+| `BACKUP_AGE_PUBLIC_KEY`                                                      | nightly-backup-export                               | encrypt only — see `docs/adr/010-backup-strategy.md`                                                                                                                                                   |
+| `BACKUP_AGE_PRIVATE_KEY`                                                     | quarterly-restore-drill only                        | decrypt — never given to the nightly job                                                                                                                                                               |
+| `BACKUP_R2_ACCOUNT_ID` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY` / `_BUCKET` | both backup workflows                               | Cloudflare R2 destination                                                                                                                                                                              |
+| `BACKUP_SUPABASE_S3_ENDPOINT` / `_ACCESS_KEY_ID` / `_SECRET_ACCESS_KEY`      | nightly-backup-export                               | Supabase Storage's S3-compatible source for the media mirror                                                                                                                                           |
+| `SUPABASE_PROJECT_URL`                                                       | membership-renewal-notices, publish-scheduled-items | the deployed project's URL (`https://<ref>.supabase.co`)                                                                                                                                               |
+| `SUPABASE_SERVICE_ROLE_KEY`                                                  | membership-renewal-notices, publish-scheduled-items | authenticates the workflow to `send-renewal-notices` / `publish-scheduled` — see `docs/adr/025-membership-renewal-workflow.md` and `docs/adr/031-scheduled-publishing.md`                              |
+| `SUPABASE_ANON_KEY`                                                          | uptime-check                                        | PostgREST requires an `apikey` header even for its own root/health probe — the anon key is meant to be public, same key `apps/web`'s build uses                                                        |
+| `PUBLIC_SITE_URL` (GitHub Actions secret)                                    | uptime-check                                        | the deployed frontend's real URL. **A different secret store from** the `PUBLIC_SITE_URL` Edge Function secret (`supabase secrets set`, `go-live.md` step 5) — same name, both need setting separately |
 
 None of these are set yet — every one of these workflows will fail with a
 clear "not configured" error until a Super Admin adds them. That failure
 is deliberate (§10, disaster-recovery.md's "fails loudly rather than
 silently" standard) rather than the workflow silently doing nothing.
+
+`uptime-check.yml` runs every 10 minutes and checks the public site, the
+database (via PostgREST's own root, which fails if it can't reach
+Postgres), and Auth (GoTrue's health endpoint). A failed scheduled run
+notifies this repository's watchers — the same paging mechanism as the
+backup/renewal workflows, see the workflow file's own header.
 
 ## Promoting a schema change
 

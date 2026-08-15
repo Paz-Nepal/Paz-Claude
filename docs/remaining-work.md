@@ -194,10 +194,13 @@ so they're visible in one place instead of five files.
   Chrome to measure honestly, deliberately not approximated.
 - **No `explain (analyze)` query snapshots** (`docs/perf/README.md`) —
   needs a database with realistic data volume to profile against.
-- **Deposit-series scheduling is a UI-only guard, not database-enforced**
-  (ADR-31 "Still open") — a caller using the API directly could still
-  schedule a Paper/Brief/Dispatch/Pigeon Post/Annual item, which would
-  publish without a `deposit_ref` or Record entry.
+- ~~**Deposit-series scheduling was a UI-only guard, not database-enforced.**~~
+  **Closed** — migration `0050` blocks the `draft`/`in_review` →
+  `scheduled` edge for Paper/Brief/Dispatch/Pigeon Post/Annual inside
+  `publishing.transition_item` itself, the only function that ever
+  changes `status`. A caller using the API directly gets a clear
+  exception, not a silently-published item with no `deposit_ref`. See
+  ADR-31.
 - **`session-form.tsx`'s datetime handling** uses
   `new Date(value).toISOString()` (browser-local timezone) rather than
   the `kathmanduInputToUtcIso()` helper added for scheduled publishing

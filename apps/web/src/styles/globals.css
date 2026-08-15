@@ -181,3 +181,76 @@
     @apply border-border my-8;
   }
 }
+
+/* Print. Work plan Part VIII, #54: "every Paper should print beautifully
+   from the browser... deeply on-brand for a press that binds an Annual in
+   cloth. It is also, quietly, a fourth copy" — a printed Paper is itself a
+   durable copy outside this website and Supabase entirely, so this is
+   read as part of the three-copy rule's spirit, not just a nicety.
+   Targets the actual reading surfaces (PublishedBody, the five series
+   detail pages) via their shared classes/semantic elements rather than a
+   page-specific stylesheet, since they already share `.rich-text` and the
+   same site chrome. */
+@media print {
+  header,
+  footer,
+  nav,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  /* Reveal's scroll-triggered fade-in has no meaning on paper, and
+     without a real browser running the IntersectionObserver, content
+     that never "became visible" would print as literally blank. */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: underline;
+  }
+
+  /* A reader can't click a printed page — spell out where a link actually
+     goes, same convention as a print stylesheet on any serious
+     publication. Skipped for mailto: (adds no useful information) and
+     anchors (#fragment). */
+  .rich-text a[href]:not([href^="mailto:"]):not([href^="#"])::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    font-weight: normal;
+    color: #444;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+    color: black;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  article,
+  .w-reading,
+  .w-standard,
+  .w-wide {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  @page {
+    margin: 2.2cm 2cm;
+  }
+}

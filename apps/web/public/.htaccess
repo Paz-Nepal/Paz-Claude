@@ -1,0 +1,30 @@
+# Site audit, 18 Sept 2026, item 1: without this, every deep link
+# (paz.com.np/papers/some-slug) 404s on direct visit, refresh, bookmark,
+# or crawler fetch -- it only ever worked by clicking through from the
+# home page, since react-router-dom handles routing client-side and
+# nothing server-side knows what /papers/some-slug is.
+#
+# This rewrites any request that isn't a real file or directory to
+# index.html, letting the client-side router take over from there.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Real files and directories (assets/, fonts/, robots.txt, the .htaccess
+  # itself) are served as-is -- only unmatched paths fall through.
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Fallback for the (rare) Apache build without mod_rewrite: a 404
+# ErrorDocument still serves index.html, with a 200 forced explicitly --
+# without it Apache would keep responding 404 even though the right
+# markup rendered, which is wrong for both real 404s (the app's own
+# router.tsx already renders a real "not found" page client-side) and
+# search engines.
+<IfModule !mod_rewrite.c>
+  ErrorDocument 404 /index.html
+</IfModule>

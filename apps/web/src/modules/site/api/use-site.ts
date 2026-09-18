@@ -216,12 +216,31 @@ export function useSubmitContactMessage() {
   });
 }
 
+/**
+ * Site audit, 18 Sept 2026, item "The Record is the one query with no
+ * ordering": the page promises entries "in order" but the query had no
+ * .order(), so Postgres was free to return rows in whatever order it
+ * liked. deposit_number is the permanent, zero-padded, sequentially
+ * assigned reference (publishing.next_deposit_ref()) -- the actual
+ * numbering the register is built around, unlike deposited_at which
+ * exists but isn't the promised ordering.
+ *
+ * Still open from the same audit: every query in this file (and 27
+ * others across the app) is `select("*")` with no pagination, which
+ * means each silently truncates at Supabase's default 1000-row limit.
+ * The Record is the one table meant to run for a century -- adding
+ * real range-based pagination here (and everywhere else) is real,
+ * separate follow-up work, not done in this fix.
+ */
 export function useRecordEntries() {
   return useQuery({
     queryKey: ["record-entries"],
     staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await api().from("record_entries").select("*");
+      const { data, error } = await api()
+        .from("record_entries")
+        .select("*")
+        .order("deposit_number", { ascending: true });
       if (error) throw toAppError(error);
       return data;
     },

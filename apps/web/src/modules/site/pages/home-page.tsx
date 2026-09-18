@@ -48,7 +48,13 @@ export function HomePage() {
       {/* Hero */}
       <section className="border-border flex flex-col items-center gap-8 border-b py-28 text-center md:py-40">
         <Reveal>
-          <p className="type-label">Kathmandu · Est. 2026</p>
+          {/* Site audit, 18 Sept 2026: was "Kathmandu · Est. 2026" -- wrong
+              twice over. The house is at Manbhawan in Lalitpur, not
+              Kathmandu proper, and PAZ Pratisthan is not yet incorporated,
+              so an establishment year is a claim the house can't honestly
+              make yet. Matches the footer's own wording (public-layout.tsx),
+              not new copy. */}
+          <p className="type-label">Patan, Lalitpur</p>
           <h1 className="type-display mt-6">{siteName}</h1>
         </Reveal>
         {tagline && (

@@ -84,7 +84,7 @@ export function HearthPage() {
           <Reveal>
             <h2 className="type-h2">Come to the table</h2>
             <p className="type-body-lg max-w-reading mx-auto mt-6">
-              A person confirms every reservation — expect a reply, not an instant confirmation.
+              A person confirms every reservation. Expect a reply, not an instant confirmation.
             </p>
             <Link
               to={localize("/reservations")}

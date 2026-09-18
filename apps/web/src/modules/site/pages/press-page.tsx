@@ -97,7 +97,7 @@ export function PressPage() {
         </div>
         <div className="mt-12">
           <ArrowLink to="/send-a-pigeon">
-            Send a pigeon — contribute something you noticed
+            Send a pigeon, contribute something you noticed
           </ArrowLink>
         </div>
       </section>

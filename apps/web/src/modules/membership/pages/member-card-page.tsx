@@ -96,8 +96,8 @@ export function MemberCardPage() {
             </p>
             <p className="font-mono text-3xl tracking-widest">{issue.data.token}</p>
             <p className="text-muted-foreground text-sm">
-              Scan the code or show/read the text to staff. It&rsquo;s shown once here — issue a new
-              one any time, which immediately stops the old one working.
+              Scan the code or show/read the text to staff. It&rsquo;s shown once here; issuing a new
+              one at any time immediately stops the old one working.
             </p>
           </div>
         </div>

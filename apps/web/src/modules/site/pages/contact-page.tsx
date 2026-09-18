@@ -16,7 +16,7 @@ export function ContactPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">Contact</h1>
         <p className="text-muted-foreground">
-          Write to us — a person reads every message. This isn&rsquo;t a live chat, so expect a
+          Write to us. A person reads every message. This isn&rsquo;t a live chat, so expect a
           reply by email rather than an instant response.
         </p>
       </header>
@@ -24,7 +24,7 @@ export function ContactPage() {
       {submit.isSuccess ? (
         <StatePanel
           title="Message sent."
-          description="Thank you — we'll write back to the email address you gave us."
+          description="Thank you. We'll write back to the email address you gave us."
         />
       ) : (
         <form

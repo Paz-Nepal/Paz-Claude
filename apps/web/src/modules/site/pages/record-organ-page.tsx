@@ -51,7 +51,7 @@ export function RecordOrganPage() {
     <div>
       <DocumentHead
         title={title}
-        description={subtitle || "The public deposit index — kept, in order, forever."}
+        description={subtitle || "The public deposit index, kept in order, forever."}
         path="/the-record"
         feedPath="/the-record/feed.xml"
       />

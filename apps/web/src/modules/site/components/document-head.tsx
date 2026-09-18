@@ -93,7 +93,15 @@ function upsertJsonLd(id: string, data: Record<string, unknown> | null) {
 
 export interface DocumentHeadProps {
   title: string;
-  description: string;
+  /** Standing Specifications, 18 Sept 2026: the retired brand language
+   * ("hospitality-led cultural institution...") that used to fill this
+   * when a page had none of its own is gone -- "the field stays empty
+   * rather than filled with the retired phrase... an empty field is
+   * better than a wrong one." Optional now; omitting it removes the
+   * description/og:description/twitter:description tags entirely rather
+   * than writing an empty or invented one. The house supplies the real
+   * copy (site.tagline in the CMS) when it's ready. */
+  description?: string | null | undefined;
   /** Site-relative and always the *bare* (English) path, e.g.
    * "/papers/some-slug" — never pre-localized by the caller. This
    * component reads the current language itself and prefixes "/ne" onto
@@ -130,19 +138,27 @@ export function DocumentHead(props: DocumentHeadProps) {
   const { lang } = useLanguage();
 
   React.useEffect(() => {
-    const fullTitle = title && title !== "PAZ" ? `${title} — PAZ` : "PAZ";
+    // Standing Specifications, "House style": "No em dashes. Removal is
+    // a rewrite that preserves the rhythm, never a find and replace...
+    // This includes the page title template, which currently carries
+    // one on every tab." "·" already does separator duty elsewhere in
+    // this site's own chrome (the hero's "Patan, Lalitpur" eyebrow, the
+    // KATHMANDU · EST. line it replaced) -- same rhythm, no em dash.
+    const fullTitle = title && title !== "PAZ" ? `${title} · PAZ` : "PAZ";
     const localizedPath = lang === "ne" ? (path === "/" ? "/ne" : `/ne${path}`) : path;
     const url = `${SITE_URL}${localizedPath}`;
 
     document.title = fullTitle;
-    upsertMeta("name", "description", description);
+    if (description) upsertMeta("name", "description", description);
+    else removeMeta("name", "description");
     upsertLink("canonical", url);
     upsertAlternateLangLinks(path);
     upsertFeedLink(feedPath ? `${SITE_URL}${feedPath}` : null);
     upsertMeta("name", "robots", noindex ? "noindex, follow" : "index, follow");
 
     upsertMeta("property", "og:title", fullTitle);
-    upsertMeta("property", "og:description", description);
+    if (description) upsertMeta("property", "og:description", description);
+    else removeMeta("property", "og:description");
     upsertMeta("property", "og:type", ogType);
     upsertMeta("property", "og:url", url);
     upsertMeta("property", "og:site_name", "PAZ");
@@ -151,7 +167,8 @@ export function DocumentHead(props: DocumentHeadProps) {
 
     upsertMeta("name", "twitter:card", ogImage ? "summary_large_image" : "summary");
     upsertMeta("name", "twitter:title", fullTitle);
-    upsertMeta("name", "twitter:description", description);
+    if (description) upsertMeta("name", "twitter:description", description);
+    else removeMeta("name", "twitter:description");
     if (ogImage) upsertMeta("name", "twitter:image", ogImage);
     else removeMeta("name", "twitter:image");
 

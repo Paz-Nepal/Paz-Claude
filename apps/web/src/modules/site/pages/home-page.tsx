@@ -20,7 +20,7 @@ const ORGANS = [
   {
     to: "/the-record",
     label: "The Record",
-    desc: "The public deposit index — kept, in order, forever.",
+    desc: "The public deposit index, kept in order, forever.",
   },
   { to: "/treasury", label: "The Treasury", desc: "What sustains the institution, and how." },
 ];
@@ -39,9 +39,7 @@ export function HomePage() {
     <div>
       <DocumentHead
         title={siteName}
-        description={
-          tagline || "A hospitality-led cultural institution in Kathmandu, kept by six organs."
-        }
+        description={tagline || undefined}
         path="/"
         ogType="website"
       />
@@ -70,7 +68,10 @@ export function HomePage() {
             >
               Visit the House
             </Link>
-            <ArrowLink to="/about">Our mission</ArrowLink>
+            {/* Standing Specifications: "The house speaks of itself in
+                the third person. It does not have 'our mission'." was
+                "Our mission". */}
+            <ArrowLink to="/about">About PAZ</ArrowLink>
           </div>
         </Reveal>
       </section>

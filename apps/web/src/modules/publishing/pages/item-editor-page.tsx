@@ -177,7 +177,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
               {autosaveItem.isPending
                 ? "Autosaving…"
                 : autosaveItem.isError
-                  ? "Autosave failed — use Save"
+                  ? "Autosave failed; use Save"
                   : lastAutosavedAt
                     ? `Autosaved ${lastAutosavedAt.toLocaleTimeString()}`
                     : null}
@@ -267,7 +267,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="text-sm font-medium">Body (Nepali) — optional</span>
+            <span className="text-sm font-medium">Body (Nepali, optional)</span>
             <BodyEditor
               initialContent={bodyNeRef.current}
               onChange={(doc) => {
@@ -360,7 +360,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
                 <span className="text-sm font-medium">Correction</span>
                 <p className="text-muted-foreground text-sm">
                   Deposited items can&apos;t be edited directly. To correct this one, start a new
-                  version — the original stays exactly as deposited, and readers are shown a link to
+                  version: the original stays exactly as deposited, and readers are shown a link to
                   the newer version once it&apos;s deposited too.
                 </p>
                 {createCorrection.isError && (
@@ -392,7 +392,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
         <div className="flex flex-col gap-3 border-t pt-6">
           <span className="text-sm font-medium">Comments</span>
           <p className="text-muted-foreground -mt-1 text-xs">
-            Anchored to the last saved version — save first if you&apos;ve made changes you want to
+            Anchored to the last saved version. Save first if you&apos;ve made changes you want to
             comment against.
           </p>
           <CommentsPanel itemId={existing.id} body={existing.body as RichTextNode | null} />

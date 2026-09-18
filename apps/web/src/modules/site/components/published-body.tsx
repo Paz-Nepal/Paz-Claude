@@ -34,7 +34,7 @@ export function PublishedBody({
     <article className="flex flex-col">
       <DocumentHead
         title={title}
-        description={description || "PAZ, a hospitality-led cultural institution in Kathmandu."}
+        description={description || undefined}
         path={path}
         ogType="article"
         ogImage={item.featured_media_path ? publicMediaUrl(item.featured_media_path) : null}

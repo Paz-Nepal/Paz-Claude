@@ -92,7 +92,7 @@ export function HospitalityDeskPage() {
                           ))}
                         </select>
                       ) : (
-                        (r.table_name ?? "—")
+                        (r.table_name ?? "–")
                       )}
                     </td>
                     <td className="py-3 pr-4">

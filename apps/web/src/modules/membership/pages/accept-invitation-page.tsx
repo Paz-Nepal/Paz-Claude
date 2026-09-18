@@ -19,7 +19,7 @@ export function AcceptInvitationPage() {
       <div className="max-w-reading mx-auto px-6 py-16">
         <StatePanel
           title="No invitation token."
-          description="This link is missing its token — check that you copied the whole address from the email."
+          description="This link is missing its token. Check that you copied the whole address from the email."
         />
       </div>
     );

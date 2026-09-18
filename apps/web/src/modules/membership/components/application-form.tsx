@@ -43,8 +43,8 @@ export function ApplicationForm() {
   if (submit.isSuccess) {
     return (
       <StatePanel
-        title="Thank you — your application is in."
-        description="A member of staff will be in touch once it's been reviewed."
+        title="Thank you. Your application is in."
+        description="Someone will write back once it's been reviewed."
       />
     );
   }
@@ -83,7 +83,7 @@ export function ApplicationForm() {
               />
               <span className="flex flex-col">
                 <span className="font-medium">
-                  {tier.name} —{" "}
+                  {tier.name}:{" "}
                   {tier.annual_fee_cents != null ? formatCents(tier.annual_fee_cents) : ""}
                   /year
                 </span>

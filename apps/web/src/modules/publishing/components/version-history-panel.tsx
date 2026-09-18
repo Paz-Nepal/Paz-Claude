@@ -114,7 +114,7 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
                           onClick={() => {
                             if (
                               window.confirm(
-                                "Restore this version as the item's current content? This becomes a new revision — nothing is lost.",
+                                "Restore this version as the item's current content? This becomes a new revision. Nothing is lost.",
                               )
                             ) {
                               restore.mutate(rev.id, {

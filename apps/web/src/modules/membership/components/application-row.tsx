@@ -46,7 +46,7 @@ export function ApplicationRow({
         </p>
       )}
       {invite.isSuccess && (
-        <p className="text-sm">Invitation sent — expires {invite.data.expiresAt}.</p>
+        <p className="text-sm">Invitation sent. Expires {invite.data.expiresAt}.</p>
       )}
       <div className="flex flex-wrap gap-2">
         <Button

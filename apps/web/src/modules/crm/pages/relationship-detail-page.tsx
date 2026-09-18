@@ -124,7 +124,7 @@ export function RelationshipDetailPage() {
           <span className="text-sm font-medium">Full timeline</span>
           <p className="text-muted-foreground text-xs">
             Every recorded touchpoint with this person across membership, programmes, hospitality,
-            and other relationships — not just this one (D-14).
+            and other relationships, not just this one (D-14).
           </p>
           <PersonTimeline personId={relationship.person_id} />
         </div>

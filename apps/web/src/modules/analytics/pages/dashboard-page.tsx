@@ -179,7 +179,7 @@ export function DashboardPage() {
                       {metricLabel(row.metric ?? "")}
                     </dt>
                     <dd className="text-lg font-medium">
-                      {row.cents != null ? formatCents(row.cents) : "—"}
+                      {row.cents != null ? formatCents(row.cents) : "–"}
                     </dd>
                   </div>
                 ))}

@@ -22,7 +22,7 @@ export function ReservationPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">Reserve a table</h1>
         <p className="text-muted-foreground">
-          A person confirms every reservation — expect a reply, not an instant confirmation.
+          A person confirms every reservation. Expect a reply, not an instant confirmation.
         </p>
       </header>
 

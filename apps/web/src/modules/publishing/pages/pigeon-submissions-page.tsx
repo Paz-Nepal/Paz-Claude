@@ -14,7 +14,7 @@ export function PigeonSubmissionsPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-serif text-2xl">Send a pigeon — inbox</h1>
+      <h1 className="font-serif text-2xl">Pigeon inbox</h1>
 
       {submissions.isPending && <p className="text-muted-foreground">Loading…</p>}
       {submissions.isError && (

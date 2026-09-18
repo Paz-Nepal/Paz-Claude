@@ -2,24 +2,38 @@
    preset via `hsl(var(--...))`. Single source of truth for both the real
    app (apps/web/src/styles/globals.css imports this) and the component
    workshop (packages/ui/.ladle/globals.css imports it too) so a token
-   change can never drift between what ships and what the workshop shows. */
+   change can never drift between what ships and what the workshop shows.
+
+   Standing Specifications, 18 Sept 2026, "Colour": five canonical values
+   -- ground #F5F0E8, text #23201D (the house ink, measured from Paper
+   No. 1), rule #C9C1B4, brick #8C4A38, verdigris #4F8677. Brick and
+   verdigris are the screen's only accents ("colour enters through
+   material, and print is monochrome... the screen is the one exception,
+   because it has no materials") and carry no meaning alone -- an
+   interface signal can't be color-only, it must also read correctly in
+   grayscale. Everything below the five canonical values (secondary/
+   muted/accent neutrals, --ring, --destructive) is this codebase's own
+   derivation for UI mechanics the spec doesn't name colours for, tinted
+   to the same warm hue family rather than invented independently. */
 :root {
-  --background: 40 30% 98%;
-  --foreground: 30 8% 13%;
-  --primary: 30 8% 13%;
-  --primary-foreground: 40 30% 98%;
-  --secondary: 36 18% 93%;
-  --secondary-foreground: 30 8% 13%;
-  --muted: 36 16% 92%;
-  --muted-foreground: 30 6% 42%;
-  --accent: 36 18% 93%;
-  --accent-foreground: 30 8% 13%;
-  --destructive: 0 60% 42%;
-  --destructive-foreground: 40 30% 98%;
-  --border: 34 14% 87%;
-  --input: 34 14% 84%;
-  --ring: 12 52% 42%;
+  --background: 36.9 39.4% 93.5%; /* ground #F5F0E8 */
+  --foreground: 30 9.4% 12.5%; /* text #23201D */
+  --primary: 30 9.4% 12.5%;
+  --primary-foreground: 36.9 39.4% 93.5%;
+  --secondary: 36.9 20% 90%;
+  --secondary-foreground: 30 9.4% 12.5%;
+  --muted: 36.9 18% 89%;
+  --muted-foreground: 30 8% 40%;
+  --accent: 36.9 20% 90%;
+  --accent-foreground: 30 9.4% 12.5%;
+  --destructive: 0 55% 40%;
+  --destructive-foreground: 36.9 39.4% 93.5%;
+  --border: 37.1 16.3% 74.7%; /* rule #C9C1B4 */
+  --input: 37.1 16.3% 70%;
+  --ring: 12.9 42.9% 38.4%;
   --radius: 0.125rem;
-  --brand: 12 52% 42%;
-  --brand-soft: 12 40% 55%;
+  --brand: 12.9 42.9% 38.4%; /* brick #8C4A38, accent only */
+  --brand-soft: 12.9 35% 52%;
+  --verdigris: 163.6 25.8% 41.8%; /* #4F8677, accent only, restored per audit */
+  --verdigris-soft: 163.6 22% 55%;
 }

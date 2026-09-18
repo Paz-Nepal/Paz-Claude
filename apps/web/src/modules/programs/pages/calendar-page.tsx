@@ -21,7 +21,7 @@ export function CalendarPage() {
         <div>
           <p className="font-medium">Encounters</p>
           <p className="text-muted-foreground text-sm">
-            Field Studies, Common Ground, The Chautari — the public civic layer.
+            Field Studies, Common Ground, The Chautari: the public civic layer.
           </p>
         </div>
         <span className="text-muted-foreground text-sm">→</span>

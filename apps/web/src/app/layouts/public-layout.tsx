@@ -340,9 +340,15 @@ function Footer({
       <div className="w-wide grid gap-12 py-20 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <div className="font-serif text-3xl">{siteName}</div>
-          <p className="type-body mt-5 max-w-xs">
-            A hospitality-led cultural institution in Kathmandu, kept by six organs and open to all.
-          </p>
+          {/* Standing Specifications, 18 Sept 2026, "Said aloud": "PAZ
+              rhymes with the English word 'cause', with the z sounded...
+              This is to be written out on the site, so that the name has
+              one pronunciation rather than three." The site's own
+              description used to fill the space below this line -- that
+              was retired brand language ("hospitality-led cultural
+              institution...") and is removed rather than reworded; the
+              house supplies the replacement. */}
+          <p className="type-small mt-5 max-w-xs">Rhymes with &ldquo;cause,&rdquo; z sounded.</p>
           <p className="type-small mt-6">
             Patan, Lalitpur
             <br />

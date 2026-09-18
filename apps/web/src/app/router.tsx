@@ -66,6 +66,12 @@ const HousePage = React.lazy(() =>
 const HearthPage = React.lazy(() =>
   import("@/modules/site/pages/hearth-page").then((m) => ({ default: m.HearthPage })),
 );
+const GuildPage = React.lazy(() =>
+  import("@/modules/site/pages/guild-page").then((m) => ({ default: m.GuildPage })),
+);
+const TreasuryPage = React.lazy(() =>
+  import("@/modules/site/pages/treasury-page").then((m) => ({ default: m.TreasuryPage })),
+);
 const RecordOrganPage = React.lazy(() =>
   import("@/modules/site/pages/record-organ-page").then((m) => ({
     default: m.RecordOrganPage,
@@ -274,14 +280,19 @@ function publicRouteChildren() {
     { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
     { path: "contact", element: withSuspense(<ContactPage />) },
     { path: "search", element: withSuspense(<SearchPage />) },
-    // The six organs. Four have a dedicated hub component that
-    // aggregates related content (Press: the five series; House: Visit;
-    // Hearth: Menu + Reservations; The Record: the deposit index); Guild
-    // and Treasury fall through to the generic CmsPage catch-all below,
-    // same as any other plain institutional page.
+    // The six organs, all shown alike (site audit, 18 Sept 2026: Guild
+    // and Treasury used to fall through the generic CmsPage catch-all
+    // below while the other four had a dedicated component). Press,
+    // House, Hearth, and The Record additionally aggregate related
+    // content of their own (the five series; Visit; Menu + Reservations;
+    // the deposit index) -- Guild and Treasury don't need that, just the
+    // same organ-page treatment (DocumentHead, the "An organ of the
+    // house" kicker, translation-notice handling).
     { path: "press", element: withSuspense(<PressPage />) },
     { path: "house", element: withSuspense(<HousePage />) },
     { path: "hearth", element: withSuspense(<HearthPage />) },
+    { path: "guild", element: withSuspense(<GuildPage />) },
+    { path: "treasury", element: withSuspense(<TreasuryPage />) },
     { path: "the-record", element: withSuspense(<RecordOrganPage />) },
     { path: "journal", element: withSuspense(<JournalPage />) },
     { path: "journal/:slug", element: withSuspense(<ArticlePage />) },

@@ -29,7 +29,11 @@ export function usePublicMenu() {
     queryKey: ["public-menu"],
     staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await api().from("public_menu").select("*");
+      const { data, error } = await api()
+        .from("public_menu")
+        .select("*")
+        .order("section_position")
+        .order("item_position");
       if (error) throw toAppError(error);
       return data;
     },
@@ -113,7 +117,7 @@ export function useDeskReservations() {
   return useQuery({
     queryKey: ["desk-reservations"],
     queryFn: async () => {
-      const { data, error } = await api().from("desk_reservations").select("*");
+      const { data, error } = await api().from("desk_reservations").select("*").order("starts_at");
       if (error) throw toAppError(error);
       return data;
     },
@@ -193,7 +197,7 @@ export function useAdminMenus() {
   return useQuery({
     queryKey: ["admin-menus"],
     queryFn: async () => {
-      const { data, error } = await api().from("admin_menus").select("*");
+      const { data, error } = await api().from("admin_menus").select("*").order("name");
       if (error) throw toAppError(error);
       return data;
     },

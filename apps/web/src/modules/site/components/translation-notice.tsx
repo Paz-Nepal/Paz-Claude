@@ -11,7 +11,7 @@
 export function TranslationNotice() {
   return (
     <p className="type-small border-brand/40 bg-brand/5 mb-8 border-l-2 py-2 pl-4 italic">
-      यो लेख अझै नेपालीमा उपलब्ध छैन — अंग्रेजी पाठ देखाइएको छ।
+      यो लेख अझै नेपालीमा उपलब्ध छैन। अंग्रेजी पाठ देखाइएको छ।
     </p>
   );
 }

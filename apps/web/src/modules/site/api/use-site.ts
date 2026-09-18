@@ -216,33 +216,47 @@ export function useSubmitContactMessage() {
   });
 }
 
+const RECORD_PAGE_SIZE = 1000;
+
 /**
- * Site audit, 18 Sept 2026, item "The Record is the one query with no
- * ordering": the page promises entries "in order" but the query had no
- * .order(), so Postgres was free to return rows in whatever order it
- * liked. deposit_number is the permanent, zero-padded, sequentially
- * assigned reference (publishing.next_deposit_ref()) -- the actual
- * numbering the register is built around, unlike deposited_at which
- * exists but isn't the promised ordering.
+ * Site audit, 18 Sept 2026: two separate findings on this one query.
  *
- * Still open from the same audit: every query in this file (and 27
- * others across the app) is `select("*")` with no pagination, which
- * means each silently truncates at Supabase's default 1000-row limit.
- * The Record is the one table meant to run for a century -- adding
- * real range-based pagination here (and everywhere else) is real,
- * separate follow-up work, not done in this fix.
+ * "The Record is the one query with no ordering": the page promises
+ * entries "in order" but the query had no .order(), so Postgres was
+ * free to return rows in whatever order it liked -- fixed below,
+ * ordered by deposit_number, the permanent zero-padded sequential
+ * reference (publishing.next_deposit_ref()) the register is actually
+ * built around.
+ *
+ * Follow-up audit: "Ordering was added but no .limit() or .range().
+ * Every query still stops silently at Supabase's default thousand
+ * rows, the Record included. It is now a correctly ordered list that
+ * will quietly stop at deposit one thousand." record-page.tsx's own
+ * comment says pagination is deliberately not wanted here ("no
+ * filtering or pagination cleverness... it is the whole log") -- a
+ * "Load more" UI would contradict that intent, so instead of adding
+ * one, this loops .range() pages internally until exhausted and
+ * returns the complete list. The reader-facing behavior (the whole
+ * log, no button) stays exactly what it was designed to be; only the
+ * silent 1000-row cap that behavior was quietly relying on is closed.
  */
 export function useRecordEntries() {
   return useQuery({
     queryKey: ["record-entries"],
     staleTime: 60_000,
     queryFn: async () => {
-      const { data, error } = await api()
-        .from("record_entries")
-        .select("*")
-        .order("deposit_number", { ascending: true });
-      if (error) throw toAppError(error);
-      return data;
+      const all: RecordEntry[] = [];
+      for (let from = 0; ; from += RECORD_PAGE_SIZE) {
+        const { data, error } = await api()
+          .from("record_entries")
+          .select("*")
+          .order("deposit_number", { ascending: true })
+          .range(from, from + RECORD_PAGE_SIZE - 1);
+        if (error) throw toAppError(error);
+        all.push(...(data ?? []));
+        if (!data || data.length < RECORD_PAGE_SIZE) break;
+      }
+      return all;
     },
   });
 }

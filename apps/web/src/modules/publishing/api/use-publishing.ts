@@ -378,7 +378,10 @@ export function usePigeonSubmissions() {
   return useQuery({
     queryKey: ["pigeon-submissions"],
     queryFn: async () => {
-      const { data, error } = await api().from("pigeon_submissions").select("*");
+      const { data, error } = await api()
+        .from("pigeon_submissions")
+        .select("*")
+        .order("submitted_at", { ascending: false });
       if (error) throw toAppError(error);
       return data;
     },

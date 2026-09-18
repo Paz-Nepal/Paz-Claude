@@ -93,7 +93,7 @@
   font-family:
     "Tiro Devanagari Hindi",
     "Literata",
-    sans-serif;
+    serif;
 }
 
 /* Editorial type scale + width presets, ported from the legacy Horizons
@@ -136,7 +136,14 @@
     @apply text-foreground/90 font-sans text-lg font-light leading-relaxed md:text-xl;
   }
   .type-body {
-    @apply text-foreground/85 font-sans text-base font-normal leading-relaxed;
+    /* Standing Specifications: "Body size 19px. Line height 1.6." was
+       `text-base leading-relaxed` (Tailwind's 1rem/1.625) -- a more
+       specific selector than the inherited `body { font-size: 19px;
+       line-height: 1.6; }` rule, so it silently overrode it back down.
+       Audit, 18 Sept 2026: "The build sets 1rem on 1.625." */
+    @apply text-foreground/85 font-sans font-normal;
+    font-size: 19px;
+    line-height: 1.6;
   }
   .type-small {
     @apply text-muted-foreground font-sans text-sm leading-relaxed;
@@ -203,7 +210,11 @@
    the editor's editable surface so what you write is what readers see. */
 @layer components {
   .rich-text {
-    @apply text-base leading-relaxed;
+    /* Same fix as .type-body above -- this is the actual continuous
+       reading surface (published articles, the item editor), so it's
+       the one place the 19px/1.6 ruling matters most. */
+    font-size: 19px;
+    line-height: 1.6;
   }
   .rich-text > * + * {
     @apply mt-4;

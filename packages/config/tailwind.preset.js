@@ -22,7 +22,7 @@ module.exports = {
       fontFamily: {
         serif: ["Literata", "Georgia", "serif"],
         sans: ["Literata", "Georgia", "serif"],
-        ne: ['"Tiro Devanagari Hindi"', "Literata", "sans-serif"],
+        ne: ['"Tiro Devanagari Hindi"', "Literata", "serif"],
       },
       maxWidth: {
         // Standing Specifications, 18 Sept 2026, "Type": "Measure: 66

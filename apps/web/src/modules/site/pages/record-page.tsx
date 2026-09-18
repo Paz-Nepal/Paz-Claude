@@ -9,7 +9,11 @@ import { useLocalizedPath } from "../language";
  * The spine of the site (spec §2/§59): every public deposit, in order,
  * forever. Reads api.record_entries, which is a straight append-only
  * mirror of publishing.record_entries -- there is no filtering or
- * pagination cleverness here on purpose; it is the whole log.
+ * pagination *UI* here on purpose; it is the whole log, one scroll, no
+ * "Load more." useRecordEntries (use-site.ts) pages past Supabase's
+ * 1000-row-per-request cap internally so that stays true past deposit
+ * one thousand too -- see its own comment for the audit finding this
+ * closes.
  */
 export function RecordPage() {
   const entries = useRecordEntries();

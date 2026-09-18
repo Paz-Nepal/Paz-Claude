@@ -151,6 +151,9 @@ cd apps/web
 echo "VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co" > .env.production.local
 echo "VITE_SUPABASE_ANON_KEY=<your project's anon key, from the dashboard's API settings>" >> .env.production.local
 pnpm build
+cd ..
+pnpm sitemap
+pnpm feeds
 ```
 
 This produces `apps/web/dist/` — a fully static site (HTML/CSS/JS, no
@@ -159,6 +162,15 @@ key is meant to be public (it's rate-limited and RLS-scoped, the same key
 the browser would see in any Supabase app's network tab) — the
 `SUPABASE_SERVICE_ROLE_KEY` from step 5's dashboard is the one that must
 never appear here or anywhere in `apps/web`.
+
+**`pnpm build` alone does not produce `sitemap.xml`** — `robots.txt`
+promises one at `/sitemap.xml`, but generating it needs a live query
+against the deployed project (`scripts/generate-sitemap.mjs`,
+reads `apps/web/.env.local`/`.env.production.local` automatically),
+so it's a separate step from the plain asset build CI also runs
+(and CI has no Supabase credentials to run it with). `pnpm sitemap`
+and `pnpm feeds` both write into `apps/web/dist/`, so run them after
+`pnpm build`, not instead of it, and before zipping/uploading `dist/`.
 
 Upload the _contents_ of `dist/` (not the folder itself) to your static
 host's document root. Configure the host to serve `index.html` for any

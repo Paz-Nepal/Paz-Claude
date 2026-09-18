@@ -124,7 +124,7 @@ export function DashboardPage() {
         )}
 
         {canMembership && (
-          <Card title="Membership funnel">
+          <Card title="Friends of PAZ funnel">
             {membership.isError && (
               <p className="text-destructive text-sm">{toAppError(membership.error).message}</p>
             )}

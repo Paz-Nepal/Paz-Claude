@@ -156,7 +156,7 @@ function Header({ siteName }: { siteName: string }) {
             Programmes
           </NavLink>
           <NavLink to={localize("/membership/apply")} className={navLinkClass}>
-            Membership
+            Friends of PAZ
           </NavLink>
           <NavLink to={localize("/journal")} className={navLinkClass}>
             Journal
@@ -273,7 +273,7 @@ function Header({ siteName }: { siteName: string }) {
               to={localize("/membership/apply")}
               className="text-foreground/90 py-2 font-serif text-2xl"
             >
-              Membership
+              Friends of PAZ
             </Link>
             <Link to={localize("/journal")} className="text-foreground/90 py-2 font-serif text-2xl">
               Journal

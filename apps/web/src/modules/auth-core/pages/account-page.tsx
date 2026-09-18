@@ -55,7 +55,7 @@ export function AccountPage() {
         <h1 className="font-serif text-3xl">My account</h1>
         <p className="text-muted-foreground">{profile.data?.full_name}</p>
         <Link to="/membership/card" className="text-sm hover:underline">
-          My membership card
+          My Friend card
         </Link>
       </header>
 

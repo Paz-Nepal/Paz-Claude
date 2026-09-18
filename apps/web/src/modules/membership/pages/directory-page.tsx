@@ -8,10 +8,10 @@ export function DirectoryPage() {
   return (
     <div className="max-w-standard mx-auto flex flex-col gap-8 px-6 py-16">
       <div className="flex flex-col gap-2 text-center">
-        <h1 className="font-serif text-3xl">Members</h1>
+        <h1 className="font-serif text-3xl">Friends of PAZ</h1>
         <p className="text-muted-foreground">
-          The members who&rsquo;ve chosen to appear here. Most members keep their support private —
-          this list is opt-in.
+          The Friends who&rsquo;ve chosen to appear here. Most keep their support private: this
+          list is opt-in.
         </p>
       </div>
       {directory.isPending && <p className="text-muted-foreground text-center">Loading…</p>}

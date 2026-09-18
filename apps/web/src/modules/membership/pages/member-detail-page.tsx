@@ -67,14 +67,14 @@ export function MemberDetailPage() {
 
   if (members.isPending) return <p className="text-muted-foreground">Loading…</p>;
   if (!member) {
-    return <StatePanel title="Member not found." description="It may have been removed." />;
+    return <StatePanel title="Friend not found." description="It may have been removed." />;
   }
 
   return (
     <div className="max-w-standard flex flex-col gap-8">
       <div className="flex items-center gap-3">
         <Link to="/admin/members" className="text-muted-foreground text-sm hover:underline">
-          ← Members
+          ← Friends of PAZ
         </Link>
         <h1 className="font-serif text-2xl">{member.member_name}</h1>
         <MemberStatusBadge status={member.status} />
@@ -82,7 +82,7 @@ export function MemberDetailPage() {
 
       <div className="flex flex-col gap-2 text-sm">
         <p>
-          <span className="text-muted-foreground">Member no.</span> {member.member_no}
+          <span className="text-muted-foreground">Friend no.</span> {member.member_no}
         </p>
         <p>
           <span className="text-muted-foreground">Email</span> {member.member_email}

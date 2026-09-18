@@ -11,7 +11,7 @@ export function VerifyCardPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="font-serif text-2xl">Verify a member card</h1>
+      <h1 className="font-serif text-2xl">Verify a Friend card</h1>
 
       <form
         className="flex max-w-md flex-col gap-4"
@@ -47,10 +47,13 @@ export function VerifyCardPage() {
             <p className="text-muted-foreground text-sm">
               {verify.data.memberNo} · {verify.data.tierName}
             </p>
+            {/* Standing Specifications: "Where a card exists, it should
+                be legible as what it is: it carries the Friends price,
+                and nothing else." Not framed as access/door control. */}
             <p className="mt-2 font-medium">
               {verify.data.valid
-                ? "Valid membership"
-                : `Not currently valid (${verify.data.status})`}
+                ? "Friends price applies"
+                : `Friends price doesn't apply (${verify.data.status})`}
             </p>
           </div>
         ) : (

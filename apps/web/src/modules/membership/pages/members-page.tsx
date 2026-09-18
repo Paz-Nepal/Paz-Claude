@@ -10,7 +10,7 @@ export function MembersPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h1 className="font-serif text-2xl">Members</h1>
+        <h1 className="font-serif text-2xl">Friends of PAZ</h1>
         <Link to="/admin/members/verify-card" className="text-sm hover:underline">
           Verify a card
         </Link>
@@ -19,20 +19,20 @@ export function MembersPage() {
       {members.isPending && <p className="text-muted-foreground">Loading…</p>}
       {members.isError && (
         <StatePanel
-          title="Couldn't load members."
+          title="Couldn't load Friends of PAZ."
           description={toAppError(members.error).message}
         />
       )}
 
       {members.data &&
         (members.data.length === 0 ? (
-          <StatePanel title="No members yet." description="Accepted applications appear here." />
+          <StatePanel title="No Friends yet." description="Accepted applications appear here." />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="text-muted-foreground border-b">
-                  <th className="py-2 pr-4 font-medium">Member no.</th>
+                  <th className="py-2 pr-4 font-medium">Friend no.</th>
                   <th className="py-2 pr-4 font-medium">Name</th>
                   <th className="py-2 pr-4 font-medium">Tier</th>
                   <th className="py-2 pr-4 font-medium">Status</th>

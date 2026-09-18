@@ -7,8 +7,8 @@ const KIND_LABEL: Record<string, string> = {
   relationship_started: "Relationship started",
   relationship_ended: "Relationship ended",
   pledge: "Pledge",
-  membership_application: "Membership application",
-  membership_term: "Membership term",
+  membership_application: "Friends of PAZ application",
+  membership_term: "Friends of PAZ term",
   program_registration: "Programme registration",
   reservation: "Reservation",
 };

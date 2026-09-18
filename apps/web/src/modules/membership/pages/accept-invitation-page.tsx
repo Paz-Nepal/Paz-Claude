@@ -30,7 +30,7 @@ export function AcceptInvitationPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">Accept your invitation</h1>
         <p className="text-muted-foreground">
-          Welcome — accepting sets up your membership record. You can pay whenever it&rsquo;s
+          Welcome. Accepting sets up your Friends of PAZ record. You can pay whenever it&rsquo;s
           convenient; we&rsquo;ll be in touch about that separately.
         </p>
       </header>

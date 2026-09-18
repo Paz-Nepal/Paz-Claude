@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
-import { formatKathmanduDate } from "@paz/utils";
+import { formatDualEraDate } from "@paz/utils";
 import { useRecordEntries } from "../api/use-site";
 import { useLocalizedPath } from "../language";
 
@@ -44,9 +44,12 @@ export function RecordPage() {
           <ol className="flex flex-col gap-4">
             {entries.data.map((entry) => (
               <li key={entry.id} className="flex flex-col gap-0.5 border-b pb-4 last:border-0">
+                {/* Standing Specifications, "Calendar and numerals":
+                    "Both eras always appear in the Record's deposit
+                    entries... currently carrying one." */}
                 <span className="text-muted-foreground text-xs">
                   {entry.deposit_number}
-                  {entry.deposited_at ? ` · ${formatKathmanduDate(entry.deposited_at)}` : ""}
+                  {entry.deposited_at ? ` · ${formatDualEraDate(entry.deposited_at)}` : ""}
                 </span>
                 {entry.link ? (
                   <Link to={localize(entry.link)} className="font-medium hover:underline">

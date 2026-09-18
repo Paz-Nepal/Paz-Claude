@@ -6,7 +6,9 @@
 if the JS a first-time visitor's browser must download before the app
 can render (`apps/web/dist/index.html`'s own `<script>`/`modulepreload`
 tags, gzip bytes) exceeds 200KB. T-071's original target was 150KB;
-current eager JS measures ~163KB — the budget is set above the measured
+current eager JS measures ~168KB (grew from ~163KB after adding
+nepali-date-converter for the Record's dual-era dates, 18 Sept 2026) —
+the budget is set above the measured
 baseline so regressions are still caught now, rather than either
 silently passing a target that was never met or failing every build
 until a real reduction pass (further splitting `vendor-supabase`,

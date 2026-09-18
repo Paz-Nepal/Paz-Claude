@@ -223,6 +223,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      nepali-date-converter:
+        specifier: ^3.4.0
+        version: 3.4.0
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.1
@@ -2997,6 +3000,10 @@ packages:
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
+
+  nepali-date-converter@3.4.0:
+    resolution: {integrity: sha512-hBojNXCQN69I533CnxNubl72uNx2Zcow9t2bOML3CxXv227s7NKA2kStUGO5xysg0SwsubTTxAO6tcg9IhS61w==}
+    engines: {node: '>=6.0.0'}
 
   node-exports-info@1.6.2:
     resolution: {integrity: sha512-kXs9Go0cah0qHVV2v389IXQLdLCeE1xfFtjOAF+iobu0OIoG1pje8At2vMHyaPMiPMnG/LWP50twML21eMcAag==}
@@ -7436,6 +7443,8 @@ snapshots:
   negotiator@0.6.3: {}
 
   neo-async@2.6.2: {}
+
+  nepali-date-converter@3.4.0: {}
 
   node-exports-info@1.6.2:
     dependencies:

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
-import { formatKathmanduDate } from "@paz/utils";
+import { formatDualEraDate } from "@paz/utils";
 import { usePublishedItem, useRecordEntries } from "../api/use-site";
 import {
   useLanguage,
@@ -90,7 +90,7 @@ export function RecordOrganPage() {
                   <li key={entry.id} className="border-border flex flex-col gap-0.5 border-t pt-4">
                     <span className="type-caption">
                       {entry.deposit_number}
-                      {entry.deposited_at ? ` · ${formatKathmanduDate(entry.deposited_at)}` : ""}
+                      {entry.deposited_at ? ` · ${formatDualEraDate(entry.deposited_at)}` : ""}
                     </span>
                     {entry.link ? (
                       <Link to={localize(entry.link)} className="link-underline font-serif text-lg">

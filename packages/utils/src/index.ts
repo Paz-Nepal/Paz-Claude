@@ -3,6 +3,8 @@ export {
   PAZ_TIME_ZONE,
   formatKathmanduTime,
   formatKathmanduDate,
+  formatBikramSambatDate,
+  formatDualEraDate,
   isValidRange,
   kathmanduInputToUtcIso,
 } from "./dates";

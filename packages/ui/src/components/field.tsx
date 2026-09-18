@@ -29,7 +29,7 @@ export function Field({ label, htmlFor, error, hint, className, children, ...pro
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="text-destructive text-sm">
+        <p id={errorId} role="alert" aria-live="assertive" className="text-destructive text-sm">
           {error}
         </p>
       )}

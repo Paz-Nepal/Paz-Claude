@@ -39,7 +39,6 @@ export function AdminProgramsPage() {
                 >
                   <span className="font-medium">{p.title}</span>
                   <div className="flex items-center gap-2">
-                    {p.member_only && <Badge variant="secondary">Members only</Badge>}
                     {!p.active && <Badge variant="outline">Inactive</Badge>}
                   </div>
                 </Link>

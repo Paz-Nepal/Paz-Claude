@@ -150,24 +150,42 @@ export interface SaveProgramInput {
   slug: string;
   title: string;
   summary: string | null;
-  memberOnly: boolean;
 }
 
+/**
+ * Standing Specifications, 18 Sept 2026: api.save_program's signature
+ * changed (0065, member_only removed -- "Access to the house is never
+ * sold... a programme gated to a paid tier contradicts this") after the
+ * generated types were last produced, so this uses a hand-written Args
+ * type rather than the (now stale) generated one, same reasoning as
+ * every other object new or changed since ADR-26.
+ */
 export function useSaveProgram() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: SaveProgramInput) => {
-      const { data, error } = await api().rpc(
-        "save_program",
-        asArgs<Database["api"]["Functions"]["save_program"]["Args"]>({
-          p_id: input.id,
-          p_slug: input.slug,
-          p_title: input.title,
-          p_summary: input.summary,
-          p_member_only: input.memberOnly,
-          p_description_item: null,
-        }),
-      );
+      // The generated overload for this literal name still expects the
+      // old (pre-0065) 6-arg shape, so it's bypassed here rather than
+      // fought with `asArgs` alone -- that only casts the value, not
+      // which overload `.rpc("save_program", ...)` resolves to.
+      const client = api();
+      const rpc = client.rpc.bind(client) as (
+        fn: "save_program",
+        args: {
+          p_id: string | null;
+          p_slug: string;
+          p_title: string;
+          p_summary: string | null;
+          p_description_item: string | null;
+        },
+      ) => PromiseLike<{ data: string; error: unknown }>;
+      const { data, error } = await rpc("save_program", {
+        p_id: input.id,
+        p_slug: input.slug,
+        p_title: input.title,
+        p_summary: input.summary,
+        p_description_item: null,
+      });
       if (error) throw toAppError(error);
       return data;
     },

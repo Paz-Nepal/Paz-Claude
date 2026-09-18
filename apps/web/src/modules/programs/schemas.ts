@@ -8,7 +8,6 @@ export const programSchema = z.object({
     .min(1, "Slug is required")
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "Lowercase letters, numbers, and hyphens only"),
   summary: z.string().trim(),
-  memberOnly: z.boolean(),
 });
 export type ProgramInput = z.infer<typeof programSchema>;
 

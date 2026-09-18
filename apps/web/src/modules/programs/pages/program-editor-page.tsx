@@ -94,7 +94,6 @@ function ProgramMetadataForm({
         slug: string | null;
         title: string | null;
         summary: string | null;
-        member_only: boolean | null;
       }
     | undefined;
   onSaved: (id: string) => void;
@@ -110,7 +109,6 @@ function ProgramMetadataForm({
       title: existing?.title ?? "",
       slug: existing?.slug ?? "",
       summary: existing?.summary ?? "",
-      memberOnly: existing?.member_only ?? false,
     },
   });
 
@@ -121,7 +119,6 @@ function ProgramMetadataForm({
         slug: values.slug,
         title: values.title,
         summary: values.summary || null,
-        memberOnly: values.memberOnly,
       },
       { onSuccess: (newId) => onSaved(newId) },
     );
@@ -138,10 +135,6 @@ function ProgramMetadataForm({
       <Field label="Summary" htmlFor="summary" error={errors.summary?.message}>
         <Textarea id="summary" {...register("summary")} />
       </Field>
-      <label className="flex items-center gap-2 text-sm">
-        <input type="checkbox" {...register("memberOnly")} />
-        Members only
-      </label>
       {save.isError && (
         <p role="alert" className="text-destructive text-sm">
           {toAppError(save.error).message}

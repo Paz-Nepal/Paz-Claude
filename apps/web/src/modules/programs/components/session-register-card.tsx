@@ -69,7 +69,6 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
           )}
         </div>
         <div className="flex items-center gap-2">
-          {session.member_only && <Badge variant="secondary">Members only</Badge>}
           {full ? (
             <Badge variant="outline">Waitlist</Badge>
           ) : (

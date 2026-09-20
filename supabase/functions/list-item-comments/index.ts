@@ -39,7 +39,9 @@ Deno.serve(async (req) => {
     global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
   });
 
-  const { data, error } = await supabase.schema("api").rpc("item_comments", { p_item: body.itemId });
+  const { data, error } = await supabase
+    .schema("api")
+    .rpc("item_comments", { p_item: body.itemId });
 
   if (error) {
     return jsonError(error.message, 400);

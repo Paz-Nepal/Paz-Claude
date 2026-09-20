@@ -1,7 +1,17 @@
 import { z } from "zod";
 
 export const itemMetadataSchema = z.object({
-  type: z.enum(["article", "page", "paper", "brief", "dispatch", "pigeon_post", "annual", "event"]),
+  type: z.enum([
+    "article",
+    "page",
+    "paper",
+    "brief",
+    "dispatch",
+    "pigeon_post",
+    "annual",
+    "event",
+    "sattal",
+  ]),
   title: z.string().trim().min(1, "Title is required"),
   slug: z
     .string()

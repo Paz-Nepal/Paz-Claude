@@ -81,7 +81,7 @@ jobs:
       - name: Regenerate types and fail if stale
         run: |
           supabase gen types typescript --local \
-            --schema identity,authz,admin,api,publishing,programs,membership,crm \
+            --schema identity,authz,admin,api,publishing,programs,membership,crm,wall,sattal \
             > /tmp/database.generated.ts
           diff -u packages/types/src/database.generated.ts /tmp/database.generated.ts
 

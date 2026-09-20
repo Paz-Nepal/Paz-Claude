@@ -45,9 +45,6 @@ const MediaPage = React.lazy(() =>
 const SettingsPage = React.lazy(() =>
   import("@/modules/admin-core/pages/settings-page").then((m) => ({ default: m.SettingsPage })),
 );
-const JournalPage = React.lazy(() =>
-  import("@/modules/site/pages/journal-page").then((m) => ({ default: m.JournalPage })),
-);
 const ArticlePage = React.lazy(() =>
   import("@/modules/site/pages/article-page").then((m) => ({ default: m.ArticlePage })),
 );
@@ -194,6 +191,63 @@ const RelationshipDetailPage = React.lazy(() =>
 const PledgesPage = React.lazy(() =>
   import("@/modules/crm/pages/pledges-page").then((m) => ({ default: m.PledgesPage })),
 );
+const WallPage = React.lazy(() =>
+  import("@/modules/site/pages/wall-page").then((m) => ({ default: m.WallPage })),
+);
+const PersonPage = React.lazy(() =>
+  import("@/modules/site/pages/person-page").then((m) => ({ default: m.PersonPage })),
+);
+const WorkPage = React.lazy(() =>
+  import("@/modules/site/pages/work-page").then((m) => ({ default: m.WorkPage })),
+);
+const ShowPage = React.lazy(() =>
+  import("@/modules/site/pages/show-page").then((m) => ({ default: m.ShowPage })),
+);
+const SattalIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/sattal-pages").then((m) => ({ default: m.SattalIndexPage })),
+);
+const SattalPiecePage = React.lazy(() =>
+  import("@/modules/site/pages/sattal-pages").then((m) => ({ default: m.SattalPiecePage })),
+);
+const ChroniclePage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.ChroniclePage })),
+);
+const WordsPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.WordsPage })),
+);
+const CommonsPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CommonsPage })),
+);
+const CanonIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CanonIndexPage })),
+);
+const CanonDocRoute = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CanonDocRoute })),
+);
+const AVoicePage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.AVoicePage })),
+);
+const DepositRoute = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.DepositRoute })),
+);
+const NamePage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.NamePage })),
+);
+const TablePage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TablePage })),
+);
+const EncountersPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.EncountersPage })),
+);
+const LookingForPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.LookingForPage })),
+);
+const PrivacyPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.PrivacyPage })),
+);
+const TermsPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TermsPage })),
+);
 const DashboardPage = React.lazy(() =>
   import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
 );
@@ -254,6 +308,26 @@ function publicRouteChildren() {
     { path: "annual", element: withSuspense(<AnnualIndexPage />) },
     { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
     { path: "record", element: withSuspense(<RecordPage />) },
+    { path: "wall", element: withSuspense(<WallPage />) },
+    { path: "people/:slug", element: withSuspense(<PersonPage />) },
+    { path: "works/:slug", element: withSuspense(<WorkPage />) },
+    { path: "shows/:slug", element: withSuspense(<ShowPage />) },
+    { path: "sattal", element: withSuspense(<SattalIndexPage />) },
+    { path: "sattal/:slug", element: withSuspense(<SattalPiecePage />) },
+    { path: "chronicle", element: withSuspense(<ChroniclePage />) },
+    { path: "words", element: withSuspense(<WordsPage />) },
+    { path: "record/:deposit", element: withSuspense(<DepositRoute />) },
+    { path: "name", element: withSuspense(<NamePage />) },
+    { path: "table", element: withSuspense(<TablePage />) },
+    { path: "commons", element: withSuspense(<CommonsPage />) },
+    { path: "friends", element: withSuspense(<ApplyPage />) },
+    { path: "encounters", element: withSuspense(<EncountersPage />) },
+    { path: "canon", element: withSuspense(<CanonIndexPage />) },
+    { path: "canon/:doc", element: withSuspense(<CanonDocRoute />) },
+    { path: "looking-for", element: withSuspense(<LookingForPage />) },
+    { path: "privacy", element: withSuspense(<PrivacyPage />) },
+    { path: "terms", element: withSuspense(<TermsPage />) },
+    { path: "a-voice", element: withSuspense(<AVoicePage />) },
     { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
     { path: "contact", element: withSuspense(<ContactPage />) },
     { path: "search", element: withSuspense(<SearchPage />) },
@@ -270,9 +344,11 @@ function publicRouteChildren() {
     { path: "guild", element: withSuspense(<GuildPage />) },
     { path: "treasury", element: withSuspense(<TreasuryPage />) },
     { path: "the-record", element: withSuspense(<RecordOrganPage />) },
-    { path: "journal", element: withSuspense(<JournalPage />) },
+    // The Journal became the Chronicle (Build Specification 9). Its old
+    // address is kept; individual articles keep theirs.
+    { path: "journal", element: <Navigate to="/chronicle" replace /> },
     { path: "journal/:slug", element: withSuspense(<ArticlePage />) },
-    { path: "membership/apply", element: withSuspense(<ApplyPage />) },
+    { path: "membership/apply", element: <Navigate to="/friends" replace /> },
     { path: "membership/directory", element: withSuspense(<DirectoryPage />) },
     { path: "membership/accept-invitation", element: withSuspense(<AcceptInvitationPage />) },
     {

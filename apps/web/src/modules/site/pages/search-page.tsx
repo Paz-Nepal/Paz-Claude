@@ -1,22 +1,42 @@
 import * as React from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button, Input, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
-import { useSearchPublished } from "../api/use-site";
-import { SearchResultCard } from "../components/search-result-card";
+import { useSearchEverything } from "../api/use-wall";
+import { DocumentHead } from "../components/document-head";
+import { useLocalizedPath } from "../language";
+
+const KIND_LABEL: Record<string, string> = {
+  person: "Person",
+  work: "Work",
+  show: "Show",
+  sattal: "The Sattal",
+  word: "Words",
+  record: "The Record",
+  paper: "Papers",
+  brief: "Brief",
+  dispatch: "Dispatch",
+  pigeon_post: "Pigeon Post",
+  annual: "Annual",
+  article: "Journal",
+  page: "Page",
+  event: "Event",
+};
 
 export function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const q = searchParams.get("q") ?? "";
   const [draft, setDraft] = React.useState(q);
-  const results = useSearchPublished(q);
+  const results = useSearchEverything(q);
+  const localize = useLocalizedPath();
 
   React.useEffect(() => setDraft(q), [q]);
 
   return (
-    <div className="max-w-wide mx-auto flex flex-col gap-8 px-6 py-16">
+    <div className="w-standard py-16 pt-32">
+      <DocumentHead title="Search" path="/search" noindex />
       <header className="flex flex-col gap-4">
-        <h1 className="font-serif text-3xl">Search</h1>
+        <h1 className="type-h1">Search</h1>
         <form
           role="search"
           className="flex max-w-md gap-2"
@@ -27,8 +47,7 @@ export function SearchPage() {
         >
           <Input
             type="search"
-            aria-label="Search published content"
-            placeholder="Search the Journal, Papers, Brief, and more…"
+            aria-label="Search"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
           />
@@ -36,30 +55,26 @@ export function SearchPage() {
         </form>
       </header>
 
-      {!q && (
-        <StatePanel
-          title="Search PAZ."
-          description="Find published writing across the Journal, Papers, Brief, Dispatch, Annual, and Pigeon Post."
-        />
-      )}
-      {q && results.isPending && <p className="text-muted-foreground">Searching…</p>}
-      {q && results.isError && (
-        <StatePanel title="Search failed." description={toAppError(results.error).message} />
-      )}
-      {q &&
-        results.data &&
-        (results.data.length === 0 ? (
-          <StatePanel
-            title={`Nothing found for "${q}".`}
-            description="Try a different word, or browse the Journal and Press sections directly."
-          />
-        ) : (
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {results.data.map((item) => (
-              <SearchResultCard key={item.id} item={item} />
-            ))}
-          </div>
-        ))}
+      <div className="mt-10" aria-live="polite">
+        {q && results.isPending && <p className="type-small">Searching…</p>}
+        {q && results.isError && (
+          <StatePanel title="Search failed." description={toAppError(results.error).message} />
+        )}
+        {q && results.data && results.data.length === 0 && (
+          <p className="type-body">{`Nothing found for "${q}".`}</p>
+        )}
+        <ul className="flex flex-col gap-5">
+          {(results.data ?? []).map((hit) => (
+            <li key={`${hit.kind}:${hit.path}`}>
+              <p className="type-caption">{KIND_LABEL[hit.kind] ?? hit.kind}</p>
+              <Link to={localize(hit.path)} className="link-underline font-serif text-xl">
+                {hit.title}
+              </Link>
+              {hit.detail && <p className="type-small">{hit.detail}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

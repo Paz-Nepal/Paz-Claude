@@ -52,31 +52,37 @@ export type Database = {
           email: string;
           full_name: string;
           id: string;
+          kind: string;
           message: string;
           reviewed: boolean;
           reviewed_at: string | null;
           reviewed_by: string | null;
           submitted_at: string;
+          work_id: string | null;
         };
         Insert: {
           email: string;
           full_name: string;
           id?: string;
+          kind?: string;
           message: string;
           reviewed?: boolean;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           submitted_at?: string;
+          work_id?: string | null;
         };
         Update: {
           email?: string;
           full_name?: string;
           id?: string;
+          kind?: string;
           message?: string;
           reviewed?: boolean;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           submitted_at?: string;
+          work_id?: string | null;
         };
         Relationships: [];
       };
@@ -240,35 +246,325 @@ export type Database = {
           },
         ];
       };
+      admin_sattal_pieces: {
+        Row: {
+          about_house: boolean | null;
+          author_connected: boolean | null;
+          body: Json | null;
+          body_ne: Json | null;
+          created_at: string | null;
+          deposit_ref: string | null;
+          form: string | null;
+          house_connected: boolean | null;
+          id: string | null;
+          original_language: string | null;
+          outside_reader_id: string | null;
+          person_id: string | null;
+          person_name: string | null;
+          piece_number: number | null;
+          published_at: string | null;
+          reader_accepted_on: string | null;
+          relation_declaration: string | null;
+          reply_to_piece_id: string | null;
+          slug: string | null;
+          sources: Json | null;
+          status: string | null;
+          subject_person_id: string | null;
+          subject_work_id: string | null;
+          title: string | null;
+          title_ne: string | null;
+          translation_of: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pieces_outside_reader_id_fkey";
+            columns: ["outside_reader_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_readers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "pieces_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_reply_to_piece_id_fkey";
+            columns: ["reply_to_piece_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_reply_to_piece_id_fkey";
+            columns: ["reply_to_piece_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_work_id_fkey";
+            columns: ["subject_work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_work_id_fkey";
+            columns: ["subject_work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_translation_of_fkey";
+            columns: ["translation_of"];
+            isOneToOne: false;
+            referencedRelation: "admin_sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_translation_of_fkey";
+            columns: ["translation_of"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_wall_people: {
+        Row: {
+          active: boolean | null;
+          created_at: string | null;
+          formed_by_guild: boolean | null;
+          house_split_note: string | null;
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          published: boolean | null;
+          represented: boolean | null;
+          roles: string[] | null;
+          slug: string | null;
+          statement: string | null;
+          statement_ne: string | null;
+          updated_at: string | null;
+        };
+        Relationships: [];
+      };
+      admin_wall_shows: {
+        Row: {
+          closed_on: string | null;
+          created_at: string | null;
+          id: string | null;
+          opened_on: string | null;
+          published: boolean | null;
+          slug: string | null;
+          text: string | null;
+          text_ne: string | null;
+          title: string | null;
+          title_ne: string | null;
+          updated_at: string | null;
+          work_ids: string[] | null;
+        };
+        Insert: {
+          closed_on?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          opened_on?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          text?: string | null;
+          text_ne?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+          work_ids?: never;
+        };
+        Update: {
+          closed_on?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          opened_on?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          text?: string | null;
+          text_ne?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+          work_ids?: never;
+        };
+        Relationships: [];
+      };
+      admin_wall_works: {
+        Row: {
+          availability: string | null;
+          created_at: string | null;
+          currency: string | null;
+          depth_mm: number | null;
+          first_showing: boolean | null;
+          friends_price_minor: number | null;
+          hallmarked: boolean | null;
+          height_mm: number | null;
+          id: string | null;
+          image_licence: string | null;
+          may_show_after_sale: boolean | null;
+          medium: string | null;
+          medium_ne: string | null;
+          person_id: string | null;
+          person_name: string | null;
+          price_minor: number | null;
+          provenance_note: string | null;
+          published: boolean | null;
+          slug: string | null;
+          title: string | null;
+          title_ne: string | null;
+          updated_at: string | null;
+          width_mm: number | null;
+          work_number: number | null;
+          year: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      chronicle_lines: {
+        Row: {
+          corrects_id: string | null;
+          id: string | null;
+          line: string | null;
+          line_on: string | null;
+        };
+        Insert: {
+          corrects_id?: string | null;
+          id?: string | null;
+          line?: string | null;
+          line_on?: string | null;
+        };
+        Update: {
+          corrects_id?: string | null;
+          id?: string | null;
+          line?: string | null;
+          line_on?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chronicle_lines_corrects_id_fkey";
+            columns: ["corrects_id"];
+            isOneToOne: false;
+            referencedRelation: "chronicle_lines";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       contact_messages: {
         Row: {
           email: string | null;
           full_name: string | null;
           id: string | null;
+          kind: string | null;
           message: string | null;
           reviewed: boolean | null;
           reviewed_at: string | null;
           submitted_at: string | null;
+          work_id: string | null;
         };
         Insert: {
           email?: string | null;
           full_name?: string | null;
           id?: string | null;
+          kind?: string | null;
           message?: string | null;
           reviewed?: boolean | null;
           reviewed_at?: string | null;
           submitted_at?: string | null;
+          work_id?: string | null;
         };
         Update: {
           email?: string | null;
           full_name?: string | null;
           id?: string | null;
+          kind?: string | null;
           message?: string | null;
           reviewed?: boolean | null;
           reviewed_at?: string | null;
           submitted_at?: string | null;
+          work_id?: string | null;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "contact_messages_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "contact_messages_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       desk_items: {
         Row: {
@@ -316,6 +612,36 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      glossary_terms: {
+        Row: {
+          definition: string | null;
+          definition_ne: string | null;
+          id: string | null;
+          kind: string | null;
+          slug: string | null;
+          term: string | null;
+          term_ne: string | null;
+        };
+        Insert: {
+          definition?: string | null;
+          definition_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          slug?: string | null;
+          term?: string | null;
+          term_ne?: string | null;
+        };
+        Update: {
+          definition?: string | null;
+          definition_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          slug?: string | null;
+          term?: string | null;
+          term_ne?: string | null;
+        };
+        Relationships: [];
       };
       interactions: {
         Row: {
@@ -765,6 +1091,7 @@ export type Database = {
           id: string | null;
           link: string | null;
           provenance: string | null;
+          readable_path: string | null;
           title: string | null;
         };
         Insert: {
@@ -774,6 +1101,7 @@ export type Database = {
           id?: string | null;
           link?: string | null;
           provenance?: string | null;
+          readable_path?: string | null;
           title?: string | null;
         };
         Update: {
@@ -783,6 +1111,7 @@ export type Database = {
           id?: string | null;
           link?: string | null;
           provenance?: string | null;
+          readable_path?: string | null;
           title?: string | null;
         };
         Relationships: [];
@@ -824,6 +1153,160 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      sattal_corrections: {
+        Row: {
+          added_at: string | null;
+          id: string | null;
+          note: string | null;
+          piece_id: string | null;
+        };
+        Insert: {
+          added_at?: string | null;
+          id?: string | null;
+          note?: string | null;
+          piece_id?: string | null;
+        };
+        Update: {
+          added_at?: string | null;
+          id?: string | null;
+          note?: string | null;
+          piece_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "piece_corrections_piece_id_fkey";
+            columns: ["piece_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "piece_corrections_piece_id_fkey";
+            columns: ["piece_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      sattal_pieces: {
+        Row: {
+          about_house: boolean | null;
+          body: Json | null;
+          body_ne: Json | null;
+          deposit_ref: string | null;
+          form: string | null;
+          id: string | null;
+          original_language: string | null;
+          outside_reader_name: string | null;
+          person_id: string | null;
+          person_name: string | null;
+          person_name_ne: string | null;
+          person_slug: string | null;
+          piece_number: number | null;
+          published_at: string | null;
+          reader_accepted_on: string | null;
+          relation_declaration: string | null;
+          reply_to_piece_id: string | null;
+          slug: string | null;
+          sources: Json | null;
+          subject_person_id: string | null;
+          subject_person_name: string | null;
+          subject_person_slug: string | null;
+          subject_work_id: string | null;
+          subject_work_slug: string | null;
+          subject_work_title: string | null;
+          title: string | null;
+          title_ne: string | null;
+          translation_of: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pieces_reply_to_piece_id_fkey";
+            columns: ["reply_to_piece_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_reply_to_piece_id_fkey";
+            columns: ["reply_to_piece_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_person_id_fkey";
+            columns: ["subject_person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_work_id_fkey";
+            columns: ["subject_work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_subject_work_id_fkey";
+            columns: ["subject_work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_translation_of_fkey";
+            columns: ["translation_of"];
+            isOneToOne: false;
+            referencedRelation: "admin_sattal_pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_translation_of_fkey";
+            columns: ["translation_of"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      sattal_readers: {
+        Row: {
+          appointed_on: string | null;
+          id: string | null;
+          name: string | null;
+          note: string | null;
+        };
+        Insert: {
+          appointed_on?: string | null;
+          id?: string | null;
+          name?: string | null;
+          note?: string | null;
+        };
+        Update: {
+          appointed_on?: string | null;
+          id?: string | null;
+          name?: string | null;
+          note?: string | null;
+        };
+        Relationships: [];
       };
       settings: {
         Row: {
@@ -867,6 +1350,429 @@ export type Database = {
         };
         Relationships: [];
       };
+      voice_intake: {
+        Row: {
+          about_name: string | null;
+          contact: string | null;
+          id: string | null;
+          note: string | null;
+          place: string | null;
+          submitted_at: string | null;
+          writer_name: string | null;
+        };
+        Insert: {
+          about_name?: string | null;
+          contact?: string | null;
+          id?: string | null;
+          note?: string | null;
+          place?: string | null;
+          submitted_at?: string | null;
+          writer_name?: string | null;
+        };
+        Update: {
+          about_name?: string | null;
+          contact?: string | null;
+          id?: string | null;
+          note?: string | null;
+          place?: string | null;
+          submitted_at?: string | null;
+          writer_name?: string | null;
+        };
+        Relationships: [];
+      };
+      wall_people: {
+        Row: {
+          active: boolean | null;
+          formed_by_guild: boolean | null;
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          represented: boolean | null;
+          roles: string[] | null;
+          slug: string | null;
+          statement: string | null;
+          statement_ne: string | null;
+        };
+        Insert: {
+          active?: boolean | null;
+          formed_by_guild?: boolean | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          represented?: boolean | null;
+          roles?: string[] | null;
+          slug?: string | null;
+          statement?: string | null;
+          statement_ne?: string | null;
+        };
+        Update: {
+          active?: boolean | null;
+          formed_by_guild?: boolean | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          represented?: boolean | null;
+          roles?: string[] | null;
+          slug?: string | null;
+          statement?: string | null;
+          statement_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      wall_person_exhibitions: {
+        Row: {
+          id: string | null;
+          note: string | null;
+          person_id: string | null;
+          place: string | null;
+          title: string | null;
+          year: number | null;
+        };
+        Insert: {
+          id?: string | null;
+          note?: string | null;
+          person_id?: string | null;
+          place?: string | null;
+          title?: string | null;
+          year?: number | null;
+        };
+        Update: {
+          id?: string | null;
+          note?: string | null;
+          person_id?: string | null;
+          place?: string | null;
+          title?: string | null;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_exhibitions_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "person_exhibitions_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "person_exhibitions_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_person_writings: {
+        Row: {
+          id: string | null;
+          person_id: string | null;
+          source: string | null;
+          title: string | null;
+          url: string | null;
+          year: number | null;
+        };
+        Insert: {
+          id?: string | null;
+          person_id?: string | null;
+          source?: string | null;
+          title?: string | null;
+          url?: string | null;
+          year?: number | null;
+        };
+        Update: {
+          id?: string | null;
+          person_id?: string | null;
+          source?: string | null;
+          title?: string | null;
+          url?: string | null;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_writings_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "person_writings_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "person_writings_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_show_works: {
+        Row: {
+          show_id: string | null;
+          work_id: string | null;
+        };
+        Insert: {
+          show_id?: string | null;
+          work_id?: string | null;
+        };
+        Update: {
+          show_id?: string | null;
+          work_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "show_works_show_id_fkey";
+            columns: ["show_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_shows";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "show_works_show_id_fkey";
+            columns: ["show_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_shows";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "show_works_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "show_works_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_shows: {
+        Row: {
+          closed_on: string | null;
+          id: string | null;
+          opened_on: string | null;
+          slug: string | null;
+          text: string | null;
+          text_ne: string | null;
+          title: string | null;
+          title_ne: string | null;
+        };
+        Insert: {
+          closed_on?: string | null;
+          id?: string | null;
+          opened_on?: string | null;
+          slug?: string | null;
+          text?: string | null;
+          text_ne?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Update: {
+          closed_on?: string | null;
+          id?: string | null;
+          opened_on?: string | null;
+          slug?: string | null;
+          text?: string | null;
+          text_ne?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      wall_work_events: {
+        Row: {
+          id: string | null;
+          kind: string | null;
+          note: string | null;
+          occurred_on: string | null;
+          work_id: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          occurred_on?: string | null;
+          work_id?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          occurred_on?: string | null;
+          work_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_events_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_events_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_work_images: {
+        Row: {
+          alt: string | null;
+          frame: string | null;
+          height: number | null;
+          id: string | null;
+          original_path: string | null;
+          photographer: string | null;
+          variants: Json | null;
+          width: number | null;
+          work_id: string | null;
+        };
+        Insert: {
+          alt?: string | null;
+          frame?: string | null;
+          height?: number | null;
+          id?: string | null;
+          original_path?: string | null;
+          photographer?: string | null;
+          variants?: Json | null;
+          width?: number | null;
+          work_id?: string | null;
+        };
+        Update: {
+          alt?: string | null;
+          frame?: string | null;
+          height?: number | null;
+          id?: string | null;
+          original_path?: string | null;
+          photographer?: string | null;
+          variants?: Json | null;
+          width?: number | null;
+          work_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_images_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_images_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_work_texts: {
+        Row: {
+          attribution: string | null;
+          body: string | null;
+          body_ne: string | null;
+          id: string | null;
+          work_id: string | null;
+        };
+        Insert: {
+          attribution?: string | null;
+          body?: string | null;
+          body_ne?: string | null;
+          id?: string | null;
+          work_id?: string | null;
+        };
+        Update: {
+          attribution?: string | null;
+          body?: string | null;
+          body_ne?: string | null;
+          id?: string | null;
+          work_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_texts_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_works";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_texts_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wall_works: {
+        Row: {
+          availability: string | null;
+          currency: string | null;
+          depth_mm: number | null;
+          friends_price_minor: number | null;
+          hallmarked: boolean | null;
+          height_mm: number | null;
+          id: string | null;
+          medium: string | null;
+          medium_ne: string | null;
+          person_active: boolean | null;
+          person_formed_by_guild: boolean | null;
+          person_id: string | null;
+          person_name: string | null;
+          person_name_ne: string | null;
+          person_slug: string | null;
+          price_minor: number | null;
+          provenance_note: string | null;
+          slug: string | null;
+          title: string | null;
+          title_ne: string | null;
+          width_mm: number | null;
+          work_number: number | null;
+          year: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
       accept_membership_invitation: {
@@ -874,6 +1780,10 @@ export type Database = {
         Returns: string;
       };
       acknowledge_pledge: { Args: { p_id: string }; Returns: undefined };
+      add_chronicle_line: {
+        Args: { p_corrects?: string; p_line: string; p_on: string };
+        Returns: string;
+      };
       add_item_comment: {
         Args: {
           p_anchor_text: string;
@@ -888,6 +1798,48 @@ export type Database = {
           isOneToOne: true;
           isSetofReturn: false;
         };
+      };
+      add_person_exhibition: {
+        Args: {
+          p_note: string;
+          p_person: string;
+          p_place: string;
+          p_title: string;
+          p_year: number;
+        };
+        Returns: string;
+      };
+      add_person_writing: {
+        Args: {
+          p_person: string;
+          p_source: string;
+          p_title: string;
+          p_url: string;
+          p_year: number;
+        };
+        Returns: string;
+      };
+      add_sattal_correction: {
+        Args: { p_note: string; p_piece: string };
+        Returns: string;
+      };
+      add_work_event: {
+        Args: {
+          p_kind: string;
+          p_note: string;
+          p_occurred_on: string;
+          p_work: string;
+        };
+        Returns: string;
+      };
+      add_work_text: {
+        Args: {
+          p_attribution: string;
+          p_body: string;
+          p_body_ne: string;
+          p_work: string;
+        };
+        Returns: string;
       };
       autosave_item: {
         Args: {
@@ -1237,6 +2189,7 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      publish_sattal_piece: { Args: { p_id: string }; Returns: string };
       publish_scheduled_items: {
         Args: never;
         Returns: {
@@ -1332,6 +2285,7 @@ export type Database = {
         Args: { p_event_date: string; p_item: string; p_location: string };
         Returns: undefined;
       };
+      save_glossary_term: { Args: { p: Json }; Returns: string };
       save_item: {
         Args: {
           p_body: Json;
@@ -1353,6 +2307,7 @@ export type Database = {
         Args: { p_id: string; p_kind: string; p_name: string; p_notes: string };
         Returns: string;
       };
+      save_outside_reader: { Args: { p: Json }; Returns: string };
       save_paper_details: {
         Args: {
           p_abstract: string;
@@ -1363,6 +2318,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      save_person: { Args: { p: Json }; Returns: string };
       save_pigeon_post_details: {
         Args: { p_edition_no: string; p_item: string; p_pdf_media: string };
         Returns: undefined;
@@ -1398,6 +2354,7 @@ export type Database = {
         };
         Returns: string;
       };
+      save_sattal_piece: { Args: { p: Json }; Returns: string };
       save_session: {
         Args: {
           p_capacity: number;
@@ -1408,6 +2365,18 @@ export type Database = {
           p_venue_id: string;
         };
         Returns: string;
+      };
+      save_show: { Args: { p: Json }; Returns: string };
+      save_work: { Args: { p: Json }; Returns: string };
+      save_work_image: { Args: { p: Json }; Returns: string };
+      search_everything: {
+        Args: { q: string };
+        Returns: {
+          detail: string;
+          kind: string;
+          path: string;
+          title: string;
+        }[];
       };
       search_published: {
         Args: { q: string };
@@ -1462,7 +2431,12 @@ export type Database = {
       };
       site_info: { Args: never; Returns: Json };
       submit_contact_message: {
-        Args: { p_email: string; p_full_name: string; p_message: string };
+        Args: {
+          p_email: string;
+          p_full_name: string;
+          p_message: string;
+          p_work_id?: string;
+        };
         Returns: string;
       };
       submit_membership_application: {
@@ -1473,6 +2447,16 @@ export type Database = {
           p_motivation: string;
           p_phone: string;
           p_tier_key: string;
+        };
+        Returns: string;
+      };
+      submit_voice_intake: {
+        Args: {
+          p_about_name: string;
+          p_contact: string;
+          p_note: string;
+          p_place: string;
+          p_writer_name: string;
         };
         Returns: string;
       };
@@ -1865,6 +2849,36 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      voice_intake: {
+        Row: {
+          about_name: string | null;
+          contact: string;
+          id: string;
+          note: string | null;
+          place: string | null;
+          submitted_at: string;
+          writer_name: string;
+        };
+        Insert: {
+          about_name?: string | null;
+          contact: string;
+          id?: string;
+          note?: string | null;
+          place?: string | null;
+          submitted_at?: string;
+          writer_name: string;
+        };
+        Update: {
+          about_name?: string | null;
+          contact?: string;
+          id?: string;
+          note?: string | null;
+          place?: string | null;
+          submitted_at?: string;
+          writer_name?: string;
+        };
+        Relationships: [];
       };
     };
     Views: {
@@ -2578,6 +3592,41 @@ export type Database = {
           },
         ];
       };
+      chronicle_lines: {
+        Row: {
+          corrects_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          line: string;
+          line_on: string;
+        };
+        Insert: {
+          corrects_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          line: string;
+          line_on: string;
+        };
+        Update: {
+          corrects_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          line?: string;
+          line_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "chronicle_lines_corrects_id_fkey";
+            columns: ["corrects_id"];
+            isOneToOne: false;
+            referencedRelation: "chronicle_lines";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       dispatch_details: {
         Row: {
           issue_date: string;
@@ -2629,6 +3678,39 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      glossary_terms: {
+        Row: {
+          created_at: string;
+          definition: string;
+          definition_ne: string | null;
+          id: string;
+          kind: string;
+          slug: string;
+          term: string;
+          term_ne: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          definition: string;
+          definition_ne?: string | null;
+          id?: string;
+          kind?: string;
+          slug: string;
+          term: string;
+          term_ne?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          definition?: string;
+          definition_ne?: string | null;
+          id?: string;
+          kind?: string;
+          slug?: string;
+          term?: string;
+          term_ne?: string | null;
+        };
+        Relationships: [];
       };
       item_comments: {
         Row: {
@@ -3010,9 +4092,11 @@ export type Database = {
           deposited_at: string;
           entry_type: Database["publishing"]["Enums"]["item_type"];
           id: string;
-          item_id: string;
+          item_id: string | null;
           link: string;
           provenance: string;
+          readable_path: string | null;
+          sattal_piece_id: string | null;
           title: string;
         };
         Insert: {
@@ -3020,9 +4104,11 @@ export type Database = {
           deposited_at?: string;
           entry_type: Database["publishing"]["Enums"]["item_type"];
           id?: string;
-          item_id: string;
+          item_id?: string | null;
           link: string;
           provenance: string;
+          readable_path?: string | null;
+          sattal_piece_id?: string | null;
           title: string;
         };
         Update: {
@@ -3030,9 +4116,11 @@ export type Database = {
           deposited_at?: string;
           entry_type?: Database["publishing"]["Enums"]["item_type"];
           id?: string;
-          item_id?: string;
+          item_id?: string | null;
           link?: string;
           provenance?: string;
+          readable_path?: string | null;
+          sattal_piece_id?: string | null;
           title?: string;
         };
         Relationships: [
@@ -3241,7 +4329,646 @@ export type Database = {
     Enums: {
       item_status: "draft" | "in_review" | "published" | "archived" | "scheduled";
       item_type:
-        "article" | "page" | "paper" | "dispatch" | "pigeon_post" | "brief" | "annual" | "event";
+        | "article"
+        | "page"
+        | "paper"
+        | "dispatch"
+        | "pigeon_post"
+        | "brief"
+        | "annual"
+        | "event"
+        | "sattal";
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+  sattal: {
+    Tables: {
+      outside_readers: {
+        Row: {
+          active: boolean;
+          appointed_on: string;
+          id: string;
+          name: string;
+          note: string | null;
+        };
+        Insert: {
+          active?: boolean;
+          appointed_on?: string;
+          id?: string;
+          name: string;
+          note?: string | null;
+        };
+        Update: {
+          active?: boolean;
+          appointed_on?: string;
+          id?: string;
+          name?: string;
+          note?: string | null;
+        };
+        Relationships: [];
+      };
+      piece_corrections: {
+        Row: {
+          added_at: string;
+          id: string;
+          note: string;
+          piece_id: string;
+        };
+        Insert: {
+          added_at?: string;
+          id?: string;
+          note: string;
+          piece_id: string;
+        };
+        Update: {
+          added_at?: string;
+          id?: string;
+          note?: string;
+          piece_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "piece_corrections_piece_id_fkey";
+            columns: ["piece_id"];
+            isOneToOne: false;
+            referencedRelation: "pieces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pieces: {
+        Row: {
+          about_house: boolean;
+          author_connected: boolean;
+          body: Json;
+          body_ne: Json | null;
+          created_at: string;
+          deposit_ref: string | null;
+          form: string;
+          id: string;
+          original_language: string;
+          outside_reader_id: string | null;
+          person_id: string;
+          piece_number: number | null;
+          published_at: string | null;
+          reader_accepted_on: string | null;
+          relation_declaration: string;
+          reply_to_piece_id: string | null;
+          slug: string;
+          sources: Json;
+          status: string;
+          subject_person_id: string | null;
+          subject_work_id: string | null;
+          title: string;
+          title_ne: string | null;
+          translation_of: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          about_house?: boolean;
+          author_connected?: boolean;
+          body?: Json;
+          body_ne?: Json | null;
+          created_at?: string;
+          deposit_ref?: string | null;
+          form: string;
+          id?: string;
+          original_language: string;
+          outside_reader_id?: string | null;
+          person_id: string;
+          piece_number?: number | null;
+          published_at?: string | null;
+          reader_accepted_on?: string | null;
+          relation_declaration: string;
+          reply_to_piece_id?: string | null;
+          slug: string;
+          sources?: Json;
+          status?: string;
+          subject_person_id?: string | null;
+          subject_work_id?: string | null;
+          title: string;
+          title_ne?: string | null;
+          translation_of?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          about_house?: boolean;
+          author_connected?: boolean;
+          body?: Json;
+          body_ne?: Json | null;
+          created_at?: string;
+          deposit_ref?: string | null;
+          form?: string;
+          id?: string;
+          original_language?: string;
+          outside_reader_id?: string | null;
+          person_id?: string;
+          piece_number?: number | null;
+          published_at?: string | null;
+          reader_accepted_on?: string | null;
+          relation_declaration?: string;
+          reply_to_piece_id?: string | null;
+          slug?: string;
+          sources?: Json;
+          status?: string;
+          subject_person_id?: string | null;
+          subject_work_id?: string | null;
+          title?: string;
+          title_ne?: string | null;
+          translation_of?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pieces_outside_reader_id_fkey";
+            columns: ["outside_reader_id"];
+            isOneToOne: false;
+            referencedRelation: "outside_readers";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_reply_to_piece_id_fkey";
+            columns: ["reply_to_piece_id"];
+            isOneToOne: false;
+            referencedRelation: "pieces";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pieces_translation_of_fkey";
+            columns: ["translation_of"];
+            isOneToOne: false;
+            referencedRelation: "pieces";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      is_house_connected: {
+        Args: { p_about_house: boolean; p_person: string; p_work: string };
+        Returns: boolean;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+  wall: {
+    Tables: {
+      people: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          formed_by_guild: boolean;
+          id: string;
+          name: string;
+          name_ne: string | null;
+          published: boolean;
+          represented: boolean;
+          roles: string[];
+          slug: string;
+          statement: string | null;
+          statement_ne: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          formed_by_guild?: boolean;
+          id?: string;
+          name: string;
+          name_ne?: string | null;
+          published?: boolean;
+          represented?: boolean;
+          roles?: string[];
+          slug: string;
+          statement?: string | null;
+          statement_ne?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          formed_by_guild?: boolean;
+          id?: string;
+          name?: string;
+          name_ne?: string | null;
+          published?: boolean;
+          represented?: boolean;
+          roles?: string[];
+          slug?: string;
+          statement?: string | null;
+          statement_ne?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      person_exhibitions: {
+        Row: {
+          created_at: string;
+          id: string;
+          note: string | null;
+          person_id: string;
+          place: string | null;
+          title: string;
+          year: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          person_id: string;
+          place?: string | null;
+          title: string;
+          year?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          person_id?: string;
+          place?: string | null;
+          title?: string;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_exhibitions_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      person_terms: {
+        Row: {
+          house_split_note: string | null;
+          person_id: string;
+        };
+        Insert: {
+          house_split_note?: string | null;
+          person_id: string;
+        };
+        Update: {
+          house_split_note?: string | null;
+          person_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_terms_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: true;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      person_writings: {
+        Row: {
+          created_at: string;
+          id: string;
+          person_id: string;
+          source: string;
+          title: string;
+          url: string | null;
+          year: number | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          person_id: string;
+          source: string;
+          title: string;
+          url?: string | null;
+          year?: number | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          person_id?: string;
+          source?: string;
+          title?: string;
+          url?: string | null;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "person_writings_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      show_works: {
+        Row: {
+          show_id: string;
+          work_id: string;
+        };
+        Insert: {
+          show_id: string;
+          work_id: string;
+        };
+        Update: {
+          show_id?: string;
+          work_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "show_works_show_id_fkey";
+            columns: ["show_id"];
+            isOneToOne: false;
+            referencedRelation: "shows";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "show_works_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      shows: {
+        Row: {
+          closed_on: string | null;
+          created_at: string;
+          id: string;
+          opened_on: string;
+          published: boolean;
+          slug: string;
+          text: string | null;
+          text_ne: string | null;
+          title: string;
+          title_ne: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          closed_on?: string | null;
+          created_at?: string;
+          id?: string;
+          opened_on: string;
+          published?: boolean;
+          slug: string;
+          text?: string | null;
+          text_ne?: string | null;
+          title: string;
+          title_ne?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          closed_on?: string | null;
+          created_at?: string;
+          id?: string;
+          opened_on?: string;
+          published?: boolean;
+          slug?: string;
+          text?: string | null;
+          text_ne?: string | null;
+          title?: string;
+          title_ne?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      work_events: {
+        Row: {
+          id: string;
+          kind: string;
+          note: string | null;
+          occurred_on: string;
+          recorded_at: string;
+          work_id: string;
+        };
+        Insert: {
+          id?: string;
+          kind: string;
+          note?: string | null;
+          occurred_on: string;
+          recorded_at?: string;
+          work_id: string;
+        };
+        Update: {
+          id?: string;
+          kind?: string;
+          note?: string | null;
+          occurred_on?: string;
+          recorded_at?: string;
+          work_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_events_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      work_images: {
+        Row: {
+          alt: string;
+          created_at: string;
+          frame: string;
+          height: number;
+          id: string;
+          original_path: string;
+          photographer: string;
+          variants: Json;
+          width: number;
+          work_id: string;
+        };
+        Insert: {
+          alt: string;
+          created_at?: string;
+          frame: string;
+          height: number;
+          id?: string;
+          original_path: string;
+          photographer: string;
+          variants?: Json;
+          width: number;
+          work_id: string;
+        };
+        Update: {
+          alt?: string;
+          created_at?: string;
+          frame?: string;
+          height?: number;
+          id?: string;
+          original_path?: string;
+          photographer?: string;
+          variants?: Json;
+          width?: number;
+          work_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_images_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      work_texts: {
+        Row: {
+          attribution: string;
+          body: string;
+          body_ne: string | null;
+          created_at: string;
+          id: string;
+          work_id: string;
+        };
+        Insert: {
+          attribution: string;
+          body: string;
+          body_ne?: string | null;
+          created_at?: string;
+          id?: string;
+          work_id: string;
+        };
+        Update: {
+          attribution?: string;
+          body?: string;
+          body_ne?: string | null;
+          created_at?: string;
+          id?: string;
+          work_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_texts_work_id_fkey";
+            columns: ["work_id"];
+            isOneToOne: false;
+            referencedRelation: "works";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      works: {
+        Row: {
+          availability: string;
+          created_at: string;
+          currency: string;
+          depth_mm: number | null;
+          first_showing: boolean;
+          friends_price_minor: number | null;
+          hallmarked: boolean;
+          height_mm: number | null;
+          id: string;
+          image_licence: string | null;
+          may_show_after_sale: boolean;
+          medium: string | null;
+          medium_ne: string | null;
+          person_id: string;
+          price_minor: number | null;
+          provenance_note: string | null;
+          published: boolean;
+          slug: string;
+          title: string;
+          title_ne: string | null;
+          updated_at: string;
+          width_mm: number | null;
+          work_number: number;
+          year: number | null;
+        };
+        Insert: {
+          availability?: string;
+          created_at?: string;
+          currency?: string;
+          depth_mm?: number | null;
+          first_showing?: boolean;
+          friends_price_minor?: number | null;
+          hallmarked?: boolean;
+          height_mm?: number | null;
+          id?: string;
+          image_licence?: string | null;
+          may_show_after_sale?: boolean;
+          medium?: string | null;
+          medium_ne?: string | null;
+          person_id: string;
+          price_minor?: number | null;
+          provenance_note?: string | null;
+          published?: boolean;
+          slug: string;
+          title: string;
+          title_ne?: string | null;
+          updated_at?: string;
+          width_mm?: number | null;
+          work_number?: number;
+          year?: number | null;
+        };
+        Update: {
+          availability?: string;
+          created_at?: string;
+          currency?: string;
+          depth_mm?: number | null;
+          first_showing?: boolean;
+          friends_price_minor?: number | null;
+          hallmarked?: boolean;
+          height_mm?: number | null;
+          id?: string;
+          image_licence?: string | null;
+          may_show_after_sale?: boolean;
+          medium?: string | null;
+          medium_ne?: string | null;
+          person_id?: string;
+          price_minor?: number | null;
+          provenance_note?: string | null;
+          published?: boolean;
+          slug?: string;
+          title?: string;
+          title_ne?: string | null;
+          updated_at?: string;
+          width_mm?: number | null;
+          work_number?: number;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "works_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      audit: {
+        Args: {
+          p_action: string;
+          p_actor: string;
+          p_after: Json;
+          p_before: Json;
+          p_id: string;
+          p_schema: string;
+          p_table: string;
+        };
+        Returns: undefined;
+      };
+      require: { Args: { p_permission: string }; Returns: string };
+    };
+    Enums: {
+      [_ in never]: never;
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -3402,7 +5129,14 @@ export const Constants = {
         "brief",
         "annual",
         "event",
+        "sattal",
       ],
     },
+  },
+  sattal: {
+    Enums: {},
+  },
+  wall: {
+    Enums: {},
   },
 } as const;

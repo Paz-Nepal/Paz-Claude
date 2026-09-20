@@ -19,6 +19,8 @@ interface SubmitContactMessageBody {
   fullName: string;
   email: string;
   message: string;
+  /** An enquiry about a work on the Wall (Build Specification 12). */
+  workId?: string;
 }
 
 function jsonError(message: string, status: number): Response {
@@ -64,6 +66,7 @@ Deno.serve(async (req) => {
     p_full_name: body.fullName,
     p_email: body.email,
     p_message: body.message,
+    p_work_id: body.workId ?? null,
   });
 
   if (error) {

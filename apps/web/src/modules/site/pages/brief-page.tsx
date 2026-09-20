@@ -1,17 +1,26 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduDate } from "@paz/utils";
 import { useBrief } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
+import {
+  useLanguage,
+  pickLang,
+  pickLangDoc,
+  isUntranslatedDoc,
+  useLocalizedPath,
+} from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { ResolveNotFoundPage } from "./resolve-not-found-page";
+import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
 
-export function BriefPage() {
-  const { slug } = useParams<{ slug: string }>();
+export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
+  const params = useParams<{ slug: string; deposit: string }>();
+  const slug = slugProp ?? params.slug;
+  const localize = useLocalizedPath();
   const brief = useBrief(slug);
   const { lang } = useLanguage();
 
@@ -23,13 +32,19 @@ export function BriefPage() {
       </div>
     );
   }
-  if (!brief.data) return <NotPublished />;
+  if (!brief.data) return <ResolveNotFoundPage />;
+  // The deposit number is the canonical address; the readable slug
+  // redirects to it, never the reverse (Build Specification 4.10).
+  if (!params.deposit && brief.data.deposit_ref) {
+    return <Navigate to={localize(`/record/${brief.data.deposit_ref}`)} replace />;
+  }
 
   const item = brief.data;
   const body = pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null;
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SpeakerNote speaker="house" />
       <DocumentHead
         title={pickLang(item.title ?? "", item.title_ne, lang)}
         description={
@@ -52,7 +67,11 @@ export function BriefPage() {
       </header>
       {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
-      <DepositProvenance depositRef={item.deposit_ref} />
+      <DepositProvenance
+        series="The Brief"
+        title={item.title ?? ""}
+        depositRef={item.deposit_ref}
+      />
     </article>
   );
 }

@@ -1,16 +1,20 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePigeonPost, publicMediaUrl } from "../api/use-site";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { ResolveNotFoundPage } from "./resolve-not-found-page";
+import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
+import { useLocalizedPath } from "../language";
 
 /** No author_name field is read or rendered anywhere in this page -- there
  * is none to read (spec §2/§5: Pigeon Post is anonymous on the page). */
-export function PigeonPostPage() {
-  const { slug } = useParams<{ slug: string }>();
+export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
+  const params = useParams<{ slug: string; deposit: string }>();
+  const slug = slugProp ?? params.slug;
+  const localize = useLocalizedPath();
   const post = usePigeonPost(slug);
 
   if (post.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
@@ -21,12 +25,18 @@ export function PigeonPostPage() {
       </div>
     );
   }
-  if (!post.data) return <NotPublished />;
+  if (!post.data) return <ResolveNotFoundPage />;
+  // The deposit number is the canonical address; the readable slug
+  // redirects to it, never the reverse (Build Specification 4.10).
+  if (!params.deposit && post.data.deposit_ref) {
+    return <Navigate to={localize(`/record/${post.data.deposit_ref}`)} replace />;
+  }
 
   const item = post.data;
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SpeakerNote speaker="anonymous" />
       <DocumentHead
         title={item.title ?? ""}
         description="A quiet keepsake from Pigeon Post, kept in the Record."
@@ -48,7 +58,11 @@ export function PigeonPostPage() {
           View the keepsake
         </a>
       )}
-      <DepositProvenance depositRef={item.deposit_ref} />
+      <DepositProvenance
+        series="Pigeon Post"
+        title={item.title ?? ""}
+        depositRef={item.deposit_ref}
+      />
     </article>
   );
 }

@@ -1,7 +1,14 @@
+import { Link } from "react-router-dom";
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
-import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
+import {
+  useLanguage,
+  pickLang,
+  pickLangDoc,
+  isUntranslatedDoc,
+  useLocalizedPath,
+} from "../language";
 import { PageHero, Eyebrow, Reveal } from "../components/paz-editorial";
 import { NotPublished } from "../components/published-body";
 import { TranslationNotice } from "../components/translation-notice";
@@ -10,6 +17,7 @@ export function HousePage() {
   const page = usePublishedItem("page", "house");
   const visit = usePublishedItem("page", "visit");
   const { lang } = useLanguage();
+  const localize = useLocalizedPath();
 
   if (page.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
   if (page.isError) {
@@ -60,6 +68,30 @@ export function HousePage() {
           </div>
         </section>
       )}
+      <nav className="w-standard border-border border-t py-12" aria-label="In the house">
+        <ul className="type-body flex flex-col gap-2">
+          {[
+            ["/hearth", "The Hearth"],
+            ["/guild", "The Guild"],
+            ["/press", "The Press"],
+            ["/the-record", "The Record"],
+            ["/treasury", "The Treasury"],
+            ["/chronicle", "The Chronicle"],
+            ["/commons", "The Commons"],
+            ["/friends", "Friends of PAZ"],
+            ["/table", "The Table"],
+            ["/encounters", "Encounters"],
+            ["/name", "The name"],
+            ["/canon", "The Canon"],
+          ].map(([to, label]) => (
+            <li key={to}>
+              <Link to={localize(to as string)} className="link-underline">
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 }

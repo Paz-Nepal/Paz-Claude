@@ -320,3 +320,93 @@
     margin: 2.2cm 2cm;
   }
 }
+
+/* Devanagari sets optically larger, with more leading, than the Latin
+   beside it (Build Specification 13, "Type"). Applied to the whole
+   Nepali reading tree and to any element marked lang="ne" inside an
+   English page (the Sattal's facing column). */
+html[lang="ne"] body {
+  font-size: 20.5px;
+  line-height: 1.75;
+}
+[lang="ne"]:not(html) {
+  font-size: 1.08em;
+  line-height: 1.75;
+  font-style: normal;
+}
+/* No italic in Devanagari: emphasis is weight and space. */
+:lang(ne) em,
+:lang(ne) i,
+:lang(ne) blockquote {
+  font-style: normal;
+  font-weight: 600;
+}
+
+@layer components {
+  /* A work's image sits on a neutral surround with room around it, so the
+     ground does not fight the painting (Build Specification 13, "Colour"). */
+  .work-surround {
+    background: #f2f2f2;
+    padding: clamp(1.25rem, 5vw, 3rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .work-surround img {
+    max-height: 78vh;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* The Sattal leaf: ranged left, ragged right, no indent, a line space
+     between paragraphs. Source keys sit in a wide outer column, anchored
+     to the paragraph they serve (Build Specification 7.3). */
+  .sattal-leaf p {
+    text-align: left;
+    text-indent: 0;
+    hyphens: manual;
+  }
+  .sattal-leaf > * + *,
+  .sattal-leaf .rich-text > * + * {
+    margin-top: 1.6em;
+  }
+  .sattal-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem 2.5rem;
+  }
+  @media (min-width: 768px) {
+    .sattal-row {
+      grid-template-columns: minmax(0, 66ch) minmax(0, 1fr);
+    }
+    .sattal-row-parallel {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+  .sattal-margin {
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  /* Who is speaking is the site's primary visual distinction (7.1). Three
+     states, different at a glance and never by colour alone: each also
+     carries its label in words and a different rule style. */
+  .speaker {
+    border-left-width: 3px;
+    padding-left: 1rem;
+  }
+  .speaker-anonymous {
+    border-left-style: dotted;
+    border-color: hsl(var(--foreground));
+  }
+  .speaker-house {
+    border-left-style: solid;
+    border-color: hsl(var(--brand));
+  }
+  .speaker-signed {
+    border-left-style: double;
+    border-left-width: 6px;
+    border-color: hsl(var(--verdigris));
+  }
+}

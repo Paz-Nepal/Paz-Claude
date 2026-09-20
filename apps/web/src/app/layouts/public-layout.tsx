@@ -9,15 +9,10 @@ import {
 } from "@/modules/site";
 
 /**
- * Public site chrome. The primary nav is deliberately curated, not
- * auto-generated from every published `page` item — the organs (House,
- * Hearth, Press, Guild, Record, Treasury) are the entry points, and
- * several routes that used to be top-level (Papers/Brief/Dispatch/Annual/
- * Pigeon Post, Record, Visit, Encounters, Menu, Reservations) now live
- * under whichever organ or section they conceptually belong to, per the
- * institution's own request. A newly published institutional page still
- * needs a line added here to appear in nav — a small ongoing cost, traded
- * for a nav that reads as a considered structure rather than a page list.
+ * Public site chrome. Four sections at the top level, in this order: The
+ * Wall, The Press, The House, The Record (Build Specification 3).
+ * Governance material is public and sits at the foot. The primary nav is
+ * curated, not generated from published pages.
  *
  * Every `to=`/`href=` target in this file is routed through
  * `useLocalizedPath()` (aliased `localize` below) so nav/footer links stay
@@ -26,10 +21,11 @@ import {
  */
 const PRESS_ITEMS = [
   { to: "/papers", label: "Papers" },
+  { to: "/sattal", label: "The Sattal" },
+  { to: "/pigeon-post", label: "Pigeon Post" },
   { to: "/brief", label: "Brief" },
   { to: "/dispatch", label: "Dispatch" },
   { to: "/annual", label: "Annual" },
-  { to: "/pigeon-post", label: "Pigeon Post" },
   { to: "/send-a-pigeon", label: "Send a pigeon" },
 ];
 
@@ -130,39 +126,15 @@ function Header({ siteName }: { siteName: string }) {
       <div className="w-wide flex h-20 items-center justify-between">
         <Logo siteName={siteName} />
         <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
-          <NavLink to={localize("/")} end className={navLinkClass}>
-            Home
+          <NavLink to={localize("/wall")} className={navLinkClass}>
+            The Wall
           </NavLink>
-          <NavLink to={localize("/about")} className={navLinkClass}>
-            About
-          </NavLink>
+          <PressMenu />
           <NavLink to={localize("/house")} className={navLinkClass}>
             The House
           </NavLink>
-          <NavLink to={localize("/hearth")} className={navLinkClass}>
-            The Hearth
-          </NavLink>
-          <PressMenu />
-          <NavLink to={localize("/guild")} className={navLinkClass}>
-            The Guild
-          </NavLink>
           <NavLink to={localize("/the-record")} className={navLinkClass}>
             The Record
-          </NavLink>
-          <NavLink to={localize("/treasury")} className={navLinkClass}>
-            The Treasury
-          </NavLink>
-          <NavLink to={localize("/programmes")} className={navLinkClass}>
-            Programmes
-          </NavLink>
-          <NavLink to={localize("/membership/apply")} className={navLinkClass}>
-            Friends of PAZ
-          </NavLink>
-          <NavLink to={localize("/journal")} className={navLinkClass}>
-            Journal
-          </NavLink>
-          <NavLink to={localize("/contact")} className={navLinkClass}>
-            Contact
           </NavLink>
           <NavLink to={localize("/search")} className={navLinkClass} aria-label="Search">
             <svg
@@ -218,16 +190,10 @@ function Header({ siteName }: { siteName: string }) {
             </button>
           </div>
           <nav className="w-wide mt-4 flex flex-1 flex-col gap-1 pb-12">
-            <Link to={localize("/about")} className="text-foreground/90 py-2 font-serif text-2xl">
-              About
+            <Link to={localize("/wall")} className="text-foreground/90 py-2 font-serif text-2xl">
+              The Wall
             </Link>
-            <Link to={localize("/house")} className="text-foreground/90 py-2 font-serif text-2xl">
-              The House
-            </Link>
-            <Link to={localize("/hearth")} className="text-foreground/90 py-2 font-serif text-2xl">
-              The Hearth
-            </Link>
-            <p className="text-muted-foreground mb-1 mt-2 font-sans text-xs uppercase tracking-[0.14em]">
+            <p className="text-muted-foreground mb-1 mt-2 font-sans text-xs tracking-[0.14em]">
               The Press
             </p>
             <Link
@@ -246,40 +212,16 @@ function Header({ siteName }: { siteName: string }) {
               </Link>
             ))}
             <Link
-              to={localize("/guild")}
+              to={localize("/house")}
               className="text-foreground/90 mt-2 py-2 font-serif text-2xl"
             >
-              The Guild
+              The House
             </Link>
             <Link
               to={localize("/the-record")}
               className="text-foreground/90 py-2 font-serif text-2xl"
             >
               The Record
-            </Link>
-            <Link
-              to={localize("/treasury")}
-              className="text-foreground/90 py-2 font-serif text-2xl"
-            >
-              The Treasury
-            </Link>
-            <Link
-              to={localize("/programmes")}
-              className="text-foreground/90 py-2 font-serif text-2xl"
-            >
-              Programmes
-            </Link>
-            <Link
-              to={localize("/membership/apply")}
-              className="text-foreground/90 py-2 font-serif text-2xl"
-            >
-              Friends of PAZ
-            </Link>
-            <Link to={localize("/journal")} className="text-foreground/90 py-2 font-serif text-2xl">
-              Journal
-            </Link>
-            <Link to={localize("/contact")} className="text-foreground/90 py-2 font-serif text-2xl">
-              Contact
             </Link>
             <Link to={localize("/search")} className="text-foreground/90 py-2 font-serif text-2xl">
               Search
@@ -305,12 +247,10 @@ function Footer({
   const localize = useLocalizedPath();
   const columns = [
     {
-      heading: "Visit",
+      heading: "The Wall",
       links: [
-        ["About", "/about"],
-        ["The House", "/house"],
-        ["Programmes", "/programmes"],
-        ["Contact", "/contact"],
+        ["The Wall", "/wall"],
+        ["The Sattal", "/sattal"],
       ],
     },
     {
@@ -318,21 +258,35 @@ function Footer({
       links: [
         ["Overview", "/press"],
         ["Papers", "/papers"],
+        ["Pigeon Post", "/pigeon-post"],
         ["Brief", "/brief"],
         ["Dispatch", "/dispatch"],
         ["Annual", "/annual"],
-        ["Pigeon Post", "/pigeon-post"],
       ],
     },
     {
-      heading: "The Organs",
+      heading: "The House",
       links: [
-        ["The Hearth", "/hearth"],
-        ["The Guild", "/guild"],
+        ["The House", "/house"],
         ["The Record", "/the-record"],
-        ["The Treasury", "/treasury"],
+        ["The Chronicle", "/chronicle"],
+        ["Friends of PAZ", "/friends"],
+        ["The Commons", "/commons"],
+        ["Programmes", "/programmes"],
+        ["Contact", "/contact"],
       ],
     },
+  ] as const;
+
+  // Governance material is public and belongs at the foot of the site,
+  // not the front (Build Specification 3).
+  const governance = [
+    ["The Canon", "/canon"],
+    ["The name", "/name"],
+    ["Words", "/words"],
+    ["Looking for", "/looking-for"],
+    ["Privacy", "/privacy"],
+    ["Terms", "/terms"],
   ] as const;
 
   return (
@@ -377,13 +331,12 @@ function Footer({
         <p>
           © {year} {siteName}. No cookies, no analytics, no reader tracking of any kind.
         </p>
-        <div className="flex items-center gap-4">
-          <Link to={localize("/privacy")} className="hover:text-brand transition-colors">
-            Privacy
-          </Link>
-          <Link to={localize("/terms")} className="hover:text-brand transition-colors">
-            Terms
-          </Link>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {governance.map(([label, to]) => (
+            <Link key={to} to={localize(to)} className="hover:text-brand transition-colors">
+              {label}
+            </Link>
+          ))}
           {contactEmail && (
             <a href={`mailto:${contactEmail}`} className="hover:text-brand transition-colors">
               {contactEmail}

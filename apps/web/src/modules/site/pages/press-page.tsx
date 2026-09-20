@@ -94,11 +94,16 @@ export function PressPage() {
           {SERIES.map((s) => (
             <SeriesFeed key={s.type} type={s.type} label={s.label} to={s.to} />
           ))}
+          <div className="border-border border-t pt-8">
+            <div className="mb-4 flex items-baseline justify-between">
+              <h3 className="type-h3">The Sattal</h3>
+              <ArrowLink to="/sattal">All pieces</ArrowLink>
+            </div>
+            <p className="type-small">Signed work by authors who are not the house.</p>
+          </div>
         </div>
         <div className="mt-12">
-          <ArrowLink to="/send-a-pigeon">
-            Send a pigeon, contribute something you noticed
-          </ArrowLink>
+          <ArrowLink to="/send-a-pigeon">Send a pigeon, contribute something you noticed</ArrowLink>
         </div>
       </section>
     </div>

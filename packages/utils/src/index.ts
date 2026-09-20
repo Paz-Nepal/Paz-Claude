@@ -8,4 +8,4 @@ export {
   isValidRange,
   kathmanduInputToUtcIso,
 } from "./dates";
-export { formatCents } from "./currency";
+export { formatCents, formatMoney, formatDimensions } from "./currency";

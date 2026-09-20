@@ -68,6 +68,10 @@ dependency order.
 | `analytics.dashboard.membership` | super_admin, administrator, membership_manager          | View the membership funnel dashboard                   |
 | `analytics.dashboard.finance`    | super_admin, administrator, finance                     | View the financial summary dashboard                   |
 | `analytics.dashboard.vitals`     | super_admin, administrator                              | View the cross-domain institution vitals panel         |
+| `wall.manage`                    | super_admin, administrator, editor                      | Manage people, works, shows, work text and images      |
+| `sattal.manage`                  | super_admin, administrator, editor                      | Manage Sattal pieces and outside readers, and publish  |
+| `chronicle.line.create`          | super_admin, administrator, editor                      | Add a line to the Chronicle                            |
+| `crm.voice.read`                 | super_admin, administrator                              | Read the private voice intake                          |
 
 ## Adding a new permission
 

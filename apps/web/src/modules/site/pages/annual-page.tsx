@@ -1,15 +1,18 @@
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useAnnual, publicMediaUrl } from "../api/use-site";
-import { useLanguage, pickLang } from "../language";
+import { useLanguage, pickLang, useLocalizedPath } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
-import { NotPublished } from "../components/published-body";
+import { ResolveNotFoundPage } from "./resolve-not-found-page";
+import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
 
-export function AnnualPage() {
-  const { slug } = useParams<{ slug: string }>();
+export function AnnualPage({ slug: slugProp }: { slug?: string } = {}) {
+  const params = useParams<{ slug: string; deposit: string }>();
+  const slug = slugProp ?? params.slug;
+  const localize = useLocalizedPath();
   const annual = useAnnual(slug);
   const { lang } = useLanguage();
 
@@ -21,12 +24,18 @@ export function AnnualPage() {
       </div>
     );
   }
-  if (!annual.data) return <NotPublished />;
+  if (!annual.data) return <ResolveNotFoundPage />;
+  // The deposit number is the canonical address; the readable slug
+  // redirects to it, never the reverse (Build Specification 4.10).
+  if (!params.deposit && annual.data.deposit_ref) {
+    return <Navigate to={localize(`/record/${annual.data.deposit_ref}`)} replace />;
+  }
 
   const item = annual.data;
 
   return (
     <article className="max-w-reading mx-auto flex flex-col gap-6 px-6 py-16">
+      <SpeakerNote speaker="house" />
       <DocumentHead
         title={pickLang(item.title ?? "", item.title_ne, lang)}
         description={
@@ -52,7 +61,11 @@ export function AnnualPage() {
           Download the PDF
         </a>
       )}
-      <DepositProvenance depositRef={item.deposit_ref} />
+      <DepositProvenance
+        series="The Annual"
+        title={item.title ?? ""}
+        depositRef={item.deposit_ref}
+      />
     </article>
   );
 }

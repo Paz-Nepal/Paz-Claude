@@ -16,7 +16,11 @@ export function MembersPage() {
         </Link>
       </div>
 
-      {members.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {members.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {members.isError && (
         <StatePanel
           title="Couldn't load Friends of PAZ."

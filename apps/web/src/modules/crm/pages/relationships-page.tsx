@@ -13,7 +13,11 @@ export function RelationshipsPage() {
       <h1 className="font-serif text-2xl">Relationships</h1>
       <NewRelationshipForm />
 
-      {relationships.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {relationships.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {relationships.isError && (
         <StatePanel
           title="Couldn't load relationships."

@@ -30,7 +30,12 @@ export function RecordOrganPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
 
-  if (page.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (page.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (page.isError) {
     return (
       <div className="p-16">
@@ -73,7 +78,11 @@ export function RecordOrganPage() {
             </p>
           </Reveal>
 
-          {entries.isPending && <p className="type-small mt-8">Loading…</p>}
+          {entries.isPending && (
+            <p role="status" className="type-small mt-8">
+              Loading…
+            </p>
+          )}
           {entries.isError && (
             <StatePanel
               title="Couldn't load the Record."

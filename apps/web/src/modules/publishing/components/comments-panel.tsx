@@ -59,7 +59,12 @@ export function CommentsPanel({ itemId, body }: CommentsPanelProps) {
     return { byBlockIndex: map, unanchored: orphans };
   }, [comments.data, blocks]);
 
-  if (comments.isPending) return <p className="text-muted-foreground text-sm">Loading…</p>;
+  if (comments.isPending)
+    return (
+      <p role="status" className="text-muted-foreground text-sm">
+        Loading…
+      </p>
+    );
   if (comments.isError) {
     return (
       <StatePanel

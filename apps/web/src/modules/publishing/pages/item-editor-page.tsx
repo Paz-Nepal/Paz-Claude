@@ -40,7 +40,11 @@ export function ItemEditorPage() {
   const item = useItem(id);
 
   if (id && item.isPending) {
-    return <p className="text-muted-foreground">Loading…</p>;
+    return (
+      <p role="status" className="text-muted-foreground">
+        Loading…
+      </p>
+    );
   }
   if (id && item.isError) {
     return (

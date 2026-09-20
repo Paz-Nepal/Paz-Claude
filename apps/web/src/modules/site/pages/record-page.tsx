@@ -29,7 +29,11 @@ export function RecordPage() {
         </p>
       </header>
 
-      {entries.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {entries.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {entries.isError && (
         <StatePanel
           title="Couldn't load the Record."

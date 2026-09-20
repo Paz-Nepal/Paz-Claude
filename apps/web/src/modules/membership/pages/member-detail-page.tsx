@@ -65,7 +65,12 @@ export function MemberDetailPage() {
 
   const member = members.data?.find((m) => m.id === id);
 
-  if (members.isPending) return <p className="text-muted-foreground">Loading…</p>;
+  if (members.isPending)
+    return (
+      <p role="status" className="text-muted-foreground">
+        Loading…
+      </p>
+    );
   if (!member) {
     return <StatePanel title="Friend not found." description="It may have been removed." />;
   }

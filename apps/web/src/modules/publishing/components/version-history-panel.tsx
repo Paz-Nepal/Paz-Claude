@@ -21,7 +21,12 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
   const prevPreview = useItemRevision(prevRevisionId);
   const restore = useRestoreItemRevision(itemId);
 
-  if (revisions.isPending) return <p className="text-muted-foreground text-sm">Loading…</p>;
+  if (revisions.isPending)
+    return (
+      <p role="status" className="text-muted-foreground text-sm">
+        Loading…
+      </p>
+    );
   if (revisions.isError) {
     return (
       <p role="alert" className="text-destructive text-sm">
@@ -64,7 +69,11 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
 
             {isOpen && (
               <div className="flex flex-col gap-3 border-t p-3">
-                {preview.isPending && <p className="text-muted-foreground text-sm">Loading…</p>}
+                {preview.isPending && (
+                  <p role="status" className="text-muted-foreground text-sm">
+                    Loading…
+                  </p>
+                )}
                 {preview.data && (
                   <>
                     <p className="font-serif text-lg">{preview.data.title}</p>
@@ -75,7 +84,9 @@ export function VersionHistoryPanel({ itemId }: { itemId: string }) {
                           : "First recorded revision"}
                       </p>
                       {prevRevisionId && prevPreview.isPending ? (
-                        <p className="text-muted-foreground text-sm">Loading…</p>
+                        <p role="status" className="text-muted-foreground text-sm">
+                          Loading…
+                        </p>
                       ) : (
                         <RevisionDiff
                           title={preview.data.title}

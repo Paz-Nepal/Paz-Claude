@@ -122,12 +122,11 @@ After anything changes that readers should see, one person runs this
 once, on a computer with the project on it:
 
 ```bash
-pnpm build
 pnpm site
 ```
 
 Then upload the contents of `apps/web/dist/` to the web host,
-replacing what is there. That is the whole job. It writes every page,
+replacing what is there. That is the whole job. It builds the app fresh, then writes every page,
 the sitemap, the feeds, and plain text copies of everything deposited
 (`record/<number>/text.txt`, `chronicle.txt`, `record.txt`).
 

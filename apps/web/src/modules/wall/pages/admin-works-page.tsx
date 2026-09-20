@@ -141,7 +141,11 @@ export function AdminWorksPage() {
         </Button>
       </div>
 
-      {works.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {works.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {works.isError && (
         <StatePanel title="Couldn't load works." description={toAppError(works.error).message} />
       )}

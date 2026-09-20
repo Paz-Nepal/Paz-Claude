@@ -11,7 +11,12 @@ export function ProgramPage() {
 
   const program = programs.data?.find((p) => p.slug === slug);
 
-  if (programs.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (programs.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (!program) {
     return (
       <div className="p-8">

@@ -29,7 +29,11 @@ export function ProtectedRoute({
   const location = useLocation();
 
   if (auth.loading || (permission !== undefined && auth.signedIn && auth.permissionsLoading)) {
-    return <div className="text-muted-foreground p-8">Loading…</div>;
+    return (
+      <div role="status" className="text-muted-foreground p-8">
+        Loading…
+      </div>
+    );
   }
 
   if (!auth.signedIn) {

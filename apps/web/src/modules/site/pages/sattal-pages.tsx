@@ -72,7 +72,11 @@ export function SattalIndexPage() {
       </section>
 
       <section className="w-standard border-border border-t py-10" aria-label="Pieces">
-        {pieces.isPending && <p className="type-small">Loading…</p>}
+        {pieces.isPending && (
+          <p role="status" className="type-small">
+            Loading…
+          </p>
+        )}
         {pieces.isError && (
           <StatePanel title="Couldn't load this." description={toAppError(pieces.error).message} />
         )}
@@ -226,7 +230,12 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
 
-  if (piece.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (piece.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (piece.isError) {
     return (
       <div className="p-16">

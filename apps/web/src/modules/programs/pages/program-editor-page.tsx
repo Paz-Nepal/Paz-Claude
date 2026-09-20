@@ -16,7 +16,12 @@ export function ProgramEditorPage() {
 
   const existing = id ? programs.data?.find((p) => p.id === id) : undefined;
 
-  if (id && programs.isPending) return <p className="text-muted-foreground">Loading…</p>;
+  if (id && programs.isPending)
+    return (
+      <p role="status" className="text-muted-foreground">
+        Loading…
+      </p>
+    );
 
   return (
     <div className="max-w-standard flex flex-col gap-8">

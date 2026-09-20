@@ -23,7 +23,12 @@ export function PaperPage({ slug: slugProp }: { slug?: string } = {}) {
   const paper = usePaper(slug);
   const { lang } = useLanguage();
 
-  if (paper.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (paper.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (paper.isError) {
     return (
       <div className="p-8">

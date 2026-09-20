@@ -56,7 +56,11 @@ export function SearchPage() {
       </header>
 
       <div className="mt-10" aria-live="polite">
-        {q && results.isPending && <p className="type-small">Searching…</p>}
+        {q && results.isPending && (
+          <p role="status" className="type-small">
+            Searching…
+          </p>
+        )}
         {q && results.isError && (
           <StatePanel title="Search failed." description={toAppError(results.error).message} />
         )}

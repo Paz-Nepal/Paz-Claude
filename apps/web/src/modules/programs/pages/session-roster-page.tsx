@@ -26,7 +26,11 @@ export function SessionRosterPage() {
         <h1 className="font-serif text-2xl">Roster</h1>
       </div>
 
-      {roster.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {roster.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {roster.isError && (
         <StatePanel
           title="Couldn't load the roster."

@@ -230,7 +230,11 @@ export function AdminSattalPage() {
 
       <Readers />
 
-      {pieces.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {pieces.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {pieces.isError && (
         <StatePanel title="Couldn't load pieces." description={toAppError(pieces.error).message} />
       )}

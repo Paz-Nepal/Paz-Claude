@@ -42,7 +42,7 @@ export function StatePanel({
       {...props}
     >
       <h2 className="text-foreground font-serif text-lg">{title}</h2>
-      {description && <p className="text-muted-foreground max-w-prose text-sm">{description}</p>}
+      {description && <p className="text-muted-foreground max-w-reading text-sm">{description}</p>}
       {reference && (
         <p className="text-muted-foreground text-xs">
           Reference: <code className="font-mono">{reference}</code>

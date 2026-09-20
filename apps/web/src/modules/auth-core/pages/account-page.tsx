@@ -33,7 +33,9 @@ export function AccountPage() {
   if (profile.isPending) {
     return (
       <div className="max-w-standard mx-auto px-6 py-16">
-        <p className="text-muted-foreground">Loading…</p>
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
       </div>
     );
   }

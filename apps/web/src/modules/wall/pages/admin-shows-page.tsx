@@ -56,7 +56,11 @@ export function AdminShowsPage() {
         </Button>
       </div>
 
-      {shows.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {shows.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {shows.isError && (
         <StatePanel title="Couldn't load shows." description={toAppError(shows.error).message} />
       )}

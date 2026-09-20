@@ -56,7 +56,11 @@ export function DeskPage() {
         ))}
       </div>
 
-      {items.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {items.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {items.isError && (
         <StatePanel title="Couldn't load the desk." description={toAppError(items.error).message} />
       )}

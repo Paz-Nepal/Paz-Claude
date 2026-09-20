@@ -27,7 +27,12 @@ export function ShowPage() {
   const hung = (works.data ?? []).filter((w) => ids.has(w.id));
   const images = useWorkImages(hung.map((w) => w.id as string));
 
-  if (show.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (show.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (show.isError) {
     return (
       <div className="p-16">

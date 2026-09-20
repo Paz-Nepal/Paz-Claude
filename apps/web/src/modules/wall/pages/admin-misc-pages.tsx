@@ -17,7 +17,11 @@ export function AdminVoicePage() {
       <p className="text-muted-foreground text-sm">
         The house is not recording yet. This is a map of who is there, kept private.
       </p>
-      {rows.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {rows.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {rows.isError && (
         <StatePanel
           title="Couldn't load the intake."

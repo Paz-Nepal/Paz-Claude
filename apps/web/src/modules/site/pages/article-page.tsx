@@ -8,7 +8,12 @@ export function ArticlePage() {
   const { slug } = useParams<{ slug: string }>();
   const item = usePublishedItem("article", slug);
 
-  if (item.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (item.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (item.isError) {
     return (
       <div className="p-8">

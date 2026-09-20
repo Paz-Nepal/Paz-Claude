@@ -150,12 +150,12 @@ are dashboard-only and **must** be set by hand, per `docs/runbooks/auth-config.m
 cd apps/web
 echo "VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co" > .env.production.local
 echo "VITE_SUPABASE_ANON_KEY=<your project's anon key, from the dashboard's API settings>" >> .env.production.local
-pnpm build
 cd ..
 pnpm site
 ```
 
-`pnpm site` is the whole publishing step in one command: it writes the
+`pnpm site` is the whole publishing step in one command: it clears
+`dist/`, builds the app fresh, then writes the
 sitemap, the feeds, and then every public page as flat HTML and plain
 text into `apps/web/dist/` (`scripts/prerender.mjs`). Everything that
 has been deposited or published reads with JavaScript switched off, and

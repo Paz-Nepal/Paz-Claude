@@ -24,7 +24,12 @@ export function DispatchPage({ slug: slugProp }: { slug?: string } = {}) {
   const dispatch = useDispatch(slug);
   const { lang } = useLanguage();
 
-  if (dispatch.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (dispatch.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (dispatch.isError) {
     return (
       <div className="p-8">

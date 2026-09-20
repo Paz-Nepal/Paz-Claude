@@ -14,7 +14,11 @@ export function DirectoryPage() {
           is opt-in.
         </p>
       </div>
-      {directory.isPending && <p className="text-muted-foreground text-center">Loading…</p>}
+      {directory.isPending && (
+        <p role="status" className="text-muted-foreground text-center">
+          Loading…
+        </p>
+      )}
       {directory.isError && (
         <StatePanel
           title="Couldn't load the directory."

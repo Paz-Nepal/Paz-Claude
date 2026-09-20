@@ -21,7 +21,12 @@ const KIND_LABEL: Record<string, string> = {
 export function PersonTimeline({ personId }: { personId: string | undefined }) {
   const timeline = usePersonTimeline(personId);
 
-  if (timeline.isPending) return <p className="text-muted-foreground text-sm">Loading…</p>;
+  if (timeline.isPending)
+    return (
+      <p role="status" className="text-muted-foreground text-sm">
+        Loading…
+      </p>
+    );
   if (timeline.isError) {
     return (
       <p role="alert" className="text-destructive text-sm">

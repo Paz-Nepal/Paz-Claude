@@ -43,7 +43,11 @@ export function ShellPage({
       <DocumentHead title={heading} path={`/${slug}`} />
       <PageHero title={heading} />
       <div className="w-reading py-12">
-        {item.isPending && <p className="type-small">Loading…</p>}
+        {item.isPending && (
+          <p role="status" className="type-small">
+            Loading…
+          </p>
+        )}
         {item.isError && (
           <StatePanel title="Couldn't load this." description={toAppError(item.error).message} />
         )}
@@ -72,7 +76,11 @@ export function ChroniclePage() {
       <DocumentHead title="The Chronicle" path="/chronicle" feedPath="/chronicle/feed.xml" />
       <PageHero title="The Chronicle" />
       <section className="w-reading py-12" aria-label="The run">
-        {lines.isPending && <p className="type-small">Loading…</p>}
+        {lines.isPending && (
+          <p role="status" className="type-small">
+            Loading…
+          </p>
+        )}
         {lines.isError && (
           <StatePanel title="Couldn't load this." description={toAppError(lines.error).message} />
         )}
@@ -102,7 +110,11 @@ export function WordsPage() {
       <DocumentHead title="Words" path="/words" />
       <PageHero title="Words" />
       <section className="w-reading py-12" aria-label="Glossary">
-        {terms.isPending && <p className="type-small">Loading…</p>}
+        {terms.isPending && (
+          <p role="status" className="type-small">
+            Loading…
+          </p>
+        )}
         {terms.data && terms.data.length === 0 && (
           <p className="type-body">No words are listed yet.</p>
         )}
@@ -131,7 +143,12 @@ export function WordsPage() {
 // ---------------------------------------------------------------------
 export function DepositPage({ deposit }: { deposit: string }) {
   const entry = useRecordEntry(deposit);
-  if (entry.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (entry.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (entry.isError) {
     return (
       <div className="p-16">
@@ -200,7 +217,11 @@ export function CanonIndexPage() {
       <DocumentHead title="The Canon" path="/canon" />
       <PageHero title="The Canon" />
       <section className="w-reading py-12" aria-label="Documents">
-        {pages.isPending && <p className="type-small">Loading…</p>}
+        {pages.isPending && (
+          <p role="status" className="type-small">
+            Loading…
+          </p>
+        )}
         {pages.isSuccess && docs.length === 0 && (
           <p className="type-body">No document has been published yet.</p>
         )}

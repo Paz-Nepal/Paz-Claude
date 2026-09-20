@@ -17,7 +17,12 @@ export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
   const localize = useLocalizedPath();
   const post = usePigeonPost(slug);
 
-  if (post.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (post.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (post.isError) {
     return (
       <div className="p-8">

@@ -16,7 +16,12 @@ export function AnnualPage({ slug: slugProp }: { slug?: string } = {}) {
   const annual = useAnnual(slug);
   const { lang } = useLanguage();
 
-  if (annual.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (annual.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (annual.isError) {
     return (
       <div className="p-8">

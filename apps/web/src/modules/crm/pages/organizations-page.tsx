@@ -63,7 +63,11 @@ export function OrganizationsPage() {
       <h1 className="font-serif text-2xl">Organizations</h1>
       <NewOrganizationForm />
 
-      {organizations.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {organizations.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {organizations.isError && (
         <StatePanel
           title="Couldn't load organizations."

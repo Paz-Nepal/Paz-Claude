@@ -50,7 +50,12 @@ export function RelationshipDetailPage() {
 
   const relationship = relationships.data?.find((r) => r.id === id);
 
-  if (relationships.isPending) return <p className="text-muted-foreground">Loading…</p>;
+  if (relationships.isPending)
+    return (
+      <p role="status" className="text-muted-foreground">
+        Loading…
+      </p>
+    );
   if (!relationship) {
     return (
       <StatePanel

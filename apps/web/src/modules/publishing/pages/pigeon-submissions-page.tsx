@@ -16,7 +16,11 @@ export function PigeonSubmissionsPage() {
     <div className="flex flex-col gap-6">
       <h1 className="font-serif text-2xl">Pigeon inbox</h1>
 
-      {submissions.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {submissions.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {submissions.isError && (
         <StatePanel
           title="Couldn't load submissions."

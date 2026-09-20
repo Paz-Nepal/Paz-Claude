@@ -101,7 +101,11 @@ export function AdminPeoplePage() {
         </Button>
       </div>
 
-      {people.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {people.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {people.isError && (
         <StatePanel title="Couldn't load people." description={toAppError(people.error).message} />
       )}

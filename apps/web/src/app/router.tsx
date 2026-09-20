@@ -294,7 +294,17 @@ const PigeonSubmissionsPage = React.lazy(() =>
 );
 
 function withSuspense(element: React.ReactNode) {
-  return <React.Suspense fallback={<div className="p-8">Loading…</div>}>{element}</React.Suspense>;
+  return (
+    <React.Suspense
+      fallback={
+        <div role="status" className="p-8">
+          Loading…
+        </div>
+      }
+    >
+      {element}
+    </React.Suspense>
+  );
 }
 
 /**

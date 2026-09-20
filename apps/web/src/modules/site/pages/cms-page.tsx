@@ -19,7 +19,12 @@ export function CmsPage() {
   const { slug } = useParams<{ slug: string }>();
   const item = usePublishedItem("page", slug);
 
-  if (item.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (item.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (item.isError) {
     return (
       <div className="p-8">

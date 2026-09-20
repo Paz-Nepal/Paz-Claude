@@ -43,7 +43,11 @@ export function MediaPage() {
         </p>
       )}
 
-      {library.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {library.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {library.isError && (
         <StatePanel
           title="Couldn't load the library."

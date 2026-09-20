@@ -38,7 +38,12 @@ export function PersonPage() {
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
 
-  if (person.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (person.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (person.isError) {
     return (
       <div className="p-16">

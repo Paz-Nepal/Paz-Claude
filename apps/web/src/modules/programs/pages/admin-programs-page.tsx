@@ -15,7 +15,11 @@ export function AdminProgramsPage() {
         </Button>
       </div>
 
-      {programs.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {programs.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {programs.isError && (
         <StatePanel
           title="Couldn't load programmes."

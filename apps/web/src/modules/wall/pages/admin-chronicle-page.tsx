@@ -84,7 +84,11 @@ export function AdminChroniclePage() {
         </div>
       </form>
 
-      {lines.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {lines.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {lines.isError && (
         <StatePanel
           title="Couldn't load the Chronicle."

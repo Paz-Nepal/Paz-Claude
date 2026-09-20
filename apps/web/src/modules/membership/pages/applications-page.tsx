@@ -12,7 +12,11 @@ export function ApplicationsPage() {
     <div className="flex flex-col gap-8">
       <h1 className="font-serif text-2xl">Friends of PAZ applications</h1>
 
-      {applications.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {applications.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {applications.isError && (
         <StatePanel
           title="Couldn't load applications."

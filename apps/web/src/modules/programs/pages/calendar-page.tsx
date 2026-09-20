@@ -27,7 +27,11 @@ export function CalendarPage() {
         <span className="text-muted-foreground text-sm">→</span>
       </Link>
 
-      {sessions.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {sessions.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {sessions.isError && (
         <StatePanel
           title="Couldn't load the calendar."

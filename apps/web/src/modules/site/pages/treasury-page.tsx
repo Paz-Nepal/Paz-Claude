@@ -17,7 +17,12 @@ export function TreasuryPage() {
   const page = usePublishedItem("page", "treasury");
   const { lang } = useLanguage();
 
-  if (page.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (page.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (page.isError) {
     return (
       <div className="p-16">

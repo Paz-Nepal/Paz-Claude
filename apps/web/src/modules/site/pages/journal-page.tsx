@@ -9,7 +9,11 @@ export function JournalPage() {
   return (
     <div className="max-w-wide mx-auto flex flex-col gap-8 px-6 py-16">
       <h1 className="font-serif text-3xl">Journal</h1>
-      {articles.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {articles.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {articles.isError && (
         <StatePanel
           title="Couldn't load the journal."

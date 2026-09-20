@@ -83,7 +83,11 @@ export function SettingsPage() {
   return (
     <div className="max-w-standard flex flex-col gap-6">
       <h1 className="font-serif text-2xl">Institutional settings</h1>
-      {settings.isPending && <p className="text-muted-foreground">Loading…</p>}
+      {settings.isPending && (
+        <p role="status" className="text-muted-foreground">
+          Loading…
+        </p>
+      )}
       {settings.isError && (
         <StatePanel
           title="Couldn't load settings."

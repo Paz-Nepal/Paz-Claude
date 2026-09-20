@@ -41,7 +41,11 @@ export function WallPage() {
         <h2 id="wall-people" className="type-h2">
           People
         </h2>
-        {people.isPending && <p className="type-small mt-4">Loading…</p>}
+        {people.isPending && (
+          <p role="status" className="type-small mt-4">
+            Loading…
+          </p>
+        )}
         {people.isError && (
           <StatePanel title="Couldn't load this." description={toAppError(people.error).message} />
         )}
@@ -64,7 +68,11 @@ export function WallPage() {
         <h2 id="wall-works" className="type-h2">
           Work
         </h2>
-        {works.isPending && <p className="type-small mt-4">Loading…</p>}
+        {works.isPending && (
+          <p role="status" className="type-small mt-4">
+            Loading…
+          </p>
+        )}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {listed.map((w) => {
             const img = whole.get(w.id);

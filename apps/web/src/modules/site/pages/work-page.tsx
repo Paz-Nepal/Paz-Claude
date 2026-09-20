@@ -65,7 +65,12 @@ export function WorkPage() {
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
 
-  if (work.isPending) return <p className="type-small p-16 text-center">Loading…</p>;
+  if (work.isPending)
+    return (
+      <p role="status" className="type-small p-16 text-center">
+        Loading…
+      </p>
+    );
   if (work.isError) {
     return (
       <div className="p-16">

@@ -24,7 +24,12 @@ export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
   const brief = useBrief(slug);
   const { lang } = useLanguage();
 
-  if (brief.isPending) return <p className="text-muted-foreground p-8">Loading…</p>;
+  if (brief.isPending)
+    return (
+      <p role="status" className="text-muted-foreground p-8">
+        Loading…
+      </p>
+    );
   if (brief.isError) {
     return (
       <div className="p-8">

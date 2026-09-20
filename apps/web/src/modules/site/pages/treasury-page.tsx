@@ -2,6 +2,7 @@ import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
+import { TreasuryAccounts } from "./more-pages";
 import { PageHero } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
@@ -47,6 +48,7 @@ export function TreasuryPage() {
           {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}
+      <TreasuryAccounts />
     </div>
   );
 }

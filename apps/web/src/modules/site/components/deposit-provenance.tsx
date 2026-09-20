@@ -6,6 +6,8 @@
  * (Build Specification 7.6). There is no date on a Paper's page; the date
  * lives in the Record.
  */
+import { Mark } from "./mark";
+
 const LICENCE_WORDS: Record<string, string> = {
   "CC BY": "Anyone may copy, share and adapt this text, provided they credit it.",
   "CC BY-SA":
@@ -29,7 +31,10 @@ export function DepositProvenance({
     .join(". ");
   return (
     <div className="text-muted-foreground border-t pt-4 text-sm">
-      <p>Kept by the house · Deposited in the Record ({depositRef})</p>
+      <p>
+        <Mark className="mr-2 inline-block align-text-bottom" />
+        Kept by the house · Deposited in the Record ({depositRef})
+      </p>
       {license && (
         <p className="mt-1">
           Licence: {license}. {LICENCE_WORDS[license] ?? ""}

@@ -142,6 +142,64 @@ what to install and which keys to set.
   not what it fetched. The Sattal's conflict rule reads "connected to the
   house" broadly: anyone represented, formed, or holding works.
 
+## The rest of the house
+
+Each of these is a form in the console, under its own name.
+
+- **Dealings** (Wall): an enquiry to delivery. Start a dealing against a work,
+  itemise the quote, then move it through accepted, invoiced, dispatched and
+  arrived. Accepting marks the work sold; dispatch and arrival are added to the
+  work's life. The invoice prints from the dealing and is the only place the
+  company's name appears. The certificate prints from the dealing too. The
+  customs value can never be below the agreed price.
+- **Hands**: every named role and office, who holds it, and which seats are
+  open. A seat is published only when the house means the promise.
+- **Encounters**: the public calendar. Nothing here links to formation, the
+  Commons or Friends, and a workshop sells a day, never formation or a
+  hallmark. Tick **Nepali first** for anything addressed to the neighbourhood.
+- **Guild**: the hallmark register. Record a punch that has left the house's
+  keeping as destroyed; a destruction is never changed.
+- **Commons**: a register the house keeps. A rung above Companion needs a
+  recorded covenant date. Nothing here reads the Friends tiers. Tables kept
+  are reported, confirmed, and become a Chronicle line with no name in it.
+  The concurrence roll is shown to the house and never published.
+- **Treasury**: the year's account, written for the Annual.
+- **Brief**: send a deposited Brief to the confirmed list, once. There is one
+  list and no way to slice it.
+- **Concerns**: only the one person holding the safeguarding permission sees
+  this page. It exists so a concern never passes through the person it is about.
+
+Failures go in the Chronicle like everything else: a parcel lost, a promise
+broken, a Review that was wrong. A dated line, permanent and unremarkable.
+
+## Terms documents
+
+The painter's terms, the Sattal's terms, the Ethics of Memory and Friends are
+deposited documents. Create an item of type **Terms** with the slug `painters`,
+`writers`, `memory` or `friends`, then deposit it. A later version takes the
+slug `painters-v2` and so on; the earlier version stays, and the page shows the
+history. Links to them sit where a person is asked for something: on every
+enquiry, on the Sattal's front page, on the Friends page, and on the voice form.
+
+## The empty sentences
+
+What a room says before anything is in it lives in one file:
+`apps/web/src/modules/site/empty-states.json`. Each sentence is a promise, so
+each is the house's to word. Change it there and publish; the app and the static
+pages read the same file.
+
+## The mark
+
+The house's mark is undrawn, so every place it belongs is left empty rather than
+filled. The day it exists, save it as `apps/web/public/mark.svg`, publish, and it
+appears in the tab, on the seal line of a Sattal piece, on the struck row of a
+hallmarked work, on the certificate, and on every deposit entry.
+
+## Credentials and copies
+
+See `docs/runbooks/credentials-and-copies.md`. One person holding every key is
+the one failure the canon does not protect against.
+
 ## The one thing that needs to be running
 
 Forms (write to the house about a work, send a pigeon, offer a voice,

@@ -70,6 +70,21 @@ enabled = true
 # qualifies. authz/RLS, not this flag, is what limits what the call can
 # actually do (the function forwards the caller's own Authorization
 # header into the RPC it wraps -- see supabase/functions/submit-membership-application).
+[functions.brief-subscribe]
+verify_jwt = true
+
+[functions.brief-confirm]
+verify_jwt = true
+
+[functions.brief-unsubscribe]
+verify_jwt = true
+
+[functions.brief-send]
+verify_jwt = true
+
+[functions.submit-concern]
+verify_jwt = true
+
 [functions.submit-voice-intake]
 verify_jwt = true
 

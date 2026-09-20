@@ -12,6 +12,7 @@ import {
   type AdminWork,
 } from "../api/use-wall-admin";
 import { ImageUploader } from "../components/image-uploader";
+import { WorkTermsForm } from "./admin-dealings-page";
 import {
   RecordForm,
   money,
@@ -252,6 +253,8 @@ function WorkParts({ work }: { work: AdminWork }) {
 
   return (
     <div className="flex flex-col gap-8 border-t pt-6">
+      <WorkTermsForm workId={work.id as string} />
+
       <section className="flex flex-col gap-3" aria-labelledby="adm-images">
         <h2 id="adm-images" className="font-medium">
           Images

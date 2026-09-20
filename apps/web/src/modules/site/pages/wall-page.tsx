@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { StatePanel } from "@paz/ui";
+import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePeople, useShows, useWorkImages, useWorks } from "../api/use-wall";
-import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
+import { usePublishedItem } from "../api/use-site";
 import { emptyState } from "../empty-states";
+import { BriefSignup } from "../components/brief-signup";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
 import { PersonLink, WorkPicture, useEraDate } from "../components/wall-parts";
@@ -19,6 +21,8 @@ export function WallPage() {
   const people = usePeople();
   const works = useWorks();
   const shows = useShows();
+  const viewing = usePublishedItem("page", "viewing");
+  const shipping = usePublishedItem("page", "shipping");
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
@@ -37,6 +41,19 @@ export function WallPage() {
     <div>
       <DocumentHead title="The Wall" path="/wall" />
       <PageHero title="The Wall" />
+      {/* Viewing is by arrangement, and what ships and roughly what it costs is
+          answered before an enquiry. The words are the house's: each shows only
+          once the house has published its page. */}
+      {[viewing.data, shipping.data].map((item) =>
+        item ? (
+          <div key={item.id} className="w-reading pt-8">
+            <RichText
+              doc={pickLangDoc(item.body, item.body_ne, lang) as RichTextNode | null}
+              className="rich-text"
+            />
+          </div>
+        ) : null,
+      )}
 
       <section className="w-standard py-12" aria-labelledby="wall-people">
         <h2 id="wall-people" className="type-h2">
@@ -127,6 +144,9 @@ export function WallPage() {
           ))}
         </ol>
       </section>
+      <div className="w-standard pb-16">
+        <BriefSignup />
+      </div>
     </div>
   );
 }

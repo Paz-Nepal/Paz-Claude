@@ -72,6 +72,13 @@ dependency order.
 | `sattal.manage`                  | super_admin, administrator, editor                      | Manage Sattal pieces and outside readers, and publish  |
 | `chronicle.line.create`          | super_admin, administrator, editor                      | Add a line to the Chronicle                            |
 | `crm.voice.read`                 | super_admin, administrator                              | Read the private voice intake                          |
+| `governance.manage` | super_admin, administrator | Keep the register of hands: roles, offices, holders, open seats. |
+| `commons.manage` | super_admin, administrator | Keep the Commons register, Tables kept, the concurrence roll and the Assembly record. |
+| `guild.manage` | super_admin, administrator | Keep the hallmark register: formed makers, marks, and destroyed punches. |
+| `treasury.manage` | super_admin, administrator | Write the Treasury account that goes into the Annual. |
+| `encounters.manage` | super_admin, administrator, editor | Add and edit Encounters on the public calendar. |
+| `mail.manage` | super_admin, administrator, editor | Read the Brief subscriber list and send the Brief. |
+| `safeguarding.read` | super_admin | Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about. |
 
 ## Adding a new permission
 

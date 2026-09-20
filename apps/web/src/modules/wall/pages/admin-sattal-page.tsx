@@ -9,6 +9,8 @@ import {
   useAdminWorks,
   usePublishSattalPiece,
   useSaveReader,
+  useSattalLedger,
+  useSaveSattalLedger,
   useSaveSattalPiece,
   type AdminSattalPiece,
 } from "../api/use-wall-admin";
@@ -126,6 +128,20 @@ function pieceSpecs(
       rows: 12,
       hint: "The house pays for the translation. Paragraph for paragraph.",
     },
+    {
+      key: "commissioned_on",
+      label: "Commissioned on",
+      type: "date",
+      hint: "A Study is commissioned, and the commission is recorded before it can be published.",
+    },
+    { key: "commissioned_note", label: "Commission note", type: "text" },
+    {
+      key: "agreement_signed_on",
+      label: "Author agreement signed on",
+      type: "date",
+      hint: "Recorded against each piece. A piece cannot be published without it.",
+    },
+    { key: "agreement_note", label: "Agreement reference", type: "text" },
     {
       key: "sources",
       label: "Source keys",
@@ -300,6 +316,10 @@ export function AdminSattalPage() {
                           outside_reader_id: s(v["outside_reader_id"]),
                           reader_accepted_on: s(v["reader_accepted_on"]),
                           reply_to_piece_id: s(v["reply_to_piece_id"]),
+                          commissioned_on: s(v["commissioned_on"]),
+                          commissioned_note: s(v["commissioned_note"]),
+                          agreement_signed_on: s(v["agreement_signed_on"]),
+                          agreement_note: s(v["agreement_note"]),
                         },
                       },
                       {
@@ -363,6 +383,7 @@ function Published({ piece }: { piece: AdminSattalPiece }) {
         Published as {piece.deposit_ref}, piece no. {piece.piece_number}. A published piece is never
         rewritten. A correction is added.
       </p>
+      <Ledger pieceId={piece.id as string} />
       <RecordForm
         specs={specs}
         initial={toValues(specs, null)}
@@ -409,6 +430,51 @@ function Readers() {
         pending={save.isPending}
         error={save.error}
         onSubmit={(v) => save.mutate({ p: { name: s(v["name"]), note: s(v["note"]) } })}
+      />
+    </section>
+  );
+}
+
+/** Acceptance and payment are separate facts with separate dates: paying on
+ * acceptance is a promise, so it has an audit trail of its own. */
+function Ledger({ pieceId }: { pieceId: string }) {
+  const ledger = useSattalLedger();
+  const save = useSaveSattalLedger();
+  const mine = (ledger.data ?? []).find((l) => l.piece_id === pieceId);
+  const specs: FieldSpec[] = [
+    { key: "rate", label: "Rate (NPR)", type: "number", required: true },
+    { key: "accepted_on", label: "Accepted on", type: "date" },
+    { key: "paid_on", label: "Paid on", type: "date" },
+    { key: "payment_ref", label: "Payment reference", type: "text" },
+  ];
+  return (
+    <section className="flex flex-col gap-2" aria-labelledby={`ledger-${pieceId}`}>
+      <h3 id={`ledger-${pieceId}`} className="font-medium">
+        Rate ledger (private)
+      </h3>
+      <RecordForm
+        specs={specs}
+        initial={{
+          rate: mine?.rate_minor == null ? "" : String(mine.rate_minor / 100),
+          accepted_on: mine?.accepted_on ?? "",
+          paid_on: mine?.paid_on ?? "",
+          payment_ref: mine?.payment_ref ?? "",
+        }}
+        resetKey={`l-${pieceId}-${ledger.dataUpdatedAt}`}
+        submitLabel="Save the ledger line"
+        pending={save.isPending}
+        error={save.error}
+        onSubmit={(v) =>
+          save.mutate({
+            p: {
+              piece_id: pieceId,
+              rate_minor: Math.round(Number(v["rate"]) * 100),
+              accepted_on: s(v["accepted_on"]),
+              paid_on: s(v["paid_on"]),
+              payment_ref: s(v["payment_ref"]),
+            },
+          })
+        }
       />
     </section>
   );

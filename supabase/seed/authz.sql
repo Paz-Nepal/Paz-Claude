@@ -62,6 +62,13 @@ insert into authz.permissions (key, description) values
   ('sattal.manage', 'Create and edit Sattal pieces and outside readers; publish a piece once the conflict rule is met.'),
   ('chronicle.line.create', 'Add a line to the Chronicle.'),
   ('crm.voice.read', 'Read the private intake of people who may be recorded in future.'),
+  ('governance.manage', 'Keep the register of hands: roles, offices, holders, open seats.'),
+  ('commons.manage', 'Keep the Commons register, Tables kept, the concurrence roll and the Assembly record.'),
+  ('guild.manage', 'Keep the hallmark register: formed makers, marks, and destroyed punches.'),
+  ('treasury.manage', 'Write the Treasury account that goes into the Annual.'),
+  ('encounters.manage', 'Add and edit Encounters on the public calendar.'),
+  ('mail.manage', 'Read the Brief subscriber list and send the Brief.'),
+  ('safeguarding.read', 'Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about.'),
   ('analytics.dashboard.editorial', 'View the editorial pipeline dashboard.'),
   ('analytics.dashboard.programs', 'View the programme fill-rate dashboard.'),
   ('analytics.dashboard.membership', 'View the membership funnel dashboard.'),
@@ -83,6 +90,8 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('editor', 'wall.manage'),
   ('editor', 'sattal.manage'),
   ('editor', 'chronicle.line.create'),
+  ('editor', 'encounters.manage'),
+  ('editor', 'mail.manage'),
   ('author', 'publishing.item.create'),
   ('author', 'publishing.media.read'),
   ('author', 'publishing.media.create')
@@ -154,5 +163,7 @@ on conflict do nothing;
 
 insert into authz.role_permissions (role_key, permission_key)
 select 'administrator', key from authz.permissions
-where key not in ('authz.user_role.grant') -- role administration stays Super-Admin-only, per spec §6
+where key not in ('authz.user_role.grant', 'safeguarding.read')
+  -- role administration stays Super-Admin-only, per spec §6; concerns are read
+  -- by one named person, never by everyone who administers the site
 on conflict do nothing;

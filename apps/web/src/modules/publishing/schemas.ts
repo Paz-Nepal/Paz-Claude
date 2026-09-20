@@ -11,6 +11,7 @@ export const itemMetadataSchema = z.object({
     "annual",
     "event",
     "sattal",
+    "terms",
   ]),
   title: z.string().trim().min(1, "Title is required"),
   slug: z

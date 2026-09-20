@@ -188,7 +188,14 @@ function SendBackControl({ itemId }: { itemId: string }) {
 /** Series the Record indexes (spec §2) -- publishing.deposit_item()
  * rejects every other type, so these are the only ones offered "Deposit"
  * instead of a plain "Publish". */
-export const DEPOSIT_SERIES: ItemType[] = ["paper", "brief", "dispatch", "pigeon_post", "annual"];
+export const DEPOSIT_SERIES: ItemType[] = [
+  "paper",
+  "brief",
+  "dispatch",
+  "pigeon_post",
+  "annual",
+  "terms",
+];
 
 export function TransitionButtons({
   itemId,

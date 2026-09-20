@@ -34,6 +34,10 @@ export function AdminChroniclePage() {
         </li>
         <li>A death is a line, never a post. No memorial page, image or card.</li>
         <li>Nothing is edited or deleted. A correction is another line.</li>
+        <li>
+          Failures go here too: a parcel lost, a promise broken, a Review that was wrong. A dated
+          line, in the same run as everything else.
+        </li>
       </ul>
 
       <form

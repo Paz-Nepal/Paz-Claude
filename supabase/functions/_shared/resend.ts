@@ -10,6 +10,7 @@ export interface SendViaResendInput {
   subject: string;
   html: string;
   text: string;
+  headers?: Record<string, string>;
 }
 
 export async function sendViaResend(input: SendViaResendInput): Promise<void> {
@@ -35,6 +36,9 @@ export async function sendViaResend(input: SendViaResendInput): Promise<void> {
       subject: input.subject,
       html: input.html,
       text: input.text,
+      // No tracking flags are ever set here: open and click tracking are
+      // domain-level settings in the provider and must stay off.
+      ...(input.headers ? { headers: input.headers } : {}),
     }),
   });
 

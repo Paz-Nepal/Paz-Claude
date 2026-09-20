@@ -410,3 +410,50 @@ html[lang="ne"] body {
     border-color: hsl(var(--verdigris));
   }
 }
+
+/* A print stylesheet for reading pages, in a house whose work is paper
+   (Build Programme 19): the text alone, on white, at a comfortable size,
+   with the chrome, the forms and every control left off. */
+@media print {
+  header,
+  footer,
+  nav,
+  form,
+  button,
+  .print\:hidden {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .w-reading,
+  .w-standard,
+  .w-wide,
+  article {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+  .work-surround {
+    background: none !important;
+    padding: 0 !important;
+  }
+}

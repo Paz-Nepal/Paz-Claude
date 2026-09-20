@@ -25,6 +25,7 @@ const TYPE_LABEL: Record<ItemType, string> = {
   annual: "Annual",
   event: "Event",
   sattal: "The Sattal",
+  terms: "Terms",
 };
 
 export function DeskPage() {

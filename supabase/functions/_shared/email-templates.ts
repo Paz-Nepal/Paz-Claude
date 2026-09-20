@@ -296,3 +296,62 @@ export function renderMembershipInvitation(data: MembershipInvitationData): Emai
 
   return { subject, text, html };
 }
+
+export interface BriefConfirmationData {
+  confirmUrl: string;
+}
+
+/** Double opt-in: nothing is sent until the reader confirms. */
+export function renderBriefConfirmation(data: BriefConfirmationData): EmailContent {
+  const subject = "Confirm your subscription to the Brief";
+  const text = [
+    "Someone asked for the Brief to be sent to this address.",
+    "",
+    "Confirming takes one step:",
+    data.confirmUrl,
+    "",
+    "If it was not you, do nothing and nothing will be sent.",
+    "",
+    "PAZ",
+  ].join("\n");
+  const html = wrapHtml(`
+    <p>Someone asked for the Brief to be sent to this address.</p>
+    <p>Confirming takes one step: <a href="${escapeHtml(data.confirmUrl)}">confirm the subscription</a>.</p>
+    <p>If it was not you, do nothing and nothing will be sent.</p>
+  `);
+  return { subject, text, html };
+}
+
+export interface BriefIssueData {
+  title: string;
+  body: string;
+  readUrl: string;
+  unsubscribeUrl: string;
+}
+
+/**
+ * The Brief: the same letter to everyone, plain text first. No tracking
+ * pixel and no rewritten links: every URL here is the real address.
+ */
+export function renderBriefIssue(data: BriefIssueData): EmailContent {
+  const text = [
+    data.title,
+    "",
+    data.body,
+    "",
+    `Read it in the Record: ${data.readUrl}`,
+    "",
+    `Unsubscribe in one step: ${data.unsubscribeUrl}`,
+  ].join("\n");
+  const paragraphs = data.body
+    .split(/\n\s*\n/)
+    .map((p) => `<p>${escapeHtml(p).replace(/\n/g, "<br />")}</p>`)
+    .join("");
+  const html = wrapHtml(`
+    <h1 style="font-size: 22px; font-weight: normal;">${escapeHtml(data.title)}</h1>
+    ${paragraphs}
+    <p><a href="${escapeHtml(data.readUrl)}">Read it in the Record</a></p>
+    <p style="font-size: 13px;"><a href="${escapeHtml(data.unsubscribeUrl)}">Unsubscribe in one step</a></p>
+  `);
+  return { subject: data.title, text, html };
+}

@@ -13,6 +13,7 @@ const TYPE_LABELS: Record<PublishedItem["type"] & string, string> = {
   annual: "Annual",
   event: "Event",
   sattal: "The Sattal",
+  terms: "Terms",
 };
 
 export function SearchResultCard({ item }: { item: PublishedItem }) {

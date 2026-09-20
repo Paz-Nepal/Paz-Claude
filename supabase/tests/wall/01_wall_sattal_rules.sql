@@ -26,10 +26,10 @@ insert into wall.works (id, slug, person_id, title, price_minor, published) valu
   ('c3000000-0000-0000-0000-000000000001', 't-work', 'c2000000-0000-0000-0000-000000000002', 'T Work', 700000, true);
 insert into sattal.outside_readers (id, name) values ('c4000000-0000-0000-0000-000000000001', 'R Reader');
 insert into sattal.pieces (id, slug, form, person_id, title, original_language, relation_declaration,
-  subject_person_id, author_connected)
+  subject_person_id, author_connected, agreement_signed_on)
 values ('c5000000-0000-0000-0000-000000000001', 't-piece', 'review',
   'c2000000-0000-0000-0000-000000000001', 'T', 'en', 'No relation.',
-  'c2000000-0000-0000-0000-000000000002', false);
+  'c2000000-0000-0000-0000-000000000002', false, current_date);
 
 -- Hallmark: only a maker the Guild has formed.
 select throws_ok(

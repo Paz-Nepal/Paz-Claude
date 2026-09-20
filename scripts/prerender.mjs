@@ -264,6 +264,13 @@ const SERIES = {
   dispatch: { path: "dispatch", name: "Dispatch", fn: "get_dispatch", byline: null },
   pigeon_post: { path: "pigeon-post", name: "Pigeon Post", fn: "get_pigeon_post", byline: null },
   annual: { path: "annual", name: "Annual", fn: "get_annual", byline: null },
+  terms: {
+    path: "terms",
+    name: "Terms",
+    fn: "get_published_item",
+    extra: { p_type: "terms" },
+    byline: null,
+  },
 };
 
 const SPEAKER = {
@@ -465,7 +472,9 @@ async function renderItems(items) {
   for (const { type, slug } of items) {
     const series = SERIES[type];
     if (series) {
-      const detail = await callRpc(series.fn, { p_slug: slug }).then((r) => r[0] ?? null);
+      const detail = await callRpc(series.fn, { p_slug: slug, ...(series.extra ?? {}) }).then(
+        (r) => r[0] ?? null,
+      );
       if (!detail) continue;
       const readable = `/${series.path}/${slug}`;
       const canonical = detail.deposit_ref ? `/record/${detail.deposit_ref}` : readable;
@@ -500,8 +509,12 @@ async function renderItems(items) {
         series: series.name,
       });
       writePage(canonical, opts, main);
+      if (type === "terms") TERMS_DETAILS.set(slug, detail);
+      // The kind-only address of a terms document is its "current" view,
+      // written in renderTerms, so it gets no redirect stub.
+      const currentView = type === "terms" && !/-v\d+$/.test(slug);
       if (detail.deposit_ref) {
-        writeRedirectStub(readable, canonical, detail.title);
+        if (!currentView) writeRedirectStub(readable, canonical, detail.title);
         writeText(
           `record/${detail.deposit_ref}/text.txt`,
           itemText({
@@ -642,7 +655,7 @@ function renderWall(d) {
   writePage(
     "/wall",
     { title: "The Wall" },
-    `<h1>The Wall</h1><h2>People</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>Work</h2><ul>${listed.map(workCard).join("")}</ul><h2>Shows</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
+    `<h1>The Wall</h1>${pageBodyFrom("viewing")}${pageBodyFrom("shipping")}<h2>People</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>Work</h2><ul>${listed.map(workCard).join("")}</ul><h2>Shows</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
       .map(
         (s) =>
           `<li>${link(`/shows/${s.slug}`, s.title)} <span>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</span></li>`,
@@ -728,6 +741,7 @@ function renderWall(d) {
         ? `<p>Friends of PAZ price: ${esc(money(w.friends_price_minor, w.currency))}</p>`
         : "",
       `<p><strong>${esc(AVAIL[w.availability] ?? w.availability)}</strong></p>`,
+      `<p>${link("/terms/painters", "The painter's terms")}</p>`,
       w.provenance_note ? `<p>${esc(w.provenance_note)}</p>` : "",
       ...texts.map(
         (t) =>
@@ -796,7 +810,7 @@ function renderSattal(d) {
   writePage(
     "/sattal",
     { title: "The Sattal" },
-    `<h1>The Sattal</h1><p><strong>${esc(SPEAKER.signed)}</strong></p><p>Work the house shows, sells or has formed, and anything critical of PAZ, is published here only when an author unconnected to it has written it and a named outside reader, whom the house cannot overrule, has accepted it.</p><p>${
+    `<h1>The Sattal</h1><p><strong>${esc(SPEAKER.signed)}</strong></p><p>${link("/terms/writers", "The Sattal's terms")}</p><p>Work the house shows, sells or has formed, and anything critical of PAZ, is published here only when an author unconnected to it has written it and a named outside reader, whom the house cannot overrule, has accepted it.</p><p>${
       readers.length
         ? `${readers.length === 1 ? "The outside reader is" : "The outside readers are"} ${esc(readers.map((r) => r.name).join(", "))}.`
         : EMPTY.sattalNoReader
@@ -1022,7 +1036,10 @@ const ORGAN_LINKS = {
     ["/table", "The Table"],
     ["/encounters", "Encounters"],
     ["/name", "The name"],
+    ["/custodian", "The Custodian of the Name"],
     ["/canon", "The Canon"],
+    ["/hands", "Hands"],
+    ["/safeguarding", "Safeguarding"],
   ],
   record: [
     ["/record/deposits", "The deposit register"],
@@ -1144,10 +1161,8 @@ const LADDER = ["Guest", "Companion", "Denizen", "Steward", "Elder", "Ancestor"]
 const SHELLS = [
   ["name", "The name"],
   ["table", "The Table"],
-  ["encounters", "Encounters"],
   ["looking-for", "Looking for"],
   ["privacy", "Privacy"],
-  ["terms", "Terms"],
 ];
 
 function renderShells(pagesBySlug, written) {
@@ -1198,7 +1213,7 @@ function renderShells(pagesBySlug, written) {
   writePage(
     "/a-voice",
     { title: "A voice", noindex: true },
-    `<h1>A voice</h1>${pageBody(pagesBySlug, "a-voice")}${formNote("This form")}`,
+    `<h1>A voice</h1>${pageBody(pagesBySlug, "a-voice")}${pageBody(pagesBySlug, "a-voice-statement")}<p>${link("/terms/memory", "The Ethics of Memory")}</p>${formNote("This form")}`,
   );
   writePage(
     "/search",
@@ -1277,6 +1292,219 @@ function checkRoutesAndWriteSitemap() {
   console.log(`sitemap.xml: ${SITEMAP.size} URL(s), each backed by a written file.`);
 }
 
+// ---------------------------------------------------------------------
+// Terms, hands, encounters, the Guild register, the Treasury account,
+// safeguarding, and the small pages that have no data of their own.
+// ---------------------------------------------------------------------
+const TERMS_KINDS = ["painters", "writers", "memory", "friends"];
+const TERMS_LABEL = {
+  painters: "The painter's terms",
+  writers: "The Sattal's terms",
+  memory: "The Ethics of Memory",
+  friends: "Friends of PAZ",
+};
+const TERMS_DETAILS = new Map();
+
+function termsKindOf(slug) {
+  return TERMS_KINDS.find((k) => slug === k || slug.startsWith(`${k}-v`)) ?? null;
+}
+const termsVersionOf = (slug) => Number(/-v(\d+)$/.exec(slug)?.[1] ?? 1);
+
+function renderTerms(versions) {
+  // Version pages already have their canonical deposit page and (for -vN)
+  // a redirect stub. Here: the index and the "current" view per kind.
+  const current = new Map();
+  for (const v of versions) {
+    const kind = termsKindOf(v.slug);
+    if (!kind) continue;
+    const prior = current.get(kind);
+    if (!prior || termsVersionOf(v.slug) > termsVersionOf(prior.slug)) current.set(kind, v);
+  }
+  for (const kind of TERMS_KINDS) {
+    const cur = current.get(kind);
+    const detail = cur ? TERMS_DETAILS.get(cur.slug) : null;
+    const earlier = versions.filter((v) => termsKindOf(v.slug) === kind && v.slug !== cur?.slug);
+    writePage(
+      `/terms/${kind}`,
+      {
+        title: detail?.title || TERMS_LABEL[kind],
+        canonicalPath: detail?.deposit_ref ? `/record/${detail.deposit_ref}` : undefined,
+        priority: "0.5",
+      },
+      detail
+        ? `<article><h1>${esc(detail.title)}</h1>${renderDoc(detail.body)}<p>Version ${termsVersionOf(cur.slug)}.</p><p>Kept by the house · Deposited in the Record (${esc(detail.deposit_ref)})</p>${
+            earlier.length
+              ? `<h2>Version history</h2><ul>${earlier
+                  .map(
+                    (v) =>
+                      `<li>${link(`/record/${v.deposit_ref}`, `Version ${termsVersionOf(v.slug)}`)}</li>`,
+                  )
+                  .join("")}</ul>`
+              : ""
+          }</article>`
+        : `<h1>${esc(TERMS_LABEL[kind])}</h1><p>${esc(EMPTY.terms)}</p>`,
+    );
+  }
+  writePage(
+    "/terms",
+    { title: "Terms", priority: "0.5" },
+    `<h1>Terms</h1>${pageBodyFrom("terms")}<ul>${TERMS_KINDS.map((kind) =>
+      current.get(kind)
+        ? `<li>${link(`/terms/${kind}`, TERMS_LABEL[kind])}</li>`
+        : `<li>${esc(TERMS_LABEL[kind])}<br />${esc(EMPTY.terms)}</li>`,
+    ).join("")}</ul>`,
+  );
+}
+
+function pageBodyFrom(slug) {
+  const p = PAGES.get(slug);
+  return p ? renderDoc(p.body) : "";
+}
+
+const HAND_STATUS = { held: "Held", open: "Open", dormant: "Dormant" };
+
+function renderHands(hands, readers) {
+  const readerNames = readers.map((r) => r.name).join(", ");
+  writePage(
+    "/hands",
+    { title: "Hands", priority: "0.5" },
+    `<h1>Hands</h1><ul>${
+      hands
+        .map((h) => {
+          const held =
+            h.slug === "outside-reader" && readerNames
+              ? `Held by ${readerNames}`
+              : h.status === "held"
+                ? `Held by ${h.holder_name}`
+                : (HAND_STATUS[h.status] ?? h.status);
+          return `<li>${link(`/hands/${h.slug}`, h.title)}<br />${esc(held)}${h.term_ends_on ? ` · term ends ${esc(h.term_ends_on)}` : ""}</li>`;
+        })
+        .join("") || `<li>${esc(EMPTY.hands)}</li>`
+    }</ul>`,
+  );
+  for (const h of hands) {
+    writePage(
+      `/hands/${h.slug}`,
+      { title: h.title, priority: "0.4" },
+      `<article><h1>${esc(h.title)}</h1><p>${esc(HAND_STATUS[h.status] ?? h.status)}</p>${
+        h.status === "held" ? `<p>Held by ${esc(h.holder_name)}.</p>` : ""
+      }${h.status === "dormant" && h.waking_trigger ? `<p>This office wakes when ${esc(h.waking_trigger)}.</p>` : ""}${[
+        ["The work", h.work],
+        ["What it asks", h.asks],
+        ["What it gives back", h.gives],
+        ["How to say yes", h.how_to_say_yes],
+      ]
+        .filter(([, t]) => t)
+        .map(([label, t]) => `<h2>${label}</h2><p>${esc(t)}</p>`)
+        .join("")}</article>`,
+    );
+  }
+}
+
+const ENCOUNTER_KIND = {
+  field_study: "Field Study",
+  common_ground: "Common Ground",
+  chautari: "The Chautari",
+  workshop: "Workshop",
+};
+
+function encounterHtml(e) {
+  const order = (en, ne) => (ne ? (e.leads_ne ? [ne, en] : [en, ne]) : [en]).filter(Boolean);
+  const langOf = (t) =>
+    t && (t === e.title_ne || t === e.place_ne || t === e.how_to_turn_up_ne) ? "ne" : "en";
+  const line = (t, tag) => `<${tag} lang="${langOf(t)}">${esc(t)}</${tag}>`;
+  return `<p>${esc(ENCOUNTER_KIND[e.kind] ?? e.kind)} · ${esc(dualEra(e.starts_on))}${e.ends_on ? ` to ${esc(dualEra(e.ends_on))}` : ""}</p>${order(
+    e.title,
+    e.title_ne,
+  )
+    .map((t) => line(t, "h2"))
+    .join("")}${order(e.place, e.place_ne)
+    .map((t) => line(t, "p"))
+    .join("")}${order(e.how_to_turn_up, e.how_to_turn_up_ne)
+    .map((t) => line(t, "p"))
+    .join("")}`;
+}
+
+function renderEncounters(events) {
+  writePage(
+    "/encounters",
+    { title: "Encounters", priority: "0.6" },
+    `<h1>Encounters</h1>${pageBodyFrom("encounters")}${
+      events.length ? "" : `<p>${esc(EMPTY.encounters)}</p>`
+    }<ol>${events
+      .map((e) => `<li>${encounterHtml(e)}${link(`/encounters/${e.slug}`, "Details")}</li>`)
+      .join("")}</ol>`,
+  );
+  for (const e of events) {
+    writePage(
+      `/encounters/${e.slug}`,
+      { title: e.title, priority: "0.5" },
+      `<article>${encounterHtml(e)}</article>`,
+    );
+  }
+}
+
+function guildExtra(register) {
+  return `<h2>The hallmark register</h2><p>The house's punch attests formation. It does not attest quality, ownership or endorsement.</p>${
+    register.length ? "" : `<p>${esc(EMPTY.guild)}</p>`
+  }<ul>${register
+    .map(
+      (m) =>
+        `<li>${link(`/people/${m.person_slug}`, m.person_name)}<br />${
+          m.mark_description ? `Mark: ${esc(m.mark_description)}. ` : ""
+        }${m.year_letter ? `Year letter ${esc(m.year_letter)}. ` : ""}${
+          m.registered_on ? `Registered ${esc(gregorian(m.registered_on))}.` : ""
+        }${m.destroyed_on ? ` Punch destroyed ${esc(gregorian(m.destroyed_on))}.` : ""}</li>`,
+    )
+    .join("")}</ul>`;
+}
+
+function treasuryExtra(accounts) {
+  return `<h2>The account</h2>${accounts.length ? "" : `<p>${esc(EMPTY.treasury)}</p>`}${accounts
+    .map(
+      (a) =>
+        `<article><h3>${esc(a.year_span)}</h3>${
+          a.patronage_share_minor != null
+            ? `<p>Patronage share given from after-tax profit: ${esc(money(a.patronage_share_minor))}${a.patronage_note ? `. ${esc(a.patronage_note)}` : ""}</p>`
+            : ""
+        }${
+          a.tithe_minor != null
+            ? `<p>Tithe: ${esc(money(a.tithe_minor))}${a.tithe_base_minor != null ? ` on a harmonised base of ${esc(money(a.tithe_base_minor))}` : ""}.</p>`
+            : ""
+        }${
+          a.largest_share_pct != null
+            ? `<p>Largest single share of the year's giving: ${esc(a.largest_share_pct)}%. The one-fifth rule is ${a.concentration_rule_met ? "met" : "not met"}.</p>`
+            : ""
+        }${a.gifts_note ? `<p>${esc(a.gifts_note)}</p>` : ""}${a.instruments_note ? `<p>Instruments in force: ${esc(a.instruments_note)}</p>` : ""}</article>`,
+    )
+    .join("")}`;
+}
+
+function renderSmallPages() {
+  const notWritten = "<p>This page has not been written yet.</p>";
+  writePage(
+    "/safeguarding",
+    { title: "Safeguarding", priority: "0.5" },
+    `<h1>Safeguarding</h1>${pageBodyFrom("safeguarding") || notWritten}${pageBodyFrom("safeguarding-route")}<p>${link("/safeguarding/children", "Photographs of children")}</p>${formNote("Raising a concern from this page")}`,
+  );
+  writePage(
+    "/safeguarding/children",
+    { title: "Photographs of children", priority: "0.4" },
+    `<h1>Photographs of children</h1>${pageBodyFrom("children-photography") || notWritten}`,
+  );
+  writePage(
+    "/custodian",
+    { title: "The Custodian of the Name", priority: "0.4" },
+    `<h1>The Custodian of the Name</h1>${pageBodyFrom("custodian") || notWritten}`,
+  );
+  for (const [path, title] of [
+    ["/brief/confirm", "The Brief"],
+    ["/brief/unsubscribe", "The Brief"],
+  ]) {
+    writePage(path, { title, noindex: true }, `<h1>${esc(title)}</h1>${formNote("This step")}`);
+  }
+}
+
 async function main() {
   // app.html is the untouched shell every unmatched path falls back to.
   // index.html becomes the prerendered home page, so it can no longer be
@@ -1310,6 +1538,11 @@ async function main() {
     record,
     sessions,
     tiers,
+    termsVersions,
+    hands,
+    guildRegister,
+    treasuryAccounts,
+    encounters,
   ] = await Promise.all([
     all("published_items", "select=type,slug,title,deposit_ref&order=published_at.desc,id"),
     all("wall_people", "select=*&order=name,id"),
@@ -1329,6 +1562,11 @@ async function main() {
     all("record_entries", "select=*&order=deposit_number"),
     all("program_sessions", "select=*&order=starts_at,id"),
     all("membership_tiers", "select=*&order=annual_fee_cents"),
+    all("terms_versions", "select=*&order=kind,version.desc"),
+    all("hands", "select=*&order=sort,title"),
+    all("guild_register", "select=*&order=registered_on,id"),
+    all("treasury_accounts", "select=*&order=year_span.desc,id"),
+    all("encounters_calendar", "select=*&order=starts_on.desc,id"),
   ]);
 
   const neCount = await renderItems(items);
@@ -1350,7 +1588,14 @@ async function main() {
   renderGlossary(glossary);
   renderHome({ works, pieces, chronicle });
   renderSeriesIndexes(items, record);
-  renderOrgans(PAGES);
+  renderOrgans(PAGES, {
+    guild: guildExtra(guildRegister),
+    treasury: treasuryExtra(treasuryAccounts),
+  });
+  renderTerms(termsVersions);
+  renderHands(hands, readers);
+  renderEncounters(encounters);
+  renderSmallPages();
   renderProgrammes(sessions);
   renderFriends(tiers);
   renderShells(PAGES, new Set(SITEMAP.keys()));

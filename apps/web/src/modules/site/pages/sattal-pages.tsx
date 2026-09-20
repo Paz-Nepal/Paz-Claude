@@ -14,6 +14,8 @@ import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { PageHero } from "../components/paz-editorial";
 import { SpeakerNote, useEraDate } from "../components/wall-parts";
+import { BriefSignup } from "../components/brief-signup";
+import { TermsLink } from "./more-pages";
 
 const FORM_LABEL: Record<string, string> = {
   study: "Study",
@@ -56,6 +58,9 @@ export function SattalIndexPage() {
           Work the house shows, sells or has formed, and anything critical of PAZ, is published here
           only when an author unconnected to it has written it and a named outside reader, whom the
           house cannot overrule, has accepted it.
+        </p>
+        <p className="type-small mt-4">
+          <TermsLink kind="writers">The Sattal&rsquo;s terms</TermsLink>
         </p>
         {readers.isSuccess &&
           (hasReader ? (
@@ -378,6 +383,9 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
           </ul>
         </section>
       )}
+      <div className="mt-16">
+        <BriefSignup />
+      </div>
     </article>
   );
 }

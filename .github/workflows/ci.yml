@@ -78,10 +78,13 @@ jobs:
       - name: authz matrix sync check
         run: node scripts/check-authz-matrix.mjs
 
+      - name: Palette accessibility limits
+        run: node scripts/check-palette.mjs
+
       - name: Regenerate types and fail if stale
         run: |
           supabase gen types typescript --local \
-            --schema identity,authz,admin,api,publishing,programs,membership,crm,wall,sattal \
+            --schema identity,authz,admin,api,publishing,programs,membership,crm,wall,sattal,governance,commons,guild,treasury,encounters,mail \
             > /tmp/database.generated.ts
           diff -u packages/types/src/database.generated.ts /tmp/database.generated.ts
 

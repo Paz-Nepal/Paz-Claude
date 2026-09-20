@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
+import { existsSync } from "node:fs";
 
 // See Frontend Implementation Review §5.5: the admin route tree is lazy
 // loaded (app/router.tsx), so route-level code-splitting keeps the public
@@ -14,8 +15,25 @@ import path from "node:path";
 // the same folder served fine). Splitting vendor code into its own
 // per-library chunks avoids both problems without changing total bytes
 // shipped.
+// The mark is one file. While it does not exist, every slot for it is
+// absent (Build Programme 15): the components read this flag, and the tab
+// icon is only linked when the file is there.
+const markPresent = existsSync(path.resolve(__dirname, "public/mark.svg"));
+
 export default defineConfig({
-  plugins: [react()],
+  define: { __MARK__: JSON.stringify(markPresent) },
+  plugins: [
+    react(),
+    {
+      name: "paz-mark-favicon",
+      transformIndexHtml(html) {
+        return markPresent
+          ? html.replace("</head>", `  <link rel="icon" type="image/svg+xml" href="/mark.svg" />
+  </head>`)
+          : html;
+      },
+    },
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

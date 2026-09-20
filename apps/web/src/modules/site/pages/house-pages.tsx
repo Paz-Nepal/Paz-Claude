@@ -16,6 +16,7 @@ import { PigeonPostPage } from "./pigeon-post-page";
 import { AnnualPage } from "./annual-page";
 import { SattalPiecePage } from "./sattal-pages";
 import { NotFoundPage } from "./not-found-page";
+import { TermsDocPage, TermsLink } from "./more-pages";
 
 /**
  * A page whose words the house supplies. The structure and the address
@@ -173,6 +174,8 @@ export function DepositPage({ deposit }: { deposit: string }) {
       return <AnnualPage slug={slug} />;
     case "sattal":
       return <SattalPiecePage slug={slug} />;
+    case "terms":
+      return <TermsDocPage slug={slug} canonical />;
     default:
       return <NotFoundPage />;
   }
@@ -196,6 +199,7 @@ export function CommonsPage() {
             <li key={rung}>{rung}</li>
           ))}
         </ol>
+        <p className="type-body mt-4">{emptyState("commons")}</p>
       </section>
     </ShellPage>
   );
@@ -256,6 +260,7 @@ export function CanonDocPage({ doc }: { doc: string }) {
 // ---------------------------------------------------------------------
 export function AVoicePage() {
   const item = usePublishedItem("page", "a-voice");
+  const statement = usePublishedItem("page", "a-voice-statement");
   const { lang } = useLanguage();
   const [writerName, setWriterName] = React.useState("");
   const [contact, setContact] = React.useState("");
@@ -266,6 +271,9 @@ export function AVoicePage() {
   const doc = item.data
     ? (pickLangDoc(item.data.body, item.data.body_ne, lang) as RichTextNode | null)
     : null;
+  const statementDoc = statement.data
+    ? (pickLangDoc(statement.data.body, statement.data.body_ne, lang) as RichTextNode | null)
+    : null;
   const canSubmit = writerName.trim() && contact.trim();
 
   return (
@@ -274,6 +282,13 @@ export function AVoicePage() {
       <PageHero title="A voice" />
       <div className="w-reading flex flex-col gap-8 py-12">
         {doc && <RichText doc={doc} className="rich-text" />}
+        {/* Its own statement, separate from the privacy page: who reads it, that
+            nothing is published, that the house is not recording yet, and what
+            happens to what is written. The words are the house's. */}
+        {statementDoc && <RichText doc={statementDoc} className="rich-text" />}
+        <p className="type-small">
+          <TermsLink kind="memory">The Ethics of Memory</TermsLink>
+        </p>
         {submit.isSuccess ? (
           <StatePanel title="Received." description="" />
         ) : (
@@ -353,7 +368,6 @@ export function CanonDocRoute() {
 
 export const NamePage = () => <ShellPage slug="name" title="The name" />;
 export const TablePage = () => <ShellPage slug="table" title="The Table" />;
-export const EncountersPage = () => <ShellPage slug="encounters" title="Encounters" />;
 export const LookingForPage = () => <ShellPage slug="looking-for" title="Looking for" />;
 export const PrivacyPage = () => <ShellPage slug="privacy" title="Privacy" />;
-export const TermsPage = () => <ShellPage slug="terms" title="Terms" />;
+export const CustodianPage = () => <ShellPage slug="custodian" title="The Custodian of the Name" />;

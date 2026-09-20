@@ -4,6 +4,7 @@ import { formatBikramSambatDate, formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, useSiteInfo } from "../api/use-site";
 import type { ImageVariant, WallWorkImage } from "../api/use-wall";
 import { useLanguage, useLocalizedPath } from "../language";
+import { Mark } from "./mark";
 
 /**
  * A work's picture: responsive sizes, modern format with a fallback,
@@ -155,6 +156,7 @@ export function SpeakerNote({
   const t = SPEAKER_TEXT[speaker];
   return (
     <p className={`speaker speaker-${speaker} type-small`}>
+      {speaker !== "anonymous" && <Mark className="mr-2 inline-block align-text-bottom" />}
       <span className="font-semibold">{t.label}.</span>
       {showSeal && <> {t.seal}</>}
     </p>

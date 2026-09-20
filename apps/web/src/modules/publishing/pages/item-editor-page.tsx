@@ -33,6 +33,7 @@ const TYPE_OPTIONS: Array<{ value: ItemType; label: string }> = [
   { value: "pigeon_post", label: "Pigeon Post" },
   { value: "annual", label: "Annual" },
   { value: "event", label: "Event" },
+  { value: "terms", label: "Terms document (painters, writers, memory, friends)" },
 ];
 
 export function ItemEditorPage() {

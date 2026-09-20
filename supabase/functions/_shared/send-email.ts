@@ -8,12 +8,16 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { sendViaResend } from "./resend.ts";
 import {
   EMAIL_TEMPLATE_VERSION,
+  renderBriefConfirmation,
+  renderBriefIssue,
   renderContactMessageReceived,
   renderMembershipApplicationDecided,
   renderMembershipApplicationReceived,
   renderMembershipInvitation,
   renderMembershipRenewalNotice,
   renderSessionRegistration,
+  type BriefConfirmationData,
+  type BriefIssueData,
   type ContactMessageReceivedData,
   type MembershipApplicationDecidedData,
   type MembershipApplicationReceivedData,
@@ -23,6 +27,8 @@ import {
 } from "./email-templates.ts";
 
 export type EmailTemplate =
+  | { name: "brief-confirmation"; data: BriefConfirmationData }
+  | { name: "brief-issue"; data: BriefIssueData }
   | { name: "membership-application-received"; data: MembershipApplicationReceivedData }
   | { name: "membership-application-decided"; data: MembershipApplicationDecidedData }
   | { name: "session-registration"; data: SessionRegistrationData }
@@ -32,6 +38,10 @@ export type EmailTemplate =
 
 function render(template: EmailTemplate) {
   switch (template.name) {
+    case "brief-confirmation":
+      return renderBriefConfirmation(template.data);
+    case "brief-issue":
+      return renderBriefIssue(template.data);
     case "membership-application-received":
       return renderMembershipApplicationReceived(template.data);
     case "membership-application-decided":
@@ -52,6 +62,8 @@ export interface SendEmailInput {
   template: EmailTemplate;
   /** The row this notification is about, if it has a stable uuid. */
   entity?: { schema: string; table: string; id: string | null };
+  /** Extra headers, e.g. List-Unsubscribe on the Brief. */
+  headers?: Record<string, string>;
   /** Extra fields folded into the logged context, e.g. a human-readable code. */
   context?: Record<string, unknown>;
 }
@@ -74,6 +86,7 @@ export async function sendEmail(input: SendEmailInput): Promise<void> {
       subject: content.subject,
       html: content.html,
       text: content.text,
+      ...(input.headers ? { headers: input.headers } : {}),
     });
   } catch (err) {
     errorMessage = err instanceof Error ? err.message : String(err);

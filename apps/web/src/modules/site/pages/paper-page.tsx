@@ -13,6 +13,7 @@ import { DepositProvenance } from "../components/deposit-provenance";
 import { SupersededBanner } from "../components/superseded-banner";
 import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
+import { BriefSignup } from "../components/brief-signup";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
 
@@ -88,6 +89,7 @@ export function PaperPage({ slug: slugProp }: { slug?: string } = {}) {
         depositRef={item.deposit_ref}
         license={item.license}
       />
+      <BriefSignup />
     </article>
   );
 }

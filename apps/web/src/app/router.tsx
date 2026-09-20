@@ -236,17 +236,11 @@ const NamePage = React.lazy(() =>
 const TablePage = React.lazy(() =>
   import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TablePage })),
 );
-const EncountersPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.EncountersPage })),
-);
 const LookingForPage = React.lazy(() =>
   import("@/modules/site/pages/house-pages").then((m) => ({ default: m.LookingForPage })),
 );
 const PrivacyPage = React.lazy(() =>
   import("@/modules/site/pages/house-pages").then((m) => ({ default: m.PrivacyPage })),
-);
-const TermsPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TermsPage })),
 );
 const AdminPeoplePage = React.lazy(() =>
   import("@/modules/wall/pages/admin-people-page").then((m) => ({ default: m.AdminPeoplePage })),
@@ -270,6 +264,76 @@ const AdminVoicePage = React.lazy(() =>
 );
 const AdminGlossaryPage = React.lazy(() =>
   import("@/modules/wall/pages/admin-misc-pages").then((m) => ({ default: m.AdminGlossaryPage })),
+);
+const TermsIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.TermsIndexPage })),
+);
+const TermsDocPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.TermsDocPage })),
+);
+const HandsPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.HandsPage })),
+);
+const HandPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.HandPage })),
+);
+const EncountersPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.EncountersPage })),
+);
+const EncounterPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.EncounterPage })),
+);
+const SafeguardingPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.SafeguardingPage })),
+);
+const ChildrenPhotographyPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.ChildrenPhotographyPage })),
+);
+const BriefConfirmPage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.BriefConfirmPage })),
+);
+const BriefUnsubscribePage = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.BriefUnsubscribePage })),
+);
+const CustodianPage = React.lazy(() =>
+  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CustodianPage })),
+);
+const FriendsTermsNote = React.lazy(() =>
+  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.FriendsTermsNote })),
+);
+const AdminRolesPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminRolesPage })),
+);
+const AdminEncountersPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({
+    default: m.AdminEncountersPage,
+  })),
+);
+const AdminTreasuryPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminTreasuryPage })),
+);
+const AdminGuildPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminGuildPage })),
+);
+const AdminCommonsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminCommonsPage })),
+);
+const AdminConcernsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminConcernsPage })),
+);
+const AdminDealingsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({
+    default: m.AdminDealingsPage,
+  })),
+);
+const CertificatePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({ default: m.CertificatePage })),
+);
+const InvoicePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({ default: m.InvoicePage })),
+);
+const AdminBriefPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-brief-page").then((m) => ({ default: m.AdminBriefPage })),
 );
 const DashboardPage = React.lazy(() =>
   import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
@@ -354,13 +418,30 @@ function publicRouteChildren() {
     { path: "name", element: withSuspense(<NamePage />) },
     { path: "table", element: withSuspense(<TablePage />) },
     { path: "commons", element: withSuspense(<CommonsPage />) },
-    { path: "friends", element: withSuspense(<ApplyPage />) },
+    {
+      path: "friends",
+      element: (
+        <>
+          {withSuspense(<ApplyPage />)}
+          {withSuspense(<FriendsTermsNote />)}
+        </>
+      ),
+    },
     { path: "encounters", element: withSuspense(<EncountersPage />) },
+    { path: "encounters/:slug", element: withSuspense(<EncounterPage />) },
     { path: "canon", element: withSuspense(<CanonIndexPage />) },
     { path: "canon/:doc", element: withSuspense(<CanonDocRoute />) },
     { path: "looking-for", element: withSuspense(<LookingForPage />) },
     { path: "privacy", element: withSuspense(<PrivacyPage />) },
-    { path: "terms", element: withSuspense(<TermsPage />) },
+    { path: "terms", element: withSuspense(<TermsIndexPage />) },
+    { path: "terms/:kind", element: withSuspense(<TermsDocPage />) },
+    { path: "hands", element: withSuspense(<HandsPage />) },
+    { path: "hands/:slug", element: withSuspense(<HandPage />) },
+    { path: "safeguarding", element: withSuspense(<SafeguardingPage />) },
+    { path: "safeguarding/children", element: withSuspense(<ChildrenPhotographyPage />) },
+    { path: "custodian", element: withSuspense(<CustodianPage />) },
+    { path: "brief/confirm", element: withSuspense(<BriefConfirmPage />) },
+    { path: "brief/unsubscribe", element: withSuspense(<BriefUnsubscribePage />) },
     { path: "a-voice", element: withSuspense(<AVoicePage />) },
     { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
     { path: "contact", element: withSuspense(<ContactPage />) },
@@ -533,6 +614,56 @@ export const router = createBrowserRouter([
             path: "words",
             element: withSuspense(<ProtectedRoute permission="publishing.item.update" />),
             children: [{ index: true, element: withSuspense(<AdminGlossaryPage />) }],
+          },
+          {
+            path: "hands",
+            element: withSuspense(<ProtectedRoute permission="governance.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminRolesPage />) }],
+          },
+          {
+            path: "encounters",
+            element: withSuspense(<ProtectedRoute permission="encounters.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminEncountersPage />) }],
+          },
+          {
+            path: "treasury",
+            element: withSuspense(<ProtectedRoute permission="treasury.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminTreasuryPage />) }],
+          },
+          {
+            path: "guild",
+            element: withSuspense(<ProtectedRoute permission="guild.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminGuildPage />) }],
+          },
+          {
+            path: "commons",
+            element: withSuspense(<ProtectedRoute permission="commons.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminCommonsPage />) }],
+          },
+          {
+            path: "concerns",
+            element: withSuspense(<ProtectedRoute permission="safeguarding.read" />),
+            children: [{ index: true, element: withSuspense(<AdminConcernsPage />) }],
+          },
+          {
+            path: "wall/dealings",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminDealingsPage />) }],
+          },
+          {
+            path: "wall/certificate/:workId",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<CertificatePage />) }],
+          },
+          {
+            path: "wall/invoice/:id",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<InvoicePage />) }],
+          },
+          {
+            path: "brief",
+            element: withSuspense(<ProtectedRoute permission="mail.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminBriefPage />) }],
           },
           {
             path: "pigeon-submissions",

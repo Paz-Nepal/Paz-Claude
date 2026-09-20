@@ -205,3 +205,173 @@ export const useAddSattalCorrection = () =>
 export const useSaveReader = () => useAdminRpc("save_outside_reader", [["sattal-readers"]]);
 export const useAddChronicleLine = () => useAdminRpc("add_chronicle_line", [["chronicle"]]);
 export const useSaveGlossaryTerm = () => useAdminRpc("save_glossary_term", [["glossary"]]);
+
+// ---------------------------------------------------------------------
+// The rest of the house: hands, encounters, treasury, guild, commons,
+// dealings, safeguarding and the Brief.
+// ---------------------------------------------------------------------
+export type AdminRole = Views["admin_roles"]["Row"];
+export type AdminEncounter = Views["admin_encounters"]["Row"];
+export type AdminTreasuryAccount = Views["admin_treasury_accounts"]["Row"];
+export type AdminGuildMaker = Views["admin_guild_makers"]["Row"];
+export type CommonsRow = Views["commons_register"]["Row"];
+export type CommonsTable = Views["commons_tables_kept"]["Row"];
+export type CommonsAssembly = Views["commons_assemblies"]["Row"];
+export type AdminDealing = Views["admin_dealings"]["Row"];
+export type AdminWorkTerms = Views["admin_work_terms"]["Row"];
+export type SattalLedgerRow = Views["sattal_ledger"]["Row"];
+export type ConcernRow = Views["concerns"]["Row"];
+
+const list = <T>(view: string, order: string, key: string[]) =>
+  selectAll<T>((from, to) => {
+    let q = api()
+      .from(view as never)
+      .select("*") as unknown as {
+      order: (c: string, o?: { ascending: boolean }) => typeof q;
+      range: (
+        a: number,
+        b: number,
+      ) => PromiseLike<{ data: T[] | null; error: PostgrestError | null }>;
+    };
+    q = q.order(order, { ascending: false });
+    for (const k of key) q = q.order(k);
+    return q.range(from, to);
+  });
+
+export const useAdminRoles = () =>
+  useQuery({
+    queryKey: ["admin-roles"],
+    queryFn: () =>
+      selectAll<AdminRole>((from, to) =>
+        api().from("admin_roles").select("*").order("sort").order("id").range(from, to),
+      ),
+  });
+export const useAdminEncounters = () =>
+  useQuery({
+    queryKey: ["admin-encounters"],
+    queryFn: () => list<AdminEncounter>("admin_encounters", "starts_on", ["id"]),
+  });
+export const useAdminTreasury = () =>
+  useQuery({
+    queryKey: ["admin-treasury"],
+    queryFn: () => list<AdminTreasuryAccount>("admin_treasury_accounts", "year_span", ["id"]),
+  });
+export const useAdminGuild = () =>
+  useQuery({
+    queryKey: ["admin-guild"],
+    queryFn: () =>
+      selectAll<AdminGuildMaker>((from, to) =>
+        api()
+          .from("admin_guild_makers")
+          .select("*")
+          .order("person_name")
+          .order("id")
+          .range(from, to),
+      ),
+  });
+export const useCommonsRegister = () =>
+  useQuery({
+    queryKey: ["commons-register"],
+    queryFn: () =>
+      selectAll<CommonsRow>((from, to) =>
+        api().from("commons_register").select("*").order("rung").order("person_id").range(from, to),
+      ),
+  });
+export const useCommonsTables = () =>
+  useQuery({
+    queryKey: ["commons-tables"],
+    queryFn: () => list<CommonsTable>("commons_tables_kept", "held_on", ["id"]),
+  });
+export const useCommonsAssemblies = () =>
+  useQuery({
+    queryKey: ["commons-assemblies"],
+    queryFn: () => list<CommonsAssembly>("commons_assemblies", "held_on", ["id"]),
+  });
+export const useAdminDealings = () =>
+  useQuery({
+    queryKey: ["admin-dealings"],
+    queryFn: () => list<AdminDealing>("admin_dealings", "created_at", ["id"]),
+  });
+export const useWorkTermsRows = () =>
+  useQuery({
+    queryKey: ["admin-work-terms"],
+    queryFn: () =>
+      selectAll<AdminWorkTerms>((from, to) =>
+        api().from("admin_work_terms").select("*").order("work_id").range(from, to),
+      ),
+  });
+export const useSattalLedger = () =>
+  useQuery({
+    queryKey: ["sattal-ledger"],
+    queryFn: () =>
+      selectAll<SattalLedgerRow>((from, to) =>
+        api().from("sattal_ledger").select("*").order("piece_id").range(from, to),
+      ),
+  });
+export const useConcerns = () =>
+  useQuery({
+    queryKey: ["concerns"],
+    queryFn: () => list<ConcernRow>("concerns", "submitted_at", ["id"]),
+  });
+
+export const useSaveRole = () => useAdminRpc("save_role", [["admin-roles"], ["hands"]]);
+export const useSaveEncounter = () =>
+  useAdminRpc("save_encounter", [["admin-encounters"], ["encounters-calendar"]]);
+export const useSaveTreasury = () =>
+  useAdminRpc("save_treasury_account", [["admin-treasury"], ["treasury-accounts"]]);
+export const useSaveGuildMaker = () =>
+  useAdminRpc("save_guild_maker", [["admin-guild"], ["guild-register"], ["admin-wall-people"]]);
+export const useRecordPunchDestruction = () =>
+  useAdminRpc("record_punch_destruction", [["admin-guild"], ["guild-register"]]);
+export const useSaveCommonsPerson = () =>
+  useAdminRpc("save_commons_person", [["commons-register"]]);
+export const useReportTableKept = () => useAdminRpc("report_table_kept", [["commons-tables"]]);
+export const useConfirmTableKept = () =>
+  useAdminRpc("confirm_table_kept", [["commons-tables"], ["chronicle"]]);
+export const useSaveAssembly = () => useAdminRpc("save_assembly", [["commons-assemblies"]]);
+export const useSaveDealing = () => useAdminRpc("save_dealing", [["admin-dealings"]]);
+export const useRecordDealingStage = () =>
+  useAdminRpc("record_dealing_stage", [
+    ["admin-dealings"],
+    ["admin-wall-works"],
+    ["admin-work-parts"],
+  ]);
+export const useSaveWorkTerms = () => useAdminRpc("save_work_terms", [["admin-work-terms"]]);
+export const useSaveSattalLedger = () => useAdminRpc("save_sattal_ledger", [["sattal-ledger"]]);
+
+/** Staff-only reads that return rows through a function rather than a view. */
+export function useConcurrenceRoll(year: number) {
+  return useQuery({
+    queryKey: ["concurrence-roll", year],
+    queryFn: async () =>
+      callRpc<
+        Array<{ person_id: string; name: string; roll_size: number; folds_into_assembly: boolean }>
+      >("concurrence_roll", { p_year: year }),
+  });
+}
+export function useAssemblyReadiness() {
+  return useQuery({
+    queryKey: ["assembly-readiness"],
+    queryFn: async () =>
+      callRpc<
+        Array<{
+          denizens: number;
+          adopted_on: string | null;
+          five_years_on: string | null;
+          ready: boolean;
+        }>
+      >("assembly_readiness", {}),
+  });
+}
+
+/** The CRM's own lookup: a person is found by the email they gave. */
+export async function findPersonByEmail(
+  email: string,
+): Promise<{ id: string; name: string } | null> {
+  const rows = await callRpc<Array<{ id: string; display_name: string }> | null>(
+    "find_person_by_email",
+    { p_email: email },
+  );
+  const row = rows?.[0];
+  return row ? { id: row.id, name: row.display_name } : null;
+}

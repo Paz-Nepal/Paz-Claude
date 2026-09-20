@@ -17,6 +17,8 @@ import {
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
+import { Mark } from "../components/mark";
+import { TermsLink } from "./more-pages";
 import {
   FormUnavailable,
   PersonLink,
@@ -142,6 +144,7 @@ export function WorkPage() {
               {/* The gallery's one line explaining the struck row is blocked:
                   the house supplies it as the published page "struck-row".
                   Nothing is written here in its place. */}
+              <Mark />
               {struckBody && <RichText doc={struckBody} className="rich-text type-small" />}
             </section>
           )}
@@ -262,6 +265,9 @@ function Enquiry({ workId }: { workId: string }) {
       <h2 id="enquiry-h" className="type-h3">
         Write about this work
       </h2>
+      <p className="type-small">
+        <TermsLink kind="painters">The painter&rsquo;s terms</TermsLink>.
+      </p>
       <p className="type-small">
         A sale is a conversation. A person reads every message and writes back about condition,
         framing, shipping and the rest.

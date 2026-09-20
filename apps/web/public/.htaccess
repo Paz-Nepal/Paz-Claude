@@ -16,7 +16,11 @@
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  RewriteRule ^ index.html [L]
+  # Unmatched paths get the bare app shell, never a prerendered page: the
+  # file at index.html is the home page, and serving it (with its canonical
+  # link) for every other address would file the home page under all of
+  # them (Build Programme 2.1). app.html is the untouched shell.
+  RewriteRule ^ app.html [L]
 </IfModule>
 
 # Fallback for the (rare) Apache build without mod_rewrite: a 404
@@ -26,5 +30,5 @@
 # router.tsx already renders a real "not found" page client-side) and
 # search engines.
 <IfModule !mod_rewrite.c>
-  ErrorDocument 404 /index.html
+  ErrorDocument 404 /app.html
 </IfModule>

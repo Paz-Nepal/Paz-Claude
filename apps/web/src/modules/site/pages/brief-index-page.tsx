@@ -23,7 +23,6 @@ export function BriefIndexPage() {
       <SeriesIndexList
         items={items.data}
         basePath="/brief"
-        emptyTitle="No issues archived yet."
         secondary={(item) => (item.published_at ? formatKathmanduDate(item.published_at) : null)}
       />
     </div>

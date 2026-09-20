@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePeople, useShows, useWorkImages, useWorks } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
 import { PersonLink, WorkPicture, useEraDate } from "../components/wall-parts";
@@ -50,7 +51,7 @@ export function WallPage() {
           <StatePanel title="Couldn't load this." description={toAppError(people.error).message} />
         )}
         {people.data && current.length === 0 && (
-          <p className="type-body mt-4">No one is listed yet.</p>
+          <p className="type-body mt-4">{emptyState("wall")}</p>
         )}
         <ul className="mt-6 flex flex-col gap-2">
           {current.map((p) => (
@@ -109,7 +110,9 @@ export function WallPage() {
         <h2 id="wall-shows" className="type-h2">
           Shows
         </h2>
-        {shows.data && shows.data.length === 0 && <p className="type-body mt-4">No shows yet.</p>}
+        {shows.data && shows.data.length === 0 && (
+          <p className="type-body mt-4">{emptyState("shows")}</p>
+        )}
         <ol className="mt-6 flex flex-col gap-4">
           {(shows.data ?? []).map((s) => (
             <li key={s.id}>

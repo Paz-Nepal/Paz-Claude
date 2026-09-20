@@ -70,6 +70,12 @@ if (!existsSync(join(DIST_DIR, "index.html"))) {
 const API = `${SUPABASE_URL}/rest/v1`;
 const PAGE = 1000;
 
+// The same file the app reads (apps/web/src/modules/site/empty-states.json),
+// so the static pages and the app never say different things.
+const EMPTY = JSON.parse(
+  readFileSync(new URL("../apps/web/src/modules/site/empty-states.json", import.meta.url), "utf8"),
+);
+
 const HEADERS = {
   apikey: SUPABASE_ANON_KEY,
   Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
@@ -250,6 +256,8 @@ const plain = (doc) =>
 const hasDoc = (doc) => Array.isArray(doc?.content) && doc.content.length > 0;
 const hasNe = (d) => Boolean(d.title_ne?.trim()) || hasDoc(d.body_ne);
 
+const PAGES = new Map();
+
 const SERIES = {
   paper: { path: "papers", name: "Paz Papers", fn: "get_paper", byline: "A Paz Paper" },
   brief: { path: "brief", name: "Brief", fn: "get_brief", byline: null },
@@ -269,7 +277,7 @@ const NAV = [
   ["/wall", "The Wall"],
   ["/press", "The Press"],
   ["/house", "The House"],
-  ["/the-record", "The Record"],
+  ["/record", "The Record"],
   ["/search", "Search"],
 ];
 const FOOT = [
@@ -297,7 +305,16 @@ function chrome(main) {
   ].join("\n");
 }
 
-function head({ title, description, path, ogType = "website", ld, noindex, canonicalPath }) {
+function head({
+  title,
+  description,
+  path,
+  ogType = "website",
+  ld,
+  noindex,
+  canonicalPath,
+  alternateNe,
+}) {
   const fullTitle = title && title !== SITE_NAME ? `${esc(title)} · ${SITE_NAME}` : SITE_NAME;
   const canon = canonicalPath ?? path;
   const nePath = canon === "/" ? "/ne" : `/ne${canon}`;
@@ -305,9 +322,6 @@ function head({ title, description, path, ogType = "website", ld, noindex, canon
   const tags = [
     `<title>${fullTitle}</title>`,
     `<link rel="canonical" href="${url}" />`,
-    `<link rel="alternate" hreflang="en" href="${SITE_URL}${canon}" />`,
-    `<link rel="alternate" hreflang="ne" href="${SITE_URL}${nePath}" />`,
-    `<link rel="alternate" hreflang="x-default" href="${SITE_URL}${canon}" />`,
     `<meta name="robots" content="${noindex ? "noindex, follow" : "index, follow"}" />`,
     `<meta property="og:title" content="${fullTitle}" />`,
     `<meta property="og:type" content="${ogType}" />`,
@@ -318,6 +332,16 @@ function head({ title, description, path, ogType = "website", ld, noindex, canon
   ];
   // The house's own description of itself is blocked: no description tag
   // is written unless a page has words of its own to put there.
+  // hreflang only where the Nepali page is genuinely prerendered: an
+  // alternate pointing at a page with no served markup misleads crawlers
+  // (Build Programme 2.1).
+  if (alternateNe) {
+    tags.push(
+      `<link rel="alternate" hreflang="en" href="${SITE_URL}${canon}" />`,
+      `<link rel="alternate" hreflang="ne" href="${SITE_URL}${nePath}" />`,
+      `<link rel="alternate" hreflang="x-default" href="${SITE_URL}${canon}" />`,
+    );
+  }
   if (description) {
     const d = esc(description);
     tags.push(
@@ -333,6 +357,11 @@ function head({ title, description, path, ogType = "website", ld, noindex, canon
 let baseHtml = "";
 let written = 0;
 
+// Every indexable page actually written, keyed by canonical path. The
+// sitemap is generated from this and from nothing else, and every entry is
+// checked against a file on disk (Build Programme 2.1).
+const SITEMAP = new Map();
+
 function writePage(path, opts, main, lang = "en") {
   let html = baseHtml
     .replace(/<title>.*?<\/title>/s, "")
@@ -344,6 +373,20 @@ function writePage(path, opts, main, lang = "en") {
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "index.html"), html, "utf8");
   written++;
+  if (lang === "en" && !opts.noindex) {
+    const canon = opts.canonicalPath ?? path;
+    const prior = SITEMAP.get(canon);
+    SITEMAP.set(canon, {
+      lastmod: opts.lastmod ?? prior?.lastmod ?? null,
+      priority: opts.priority ?? prior?.priority ?? "0.5",
+      ne: Boolean(prior?.ne),
+    });
+  }
+  if (lang === "ne") {
+    const canon = opts.canonicalPath ?? path;
+    const prior = SITEMAP.get(canon);
+    if (prior) prior.ne = true;
+  }
 }
 
 function writeText(relPath, text) {
@@ -444,6 +487,9 @@ async function renderItems(items) {
         ogType: "article",
         ld,
         canonicalPath: canonical,
+        alternateNe: hasNe(detail),
+        lastmod: detail.deposited_at?.slice(0, 10) ?? null,
+        priority: "0.7",
       };
       const main = itemMain({
         title: detail.title,
@@ -489,6 +535,13 @@ async function renderItems(items) {
         (r) => r[0] ?? null,
       );
       if (!detail) continue;
+      if (type === "page")
+        PAGES.set(slug, {
+          slug,
+          title: detail.title,
+          subtitle: detail.subtitle,
+          body: detail.body,
+        });
       const path = type === "article" ? `/journal/${slug}` : `/${slug}`;
       const opts = {
         title: detail.title,
@@ -497,7 +550,8 @@ async function renderItems(items) {
       };
       const build = (t, doc) =>
         `<article><h1>${esc(t)}</h1>${detail.subtitle ? `<p>${esc(detail.subtitle)}</p>` : ""}${renderDoc(doc)}</article>`;
-      writePage(path, opts, build(detail.title, detail.body));
+      // The canon documents live at /canon/<n>, never at their page slug.
+      if (!slug.startsWith("canon-")) writePage(path, opts, build(detail.title, detail.body));
       if (hasNe(detail)) {
         writePage(
           path,
@@ -588,7 +642,7 @@ function renderWall(d) {
   writePage(
     "/wall",
     { title: "The Wall" },
-    `<h1>The Wall</h1><h2>People</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>Work</h2><ul>${listed.map(workCard).join("")}</ul><h2>Shows</h2><ol>${d.shows
+    `<h1>The Wall</h1><h2>People</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>Work</h2><ul>${listed.map(workCard).join("")}</ul><h2>Shows</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
       .map(
         (s) =>
           `<li>${link(`/shows/${s.slug}`, s.title)} <span>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</span></li>`,
@@ -611,7 +665,7 @@ function renderWall(d) {
         ? ""
         : "<p>This page is kept as a record. The house does not currently present this person.</p>",
       p.statement ? `<h2>In their own words</h2><p>${esc(p.statement)}</p>` : "",
-      `<h2>Work</h2><ul>${works.map(workCard).join("") || "<li>No work listed.</li>"}</ul>`,
+      `<h2>Work</h2><ul>${works.map(workCard).join("") || `<li>${esc(EMPTY.artistNoWork)}</li>`}</ul>`,
       hung.length || elsewhere.length
         ? `<h2>Where they have shown</h2><ul>${hung
             .map(
@@ -725,7 +779,7 @@ function renderWall(d) {
       { title: s.title },
       `<article><h1>${esc(s.title)}</h1><p>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</p>${
         s.text ? `<p><em>The house writes</em></p><p>${esc(s.text)}</p>` : ""
-      }<h2>What hung</h2><ul>${hung.map(workCard).join("") || "<li>Nothing is listed yet.</li>"}</ul></article>`,
+      }<h2>What hung</h2><ul>${hung.map(workCard).join("") || `<li>${esc(EMPTY.wall)}</li>`}</ul></article>`,
     );
   }
 }
@@ -745,14 +799,14 @@ function renderSattal(d) {
     `<h1>The Sattal</h1><p><strong>${esc(SPEAKER.signed)}</strong></p><p>Work the house shows, sells or has formed, and anything critical of PAZ, is published here only when an author unconnected to it has written it and a named outside reader, whom the house cannot overrule, has accepted it.</p><p>${
       readers.length
         ? `${readers.length === 1 ? "The outside reader is" : "The outside readers are"} ${esc(readers.map((r) => r.name).join(", "))}.`
-        : "No outside reader has been named yet, so nothing in that category is published."
+        : EMPTY.sattalNoReader
     }</p><ol>${
       d.pieces
         .map(
           (x) =>
             `<li>${esc(FORM[x.form] ?? x.form)} no. ${x.piece_number}<br />${link(`/record/${x.deposit_ref}`, x.title)}<br />${esc(x.person_name)}</li>`,
         )
-        .join("") || "<li>Nothing is published yet.</li>"
+        .join("") || `<li>${esc(EMPTY.sattal)}</li>`
     }</ol>`,
   );
 
@@ -858,34 +912,11 @@ function renderChronicle(lines) {
   writePage(
     "/chronicle",
     { title: "The Chronicle" },
-    `<h1>The Chronicle</h1><ol>${lines.map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`).join("") || "<li>Nothing is recorded yet.</li>"}</ol>`,
+    `<h1>The Chronicle</h1><ol>${lines.map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`).join("") || `<li>${esc(EMPTY.chronicle)}</li>`}</ol>`,
   );
   writeText(
     "chronicle.txt",
-    lines.map((l) => `${l.line_on}  ${l.line}`).join("\n") || "Nothing is recorded yet.",
-  );
-}
-
-function renderRecord(entries) {
-  writePage(
-    "/record",
-    { title: "The Record" },
-    `<h1>The Record</h1><ol>${
-      entries
-        .map(
-          (e) =>
-            `<li>${esc(e.deposit_number)} · ${esc(dualEra(e.deposited_at))}<br />${link(e.link, e.title)}<br />${esc(e.provenance)}</li>`,
-        )
-        .join("") || "<li>Nothing deposited yet.</li>"
-    }</ol>`,
-  );
-  writeText(
-    "record.txt",
-    entries
-      .map(
-        (e) => `${e.deposit_number}  ${dualEra(e.deposited_at)}  ${e.title}  ${SITE_URL}${e.link}`,
-      )
-      .join("\n") || "Nothing deposited yet.",
+    lines.map((l) => `${l.line_on}  ${l.line}`).join("\n") || EMPTY.chronicle,
   );
 }
 
@@ -912,7 +943,7 @@ function renderHome(d) {
     `<h1>${esc(SITE_NAME)}</h1><p>Patan, Lalitpur</p><h2>The Wall</h2><ul>${
       recent
         .map((w) => `<li>${esc(w.person_name)}<br />${link(`/works/${w.slug}`, w.title)}</li>`)
-        .join("") || "<li>No work is listed yet.</li>"
+        .join("") || `<li>${esc(EMPTY.wall)}</li>`
     }</ul><h2>The Sattal</h2><ol>${d.pieces
       .slice(0, 3)
       .map(
@@ -923,7 +954,7 @@ function renderHome(d) {
       .map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`)
       .join("")}</ol><nav aria-label="The six organs">${[
       ["/house", "House"],
-      ["/the-record", "Record"],
+      ["/record", "Record"],
       ["/guild", "Guild"],
       ["/press", "Press"],
       ["/hearth", "Hearth"],
@@ -934,8 +965,327 @@ function renderHome(d) {
   );
 }
 
+// ---------------------------------------------------------------------
+// Every remaining public route (Build Programme 2.1): the series indexes,
+// the six organs, the deposit register, programmes, Friends, and the pages
+// whose words the house supplies. Empty rooms are written too, with the
+// house's own empty sentence and never an instruction to the desk.
+// ---------------------------------------------------------------------
+const SERIES_INDEX = [
+  {
+    type: "paper",
+    path: "/papers",
+    title: "Papers",
+    note: "Long-form essays. Numbered, permanent.",
+  },
+  { type: "brief", path: "/brief", title: "Brief" },
+  { type: "dispatch", path: "/dispatch", title: "Dispatch" },
+  { type: "pigeon_post", path: "/pigeon-post", title: "Pigeon Post" },
+  { type: "annual", path: "/annual", title: "Annual" },
+];
+
+function renderSeriesIndexes(items, deposits) {
+  const byRef = new Map(deposits.map((d) => [d.deposit_number, d]));
+  for (const s of SERIES_INDEX) {
+    const rows = items.filter((i) => i.type === s.type);
+    writePage(
+      s.path,
+      { title: s.title, priority: "0.7" },
+      `<h1>${esc(s.title)}</h1>${s.note ? `<p>${esc(s.note)}</p>` : ""}<ul>${
+        rows
+          .map((i) => {
+            const to = i.deposit_ref ? `/record/${i.deposit_ref}` : `${s.path}/${i.slug}`;
+            const d = i.deposit_ref ? byRef.get(i.deposit_ref) : null;
+            return `<li>${link(to, i.title)}${d ? ` <span>${esc(dualEra(d.deposited_at))}</span>` : ""}</li>`;
+          })
+          .join("") || `<li>${esc(EMPTY.series)}</li>`
+      }</ul>`,
+    );
+  }
+}
+
+function pageBody(pagesBySlug, slug) {
+  const p = pagesBySlug.get(slug);
+  return p ? renderDoc(p.body) : "";
+}
+
+const ORGAN_LINKS = {
+  house: [
+    ["/hearth", "The Hearth"],
+    ["/guild", "The Guild"],
+    ["/press", "The Press"],
+    ["/record", "The Record"],
+    ["/treasury", "The Treasury"],
+    ["/chronicle", "The Chronicle"],
+    ["/commons", "The Commons"],
+    ["/friends", "Friends of PAZ"],
+    ["/table", "The Table"],
+    ["/encounters", "Encounters"],
+    ["/name", "The name"],
+    ["/canon", "The Canon"],
+  ],
+  record: [
+    ["/record/deposits", "The deposit register"],
+    ["/chronicle", "The Chronicle"],
+  ],
+  press: [
+    ...SERIES_INDEX.map((s) => [s.path, s.title]),
+    ["/sattal", "The Sattal"],
+    ["/send-a-pigeon", "Send a pigeon"],
+  ],
+};
+
+function renderOrgans(pagesBySlug, extra = {}) {
+  const ORGANS = [
+    ["house", "The House"],
+    ["hearth", "The Hearth"],
+    ["guild", "The Guild"],
+    ["press", "The Press"],
+    ["record", "The Record"],
+    ["treasury", "The Treasury"],
+  ];
+  for (const [slug, title] of ORGANS) {
+    const p = pagesBySlug.get(slug);
+    const links = (ORGAN_LINKS[slug] ?? [])
+      .map(([to, label]) => `<li>${link(to, label)}</li>`)
+      .join("");
+    writePage(
+      `/${slug}`,
+      {
+        title: p?.title || title,
+        description: p?.subtitle || null,
+        priority: "0.8",
+      },
+      `<h1>${esc(p?.title || title)}</h1><p>An organ of the house</p>${p ? renderDoc(p.body) : ""}${
+        extra[slug] ?? ""
+      }${links ? `<nav aria-label="In ${esc(title)}"><ul>${links}</ul></nav>` : ""}`,
+    );
+  }
+}
+
+function renderDeposits(entries) {
+  writePage(
+    "/record/deposits",
+    { title: "The deposit register", priority: "0.6" },
+    `<h1>The deposit register</h1><ol>${
+      entries
+        .map(
+          (e) =>
+            `<li id="${esc(e.deposit_number)}">${esc(e.deposit_number)} · ${esc(dualEra(e.deposited_at))}<br />${link(e.link, e.title)}<br />${esc(e.provenance)}</li>`,
+        )
+        .join("") || `<li>${esc(EMPTY.deposits)}</li>`
+    }</ol>`,
+  );
+  writeText(
+    "record.txt",
+    entries
+      .map(
+        (e) => `${e.deposit_number}  ${dualEra(e.deposited_at)}  ${e.title}  ${SITE_URL}${e.link}`,
+      )
+      .join("\n") || EMPTY.deposits,
+  );
+}
+
+function renderProgrammes(sessions) {
+  const bySlug = new Map();
+  for (const s of sessions) {
+    if (!s.program_slug) continue;
+    if (!bySlug.has(s.program_slug)) bySlug.set(s.program_slug, []);
+    bySlug.get(s.program_slug).push(s);
+  }
+  const row = (s) =>
+    `<li>${esc(s.starts_at ? gregorian(s.starts_at) : "")}${s.venue_name ? ` · ${esc(s.venue_name)}` : ""}</li>`;
+  writePage(
+    "/programmes",
+    { title: "Programmes", priority: "0.6" },
+    `<h1>Programmes</h1><ul>${
+      [...bySlug.entries()]
+        .map(
+          ([slug, rows]) =>
+            `<li>${link(`/programmes/${slug}`, rows[0].program_title)}<ul>${rows.map(row).join("")}</ul></li>`,
+        )
+        .join("") || `<li>${esc(EMPTY.encounters)}</li>`
+    }</ul>`,
+  );
+  for (const [slug, rows] of bySlug) {
+    writePage(
+      `/programmes/${slug}`,
+      { title: rows[0].program_title, priority: "0.5" },
+      `<h1>${esc(rows[0].program_title)}</h1><ul>${rows.map(row).join("")}</ul>`,
+    );
+  }
+}
+
+function renderFriends(tiers) {
+  writePage(
+    "/friends",
+    { title: "Friends of PAZ", priority: "0.5" },
+    `<h1>Friends of PAZ</h1><ul>${tiers
+      .map(
+        (t) =>
+          `<li><strong>${esc(t.name)}</strong> · ${esc(money(t.annual_fee_cents, "NPR"))} a year${
+            t.description ? `<br />${esc(t.description)}` : ""
+          }</li>`,
+      )
+      .join("")}</ul>${formNote("Applying")}`,
+  );
+}
+
+function formNote(what) {
+  return `<p>${esc(what)} needs JavaScript.${
+    CONTACT_EMAIL ? ` Write to ${link(`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL)} instead.` : ""
+  }</p>`;
+}
+
+const LADDER = ["Guest", "Companion", "Denizen", "Steward", "Elder", "Ancestor"];
+
+// Pages whose words the house supplies: written from the published page of
+// the same slug if there is one, otherwise the plain shell.
+const SHELLS = [
+  ["name", "The name"],
+  ["table", "The Table"],
+  ["encounters", "Encounters"],
+  ["looking-for", "Looking for"],
+  ["privacy", "Privacy"],
+  ["terms", "Terms"],
+];
+
+function renderShells(pagesBySlug, written) {
+  for (const [slug, title] of SHELLS) {
+    if (written.has(`/${slug}`)) continue;
+    writePage(
+      `/${slug}`,
+      { title, priority: "0.4" },
+      `<h1>${esc(title)}</h1><p>This page has not been written yet.</p>`,
+    );
+  }
+  if (!written.has("/commons")) {
+    writePage(
+      "/commons",
+      { title: "The Commons", priority: "0.5" },
+      `<h1>The Commons</h1>${pageBody(pagesBySlug, "commons") || "<p>This page has not been written yet.</p>"}<h2>The ladder</h2><ol>${LADDER.map((r) => `<li>${esc(r)}</li>`).join("")}</ol><p>${esc(EMPTY.commons)}</p>`,
+    );
+  }
+  writePage(
+    "/canon",
+    { title: "The Canon", priority: "0.5" },
+    `<h1>The Canon</h1>${
+      [...pagesBySlug.values()]
+        .filter((p) => p.slug.startsWith("canon-"))
+        .map((p) => `<p>${link(`/canon/${p.slug.replace(/^canon-/, "")}`, p.title)}</p>`)
+        .join("") || "<p>No document has been published yet.</p>"
+    }`,
+  );
+  for (const p of pagesBySlug.values()) {
+    if (!p.slug.startsWith("canon-")) continue;
+    const doc = p.slug.replace(/^canon-/, "");
+    writePage(
+      `/canon/${doc}`,
+      { title: p.title, priority: "0.5" },
+      `<h1>${esc(p.title)}</h1>${renderDoc(p.body)}`,
+    );
+  }
+  writePage(
+    "/contact",
+    { title: "Contact", priority: "0.4" },
+    `<h1>Contact</h1>${formNote("Writing from this page")}`,
+  );
+  writePage(
+    "/send-a-pigeon",
+    { title: "Send a pigeon", priority: "0.4" },
+    `<h1>Send a pigeon</h1>${formNote("Sending a pigeon")}`,
+  );
+  writePage(
+    "/a-voice",
+    { title: "A voice", noindex: true },
+    `<h1>A voice</h1>${pageBody(pagesBySlug, "a-voice")}${formNote("This form")}`,
+  );
+  writePage(
+    "/search",
+    { title: "Search", noindex: true },
+    `<h1>Search</h1><p>Search needs JavaScript. ${link("/record/deposits", "The deposit register")} lists everything deposited.</p>`,
+  );
+}
+
+// ---------------------------------------------------------------------
+// The sitemap comes from what was actually written, and the build fails
+// when an entry has no file or a public route has no page.
+// ---------------------------------------------------------------------
+const APP_ONLY = new Set([
+  "sign-in",
+  "account",
+  "my-registrations",
+  "membership/card",
+  "membership/apply",
+  "membership/directory",
+  "membership/accept-invitation",
+  "journal",
+  "the-record",
+  "visit",
+]);
+
+function checkRoutesAndWriteSitemap() {
+  const problems = [];
+  for (const path of SITEMAP.keys()) {
+    const file = join(DIST_DIR, path === "/" ? "" : path.replace(/^\//, ""), "index.html");
+    if (!existsSync(file)) problems.push(`sitemap entry ${path} has no file (${file})`);
+  }
+  // Every static public route in the router must have been prerendered.
+  const router = readFileSync(new URL("../apps/web/src/app/router.tsx", import.meta.url), "utf8");
+  const publicPart = router.slice(
+    router.indexOf("function publicRouteChildren"),
+    router.indexOf("export const router"),
+  );
+  for (const m of publicPart.matchAll(/\{\s*path:\s*"([^"]+)"/g)) {
+    const path = m[1];
+    if (path.includes(":") || path === "*" || APP_ONLY.has(path)) continue;
+    const file = join(DIST_DIR, path, "index.html");
+    if (!existsSync(file)) problems.push(`public route /${path} was not prerendered`);
+  }
+  if (problems.length) {
+    console.error(problems.join("\n"));
+    process.exit(1);
+  }
+
+  const entry = (path, meta) => {
+    const loc = `${SITE_URL}${path === "/" ? "/" : path}`;
+    return [
+      "  <url>",
+      `    <loc>${esc(loc)}</loc>`,
+      meta.lastmod ? `    <lastmod>${meta.lastmod}</lastmod>` : null,
+      `    <priority>${meta.priority}</priority>`,
+      // hreflang only for pages whose Nepali page was prerendered too.
+      ...(meta.ne
+        ? [
+            `    <xhtml:link rel="alternate" hreflang="en" href="${esc(loc)}" />`,
+            `    <xhtml:link rel="alternate" hreflang="ne" href="${esc(`${SITE_URL}/ne${path === "/" ? "" : path}`)}" />`,
+          ]
+        : []),
+      "  </url>",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  };
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...[...SITEMAP.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([p, m]) => entry(p, m)),
+    "</urlset>",
+    "",
+  ].join("\n");
+  writeFileSync(join(DIST_DIR, "sitemap.xml"), xml, "utf8");
+  console.log(`sitemap.xml: ${SITEMAP.size} URL(s), each backed by a written file.`);
+}
+
 async function main() {
-  baseHtml = readFileSync(join(DIST_DIR, "index.html"), "utf8");
+  // app.html is the untouched shell every unmatched path falls back to.
+  // index.html becomes the prerendered home page, so it can no longer be
+  // the fallback: serving it for every other address would file the home
+  // page under all of them (Build Programme 2.1).
+  const shell = join(DIST_DIR, "app.html");
+  baseHtml = readFileSync(existsSync(shell) ? shell : join(DIST_DIR, "index.html"), "utf8");
+  if (baseHtml.includes("<main>")) throw new Error("The shell already holds a prerendered page.");
+  writeFileSync(shell, baseHtml, "utf8");
 
   const info = await callRpc("site_info").catch(() => ({}));
   SITE_NAME = info?.["site.name"] || "PAZ";
@@ -958,8 +1308,10 @@ async function main() {
     chronicle,
     glossary,
     record,
+    sessions,
+    tiers,
   ] = await Promise.all([
-    all("published_items", "select=type,slug&order=published_at.desc,id"),
+    all("published_items", "select=type,slug,title,deposit_ref&order=published_at.desc,id"),
     all("wall_people", "select=*&order=name,id"),
     all("wall_works", "select=*&order=work_number.desc"),
     all("wall_work_images", "select=*&order=work_id,frame"),
@@ -975,6 +1327,8 @@ async function main() {
     all("chronicle_lines", "select=*&order=line_on.desc,id.desc"),
     all("glossary_terms", "select=*&order=term,id"),
     all("record_entries", "select=*&order=deposit_number"),
+    all("program_sessions", "select=*&order=starts_at,id"),
+    all("membership_tiers", "select=*&order=annual_fee_cents"),
   ]);
 
   const neCount = await renderItems(items);
@@ -992,9 +1346,25 @@ async function main() {
   });
   renderSattal({ pieces, corrections, readers });
   renderChronicle(chronicle);
-  renderRecord(record);
+  renderDeposits(record);
   renderGlossary(glossary);
   renderHome({ works, pieces, chronicle });
+  renderSeriesIndexes(items, record);
+  renderOrgans(PAGES);
+  renderProgrammes(sessions);
+  renderFriends(tiers);
+  renderShells(PAGES, new Set(SITEMAP.keys()));
+  // Old addresses that moved: a redirect stub for hosts that cannot
+  // consult the redirect table (Build Programme 2.4).
+  for (const [from, to, title] of [
+    ["/the-record", "/record", "The Record"],
+    ["/visit", "/wall", "The Wall"],
+    ["/journal", "/chronicle", "The Chronicle"],
+    ["/membership/apply", "/friends", "Friends of PAZ"],
+  ]) {
+    writeRedirectStub(from, to, title);
+  }
+  checkRoutesAndWriteSitemap();
 
   console.log(
     `Wrote ${written} static page(s) into ${DIST_DIR} (${neCount} Nepali variant(s) where translated text exists), plus plain-text files for every deposit, chronicle.txt and record.txt.`,

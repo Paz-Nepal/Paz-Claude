@@ -133,6 +133,15 @@ the sitemap, the feeds, and plain text copies of everything deposited
 The very first time on a new computer, `docs/runbooks/go-live.md` says
 what to install and which keys to set.
 
+## Two rulings, recorded
+
+- **A chronicle line is a date and one line in the console**, not a line
+  appended to a text file. That is accepted for now. `chronicle.txt` is
+  generated from the console entries on every publish.
+- **A sold work does not show its price.** A record says what a work is,
+  not what it fetched. The Sattal's conflict rule reads "connected to the
+  house" broadly: anyone represented, formed, or holding works.
+
 ## The one thing that needs to be running
 
 Forms (write to the house about a work, send a pigeon, offer a voice,

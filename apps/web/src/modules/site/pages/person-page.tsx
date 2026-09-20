@@ -12,6 +12,7 @@ import {
   useWorks,
 } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { WorkPicture, useEraDate } from "../components/wall-parts";
@@ -90,7 +91,9 @@ export function PersonPage() {
         <h2 id="work" className="type-h2">
           Work
         </h2>
-        {works.data && works.data.length === 0 && <p className="type-body mt-4">No work listed.</p>}
+        {works.data && works.data.length === 0 && (
+          <p className="type-body mt-4">{emptyState("artistNoWork")}</p>
+        )}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {(works.data ?? []).map((w) => {
             const img = whole.get(w.id);

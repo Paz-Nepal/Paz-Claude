@@ -55,29 +55,6 @@ function upsertFeedLink(href: string | null) {
   if (!existing) document.head.appendChild(el);
 }
 
-/** Managed as a set (3 tags, one per hreflang value) rather than the
- * single-tag upsert pattern above, since there's no one "the" alternate
- * link. */
-function upsertAlternateLangLinks(bare: string) {
-  document.head
-    .querySelectorAll('link[rel="alternate"][data-managed-lang]')
-    .forEach((el) => el.remove());
-  const nePath = bare === "/" ? "/ne" : `/ne${bare}`;
-  const entries: Array<[string, string]> = [
-    ["en", `${SITE_URL}${bare}`],
-    ["ne", `${SITE_URL}${nePath}`],
-    ["x-default", `${SITE_URL}${bare}`],
-  ];
-  for (const [hreflang, href] of entries) {
-    const el = document.createElement("link");
-    el.setAttribute("rel", "alternate");
-    el.setAttribute("hreflang", hreflang);
-    el.setAttribute("href", href);
-    el.setAttribute("data-managed-lang", "");
-    document.head.appendChild(el);
-  }
-}
-
 function upsertJsonLd(id: string, data: Record<string, unknown> | null) {
   const existing = document.getElementById(id);
   if (!data) {
@@ -152,7 +129,12 @@ export function DocumentHead(props: DocumentHeadProps) {
     if (description) upsertMeta("name", "description", description);
     else removeMeta("name", "description");
     upsertLink("canonical", url);
-    upsertAlternateLangLinks(path);
+    // No hreflang until the Nepali locale is prerendered: an alternate
+    // that points at a page with no served markup misleads crawlers
+    // (Build Programme 2.1). Remove any left by an earlier render.
+    document.head
+      .querySelectorAll('link[rel="alternate"][data-managed-lang]')
+      .forEach((el) => el.remove());
     upsertFeedLink(feedPath ? `${SITE_URL}${feedPath}` : null);
     upsertMeta("name", "robots", noindex ? "noindex, follow" : "index, follow");
 

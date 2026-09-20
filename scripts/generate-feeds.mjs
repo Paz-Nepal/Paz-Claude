@@ -4,7 +4,7 @@
 // fortnightly serial needs a machine-readable spine ... this is also how
 // third parties mirror you without asking, which is the point"). Same
 // anon-key, dependency-free pattern as scripts/export-content.mjs and
-// scripts/generate-sitemap.mjs.
+// scripts/prerender.mjs (which also writes the sitemap).
 //
 // Usage: SUPABASE_URL=... SUPABASE_ANON_KEY=... node scripts/generate-feeds.mjs [outDir] [siteUrl]
 // Writes <outDir>/<series-path>/feed.xml for each series and
@@ -132,22 +132,22 @@ async function main() {
   const recordItems = record.map((r) =>
     rssItem({
       title: `${r.deposit_number} · ${r.title}`,
-      link: r.link ? `${SITE_URL}${r.link}` : `${SITE_URL}/the-record`,
+      link: r.link ? `${SITE_URL}${r.link}` : `${SITE_URL}/record/deposits`,
       description: r.provenance,
       pubDate: r.deposited_at,
-      guid: `${SITE_URL}/the-record#${r.deposit_number}`,
+      guid: `${SITE_URL}/record/deposits#${r.deposit_number}`,
     }),
   );
   const recordXml = rssFeed({
     title: "PAZ · The Record",
-    link: `${SITE_URL}/the-record`,
+    link: `${SITE_URL}/record/deposits`,
     description: "Everything deposited into the Record, kept in order, forever.",
     items: recordItems,
   });
-  const recordDir = join(OUT_DIR, "the-record");
+  const recordDir = join(OUT_DIR, "record");
   mkdirSync(recordDir, { recursive: true });
   writeFileSync(join(recordDir, "feed.xml"), recordXml, "utf8");
-  console.log(`  the-record/feed.xml: ${record.length} item(s)`);
+  console.log(`  record/feed.xml: ${record.length} item(s)`);
 }
 
 main().catch((err) => {

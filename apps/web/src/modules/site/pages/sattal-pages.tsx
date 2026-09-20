@@ -9,6 +9,7 @@ import {
   type SattalPiece,
 } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { PageHero } from "../components/paz-editorial";
@@ -81,7 +82,7 @@ export function SattalIndexPage() {
           <StatePanel title="Couldn't load this." description={toAppError(pieces.error).message} />
         )}
         {pieces.data && pieces.data.length === 0 && (
-          <p className="type-body">Nothing is published yet.</p>
+          <p className="type-body">{emptyState("sattal")}</p>
         )}
         <ol className="flex flex-col gap-8">
           {(pieces.data ?? []).map((x) => (

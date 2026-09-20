@@ -7,6 +7,7 @@ import { DocumentHead } from "../components/document-head";
 import { ArrowLink, Eyebrow } from "../components/paz-editorial";
 import { WorkPicture, useEraDate } from "../components/wall-parts";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 
 /**
  * The subject of this site is the people sheltering under the roof, not
@@ -54,7 +55,7 @@ export function HomePage() {
           </div>
           <ArrowLink to="/wall">The Wall</ArrowLink>
         </div>
-        {works.data && recent.length === 0 && <p className="type-body">No work is listed yet.</p>}
+        {works.data && recent.length === 0 && <p className="type-body">{emptyState("wall")}</p>}
         <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {recent.map((w) => {
             const img = whole.get(w.id);
@@ -96,7 +97,7 @@ export function HomePage() {
           <ArrowLink to="/sattal">All pieces</ArrowLink>
         </div>
         {pieces.data && pieces.data.length === 0 && (
-          <p className="type-body">Nothing is published yet.</p>
+          <p className="type-body">{emptyState("sattal")}</p>
         )}
         <ol className="flex flex-col gap-6">
           {(pieces.data ?? []).slice(0, 3).map((x) => (
@@ -125,7 +126,7 @@ export function HomePage() {
           <ArrowLink to="/chronicle">The whole run</ArrowLink>
         </div>
         {chronicle.data && chronicle.data.length === 0 && (
-          <p className="type-body">Nothing is recorded yet.</p>
+          <p className="type-body">{emptyState("chronicle")}</p>
         )}
         <ol className="flex flex-col gap-3">
           {(chronicle.data ?? []).slice(0, 5).map((l) => (
@@ -166,7 +167,7 @@ export function HomePage() {
         <ul className="type-body flex flex-wrap gap-x-8 gap-y-2">
           {[
             ["/house", "House"],
-            ["/the-record", "Record"],
+            ["/record", "Record"],
             ["/guild", "Guild"],
             ["/press", "Press"],
             ["/hearth", "Hearth"],

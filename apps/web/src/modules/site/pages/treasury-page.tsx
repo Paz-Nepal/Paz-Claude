@@ -3,7 +3,6 @@ import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { PageHero } from "../components/paz-editorial";
-import { NotPublished } from "../components/published-body";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
 
@@ -30,21 +29,21 @@ export function TreasuryPage() {
       </div>
     );
   }
-  if (!page.data) return <NotPublished />;
+  // An organ exists in law before it has written anything. No holding line
+  // is invented in the meantime: the organ shows its own hub and no body.
+  const data = page.data ?? null;
 
-  const body = pickLangDoc(page.data.body, page.data.body_ne, lang) as RichTextNode | null;
-  const title = pickLang(page.data.title ?? "The Treasury", page.data.title_ne, lang);
-  const subtitle = page.data.subtitle
-    ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang)
-    : undefined;
+  const body = pickLangDoc(data?.body, data?.body_ne, lang) as RichTextNode | null;
+  const title = pickLang(data?.title ?? "The Treasury", data?.title_ne, lang);
+  const subtitle = data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined;
 
   return (
     <div>
       <DocumentHead title={title} description={subtitle || undefined} path="/treasury" />
       <PageHero kicker="An organ of the house" title={title} subtitle={subtitle} />
-      {(isUntranslatedDoc(page.data.body_ne, lang) || body) && (
+      {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
         <div className="w-reading py-16">
-          {isUntranslatedDoc(page.data.body_ne, lang) && <TranslationNotice />}
+          {isUntranslatedDoc(data?.body_ne, lang) && <TranslationNotice />}
           {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}

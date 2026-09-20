@@ -21,7 +21,6 @@ export function DispatchIndexPage() {
       <SeriesIndexList
         items={items.data}
         basePath="/dispatch"
-        emptyTitle="No issues archived yet."
         secondary={(item) => (item.published_at ? formatKathmanduDate(item.published_at) : null)}
       />
     </div>

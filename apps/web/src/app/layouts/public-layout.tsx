@@ -133,7 +133,7 @@ function Header({ siteName }: { siteName: string }) {
           <NavLink to={localize("/house")} className={navLinkClass}>
             The House
           </NavLink>
-          <NavLink to={localize("/the-record")} className={navLinkClass}>
+          <NavLink to={localize("/record")} className={navLinkClass}>
             The Record
           </NavLink>
           <NavLink to={localize("/search")} className={navLinkClass} aria-label="Search">
@@ -217,10 +217,7 @@ function Header({ siteName }: { siteName: string }) {
             >
               The House
             </Link>
-            <Link
-              to={localize("/the-record")}
-              className="text-foreground/90 py-2 font-serif text-2xl"
-            >
+            <Link to={localize("/record")} className="text-foreground/90 py-2 font-serif text-2xl">
               The Record
             </Link>
             <Link to={localize("/search")} className="text-foreground/90 py-2 font-serif text-2xl">
@@ -268,7 +265,7 @@ function Footer({
       heading: "The House",
       links: [
         ["The House", "/house"],
-        ["The Record", "/the-record"],
+        ["The Record", "/record"],
         ["The Chronicle", "/chronicle"],
         ["Friends of PAZ", "/friends"],
         ["The Commons", "/commons"],

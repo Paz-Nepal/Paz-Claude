@@ -23,7 +23,7 @@ RewriteRule \.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|json|txt|xml)
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
-RewriteRule ^ index.html [L]
+RewriteRule ^ app.html [L]
 
 <IfModule mod_headers.c>
   <FilesMatch "\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf)$">

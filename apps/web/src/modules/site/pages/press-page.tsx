@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { emptyState } from "../empty-states";
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems, type PublicItemType } from "../api/use-site";
@@ -10,7 +11,6 @@ import {
   useLocalizedPath,
 } from "../language";
 import { PageHero, Eyebrow, ArrowLink, Reveal } from "../components/paz-editorial";
-import { NotPublished } from "../components/published-body";
 import { TranslationNotice } from "../components/translation-notice";
 
 const SERIES = [
@@ -34,7 +34,7 @@ function SeriesFeed({ type, label, to }: { type: PublicItemType; label: string; 
         <ArrowLink to={to}>All {label}</ArrowLink>
       </div>
       {recent.length === 0 ? (
-        <p className="type-small">Nothing deposited yet.</p>
+        <p className="type-small">{emptyState("series")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {recent.map((item) => (
@@ -70,22 +70,22 @@ export function PressPage() {
       </div>
     );
   }
-  if (!page.data) return <NotPublished />;
+  // An organ exists in law before it has written anything. No holding line
+  // is invented in the meantime: the organ shows its own hub and no body.
+  const data = page.data ?? null;
 
-  const body = pickLangDoc(page.data.body, page.data.body_ne, lang) as RichTextNode | null;
+  const body = pickLangDoc(data?.body, data?.body_ne, lang) as RichTextNode | null;
 
   return (
     <div>
       <PageHero
         kicker="An organ of the house"
-        title={pickLang(page.data.title ?? "The Press", page.data.title_ne, lang)}
-        subtitle={
-          page.data.subtitle ? pickLang(page.data.subtitle, page.data.subtitle_ne, lang) : undefined
-        }
+        title={pickLang(data?.title ?? "The Press", data?.title_ne, lang)}
+        subtitle={data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined}
       />
-      {(isUntranslatedDoc(page.data.body_ne, lang) || body) && (
+      {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
         <div className="w-reading py-16">
-          {isUntranslatedDoc(page.data.body_ne, lang) && <TranslationNotice />}
+          {isUntranslatedDoc(data?.body_ne, lang) && <TranslationNotice />}
           {body && <RichText doc={body} className="rich-text" />}
         </div>
       )}

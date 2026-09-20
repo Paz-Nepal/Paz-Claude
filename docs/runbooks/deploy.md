@@ -20,10 +20,7 @@ when in doubt.
 Run in order, from the repo root:
 
 ```bash
-pnpm build                              # tsc -b && vite build; wipes and rebuilds apps/web/dist
-node scripts/generate-sitemap.mjs apps/web/dist/sitemap.xml   # pnpm sitemap
-node scripts/generate-feeds.mjs apps/web/dist                 # pnpm feeds
-node scripts/prerender.mjs apps/web/dist                      # pnpm prerender
+pnpm site    # clears dist, builds, writes feeds, then prerenders every route and the sitemap
 cp apps/web/deploy/htaccess.template apps/web/dist/.htaccess
 ```
 

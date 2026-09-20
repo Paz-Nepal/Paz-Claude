@@ -173,7 +173,8 @@ never appear here or anywhere in `apps/web`.
 
 **`pnpm build` alone does not produce `sitemap.xml` or the static pages** — `robots.txt`
 promises one at `/sitemap.xml`, but generating it needs a live query
-against the deployed project (`scripts/generate-sitemap.mjs`,
+against the deployed project (`scripts/prerender.mjs` writes it from what it
+actually wrote, and fails the build if an entry or a public route has no file;
 reads `apps/web/.env.local`/`.env.production.local` automatically),
 so it's a separate step from the plain asset build CI also runs
 (and CI has no Supabase credentials to run it with). `pnpm sitemap`

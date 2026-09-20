@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useShow, useShowWorkLinks, useWorkImages, useWorks } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { PersonLink, WorkPicture, useEraDate } from "../components/wall-parts";
@@ -70,7 +71,7 @@ export function ShowPage() {
         <h2 id="hung" className="type-h2">
           What hung
         </h2>
-        {hung.length === 0 && <p className="type-body mt-4">Nothing is listed yet.</p>}
+        {hung.length === 0 && <p className="type-body mt-4">{emptyState("wall")}</p>}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {hung.map((w) => {
             const img = whole.get(w.id);

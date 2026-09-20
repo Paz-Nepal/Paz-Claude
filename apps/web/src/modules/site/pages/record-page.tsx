@@ -4,6 +4,7 @@ import { toAppError } from "@paz/types";
 import { formatDualEraDate } from "@paz/utils";
 import { useRecordEntries } from "../api/use-site";
 import { useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 
 /**
  * The spine of the site (spec §2/§59): every public deposit, in order,
@@ -22,7 +23,7 @@ export function RecordPage() {
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-3xl">The Record</h1>
+        <h1 className="font-serif text-3xl">The deposit register</h1>
         <p className="text-muted-foreground">
           The public deposit index. Every public thing PAZ makes is entered here, in order, and
           stays.
@@ -43,7 +44,7 @@ export function RecordPage() {
 
       {entries.data &&
         (entries.data.length === 0 ? (
-          <StatePanel title="Nothing deposited yet." description="" />
+          <p className="type-body">{emptyState("deposits")}</p>
         ) : (
           <ol className="flex flex-col gap-4">
             {entries.data.map((entry) => (

@@ -5,6 +5,7 @@ import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems } from "../api/use-site";
 import { useChronicle, useGlossary, useRecordEntry, useSubmitVoiceIntake } from "../api/use-wall";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
+import { emptyState } from "../empty-states";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
 import { FormUnavailable, isUnavailable, useEraDate } from "../components/wall-parts";
@@ -85,7 +86,7 @@ export function ChroniclePage() {
           <StatePanel title="Couldn't load this." description={toAppError(lines.error).message} />
         )}
         {lines.data && lines.data.length === 0 && (
-          <p className="type-body">Nothing is recorded yet.</p>
+          <p className="type-body">{emptyState("chronicle")}</p>
         )}
         <ol className="flex flex-col gap-3">
           {(lines.data ?? []).map((l) => (

@@ -340,7 +340,8 @@ function publicRouteChildren() {
     { path: "pigeon-post/:slug", element: withSuspense(<PigeonPostPage />) },
     { path: "annual", element: withSuspense(<AnnualIndexPage />) },
     { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
-    { path: "record", element: withSuspense(<RecordPage />) },
+    { path: "record", element: withSuspense(<RecordOrganPage />) },
+    { path: "record/deposits", element: withSuspense(<RecordPage />) },
     { path: "wall", element: withSuspense(<WallPage />) },
     { path: "people/:slug", element: withSuspense(<PersonPage />) },
     { path: "works/:slug", element: withSuspense(<WorkPage />) },
@@ -376,7 +377,12 @@ function publicRouteChildren() {
     { path: "hearth", element: withSuspense(<HearthPage />) },
     { path: "guild", element: withSuspense(<GuildPage />) },
     { path: "treasury", element: withSuspense(<TreasuryPage />) },
-    { path: "the-record", element: withSuspense(<RecordOrganPage />) },
+    // The organ took /record and the deposit index moved to /record/deposits
+    // (Build Programme 2.4). Every old address redirects, permanently.
+    { path: "the-record", element: <Navigate to="/record" replace /> },
+    // /visit promised hours, against the rule that a house which is a home
+    // keeps none (Build Programme 2.3).
+    { path: "visit", element: <Navigate to="/wall" replace /> },
     // The Journal became the Chronicle (Build Specification 9). Its old
     // address is kept; individual articles keep theirs.
     { path: "journal", element: <Navigate to="/chronicle" replace /> },

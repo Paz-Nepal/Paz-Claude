@@ -34,7 +34,7 @@ export function NotFoundPage() {
           for something specific, that is the place to start.
         </p>
         <div className="flex flex-wrap gap-6">
-          <ArrowLink to="/the-record">Go to the Record</ArrowLink>
+          <ArrowLink to="/record/deposits">Go to the Record</ArrowLink>
           <ArrowLink to="/">Return home</ArrowLink>
         </div>
         <p className="type-small border-border border-t pt-6">

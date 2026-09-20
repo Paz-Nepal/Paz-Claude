@@ -7,7 +7,6 @@ const DASHBOARD_PERMISSIONS = [
   "analytics.dashboard.editorial",
   "analytics.dashboard.programs",
   "analytics.dashboard.membership",
-  "analytics.dashboard.hospitality",
   "analytics.dashboard.finance",
   "analytics.dashboard.vitals",
 ];
@@ -39,17 +38,6 @@ const NAV: Array<{ to: string; label: string; permissions: string[] }> = [
     permissions: ["crm.relationship.read"],
   },
   { to: "/admin/pledges", label: "Pledges", permissions: ["crm.pledge.read"] },
-  {
-    to: "/admin/hospitality/desk",
-    label: "Reservations",
-    permissions: ["hospitality.reservation.read"],
-  },
-  {
-    to: "/admin/hospitality/tables",
-    label: "Tables",
-    permissions: ["hospitality.service.manage"],
-  },
-  { to: "/admin/hospitality/menu", label: "Menu", permissions: ["hospitality.menu.manage"] },
   { to: "/admin/settings", label: "Settings", permissions: ["admin.settings.read"] },
 ];
 

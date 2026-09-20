@@ -13,19 +13,16 @@ import {
   renderMembershipApplicationReceived,
   renderMembershipInvitation,
   renderMembershipRenewalNotice,
-  renderReservationRequested,
   renderSessionRegistration,
   type ContactMessageReceivedData,
   type MembershipApplicationDecidedData,
   type MembershipApplicationReceivedData,
   type MembershipInvitationData,
   type MembershipRenewalNoticeData,
-  type ReservationRequestedData,
   type SessionRegistrationData,
 } from "./email-templates.ts";
 
 export type EmailTemplate =
-  | { name: "reservation-requested"; data: ReservationRequestedData }
   | { name: "membership-application-received"; data: MembershipApplicationReceivedData }
   | { name: "membership-application-decided"; data: MembershipApplicationDecidedData }
   | { name: "session-registration"; data: SessionRegistrationData }
@@ -35,8 +32,6 @@ export type EmailTemplate =
 
 function render(template: EmailTemplate) {
   switch (template.name) {
-    case "reservation-requested":
-      return renderReservationRequested(template.data);
     case "membership-application-received":
       return renderMembershipApplicationReceived(template.data);
     case "membership-application-decided":

@@ -3,7 +3,7 @@ import { Button, Field, Input, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useVerifyCard } from "../api/use-membership";
 
-/** T-083. Front-desk / hospitality tool: type the code a member reads
+/** T-083. Front-desk tool: type the code a member reads
  * off their card (no scanner dependency, see member-card-page.tsx). */
 export function VerifyCardPage() {
   const [token, setToken] = React.useState("");

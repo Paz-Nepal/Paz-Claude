@@ -194,27 +194,6 @@ const RelationshipDetailPage = React.lazy(() =>
 const PledgesPage = React.lazy(() =>
   import("@/modules/crm/pages/pledges-page").then((m) => ({ default: m.PledgesPage })),
 );
-const MenuPage = React.lazy(() =>
-  import("@/modules/hospitality/pages/menu-page").then((m) => ({ default: m.MenuPage })),
-);
-const ReservationPage = React.lazy(() =>
-  import("@/modules/hospitality/pages/reservation-page").then((m) => ({
-    default: m.ReservationPage,
-  })),
-);
-const HospitalityDeskPage = React.lazy(() =>
-  import("@/modules/hospitality/pages/desk-page").then((m) => ({
-    default: m.HospitalityDeskPage,
-  })),
-);
-const TablesPage = React.lazy(() =>
-  import("@/modules/hospitality/pages/tables-page").then((m) => ({ default: m.TablesPage })),
-);
-const AdminMenuPage = React.lazy(() =>
-  import("@/modules/hospitality/pages/admin-menu-page").then((m) => ({
-    default: m.AdminMenuPage,
-  })),
-);
 const DashboardPage = React.lazy(() =>
   import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
 );
@@ -246,7 +225,7 @@ function withSuspense(element: React.ReactNode) {
  * at "/", Nepali at "/ne") -- work plan Part III, #17: "Nepali has no
  * URL... a Nepali reading of a Paper cannot be linked, shared, indexed,
  * archived, or cited." Every route (including transactional ones like
- * /reservations that have no translated content of their own) gets a /ne
+ * /send-a-pigeon that have no translated content of their own) gets a /ne
  * counterpart rather than picking and choosing, so every existing
  * internal link keeps working once uniformly lang-prefixed
  * (useLocalizedPath) -- classifying "content" vs "chrome" routes here
@@ -275,8 +254,6 @@ function publicRouteChildren() {
     { path: "annual", element: withSuspense(<AnnualIndexPage />) },
     { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
     { path: "record", element: withSuspense(<RecordPage />) },
-    { path: "menu", element: withSuspense(<MenuPage />) },
-    { path: "reservations", element: withSuspense(<ReservationPage />) },
     { path: "send-a-pigeon", element: withSuspense(<SendAPigeonPage />) },
     { path: "contact", element: withSuspense(<ContactPage />) },
     { path: "search", element: withSuspense(<SearchPage />) },
@@ -284,8 +261,7 @@ function publicRouteChildren() {
     // and Treasury used to fall through the generic CmsPage catch-all
     // below while the other four had a dedicated component). Press,
     // House, Hearth, and The Record additionally aggregate related
-    // content of their own (the five series; Visit; Menu + Reservations;
-    // the deposit index) -- Guild and Treasury don't need that, just the
+    // content of their own (the five series; the deposit index) -- Guild and Treasury don't need that, just the
     // same organ-page treatment (DocumentHead, the "An organ of the
     // house" kicker, translation-notice handling).
     { path: "press", element: withSuspense(<PressPage />) },
@@ -407,21 +383,6 @@ export const router = createBrowserRouter([
             path: "pledges",
             element: withSuspense(<ProtectedRoute permission="crm.pledge.read" />),
             children: [{ index: true, element: withSuspense(<PledgesPage />) }],
-          },
-          {
-            path: "hospitality/desk",
-            element: withSuspense(<ProtectedRoute permission="hospitality.reservation.read" />),
-            children: [{ index: true, element: withSuspense(<HospitalityDeskPage />) }],
-          },
-          {
-            path: "hospitality/tables",
-            element: withSuspense(<ProtectedRoute permission="hospitality.service.manage" />),
-            children: [{ index: true, element: withSuspense(<TablesPage />) }],
-          },
-          {
-            path: "hospitality/menu",
-            element: withSuspense(<ProtectedRoute permission="hospitality.menu.manage" />),
-            children: [{ index: true, element: withSuspense(<AdminMenuPage />) }],
           },
           {
             path: "pigeon-submissions",

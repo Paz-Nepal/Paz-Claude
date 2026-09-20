@@ -10,8 +10,6 @@ export interface SettingsRegistry {
   "site.contact_email": string;
   "email.sender_name": string;
   "email.sender_address": string;
-  "reservations.default_duration_minutes": number;
-  "reservations.max_party_size": number;
 }
 
 export type SettingsKey = keyof SettingsRegistry;

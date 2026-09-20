@@ -82,34 +82,6 @@ from identity.people a
 where a.auth_user_id = 'd0000000-0000-0000-0000-000000000002'
 on conflict (type, slug) do nothing;
 
--- Hearth menu: /menu and /hearth otherwise render an empty "nothing
--- published" state locally.
-insert into hospitality.menus (slug, name, status)
-values ('hearth', '[PLACEHOLDER] Hearth Menu', 'published')
-on conflict (slug) do nothing;
-
-insert into hospitality.menu_sections (menu_id, name, position)
-select m.id, v.name, v.position
-from hospitality.menus m,
-  (values ('[PLACEHOLDER] Small Plates', 1), ('[PLACEHOLDER] Mains', 2)) as v(name, position)
-where m.slug = 'hearth'
-  and not exists (
-    select 1 from hospitality.menu_sections s where s.menu_id = m.id and s.name = v.name
-  );
-
-insert into hospitality.menu_items (section_id, name, description, price_cents, position)
-select s.id, v.name, v.description, v.price_cents, v.position
-from hospitality.menu_sections s
-join hospitality.menus m on m.id = s.menu_id and m.slug = 'hearth'
-join (
-  values
-    ('[PLACEHOLDER] Small Plates', '[PLACEHOLDER] Dish name', '[PLACEHOLDER] Description', 45000, 1),
-    ('[PLACEHOLDER] Mains', '[PLACEHOLDER] Dish name', '[PLACEHOLDER] Description', 85000, 1)
-) as v(section_name, name, description, price_cents, position) on v.section_name = s.name
-where not exists (
-  select 1 from hospitality.menu_items i where i.section_id = s.id and i.name = v.name
-);
-
 -- One programme + upcoming session so /programmes isn't empty locally.
 insert into programs.programs (slug, title, summary)
 values (

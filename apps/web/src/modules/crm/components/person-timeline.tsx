@@ -10,7 +10,6 @@ const KIND_LABEL: Record<string, string> = {
   membership_application: "Friends of PAZ application",
   membership_term: "Friends of PAZ term",
   program_registration: "Programme registration",
-  reservation: "Reservation",
 };
 
 /**

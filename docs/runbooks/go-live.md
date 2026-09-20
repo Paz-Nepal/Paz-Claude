@@ -62,7 +62,6 @@ console itself, once you're in it.
 ## 4. Deploy the Edge Functions
 
 ```bash
-supabase functions deploy request-reservation
 supabase functions deploy submit-membership-application
 supabase functions deploy decide-membership-application
 supabase functions deploy register-for-session

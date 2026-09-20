@@ -5,7 +5,7 @@ enabled = true
 port = 54321
 # Only the curated `api` schema (plus PostgREST's required `public`) is
 # exposed to PostgREST. Every domain schema (identity, authz, publishing,
-# programs, membership, crm, hospitality, admin, analytics) is reachable
+# programs, membership, crm, admin, analytics) is reachable
 # only through views/functions in `api`, through Edge Functions using the
 # service role, or through direct database access for migrations/ops.
 # (Architecture Blueprint §5.1; Build Readiness Review §3.1.)
@@ -69,10 +69,7 @@ enabled = true
 # or not, so verify_jwt only needs to see *a* valid JWT -- the anon key
 # qualifies. authz/RLS, not this flag, is what limits what the call can
 # actually do (the function forwards the caller's own Authorization
-# header into the RPC it wraps -- see supabase/functions/request-reservation).
-[functions.request-reservation]
-verify_jwt = true
-
+# header into the RPC it wraps -- see supabase/functions/submit-membership-application).
 [functions.submit-membership-application]
 verify_jwt = true
 

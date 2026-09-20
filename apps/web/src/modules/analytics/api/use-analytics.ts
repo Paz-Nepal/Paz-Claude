@@ -7,8 +7,6 @@ export type EditorialPipelineRow =
 export type ProgramFillRow = Database["api"]["Functions"]["program_fill"]["Returns"][number];
 export type MembershipFunnelRow =
   Database["api"]["Functions"]["membership_funnel"]["Returns"][number];
-export type ReservationLoadRow =
-  Database["api"]["Functions"]["reservation_load"]["Returns"][number];
 export type FinanceSummaryRow = Database["api"]["Functions"]["finance_summary"]["Returns"][number];
 export type InstitutionVitalsRow =
   Database["api"]["Functions"]["institution_vitals"]["Returns"][number];
@@ -55,19 +53,6 @@ export function useMembershipFunnel(enabled: boolean) {
     staleTime: 30_000,
     queryFn: async () => {
       const { data, error } = await api().rpc("membership_funnel");
-      if (error) throw toAppError(error);
-      return data;
-    },
-  });
-}
-
-export function useReservationLoad(enabled: boolean) {
-  return useQuery({
-    queryKey: ["reservation-load"],
-    enabled,
-    staleTime: 30_000,
-    queryFn: async () => {
-      const { data, error } = await api().rpc("reservation_load");
       if (error) throw toAppError(error);
       return data;
     },

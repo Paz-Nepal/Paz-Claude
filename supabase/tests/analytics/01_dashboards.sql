@@ -8,7 +8,7 @@
 -- row-level ownership"). Same allow/deny discipline applies regardless of
 -- the mechanism, so each function gets both cases here.
 begin;
-select plan(12);
+select plan(10);
 
 -- Fixtures: one person per dashboard-owning role, plus Nora with no role
 -- at all for every deny case.
@@ -27,8 +27,6 @@ insert into authz.user_roles (person_id, role_key)
 select id, 'program_manager' from identity.people where auth_user_id = 'f9000000-0000-0000-0000-000000000002';
 insert into authz.user_roles (person_id, role_key)
 select id, 'membership_manager' from identity.people where auth_user_id = 'f9000000-0000-0000-0000-000000000003';
-insert into authz.user_roles (person_id, role_key)
-select id, 'hospitality_manager' from identity.people where auth_user_id = 'f9000000-0000-0000-0000-000000000004';
 insert into authz.user_roles (person_id, role_key)
 select id, 'finance' from identity.people where auth_user_id = 'f9000000-0000-0000-0000-000000000005';
 insert into authz.user_roles (person_id, role_key)
@@ -91,26 +89,6 @@ select throws_ok(
   $$select * from analytics.membership_funnel()$$,
   '42501',
   'membership_funnel (deny): a person without analytics.dashboard.membership cannot call it'
-);
-reset role;
-
--- ---------------------------------------------------------------------
--- analytics.reservation_load()
--- ---------------------------------------------------------------------
-set local role authenticated;
-set local request.jwt.claims = '{"sub": "f9000000-0000-0000-0000-000000000004", "role": "authenticated", "aal": "aal2"}';
-select lives_ok(
-  $$select * from analytics.reservation_load()$$,
-  'reservation_load (allow): hospitality_manager with analytics.dashboard.hospitality can call it'
-);
-reset role;
-
-set local role authenticated;
-set local request.jwt.claims = '{"sub": "f9000000-0000-0000-0000-000000000007", "role": "authenticated", "aal": "aal2"}';
-select throws_ok(
-  $$select * from analytics.reservation_load()$$,
-  '42501',
-  'reservation_load (deny): a person without analytics.dashboard.hospitality cannot call it'
 );
 reset role;
 

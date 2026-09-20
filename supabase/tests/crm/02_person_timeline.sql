@@ -6,7 +6,7 @@
 -- test is really checking that the union composes each table's existing
 -- policy correctly, not re-testing each policy from scratch.
 begin;
-select plan(9);
+select plan(8);
 
 insert into auth.users (id, email) values
   ('a8000000-0000-0000-0000-000000000001', 'quinn-subject8@example.test'),
@@ -21,12 +21,10 @@ insert into authz.user_roles (person_id, role_key)
 select id, 'finance' from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000002';
 insert into authz.user_roles (person_id, role_key)
 select id, 'program_manager' from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000002';
-insert into authz.user_roles (person_id, role_key)
-select id, 'hospitality_manager' from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000002';
 
 -- Sam: membership_manager only (membership.application.read,
 -- membership.member.read, crm.relationship.read -- not pledges,
--- registrations, or reservations).
+-- or registrations).
 insert into authz.user_roles (person_id, role_key)
 select id, 'membership_manager' from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000003';
 
@@ -75,12 +73,8 @@ join programs.programs pr on pr.id = s.program_id
 cross join identity.people per
 where pr.slug = 'test-timeline-program' and per.auth_user_id = 'a8000000-0000-0000-0000-000000000001';
 
-insert into hospitality.reservations (code, person_id, guest_name, party_size, starts_at)
-select 'TEST-TIMELINE-01', id, 'Quinn Subject', 2, now() + interval '1 day'
-from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000001';
-
 -- ---------------------------------------------------------------------
--- Ray (full access): all seven categories present.
+-- Ray (full access): every category present.
 -- ---------------------------------------------------------------------
 set local role authenticated;
 set local request.jwt.claims = '{"sub": "a8000000-0000-0000-0000-000000000002", "role": "authenticated", "aal": "aal2"}';
@@ -119,14 +113,10 @@ select ok(
   exists (select 1 from test_ray_timeline where kind = 'program_registration'),
   'person_timeline (full access): sees the programme registration'
 );
-select ok(
-  exists (select 1 from test_ray_timeline where kind = 'reservation'),
-  'person_timeline (full access): sees the reservation'
-);
 
 -- ---------------------------------------------------------------------
 -- Sam (membership_manager only): membership + crm.relationship
--- categories, but not pledges, registrations, or reservations.
+-- categories, but not pledges or registrations.
 -- ---------------------------------------------------------------------
 set local role authenticated;
 set local request.jwt.claims = '{"sub": "a8000000-0000-0000-0000-000000000003", "role": "authenticated", "aal": "aal2"}';
@@ -136,10 +126,10 @@ select is(
     select count(*)::int from api.person_timeline(
       (select id from identity.people where auth_user_id = 'a8000000-0000-0000-0000-000000000001')
     )
-    where kind in ('pledge', 'program_registration', 'reservation')
+    where kind in ('pledge', 'program_registration')
   ),
   0,
-  'person_timeline (partial access): membership_manager sees none of pledges/registrations/reservations'
+  'person_timeline (partial access): membership_manager sees none of pledges/registrations'
 );
 reset role;
 

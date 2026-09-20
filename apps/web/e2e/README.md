@@ -1,6 +1,6 @@
 # End-to-end tests
 
-Four of the Architecture Blueprint's eight critical journeys (§11.4), covering
+Some of the Architecture Blueprint's eight critical journeys (§11.4), covering
 the anonymous/public-visitor paths:
 
 | File                             | Journey                                              |
@@ -8,14 +8,11 @@ the anonymous/public-visitor paths:
 | `read-article.spec.ts`           | Read an article                                      |
 | `programme-registration.spec.ts` | Browse programmes and register                       |
 | `membership-application.spec.ts` | Apply for membership                                 |
-| `reservation-request.spec.ts`    | Request a reservation                                |
 | `contact-message.spec.ts`        | Send a contact message (not one of the eight, T-068) |
 
-**Not yet covered** — the four staff/authenticated journeys (staff
-reviews and publishes an item; staff decides an application; confirm a
-reservation from the desk board; member views card and directory; admin
-grants a role and audit shows it — that's five, the Blueprint's list
-overlaps "confirm a reservation" with the request half above). These need
+**Not yet covered** — the staff/authenticated journeys (staff
+reviews and publishes an item; staff decides an application; member
+views card and directory; admin grants a role and audit shows it). These need
 a signed-in, MFA-satisfied staff session — Playwright's `storageState`
 against a seeded staff account (`admin@paz.local` /
 `editor@paz.local` from `supabase/seed/synthetic.sql`) is the right

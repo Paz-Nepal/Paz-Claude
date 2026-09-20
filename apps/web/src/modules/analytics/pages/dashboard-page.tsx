@@ -7,7 +7,6 @@ import {
   useEditorialPipeline,
   useProgramFill,
   useMembershipFunnel,
-  useReservationLoad,
   useFinanceSummary,
   useInstitutionVitals,
 } from "../api/use-analytics";
@@ -31,19 +30,17 @@ export function DashboardPage() {
   const canEditorial = permissions.includes("analytics.dashboard.editorial");
   const canPrograms = permissions.includes("analytics.dashboard.programs");
   const canMembership = permissions.includes("analytics.dashboard.membership");
-  const canHospitality = permissions.includes("analytics.dashboard.hospitality");
   const canFinance = permissions.includes("analytics.dashboard.finance");
   const canVitals = permissions.includes("analytics.dashboard.vitals");
 
   const editorial = useEditorialPipeline(canEditorial);
   const programs = useProgramFill(canPrograms);
   const membership = useMembershipFunnel(canMembership);
-  const reservations = useReservationLoad(canHospitality);
   const finance = useFinanceSummary(canFinance);
   const vitals = useInstitutionVitals(canVitals);
 
   const nothingToShow =
-    !canEditorial && !canPrograms && !canMembership && !canHospitality && !canFinance && !canVitals;
+    !canEditorial && !canPrograms && !canMembership && !canFinance && !canVitals;
 
   return (
     <div className="flex flex-col gap-6">
@@ -140,29 +137,6 @@ export function DashboardPage() {
                 ))}
               </dl>
             )}
-          </Card>
-        )}
-
-        {canHospitality && (
-          <Card title="Reservation load (next 30 days)">
-            {reservations.isError && (
-              <p className="text-destructive text-sm">{toAppError(reservations.error).message}</p>
-            )}
-            {reservations.data &&
-              (reservations.data.length === 0 ? (
-                <p className="text-muted-foreground text-sm">No reservations in this window.</p>
-              ) : (
-                <ul className="flex flex-col gap-1 text-sm">
-                  {reservations.data.map((row) => (
-                    <li key={row.day} className="flex justify-between">
-                      <span>{row.day && formatKathmanduDate(row.day)}</span>
-                      <span className="text-muted-foreground">
-                        {row.requested} requested · {row.confirmed} confirmed
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              ))}
           </Card>
         )}
 

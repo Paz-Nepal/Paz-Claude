@@ -45,44 +45,6 @@ function wrapHtml(bodyHtml: string): string {
 </html>`;
 }
 
-export interface ReservationRequestedData {
-  code: string;
-  fullName: string;
-  partySize: number;
-  startsAt: string;
-  notes?: string | null;
-}
-
-export function renderReservationRequested(data: ReservationRequestedData): EmailContent {
-  const when = formatKathmandu(data.startsAt);
-  const subject = `We've received your reservation request — ${data.code}`;
-
-  const text = [
-    `Hello ${data.fullName},`,
-    "",
-    `We've received your table request for ${data.partySize} on ${when}.`,
-    "",
-    `Reservation code: ${data.code}`,
-    "",
-    "A person confirms every reservation here — expect a reply, not an instant confirmation. We'll write back to arrange the details.",
-    data.notes ? `\nYour note: ${data.notes}` : "",
-    "",
-    "— PAZ",
-  ]
-    .filter(Boolean)
-    .join("\n");
-
-  const html = wrapHtml(`
-    <p>Hello ${escapeHtml(data.fullName)},</p>
-    <p>We've received your table request for <strong>${data.partySize}</strong> on <strong>${escapeHtml(when)}</strong>.</p>
-    <p>Reservation code: <strong>${escapeHtml(data.code)}</strong></p>
-    <p>A person confirms every reservation here — expect a reply, not an instant confirmation. We'll write back to arrange the details.</p>
-    ${data.notes ? `<p>Your note: ${escapeHtml(data.notes)}</p>` : ""}
-  `);
-
-  return { subject, text, html };
-}
-
 export interface MembershipApplicationReceivedData {
   fullName: string;
   tierName: string;

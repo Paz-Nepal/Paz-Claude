@@ -38,7 +38,7 @@ export function ShowPage() {
   if (!s) return <NotPublished />;
 
   const title = pickLang(s.title as string, s.title_ne, lang);
-  const text = pickLang((s.text ?? ""), s.text_ne, lang);
+  const text = pickLang(s.text ?? "", s.text_ne, lang);
   const whole = new Map(
     (images.data ?? []).filter((i) => i.frame === "whole").map((i) => [i.work_id, i]),
   );

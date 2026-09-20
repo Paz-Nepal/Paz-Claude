@@ -49,7 +49,7 @@ export function PersonPage() {
   if (!p) return <NotPublished />;
 
   const name = pickLang(p.name as string, p.name_ne, lang);
-  const statement = pickLang((p.statement ?? ""), p.statement_ne, lang);
+  const statement = pickLang(p.statement ?? "", p.statement_ne, lang);
   const whole = new Map(
     (images.data ?? []).filter((i) => i.frame === "whole").map((i) => [i.work_id, i]),
   );

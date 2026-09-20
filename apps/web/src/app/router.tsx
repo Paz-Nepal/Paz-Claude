@@ -248,6 +248,29 @@ const PrivacyPage = React.lazy(() =>
 const TermsPage = React.lazy(() =>
   import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TermsPage })),
 );
+const AdminPeoplePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-people-page").then((m) => ({ default: m.AdminPeoplePage })),
+);
+const AdminWorksPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-works-page").then((m) => ({ default: m.AdminWorksPage })),
+);
+const AdminShowsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-shows-page").then((m) => ({ default: m.AdminShowsPage })),
+);
+const AdminSattalPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-sattal-page").then((m) => ({ default: m.AdminSattalPage })),
+);
+const AdminChroniclePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-chronicle-page").then((m) => ({
+    default: m.AdminChroniclePage,
+  })),
+);
+const AdminVoicePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-misc-pages").then((m) => ({ default: m.AdminVoicePage })),
+);
+const AdminGlossaryPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-misc-pages").then((m) => ({ default: m.AdminGlossaryPage })),
+);
 const DashboardPage = React.lazy(() =>
   import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
 );
@@ -459,6 +482,41 @@ export const router = createBrowserRouter([
             path: "pledges",
             element: withSuspense(<ProtectedRoute permission="crm.pledge.read" />),
             children: [{ index: true, element: withSuspense(<PledgesPage />) }],
+          },
+          {
+            path: "wall/people",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminPeoplePage />) }],
+          },
+          {
+            path: "wall/works",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminWorksPage />) }],
+          },
+          {
+            path: "wall/shows",
+            element: withSuspense(<ProtectedRoute permission="wall.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminShowsPage />) }],
+          },
+          {
+            path: "sattal",
+            element: withSuspense(<ProtectedRoute permission="sattal.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminSattalPage />) }],
+          },
+          {
+            path: "chronicle",
+            element: withSuspense(<ProtectedRoute permission="chronicle.line.create" />),
+            children: [{ index: true, element: withSuspense(<AdminChroniclePage />) }],
+          },
+          {
+            path: "voice",
+            element: withSuspense(<ProtectedRoute permission="crm.voice.read" />),
+            children: [{ index: true, element: withSuspense(<AdminVoicePage />) }],
+          },
+          {
+            path: "words",
+            element: withSuspense(<ProtectedRoute permission="publishing.item.update" />),
+            children: [{ index: true, element: withSuspense(<AdminGlossaryPage />) }],
           },
           {
             path: "pigeon-submissions",

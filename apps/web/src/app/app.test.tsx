@@ -14,6 +14,8 @@ function queryBuilder(data: unknown) {
     select: () => builder,
     order: () => builder,
     eq: () => builder,
+    in: () => builder,
+    range: () => builder,
     single: () => Promise.resolve(result),
     maybeSingle: () => Promise.resolve(result),
     then: (resolve: (value: typeof result) => unknown) => Promise.resolve(result).then(resolve),
@@ -47,6 +49,9 @@ describe("App shell", () => {
   it("renders the public homepage without crashing", async () => {
     render(<App />);
     expect(await screen.findByRole("heading", { level: 1, name: "PAZ" })).toBeInTheDocument();
-    expect(screen.getByText("From the journal")).toBeInTheDocument();
+    // The subject is the people under the roof: the Wall leads, the
+    // Chronicle sits with the House.
+    expect(screen.getByRole("heading", { level: 2, name: "Recent work" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "The Chronicle" })).toBeInTheDocument();
   });
 });

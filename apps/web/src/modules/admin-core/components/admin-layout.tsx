@@ -19,6 +19,13 @@ const NAV: Array<{ to: string; label: string; permissions: string[] }> = [
     label: "Send a pigeon",
     permissions: ["publishing.item.read"],
   },
+  { to: "/admin/wall/people", label: "People", permissions: ["wall.manage"] },
+  { to: "/admin/wall/works", label: "Works", permissions: ["wall.manage"] },
+  { to: "/admin/wall/shows", label: "Shows", permissions: ["wall.manage"] },
+  { to: "/admin/sattal", label: "Sattal", permissions: ["sattal.manage"] },
+  { to: "/admin/chronicle", label: "Chronicle", permissions: ["chronicle.line.create"] },
+  { to: "/admin/words", label: "Words", permissions: ["publishing.item.update"] },
+  { to: "/admin/voice", label: "A voice", permissions: ["crm.voice.read"] },
   { to: "/admin/media", label: "Media", permissions: ["publishing.media.read"] },
   {
     to: "/admin/applications",

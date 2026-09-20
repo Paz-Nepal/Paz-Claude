@@ -60,16 +60,24 @@ async function callRpc(fn, args = {}) {
   return res.json();
 }
 
+// Pages through the whole table. A backup that stopped silently at the
+// backend's default thousand rows would not be a backup.
 async function selectFrom(table, query = "") {
-  const res = await fetch(`${API}/${table}?${query}`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      "Accept-Profile": "api",
-    },
-  });
-  if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
-  return res.json();
+  const rows = [];
+  for (let offset = 0; ; offset += 1000) {
+    const res = await fetch(`${API}/${table}?${query}&limit=1000&offset=${offset}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Accept-Profile": "api",
+      },
+    });
+    if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
+    const page = await res.json();
+    rows.push(...page);
+    if (page.length < 1000) break;
+  }
+  return rows;
 }
 
 // Flattens the frozen ProseMirror node set (RichText's own contract, see
@@ -104,7 +112,7 @@ async function main() {
   console.log(`Exporting from ${SUPABASE_URL} into ./${OUT_DIR}/`);
   mkdirSync(OUT_DIR, { recursive: true });
 
-  const items = await selectFrom("published_items", "select=*");
+  const items = await selectFrom("published_items", "select=*&order=published_at,id");
   console.log(`Found ${items.length} published items across all types.`);
 
   let exported = 0;
@@ -130,7 +138,7 @@ async function main() {
           deposit_ref: detail.deposit_ref ?? null,
           slug: item.slug,
         },
-        bodyToText(detail.body) || "(no body — see PDF/keepsake)",
+        bodyToText(detail.body) || "(no body; see PDF/keepsake)",
       );
     } else {
       const [detail] = await callRpc("get_published_item", {
@@ -154,11 +162,59 @@ async function main() {
     exported++;
   }
 
-  const record = await selectFrom("record_entries", "select=*&order=deposited_at.desc");
+  const record = await selectFrom("record_entries", "select=*&order=deposit_number");
   writeFileSync(join(OUT_DIR, "record.json"), JSON.stringify(record, null, 2), "utf8");
 
+  // The Wall, the Sattal, the Chronicle and the glossary: plain files the
+  // house owns outside any platform.
+  const domains = {
+    "wall/people": await selectFrom("wall_people", "select=*&order=name,id"),
+    "wall/works": await selectFrom("wall_works", "select=*&order=work_number"),
+    "wall/work-images": await selectFrom("wall_work_images", "select=*&order=work_id,frame"),
+    "wall/work-events": await selectFrom("wall_work_events", "select=*&order=occurred_on,id"),
+    "wall/work-texts": await selectFrom("wall_work_texts", "select=*&order=id"),
+    "wall/shows": await selectFrom("wall_shows", "select=*&order=opened_on,id"),
+    "wall/show-works": await selectFrom("wall_show_works", "select=*&order=show_id,work_id"),
+    "wall/exhibitions-elsewhere": await selectFrom("wall_person_exhibitions", "select=*&order=id"),
+    "wall/writing-elsewhere": await selectFrom("wall_person_writings", "select=*&order=id"),
+    "sattal/readers": await selectFrom("sattal_readers", "select=*&order=appointed_on,id"),
+    "sattal/corrections": await selectFrom("sattal_corrections", "select=*&order=added_at,id"),
+    glossary: await selectFrom("glossary_terms", "select=*&order=term,id"),
+  };
+  for (const [name, rows] of Object.entries(domains)) {
+    mkdirSync(join(OUT_DIR, name, ".."), { recursive: true });
+    writeFileSync(join(OUT_DIR, `${name}.json`), JSON.stringify(rows, null, 2), "utf8");
+  }
+  const pieces = await selectFrom("sattal_pieces", "select=*&order=piece_number");
+  for (const piece of pieces) {
+    writeItem(
+      join(OUT_DIR, "sattal"),
+      `${piece.slug}.md`,
+      {
+        piece_number: piece.piece_number,
+        form: piece.form,
+        author: piece.person_name,
+        title: piece.title,
+        deposit_ref: piece.deposit_ref,
+        relation_declaration: piece.relation_declaration,
+        original_language: piece.original_language,
+        outside_reader: piece.outside_reader_name ?? null,
+        sources: piece.sources,
+      },
+      [bodyToText(piece.body), piece.body_ne ? bodyToText(piece.body_ne) : ""]
+        .filter(Boolean)
+        .join("\n\n---\n\n"),
+    );
+  }
+  const chronicle = await selectFrom("chronicle_lines", "select=*&order=line_on,id");
+  writeFileSync(
+    join(OUT_DIR, "chronicle.txt"),
+    chronicle.map((l) => `${l.line_on}  ${l.line}`).join("\n") + "\n",
+    "utf8",
+  );
+
   console.log(
-    `Exported ${exported} item(s) as Markdown, plus record.json (${record.length} Record entries).`,
+    `Exported ${exported} item(s) as Markdown, plus record.json (${record.length} Record entries), the Wall, ${pieces.length} Sattal piece(s), and ${chronicle.length} Chronicle line(s).`,
   );
   console.log("PDFs/scans are not duplicated here -- they are already plain files in the public");
   console.log("storage bucket, downloadable directly from their storage_path with no export step.");

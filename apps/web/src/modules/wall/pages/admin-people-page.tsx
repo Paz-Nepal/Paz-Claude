@@ -68,7 +68,7 @@ const SPECS: FieldSpec[] = [
 ];
 
 function initialFor(p: AdminPerson | null): Values {
-  const roles = (p?.roles ?? ["artist"]);
+  const roles = p?.roles ?? ["artist"];
   return {
     ...toValues(SPECS, p),
     is_artist: roles.includes("artist"),

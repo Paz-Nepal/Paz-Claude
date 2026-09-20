@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
 
   const sniffed = sniffMimeType(bytes);
   if (!sniffed) {
-    return jsonError("Unrecognized file type — only JPEG, PNG, GIF, and PDF are accepted", 415);
+    return jsonError("Unrecognized file type. Only JPEG, PNG, GIF, and PDF are accepted", 415);
   }
 
   const maxBytes = maxBytesFor(sniffed.category);

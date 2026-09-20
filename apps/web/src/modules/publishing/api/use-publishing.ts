@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { selectAll } from "@/lib/paged";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ItemType = Database["publishing"]["Enums"]["item_type"];
@@ -24,14 +25,15 @@ const api = () => supabase.schema("api");
 export function useDeskItems() {
   return useQuery({
     queryKey: ["desk-items"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("desk_items")
-        .select("*")
-        .order("updated_at", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("desk_items")
+          .select("*")
+          .order("updated_at", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -324,14 +326,15 @@ export const useSaveEventDetails = () =>
 export function useMediaLibrary() {
   return useQuery({
     queryKey: ["media-library"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("media_library")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("media_library")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -377,14 +380,15 @@ export type PigeonSubmission = Database["api"]["Views"]["pigeon_submissions"]["R
 export function usePigeonSubmissions() {
   return useQuery({
     queryKey: ["pigeon-submissions"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("pigeon_submissions")
-        .select("*")
-        .order("submitted_at", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("pigeon_submissions")
+          .select("*")
+          .order("submitted_at", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 

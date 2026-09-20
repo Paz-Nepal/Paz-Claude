@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { selectAll } from "@/lib/paged";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type MembershipTier = Database["api"]["Views"]["membership_tiers"]["Row"];
@@ -15,14 +16,10 @@ export function useMembershipTiers() {
   return useQuery({
     queryKey: ["membership-tiers"],
     staleTime: 5 * 60_000,
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("membership_tiers")
-        .select("*")
-        .order("annual_fee_cents");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("membership_tiers").select("*").order("annual_fee_cents").range(from, to),
+      ),
   });
 }
 
@@ -43,14 +40,15 @@ export function useMemberDirectory() {
   return useQuery({
     queryKey: ["member-directory"],
     staleTime: 60_000,
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("member_directory")
-        .select("*")
-        .order("display_name");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("member_directory")
+          .select("*")
+          .order("display_name")
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -88,14 +86,15 @@ export function useSubmitApplication() {
 export function useApplications() {
   return useQuery({
     queryKey: ["membership-applications"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("membership_applications")
-        .select("*")
-        .order("submitted_at", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("membership_applications")
+          .select("*")
+          .order("submitted_at", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -155,11 +154,10 @@ export function useInviteApplication() {
 export function useMembers() {
   return useQuery({
     queryKey: ["members"],
-    queryFn: async () => {
-      const { data, error } = await api().from("members").select("*").order("member_no");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("members").select("*").order("member_no").order("id").range(from, to),
+      ),
   });
 }
 

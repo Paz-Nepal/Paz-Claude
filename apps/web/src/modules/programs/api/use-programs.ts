@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { selectAll } from "@/lib/paged";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type ProgramSummary = Database["api"]["Views"]["programs"]["Row"];
@@ -26,11 +27,10 @@ export function usePrograms() {
   return useQuery({
     queryKey: ["programs"],
     staleTime: 60_000,
-    queryFn: async () => {
-      const { data, error } = await api().from("programs").select("*").order("title");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("programs").select("*").order("title").order("id").range(from, to),
+      ),
   });
 }
 
@@ -38,13 +38,12 @@ export function useProgramSessions(programSlug?: string) {
   return useQuery({
     queryKey: ["program-sessions", programSlug ?? "all"],
     staleTime: 60_000,
-    queryFn: async () => {
-      let query = api().from("program_sessions").select("*").order("starts_at");
-      if (programSlug) query = query.eq("program_slug", programSlug);
-      const { data, error } = await query;
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) => {
+        let query = api().from("program_sessions").select("*");
+        if (programSlug) query = query.eq("program_slug", programSlug);
+        return query.order("starts_at").order("id").range(from, to);
+      }),
   });
 }
 
@@ -82,11 +81,10 @@ export function useRegisterForSession() {
 export function useMyRegistrations() {
   return useQuery({
     queryKey: ["my-registrations"],
-    queryFn: async () => {
-      const { data, error } = await api().from("my_registrations").select("*").order("starts_at");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("my_registrations").select("*").order("starts_at").order("id").range(from, to),
+      ),
   });
 }
 
@@ -110,22 +108,20 @@ export function useCancelMyRegistration() {
 export function useVenues() {
   return useQuery({
     queryKey: ["venues"],
-    queryFn: async () => {
-      const { data, error } = await api().from("venues").select("*").order("name");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("venues").select("*").order("name").order("id").range(from, to),
+      ),
   });
 }
 
 export function useAdminPrograms() {
   return useQuery({
     queryKey: ["admin-programs"],
-    queryFn: async () => {
-      const { data, error } = await api().from("admin_programs").select("*").order("title");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("admin_programs").select("*").order("title").order("id").range(from, to),
+      ),
   });
 }
 
@@ -133,15 +129,16 @@ export function useAdminSessions(programId?: string) {
   return useQuery({
     queryKey: ["admin-sessions", programId ?? "all"],
     enabled: Boolean(programId),
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("admin_program_sessions")
-        .select("*")
-        .eq("program_id", programId as string)
-        .order("starts_at");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("admin_program_sessions")
+          .select("*")
+          .eq("program_id", programId as string)
+          .order("starts_at")
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 

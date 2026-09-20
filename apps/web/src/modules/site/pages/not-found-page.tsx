@@ -42,7 +42,7 @@ export function NotFoundPage() {
           <Link to={localize("/contact")} className="link-underline">
             Tell us
           </Link>
-          , so we can point it to the right place.
+          , so it can be pointed to the right place.
         </p>
       </div>
     </div>

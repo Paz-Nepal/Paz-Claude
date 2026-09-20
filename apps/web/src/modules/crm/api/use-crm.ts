@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { selectAll } from "@/lib/paged";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
 
 export type Organization = Database["api"]["Views"]["organizations"]["Row"];
@@ -22,11 +23,10 @@ function asArgs<T>(args: Record<keyof T & string, unknown>): T {
 export function useOrganizations() {
   return useQuery({
     queryKey: ["organizations"],
-    queryFn: async () => {
-      const { data, error } = await api().from("organizations").select("*").order("name");
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api().from("organizations").select("*").order("name").order("id").range(from, to),
+      ),
   });
 }
 
@@ -58,14 +58,15 @@ export function useSaveOrganization() {
 export function useRelationships() {
   return useQuery({
     queryKey: ["relationships"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("relationships")
-        .select("*")
-        .order("started_on", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("relationships")
+          .select("*")
+          .order("started_on", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -115,15 +116,16 @@ export function useInteractions(relationshipId: string | undefined) {
   return useQuery({
     queryKey: ["interactions", relationshipId],
     enabled: Boolean(relationshipId),
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("interactions")
-        .select("*")
-        .eq("relationship_id", relationshipId as string)
-        .order("occurred_at", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("interactions")
+          .select("*")
+          .eq("relationship_id", relationshipId as string)
+          .order("occurred_at", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 
@@ -147,14 +149,15 @@ export function useLogInteraction(relationshipId: string | undefined) {
 export function usePledges() {
   return useQuery({
     queryKey: ["pledges"],
-    queryFn: async () => {
-      const { data, error } = await api()
-        .from("pledges")
-        .select("*")
-        .order("pledged_on", { ascending: false });
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll((from, to) =>
+        api()
+          .from("pledges")
+          .select("*")
+          .order("pledged_on", { ascending: false })
+          .order("id")
+          .range(from, to),
+      ),
   });
 }
 

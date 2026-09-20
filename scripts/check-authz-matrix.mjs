@@ -24,7 +24,9 @@ function extractSeedPermissionKeys(sql) {
   }
   const keys = [...match[1].matchAll(/\('([a-z0-9_.]+)'/g)].map((m) => m[1]);
   if (keys.length === 0) {
-    throw new Error(`Parsed zero permission keys from ${SEED_PATH} — check the regex against the current file shape.`);
+    throw new Error(
+      `Parsed zero permission keys from ${SEED_PATH} — check the regex against the current file shape.`,
+    );
   }
   return new Set(keys);
 }

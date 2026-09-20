@@ -19,6 +19,7 @@
     "sitemap": "node scripts/generate-sitemap.mjs apps/web/dist/sitemap.xml",
     "feeds": "node scripts/generate-feeds.mjs apps/web/dist",
     "prerender": "node scripts/prerender.mjs apps/web/dist",
+    "site": "pnpm sitemap && pnpm feeds && pnpm prerender",
     "lcp": "node scripts/check-lcp-budget.mjs",
     "db:diff": "supabase db diff --linked --schema public,identity,authz,admin,api",
     "db:reset": "supabase db reset",

@@ -348,7 +348,7 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
           )}
 
           {/* Non-negotiable §3: deposited content is corrected by
-              addition, never destructive edit — this is the one path to
+              addition, never destructive edit. This is the one path to
               that. Only offered once a deposit_ref exists (i.e. it has
               actually been deposited, not just published in some other
               sense) and only for the five Record series. */}

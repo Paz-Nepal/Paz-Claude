@@ -40,7 +40,7 @@ function wrapHtml(bodyHtml: string): string {
 <html>
   <body style="font-family: Georgia, 'Times New Roman', serif; color: #1a1a1a; line-height: 1.6; max-width: 560px; margin: 0 auto; padding: 24px;">
     ${bodyHtml}
-    <p style="margin-top: 32px; font-size: 13px; color: #6b6b6b;">PAZ, Kathmandu</p>
+    <p style="margin-top: 32px; font-size: 13px; color: #6b6b6b;">PAZ, Patan, Lalitpur</p>
   </body>
 </html>`;
 }
@@ -53,22 +53,22 @@ export interface MembershipApplicationReceivedData {
 export function renderMembershipApplicationReceived(
   data: MembershipApplicationReceivedData,
 ): EmailContent {
-  const subject = "We've received your membership application";
+  const subject = "PAZ has received your membership application";
 
   const text = [
     `Hello ${data.fullName},`,
     "",
-    `We've received your application for ${data.tierName} membership.`,
+    `PAZ has received your application for ${data.tierName} membership.`,
     "",
-    "A person reviews every application — there's no automatic approval. We'll write again once a decision has been made.",
+    "A person reviews every application. Nothing is approved automatically. A second message follows once a decision has been made.",
     "",
-    "— PAZ",
+    "PAZ",
   ].join("\n");
 
   const html = wrapHtml(`
     <p>Hello ${escapeHtml(data.fullName)},</p>
-    <p>We've received your application for <strong>${escapeHtml(data.tierName)}</strong> membership.</p>
-    <p>A person reviews every application — there's no automatic approval. We'll write again once a decision has been made.</p>
+    <p>PAZ has received your application for <strong>${escapeHtml(data.tierName)}</strong> membership.</p>
+    <p>A person reviews every application. Nothing is approved automatically. A second message follows once a decision has been made.</p>
   `);
 
   return { subject, text, html };
@@ -89,19 +89,19 @@ export function renderMembershipApplicationDecided(
     const text = [
       `Hello ${data.fullName},`,
       "",
-      `Your application for ${data.tierName} membership has been accepted — welcome.`,
+      `Your application for ${data.tierName} membership has been accepted. Welcome.`,
       "",
-      "Your membership record and first term are set up on our end. We'll be in touch with what comes next.",
+      "Your membership record and first term are set up. A message about what comes next follows.",
       data.notes ? `\nA note from the person who reviewed your application: ${data.notes}` : "",
       "",
-      "— PAZ",
+      "PAZ",
     ]
       .filter(Boolean)
       .join("\n");
     const html = wrapHtml(`
       <p>Hello ${escapeHtml(data.fullName)},</p>
-      <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been accepted — welcome.</p>
-      <p>Your membership record and first term are set up on our end. We'll be in touch with what comes next.</p>
+      <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been accepted. Welcome.</p>
+      <p>Your membership record and first term are set up. A message about what comes next follows.</p>
       ${data.notes ? `<p>A note from the person who reviewed your application: ${escapeHtml(data.notes)}</p>` : ""}
     `);
     return { subject, text, html };
@@ -116,7 +116,7 @@ export function renderMembershipApplicationDecided(
     "",
     "You're welcome to apply again in the future.",
     "",
-    "— PAZ",
+    "PAZ",
   ]
     .filter(Boolean)
     .join("\n");
@@ -140,31 +140,31 @@ export function renderSessionRegistration(data: SessionRegistrationData): EmailC
   const when = formatKathmandu(data.startsAt);
 
   if (data.status === "waitlisted") {
-    const subject = `You're on the waitlist — ${data.programTitle}`;
+    const subject = `You're on the waitlist: ${data.programTitle}`;
     const text = [
       `Hello ${data.fullName},`,
       "",
-      `${data.programTitle} on ${when} is full — you're on the waitlist.`,
+      `${data.programTitle} on ${when} is full. You are on the waitlist.`,
       "",
-      "If a seat opens up, you'll be moved in automatically and we'll write to confirm.",
+      "If a seat opens up, you will be moved in automatically and a message confirms it.",
       "",
-      "— PAZ",
+      "PAZ",
     ].join("\n");
     const html = wrapHtml(`
       <p>Hello ${escapeHtml(data.fullName)},</p>
-      <p><strong>${escapeHtml(data.programTitle)}</strong> on <strong>${escapeHtml(when)}</strong> is full — you're on the waitlist.</p>
-      <p>If a seat opens up, you'll be moved in automatically and we'll write to confirm.</p>
+      <p><strong>${escapeHtml(data.programTitle)}</strong> on <strong>${escapeHtml(when)}</strong> is full. You are on the waitlist.</p>
+      <p>If a seat opens up, you will be moved in automatically and a message confirms it.</p>
     `);
     return { subject, text, html };
   }
 
-  const subject = `You're registered — ${data.programTitle}`;
+  const subject = `You're registered: ${data.programTitle}`;
   const text = [
     `Hello ${data.fullName},`,
     "",
     `You're registered for ${data.programTitle} on ${when}.`,
     "",
-    "— PAZ",
+    "PAZ",
   ].join("\n");
   const html = wrapHtml(`
     <p>Hello ${escapeHtml(data.fullName)},</p>
@@ -195,14 +195,14 @@ export function renderContactMessageReceived(data: ContactMessageReceivedData): 
     "",
     data.message,
     "",
-    "Review and reply directly to their email address — this address does not receive replies.",
+    "Review and reply directly to their email address. This address does not receive replies.",
   ].join("\n");
 
   const html = wrapHtml(`
     <p>A new message came in through the contact form.</p>
     <p><strong>From:</strong> ${escapeHtml(data.fullName)} &lt;${escapeHtml(data.email)}&gt;</p>
     <p>${escapeHtml(data.message)}</p>
-    <p>Review and reply directly to their email address — this address does not receive replies.</p>
+    <p>Review and reply directly to their email address. This address does not receive replies.</p>
   `);
 
   return { subject, text, html };
@@ -236,7 +236,7 @@ export function renderMembershipRenewalNotice(data: MembershipRenewalNoticeData)
 
   const urgencyLine =
     data.noticeKind === "7d"
-      ? `This is a reminder — your ${data.tierName} membership ends ${when}.`
+      ? `This is a reminder. Your ${data.tierName} membership ends ${when}.`
       : `Your ${data.tierName} membership ends ${when}.`;
 
   const text = [
@@ -244,15 +244,15 @@ export function renderMembershipRenewalNotice(data: MembershipRenewalNoticeData)
     "",
     urgencyLine,
     "",
-    "Renewing keeps your membership continuous — get in touch and we'll record your renewal. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.",
+    "Renewing keeps your membership continuous. Get in touch and the renewal will be recorded. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.",
     "",
-    "— PAZ",
+    "PAZ",
   ].join("\n");
 
   const html = wrapHtml(`
     <p>Hello ${escapeHtml(data.fullName)},</p>
     <p>${escapeHtml(urgencyLine)}</p>
-    <p>Renewing keeps your membership continuous — get in touch and we'll record your renewal. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.</p>
+    <p>Renewing keeps your membership continuous. Get in touch and the renewal will be recorded. If it lapses, there's a 30-day grace period before member benefits pause, and reactivating later is still possible without a fresh application.</p>
   `);
 
   return { subject, text, html };
@@ -278,20 +278,20 @@ export function renderMembershipInvitation(data: MembershipInvitationData): Emai
   const text = [
     `Hello ${data.fullName},`,
     "",
-    `Your application for ${data.tierName} membership has been reviewed, and we'd like to invite you to join.`,
+    `Your application for ${data.tierName} membership has been reviewed, and PAZ invites you to join.`,
     "",
     `Accept your invitation: ${data.acceptUrl}`,
     "",
-    "This link is valid for 14 days and can only be used once. If it expires before you use it, write to us and we'll send a new one.",
+    "This link is valid for 14 days and can only be used once. If it expires before you use it, write to PAZ and a new one will be sent.",
     "",
-    "— PAZ",
+    "PAZ",
   ].join("\n");
 
   const html = wrapHtml(`
     <p>Hello ${escapeHtml(data.fullName)},</p>
-    <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been reviewed, and we'd like to invite you to join.</p>
+    <p>Your application for <strong>${escapeHtml(data.tierName)}</strong> membership has been reviewed, and PAZ invites you to join.</p>
     <p><a href="${escapeHtml(data.acceptUrl)}">Accept your invitation</a></p>
-    <p>This link is valid for 14 days and can only be used once. If it expires before you use it, write to us and we'll send a new one.</p>
+    <p>This link is valid for 14 days and can only be used once. If it expires before you use it, write to PAZ and a new one will be sent.</p>
   `);
 
   return { subject, text, html };

@@ -39,7 +39,7 @@ export function AdminShowsPage() {
     setPicked(new Set());
   }, [editing?.id, isNew]);
 
-  const already = new Set((editing?.work_ids ?? []));
+  const already = new Set(editing?.work_ids ?? []);
 
   return (
     <div className="flex flex-col gap-6">

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button, Field, Input, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { selectAll } from "@/lib/paged";
 
 interface SettingRow {
   key: string;
@@ -13,15 +14,10 @@ interface SettingRow {
 function useSettings() {
   return useQuery({
     queryKey: ["settings"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .schema("api")
-        .from("settings")
-        .select("*")
-        .order("key");
-      if (error) throw toAppError(error);
-      return data as SettingRow[];
-    },
+    queryFn: async () =>
+      (await selectAll((from, to) =>
+        supabase.schema("api").from("settings").select("*").order("key").range(from, to),
+      )) as SettingRow[],
   });
 }
 

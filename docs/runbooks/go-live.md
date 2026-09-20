@@ -67,6 +67,7 @@ supabase functions deploy decide-membership-application
 supabase functions deploy register-for-session
 supabase functions deploy ingest-media
 supabase functions deploy submit-contact-message
+supabase functions deploy submit-voice-intake
 supabase functions deploy send-a-pigeon
 supabase functions deploy send-renewal-notices
 supabase functions deploy invite-membership-applicant
@@ -123,7 +124,7 @@ Until then, leave them unset — the functions stay deployed but inert
 
 Get a `RESEND_API_KEY` from resend.com after verifying your sending
 domain (ADR-11) — outbound email (reservation/application/invitation/
-renewal/contact-form-notification emails) silently fails without it (each
+renewal/contact-form-notification emails, and enquiries about a work) silently fails without it (each
 Edge Function catches and logs the failure rather than blocking the
 underlying action, so the site still works, it just won't send mail).
 
@@ -151,9 +152,17 @@ echo "VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co" > .env.productio
 echo "VITE_SUPABASE_ANON_KEY=<your project's anon key, from the dashboard's API settings>" >> .env.production.local
 pnpm build
 cd ..
-pnpm sitemap
-pnpm feeds
+pnpm site
 ```
+
+`pnpm site` is the whole publishing step in one command: it writes the
+sitemap, the feeds, and then every public page as flat HTML and plain
+text into `apps/web/dist/` (`scripts/prerender.mjs`). Everything that
+has been deposited or published reads with JavaScript switched off, and
+the deposit number is the canonical address of a deposited work
+(`/record/PAZ-DEP-000123`); the readable slug path is a small redirect
+page pointing at it. See `KEEPING.md` for the same steps in plain
+language.
 
 This produces `apps/web/dist/` — a fully static site (HTML/CSS/JS, no
 server needed). **This is what gets uploaded to your host.** The anon
@@ -162,7 +171,7 @@ the browser would see in any Supabase app's network tab) — the
 `SUPABASE_SERVICE_ROLE_KEY` from step 5's dashboard is the one that must
 never appear here or anywhere in `apps/web`.
 
-**`pnpm build` alone does not produce `sitemap.xml`** — `robots.txt`
+**`pnpm build` alone does not produce `sitemap.xml` or the static pages** — `robots.txt`
 promises one at `/sitemap.xml`, but generating it needs a live query
 against the deployed project (`scripts/generate-sitemap.mjs`,
 reads `apps/web/.env.local`/`.env.production.local` automatically),
@@ -180,21 +189,24 @@ to any non-home page will 404 at the host level before React ever runs.
 (Most static hosts call this "SPA fallback" or "rewrite all routes to
 index.html" — check your host's docs for the exact setting name.)
 
-## 7a. Publish the Privacy Policy and Terms of Service pages
+## 7a. The pages whose words the house supplies
 
-The footer links to `/privacy` and `/terms` unconditionally — until a
-`page`-type item exists at each of those slugs, both links 404. Sign in
-with the staff account from step 3, create two pages in the editorial
-desk with slugs `privacy` and `terms`, and paste in the draft copy from
-`docs/policies/privacy-policy.md` and `docs/policies/terms-of-service.md`
-— **read each file's own header first**: both are explicitly drafts
-grounded in what this codebase actually does, not reviewed by counsel.
-Have them reviewed before publishing if that review hasn't happened yet.
+`/privacy`, `/terms`, `/name`, `/table`, `/encounters`, `/looking-for`,
+`/commons`, `/a-voice`, the seven documents of the Canon (`/canon`,
+published as pages slugged `canon-1` to `canon-7`) and the gallery's line
+on the struck row (a page slugged `struck-row`) all exist as addresses.
+Until the house publishes a `page`-type item with the matching slug, each
+shows "This page has not been written yet" and nothing else. Their words
+are the house's to write: do not fill them from elsewhere in the
+repository. `docs/policies/privacy-policy.md` and
+`docs/policies/terms-of-service.md` are unreviewed drafts grounded in what
+the code does; the house decides whether they are used, after counsel has
+read them.
 
 ## 8. Smoke-test against the real project
 
 Once uploaded: sign in with the account from step 3, confirm the admin
-console loads, submit one real reservation/application/contact-form entry
+console loads, submit one real application or contact-form entry
 and confirm the corresponding email arrives. This is the first time any
 of this session's work will have actually run against a live database —
 see `docs/remaining-work.md` §1 for the full list of what's been

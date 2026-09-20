@@ -39,7 +39,7 @@ export function MemberCardPage() {
       <div className="max-w-standard mx-auto px-6 py-16">
         <StatePanel
           title="No Friends of PAZ record found."
-          description="This page is for current Friends of PAZ. If you believe this is a mistake, contact us."
+          description="This page is for current Friends of PAZ. If you believe this is a mistake, get in touch."
         />
       </div>
     );
@@ -82,7 +82,7 @@ export function MemberCardPage() {
       {!canIssue && (
         <StatePanel
           title="Card unavailable."
-          description="Only active or honorary Friends can issue a verification code. Contact us if your support needs renewing."
+          description="Only active or honorary Friends can issue a verification code. Get in touch if your support needs renewing."
         />
       )}
 

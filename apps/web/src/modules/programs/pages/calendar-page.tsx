@@ -12,7 +12,7 @@ export function CalendarPage() {
       <h1 className="font-serif text-3xl">Programme calendar</h1>
 
       {/* Encounters — the public civic layer (Field Studies, Common Ground,
-          The Chautari) — lives here rather than its own nav entry, per the
+          The Chautari) lives here rather than its own nav entry, per the
           house's request. /encounters itself is unchanged. */}
       <Link
         to="/encounters"

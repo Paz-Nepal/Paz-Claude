@@ -114,7 +114,7 @@ async function main() {
       }),
     );
     const xml = rssFeed({
-      title: `PAZ — ${series.title}`,
+      title: `PAZ · ${series.title}`,
       link: `${SITE_URL}/${series.path}`,
       description: `The ${series.title} series, kept by PAZ.`,
       items,
@@ -131,7 +131,7 @@ async function main() {
   );
   const recordItems = record.map((r) =>
     rssItem({
-      title: `${r.deposit_number} — ${r.title}`,
+      title: `${r.deposit_number} · ${r.title}`,
       link: r.link ? `${SITE_URL}${r.link}` : `${SITE_URL}/the-record`,
       description: r.provenance,
       pubDate: r.deposited_at,
@@ -139,7 +139,7 @@ async function main() {
     }),
   );
   const recordXml = rssFeed({
-    title: "PAZ — The Record",
+    title: "PAZ · The Record",
     link: `${SITE_URL}/the-record`,
     description: "Everything deposited into the Record, kept in order, forever.",
     items: recordItems,

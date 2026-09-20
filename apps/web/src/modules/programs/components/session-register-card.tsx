@@ -50,7 +50,7 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
         </p>
         <p className="text-foreground mt-2 text-sm">
           {register.data === "waitlisted"
-            ? "You're on the waitlist. We'll let you know if a seat opens up."
+            ? "You're on the waitlist. A message follows if a seat opens up."
             : "You're registered."}
         </p>
       </div>

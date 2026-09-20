@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { toAppError, type Database } from "@paz/types";
 import { supabase } from "@/lib/supabase";
 import { invokeEdgeFunction } from "@/lib/edge-functions";
+import { selectAll } from "@/lib/paged";
 
 export type PublishedItem = Database["api"]["Views"]["published_items"]["Row"];
 export type PublishedItemDetail =
@@ -36,16 +37,12 @@ export function usePublishedItems(type?: PublicItemType) {
   return useQuery({
     queryKey: ["published-items", type ?? "all"],
     staleTime: 60_000,
-    queryFn: async () => {
-      let query = api()
-        .from("published_items")
-        .select("*")
-        .order("published_at", { ascending: false });
-      if (type) query = query.eq("type", type);
-      const { data, error } = await query;
-      if (error) throw toAppError(error);
-      return data;
-    },
+    queryFn: () =>
+      selectAll<PublishedItem>((from, to) => {
+        let query = api().from("published_items").select("*");
+        if (type) query = query.eq("type", type);
+        return query.order("published_at", { ascending: false }).order("id").range(from, to);
+      }),
   });
 }
 

@@ -45,7 +45,7 @@ export class AppErrorBoundary extends React.Component<Props, State> {
         <div className="flex min-h-[60vh] items-center justify-center p-8">
           <StatePanel
             title="Something didn't work."
-            description="Please try again. If this keeps happening, write to us and mention the reference below."
+            description="Please try again. If this keeps happening, write to the house and mention the reference below."
             reference={this.state.reference ?? undefined}
             action={
               <Button variant="secondary" onClick={this.handleReset}>

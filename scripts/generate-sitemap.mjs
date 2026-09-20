@@ -36,16 +36,24 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 
 const API = `${SUPABASE_URL}/rest/v1`;
 
+// Pages through the whole table; never stops silently at the backend's
+// default thousand rows.
 async function selectFrom(table, query = "") {
-  const res = await fetch(`${API}/${table}?${query}`, {
-    headers: {
-      apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-      "Accept-Profile": "api",
-    },
-  });
-  if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
-  return res.json();
+  const rows = [];
+  for (let offset = 0; ; offset += 1000) {
+    const res = await fetch(`${API}/${table}?${query}&limit=1000&offset=${offset}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Accept-Profile": "api",
+      },
+    });
+    if (!res.ok) throw new Error(`${table}: ${res.status} ${await res.text()}`);
+    const page = await res.json();
+    rows.push(...page);
+    if (page.length < 1000) break;
+  }
+  return rows;
 }
 
 // Matches apps/web/src/app/router.tsx: series with a dedicated index/detail
@@ -62,19 +70,32 @@ const SERIES_PATH = {
 
 const STATIC_ROUTES = [
   { path: "/", priority: "1.0" },
+  { path: "/wall", priority: "0.9" },
+  { path: "/sattal", priority: "0.8" },
+  { path: "/chronicle", priority: "0.7" },
   { path: "/press", priority: "0.8" },
   { path: "/house", priority: "0.8" },
-  { path: "/hearth", priority: "0.8" },
   { path: "/the-record", priority: "0.8" },
   { path: "/record", priority: "0.6" },
+  { path: "/hearth", priority: "0.6" },
+  { path: "/guild", priority: "0.6" },
+  { path: "/treasury", priority: "0.6" },
   { path: "/papers", priority: "0.7" },
   { path: "/brief", priority: "0.7" },
   { path: "/dispatch", priority: "0.7" },
   { path: "/pigeon-post", priority: "0.7" },
   { path: "/annual", priority: "0.7" },
-  { path: "/journal", priority: "0.6" },
   { path: "/programmes", priority: "0.6" },
-  { path: "/membership/apply", priority: "0.5" },
+  { path: "/friends", priority: "0.5" },
+  { path: "/commons", priority: "0.5" },
+  { path: "/name", priority: "0.5" },
+  { path: "/table", priority: "0.5" },
+  { path: "/encounters", priority: "0.5" },
+  { path: "/canon", priority: "0.5" },
+  { path: "/words", priority: "0.5" },
+  { path: "/looking-for", priority: "0.4" },
+  { path: "/privacy", priority: "0.3" },
+  { path: "/terms", priority: "0.3" },
   { path: "/send-a-pigeon", priority: "0.4" },
 ];
 
@@ -111,8 +132,14 @@ async function main() {
 
   const items = await selectFrom(
     "published_items",
-    "select=type,slug,published_at&order=published_at.desc",
+    "select=type,slug,published_at,deposit_ref&order=published_at.desc,id",
   );
+  const [people, works, shows, record] = await Promise.all([
+    selectFrom("wall_people", "select=slug&order=slug"),
+    selectFrom("wall_works", "select=slug&order=slug"),
+    selectFrom("wall_shows", "select=slug,opened_on&order=slug"),
+    selectFrom("record_entries", "select=link,deposited_at&order=deposit_number"),
+  ]);
 
   // Keyed by path so a "page" item that shares its slug with a static
   // organ-hub route (e.g. the institutional page slugged "the-record",
@@ -121,7 +148,18 @@ async function main() {
   const seen = new Map();
   for (const r of STATIC_ROUTES) seen.set(r.path, urlEntry(r.path, null, r.priority));
 
+  // The deposit number is the canonical address of a deposited work
+  // (Build Specification 4.10): the register lists those, never the
+  // readable slug paths, which only redirect.
+  for (const e of record) seen.set(e.link, urlEntry(e.link, e.deposited_at?.slice(0, 10), "0.7"));
+  for (const p of people) seen.set(`/people/${p.slug}`, urlEntry(`/people/${p.slug}`, null, "0.7"));
+  for (const w of works) seen.set(`/works/${w.slug}`, urlEntry(`/works/${w.slug}`, null, "0.7"));
+  for (const sh of shows) {
+    seen.set(`/shows/${sh.slug}`, urlEntry(`/shows/${sh.slug}`, sh.opened_on, "0.6"));
+  }
+
   for (const item of items) {
+    if (item.deposit_ref) continue;
     const prefix = SERIES_PATH[item.type];
     // "page" items (About, Visit, Guild, Treasury, ...) live directly at
     // /<slug> via the generic catch-all route.

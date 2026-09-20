@@ -21,9 +21,9 @@ export function SendAPigeonPage() {
       <header className="flex flex-col gap-2">
         <h1 className="font-serif text-3xl">Send a pigeon</h1>
         <p className="text-muted-foreground">
-          The art of noticing. Send us something you noticed: a moment, a detail, a small truth. The
-          house reads every one; not everything finds its way into print, and nothing is published
-          without care.
+          The art of noticing. Send the house something you noticed: a moment, a detail, a small
+          truth. The house reads every one; not everything finds its way into print, and nothing is
+          published without care.
         </p>
       </header>
 

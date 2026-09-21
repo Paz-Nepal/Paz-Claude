@@ -21,7 +21,6 @@ Run in order, from the repo root:
 
 ```bash
 pnpm site    # clears dist, builds, writes feeds, then prerenders every route and the sitemap
-cp apps/web/deploy/htaccess.template apps/web/dist/.htaccess
 ```
 
 Each of the last three steps talks to the **live** public API with the
@@ -30,10 +29,46 @@ header comments in each script) to build output that reflects what's
 actually published. Run them after `pnpm build`, not before: Vite wipes
 `dist/` on every build, so anything written into it earlier is lost.
 
-`apps/web/dist/.htaccess` does not survive `pnpm build` either -- it isn't
-part of the Vite build graph and Vite clears `dist/` first. The tracked
-source of truth is `apps/web/deploy/htaccess.template`; always copy it in
-fresh after building, never hand-edit a copy that only lives in `dist/`.
+`.htaccess` lives in `apps/web/public/.htaccess`, so Vite copies it into
+`dist/` on every build and every zip carries it. It is the only copy: there
+used to be a second in `apps/web/deploy/`, which had drifted, and it is gone.
+Edit the one in `public/`, never a copy on the host.
+
+It does five things, in order: HTTPS and one host name (www goes to the
+bare domain); serve a real file as it is; serve a prerendered directory
+WITHOUT Apache's trailing-slash redirect (`DirectorySlash Off`, so a sitemap
+URL answers 200 in place and its canonical link is true); return a real 404
+for a missing asset instead of the app shell with a 200; and send everything
+else to `app.html`. It also sets long-lived caching on hashed bundles and
+basic security headers (HSTS, nosniff, X-Frame-Options, Referrer-Policy).
+
+## After uploading: check the live host
+
+```bash
+pnpm check:deployed https://your-domain
+```
+
+It asserts that every sitemap URL answers 200 in place (no redirect hop) with a
+canonical link equal to the requested URL, that a missing asset is a 404, that
+the security headers and the long cache on hashed bundles are present, that
+www redirects, and that `/contact` has not been rewritten by Cloudflare. The
+first run on a new host is the one that matters: the directory handling
+depends on the host honouring `DirectorySlash Off`.
+
+## Cloudflare settings that must match
+
+The pages promise no tracking and a readable address without JavaScript.
+Two Cloudflare features quietly break that, so switch them off for this zone:
+
+- **Email Address Obfuscation** (Scrape Shield): it rewrites every address in
+  the served HTML into a placeholder that only a Cloudflare script can decode,
+  so a visitor without JavaScript sees `[email protected]`. The prerendered
+  pages also wrap themselves in `<!--email_off-->`, which Cloudflare honours,
+  but the toggle is the real fix.
+- **Rocket Loader**, **Web Analytics** (the auto-injected beacon) and any other
+  option that injects a script into the page.
+- **Browser Cache TTL**: leave it on "Respect Existing Headers", or it will
+  override the long cache set on hashed bundles.
 
 ## What each generated file is for
 
@@ -41,8 +76,7 @@ fresh after building, never hand-edit a copy that only lives in `dist/`.
   drift from what's actually live (work plan Part II, #10).
 - **`<series>/feed.xml`, `the-record/feed.xml`** -- one RSS 2.0 feed per
   publication series plus the Record itself (Part II, #9). Served as
-  static files; the `.htaccess` template's extension pass-through already
-  includes `.xml`.
+  static files; a real file is always served as it is, `.xml` included.
 - **`<path>/index.html`** -- a real, complete static HTML document for
   every deposited item, CMS page, and journal article: title, meta
   description, canonical, Open Graph/Twitter tags, and (for deposited

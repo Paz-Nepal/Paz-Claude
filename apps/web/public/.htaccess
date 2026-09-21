@@ -1,34 +1,81 @@
-# Site audit, 18 Sept 2026, item 1: without this, every deep link
-# (paz.com.np/papers/some-slug) 404s on direct visit, refresh, bookmark,
-# or crawler fetch -- it only ever worked by clicking through from the
-# home page, since react-router-dom handles routing client-side and
-# nothing server-side knows what /papers/some-slug is.
+# The one .htaccess for the site. It lives in apps/web/public, so every build
+# carries it into dist/ and every zip ships it. (There used to be a second
+# copy in apps/web/deploy that had drifted from this one; it is gone.)
 #
-# This rewrites any request that isn't a real file or directory to
-# index.html, letting the client-side router take over from there.
+# What a request meets, in order:
+#   1. HTTPS, and one host name (www goes to the bare domain);
+#   2. a file that exists is served as it is;
+#   3. a directory that holds a prerendered index.html is served WITHOUT a
+#      trailing-slash redirect, so /wall answers 200 at /wall and the page's
+#      own canonical link (https://.../wall) is true;
+#   4. a missing file that looks like an asset is a real 404, never the app
+#      shell with a 200;
+#   5. anything else falls through to app.html, the bare shell the client
+#      router takes over from.
+
+# Apache's mod_dir otherwise answers /wall with a 301 to /wall/ before any
+# rewrite rule runs. Every prerendered page lives in a directory, so that
+# would put an extra hop on every URL in the sitemap and land on a page whose
+# canonical link points back at the address that just redirected away.
+DirectorySlash Off
+Options -Indexes
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Real files and directories (assets/, fonts/, robots.txt, the .htaccess
-  # itself) are served as-is -- only unmatched paths fall through.
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # 1. HTTPS (also honouring a proxy that terminates TLS in front of us, so
+  #    a proxied request that was already HTTPS is never redirected in a loop).
+  RewriteCond %{HTTPS} off
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  #    One host name: www.<domain> goes to <domain>.
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # 2. Real files are served as they are.
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # Unmatched paths get the bare app shell, never a prerendered page: the
-  # file at index.html is the home page, and serving it (with its canonical
-  # link) for every other address would file the home page under all of
-  # them (Build Programme 2.1). app.html is the untouched shell.
+  # 3. A directory with a prerendered page: serve its index.html in place.
+  RewriteCond %{REQUEST_URI} !^/$
+  RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}/index.html -f
+  RewriteRule ^(.*?)/?$ /$1/index.html [L]
+
+  # 4. A missing asset is a 404. Monitoring, build scripts and browsers that
+  #    check the status must not be told "200 OK" for a file that is not there.
+  RewriteRule \.(js|mjs|css|map|json|txt|xml|svg|png|jpe?g|gif|webp|avif|ico|woff2?|ttf|otf|pdf|webmanifest)$ - [R=404,L]
+
+  # 5. Everything else gets the bare app shell, never a prerendered page: the
+  #    file at index.html is the home page, and serving it (with its canonical
+  #    link) for every other address would file the home page under all of
+  #    them. app.html is the untouched shell.
   RewriteRule ^ app.html [L]
 </IfModule>
 
-# Fallback for the (rare) Apache build without mod_rewrite: a 404
-# ErrorDocument still serves index.html, with a 200 forced explicitly --
-# without it Apache would keep responding 404 even though the right
-# markup rendered, which is wrong for both real 404s (the app's own
-# router.tsx already renders a real "not found" page client-side) and
-# search engines.
+# Fallback for the (rare) Apache build without mod_rewrite.
 <IfModule !mod_rewrite.c>
   ErrorDocument 404 /app.html
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Hashed bundles change name on every build, so they can be kept for good.
+  <FilesMatch "^.+-[A-Za-z0-9_-]{8}\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Self-hosted fonts keep their names, so a month, not forever.
+  <FilesMatch "\.(woff2?|ttf|otf)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  # Pages are re-checked on every visit, so a new upload shows at once.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+
+  # Basic security headers.
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>

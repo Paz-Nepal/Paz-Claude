@@ -373,7 +373,14 @@ function writePage(path, opts, main, lang = "en") {
   let html = baseHtml
     .replace(/<title>.*?<\/title>/s, "")
     .replace("</head>", `${head({ ...opts, path })}\n  </head>`);
-  html = html.replace('<div id="root"></div>', `<div id="root">${chrome(main)}</div>`);
+  // Cloudflare's Email Address Obfuscation rewrites every address in the served
+  // HTML into a placeholder that only its own script can decode, which defeats
+  // the "write to this address instead" fallback for a reader without
+  // JavaScript. The email_off markers tell it to leave this content alone.
+  html = html.replace(
+    '<div id="root"></div>',
+    `<div id="root"><!--email_off-->${chrome(main)}<!--/email_off--></div>`,
+  );
   if (lang === "ne") html = html.replace('<html lang="en">', '<html lang="ne">');
   const routePath = lang === "ne" ? `/ne${path === "/" ? "" : path}` : path;
   const outDir = join(DIST_DIR, routePath.replace(/^\//, ""));

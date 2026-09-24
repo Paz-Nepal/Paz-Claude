@@ -8,3 +8,5 @@ export { useSiteInfo, usePublishedItems } from "./api/use-site";
 export { LanguageProvider, useLanguage, useLocalizedPath, useOtherLanguagePath } from "./language";
 export type { Lang } from "./language";
 export { LanguageToggle } from "./components/language-toggle";
+export { useWording, useWordingEn, useSiteWording, WORDING, WORDING_KEYS } from "./wording";
+export type { WordingKey, WordingEntry, WordingOverride } from "./wording";

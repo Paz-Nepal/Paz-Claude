@@ -1,0 +1,2183 @@
+{
+  "common.loading": {
+    "area": "Everywhere",
+    "label": "While something loads",
+    "en": "Loading…"
+  },
+  "common.load-error": {
+    "area": "Everywhere",
+    "label": "When something could not be loaded",
+    "en": "Couldn't load this."
+  },
+  "common.not-written": {
+    "area": "Everywhere",
+    "label": "A page the house has not written yet",
+    "en": "This page has not been written yet."
+  },
+  "common.received": {
+    "area": "Everywhere",
+    "label": "After a form is sent",
+    "en": "Received."
+  },
+  "common.send": {
+    "area": "Everywhere",
+    "label": "Send button on forms",
+    "en": "Send"
+  },
+  "common.details": {
+    "area": "Everywhere",
+    "label": "Link to an item's own page",
+    "en": "Details"
+  },
+  "empty.wall": {
+    "area": "Empty sections",
+    "label": "The Wall, when no work hangs",
+    "en": "No work hangs yet."
+  },
+  "empty.artist-no-work": {
+    "area": "Empty sections",
+    "label": "A person's page, when the house holds none of their work",
+    "en": "The house holds no work by this person yet."
+  },
+  "empty.shows": {
+    "area": "Empty sections",
+    "label": "The Wall, when no show has opened",
+    "en": "No show has opened yet."
+  },
+  "empty.sattal": {
+    "area": "Empty sections",
+    "label": "The Sattal, when nothing is accepted",
+    "en": "Nothing has been accepted yet."
+  },
+  "empty.sattal-no-reader": {
+    "area": "Empty sections",
+    "label": "The Sattal, while no outside reader is named",
+    "en": "No outside reader has been named yet, so nothing about work the house shows, sells or has formed, or about PAZ, can be published."
+  },
+  "empty.series": {
+    "area": "Empty sections",
+    "label": "Any Press series with nothing in it",
+    "en": "Nothing has been deposited in this series yet."
+  },
+  "empty.chronicle": {
+    "area": "Empty sections",
+    "label": "The Chronicle, when empty",
+    "en": "Nothing has been recorded yet."
+  },
+  "empty.deposits": {
+    "area": "Empty sections",
+    "label": "The deposit register, when empty",
+    "en": "Nothing has been deposited yet."
+  },
+  "empty.commons": {
+    "area": "Empty sections",
+    "label": "The Commons, when no one has covenanted",
+    "en": "No one has covenanted yet."
+  },
+  "empty.guild": {
+    "area": "Empty sections",
+    "label": "The Guild register, when no maker is formed",
+    "en": "No maker has been formed yet."
+  },
+  "empty.treasury": {
+    "area": "Empty sections",
+    "label": "The Treasury, when no account is published",
+    "en": "No account has been published yet."
+  },
+  "empty.hands": {
+    "area": "Empty sections",
+    "label": "Hands, when no role is listed",
+    "en": "No role is listed yet."
+  },
+  "empty.encounters": {
+    "area": "Empty sections",
+    "label": "Encounters, when none is listed",
+    "en": "No encounter is listed yet."
+  },
+  "empty.terms": {
+    "area": "Empty sections",
+    "label": "A terms document not yet deposited",
+    "en": "This document has not been deposited yet."
+  },
+  "empty.words": {
+    "area": "Empty sections",
+    "label": "Words, when none is listed",
+    "en": "No words are listed yet."
+  },
+  "empty.canon": {
+    "area": "Empty sections",
+    "label": "The Canon, when no document is published",
+    "en": "No document has been published yet."
+  },
+  "nav.wall": {
+    "area": "Menus and footer",
+    "label": "Top menu: The Wall",
+    "en": "The Wall"
+  },
+  "nav.press": {
+    "area": "Menus and footer",
+    "label": "Top menu: The Press (opens a list)",
+    "en": "The Press"
+  },
+  "nav.press-overview": {
+    "area": "Menus and footer",
+    "label": "Press list: link to the Press overview",
+    "en": "The Press (overview)"
+  },
+  "nav.house": {
+    "area": "Menus and footer",
+    "label": "Top menu: The House",
+    "en": "The House"
+  },
+  "nav.record": {
+    "area": "Menus and footer",
+    "label": "Top menu: The Record",
+    "en": "The Record"
+  },
+  "nav.search": {
+    "area": "Menus and footer",
+    "label": "Search (menu link and its spoken label)",
+    "en": "Search"
+  },
+  "nav.open-menu": {
+    "area": "Menus and footer",
+    "label": "Phone menu button, spoken label",
+    "en": "Open menu"
+  },
+  "nav.close-menu": {
+    "area": "Menus and footer",
+    "label": "Phone menu close button, spoken label",
+    "en": "Close menu"
+  },
+  "nav.overview": {
+    "area": "Menus and footer",
+    "label": "Phone menu and footer: Press overview",
+    "en": "Overview"
+  },
+  "nav.papers": {
+    "area": "Menus and footer",
+    "label": "Press list: Papers",
+    "en": "Papers"
+  },
+  "nav.sattal": {
+    "area": "Menus and footer",
+    "label": "Press list and footer: The Sattal",
+    "en": "The Sattal"
+  },
+  "nav.pigeon-post": {
+    "area": "Menus and footer",
+    "label": "Press list and footer: Pigeon Post",
+    "en": "Pigeon Post"
+  },
+  "nav.brief": {
+    "area": "Menus and footer",
+    "label": "Press list and footer: Brief",
+    "en": "Brief"
+  },
+  "nav.dispatch": {
+    "area": "Menus and footer",
+    "label": "Press list and footer: Dispatch",
+    "en": "Dispatch"
+  },
+  "nav.annual": {
+    "area": "Menus and footer",
+    "label": "Press list and footer: Annual",
+    "en": "Annual"
+  },
+  "nav.send-a-pigeon": {
+    "area": "Menus and footer",
+    "label": "Press list: Send a pigeon",
+    "en": "Send a pigeon"
+  },
+  "footer.pronunciation": {
+    "area": "Menus and footer",
+    "label": "Footer: how the name is said",
+    "en": "Rhymes with “cause,” z sounded."
+  },
+  "footer.place-line-1": {
+    "area": "Menus and footer",
+    "label": "Footer: address, first line",
+    "en": "Patan, Lalitpur"
+  },
+  "footer.place-line-2": {
+    "area": "Menus and footer",
+    "label": "Footer: address, second line",
+    "en": "Kathmandu Valley, Nepal"
+  },
+  "footer.col-wall": {
+    "area": "Menus and footer",
+    "label": "Footer column heading: The Wall",
+    "en": "The Wall"
+  },
+  "footer.col-press": {
+    "area": "Menus and footer",
+    "label": "Footer column heading: The Press",
+    "en": "The Press"
+  },
+  "footer.col-house": {
+    "area": "Menus and footer",
+    "label": "Footer column heading: The House",
+    "en": "The House"
+  },
+  "footer.chronicle": {
+    "area": "Menus and footer",
+    "label": "Footer link: The Chronicle",
+    "en": "The Chronicle"
+  },
+  "footer.friends": {
+    "area": "Menus and footer",
+    "label": "Footer link: Friends of PAZ",
+    "en": "Friends of PAZ"
+  },
+  "footer.commons": {
+    "area": "Menus and footer",
+    "label": "Footer link: The Commons",
+    "en": "The Commons"
+  },
+  "footer.programmes": {
+    "area": "Menus and footer",
+    "label": "Footer link: Programmes",
+    "en": "Programmes"
+  },
+  "footer.contact": {
+    "area": "Menus and footer",
+    "label": "Footer link: Contact",
+    "en": "Contact"
+  },
+  "footer.canon": {
+    "area": "Menus and footer",
+    "label": "Footer link: The Canon",
+    "en": "The Canon"
+  },
+  "footer.name": {
+    "area": "Menus and footer",
+    "label": "Footer link: The name",
+    "en": "The name"
+  },
+  "footer.words": {
+    "area": "Menus and footer",
+    "label": "Footer link: Words",
+    "en": "Words"
+  },
+  "footer.looking-for": {
+    "area": "Menus and footer",
+    "label": "Footer link: Looking for",
+    "en": "Looking for"
+  },
+  "footer.privacy": {
+    "area": "Menus and footer",
+    "label": "Footer link: Privacy",
+    "en": "Privacy"
+  },
+  "footer.terms": {
+    "area": "Menus and footer",
+    "label": "Footer link: Terms",
+    "en": "Terms"
+  },
+  "footer.no-tracking": {
+    "area": "Menus and footer",
+    "label": "Footer: the promise about tracking ({year} and {name} are filled in)",
+    "en": "© {year} {name}. No cookies, no analytics, no reader tracking of any kind."
+  },
+  "title.terms": {
+    "area": "Page titles",
+    "label": "Terms page title",
+    "en": "Terms"
+  },
+  "title.hands": {
+    "area": "Page titles",
+    "label": "Hands page title",
+    "en": "Hands"
+  },
+  "title.encounters": {
+    "area": "Page titles",
+    "label": "Encounters page title",
+    "en": "Encounters"
+  },
+  "title.encounter": {
+    "area": "Page titles",
+    "label": "An encounter with no title",
+    "en": "Encounter"
+  },
+  "title.safeguarding": {
+    "area": "Page titles",
+    "label": "Safeguarding page title",
+    "en": "Safeguarding"
+  },
+  "title.children-photography": {
+    "area": "Page titles",
+    "label": "Photographs of children page title",
+    "en": "Photographs of children"
+  },
+  "title.brief": {
+    "area": "Page titles",
+    "label": "The Brief page title (confirm and unsubscribe)",
+    "en": "The Brief"
+  },
+  "title.chronicle": {
+    "area": "Page titles",
+    "label": "The Chronicle page title",
+    "en": "The Chronicle"
+  },
+  "title.words": {
+    "area": "Page titles",
+    "label": "Words page title",
+    "en": "Words"
+  },
+  "title.commons": {
+    "area": "Page titles",
+    "label": "The Commons page title",
+    "en": "The Commons"
+  },
+  "title.canon": {
+    "area": "Page titles",
+    "label": "The Canon page title",
+    "en": "The Canon"
+  },
+  "title.a-voice": {
+    "area": "Page titles",
+    "label": "A voice page title",
+    "en": "A voice"
+  },
+  "title.name": {
+    "area": "Page titles",
+    "label": "The name page title",
+    "en": "The name"
+  },
+  "title.table": {
+    "area": "Page titles",
+    "label": "The Table page title",
+    "en": "The Table"
+  },
+  "title.looking-for": {
+    "area": "Page titles",
+    "label": "Looking for page title",
+    "en": "Looking for"
+  },
+  "title.privacy": {
+    "area": "Page titles",
+    "label": "Privacy page title",
+    "en": "Privacy"
+  },
+  "title.custodian": {
+    "area": "Page titles",
+    "label": "Custodian of the Name page title",
+    "en": "The Custodian of the Name"
+  },
+  "terms.painters": {
+    "area": "Terms",
+    "label": "Name of the painter's terms",
+    "en": "The painter's terms"
+  },
+  "terms.writers": {
+    "area": "Terms",
+    "label": "Name of the Sattal's terms",
+    "en": "The Sattal's terms"
+  },
+  "terms.memory": {
+    "area": "Terms",
+    "label": "Name of the Ethics of Memory",
+    "en": "The Ethics of Memory"
+  },
+  "terms.friends": {
+    "area": "Terms",
+    "label": "Name of the Friends of PAZ terms",
+    "en": "Friends of PAZ"
+  },
+  "terms.series": {
+    "area": "Terms",
+    "label": "Series name shown with a terms document",
+    "en": "Terms"
+  },
+  "terms.newer": {
+    "area": "Terms",
+    "label": "Note on an old version",
+    "en": "A newer version has been deposited."
+  },
+  "terms.read-current": {
+    "area": "Terms",
+    "label": "Link to the current version",
+    "en": "Read the current version"
+  },
+  "terms.version": {
+    "area": "Terms",
+    "label": "Version line ({version})",
+    "en": "Version {version}"
+  },
+  "terms.deposited": {
+    "area": "Terms",
+    "label": "Added after the version ({date})",
+    "en": "deposited {date}"
+  },
+  "terms.history": {
+    "area": "Terms",
+    "label": "Heading above earlier versions",
+    "en": "Version history"
+  },
+  "terms.friends-link": {
+    "area": "Terms",
+    "label": "Link under the Friends form",
+    "en": "Friends of PAZ: the terms"
+  },
+  "hands.held": {
+    "area": "Hands",
+    "label": "Status: held",
+    "en": "Held"
+  },
+  "hands.open": {
+    "area": "Hands",
+    "label": "Status: open",
+    "en": "Open"
+  },
+  "hands.dormant": {
+    "area": "Hands",
+    "label": "Status: dormant",
+    "en": "Dormant"
+  },
+  "hands.held-by": {
+    "area": "Hands",
+    "label": "Who holds a role ({name})",
+    "en": "Held by {name}"
+  },
+  "hands.term-ends": {
+    "area": "Hands",
+    "label": "When a term ends ({date})",
+    "en": "term ends {date}"
+  },
+  "hands.wakes-when": {
+    "area": "Hands",
+    "label": "A dormant office ({trigger})",
+    "en": "This office wakes when {trigger}."
+  },
+  "hands.the-work": {
+    "area": "Hands",
+    "label": "Heading: the work",
+    "en": "The work"
+  },
+  "hands.asks": {
+    "area": "Hands",
+    "label": "Heading: what it asks",
+    "en": "What it asks"
+  },
+  "hands.gives": {
+    "area": "Hands",
+    "label": "Heading: what it gives back",
+    "en": "What it gives back"
+  },
+  "hands.how-to-say-yes": {
+    "area": "Hands",
+    "label": "Heading: how to say yes",
+    "en": "How to say yes"
+  },
+  "hands.all": {
+    "area": "Hands",
+    "label": "Link back to every role",
+    "en": "All hands"
+  },
+  "encounters.field-study": {
+    "area": "Encounters",
+    "label": "Kind: Field Study",
+    "en": "Field Study"
+  },
+  "encounters.common-ground": {
+    "area": "Encounters",
+    "label": "Kind: Common Ground",
+    "en": "Common Ground"
+  },
+  "encounters.chautari": {
+    "area": "Encounters",
+    "label": "Kind: The Chautari",
+    "en": "The Chautari"
+  },
+  "encounters.workshop": {
+    "area": "Encounters",
+    "label": "Kind: Workshop",
+    "en": "Workshop"
+  },
+  "encounters.to": {
+    "area": "Encounters",
+    "label": "Between two dates ({date})",
+    "en": "to {date}"
+  },
+  "safeguarding.children-link": {
+    "area": "Safeguarding",
+    "label": "Link to the photographs rule",
+    "en": "Photographs of children"
+  },
+  "safeguarding.raise": {
+    "area": "Safeguarding",
+    "label": "Heading above the concern form",
+    "en": "Raise a concern"
+  },
+  "safeguarding.your-name": {
+    "area": "Safeguarding",
+    "label": "Field: your name",
+    "en": "Your name (optional)"
+  },
+  "safeguarding.reach-you": {
+    "area": "Safeguarding",
+    "label": "Field: how to reach you",
+    "en": "How to reach you (optional)"
+  },
+  "safeguarding.what": {
+    "area": "Safeguarding",
+    "label": "Field: what you want to say",
+    "en": "What you want to say"
+  },
+  "brief.confirmed": {
+    "area": "The Brief",
+    "label": "After confirming",
+    "en": "Confirmed."
+  },
+  "brief.confirm-button": {
+    "area": "The Brief",
+    "label": "Confirm button",
+    "en": "Confirm the subscription"
+  },
+  "brief.unsubscribed": {
+    "area": "The Brief",
+    "label": "After unsubscribing",
+    "en": "Unsubscribed. Nothing further will be sent."
+  },
+  "brief.unsubscribing": {
+    "area": "The Brief",
+    "label": "While unsubscribing",
+    "en": "Unsubscribing…"
+  },
+  "brief.link-incomplete": {
+    "area": "The Brief",
+    "label": "A broken link",
+    "en": "This link is incomplete."
+  },
+  "guild.register": {
+    "area": "Guild and Treasury",
+    "label": "Guild register heading",
+    "en": "The hallmark register"
+  },
+  "guild.punch-rule": {
+    "area": "Guild and Treasury",
+    "label": "House rule under the register heading",
+    "en": "The house’s punch attests formation. It does not attest quality, ownership or endorsement."
+  },
+  "guild.mark": {
+    "area": "Guild and Treasury",
+    "label": "A maker's mark ({mark})",
+    "en": "Mark: {mark}."
+  },
+  "guild.year-letter": {
+    "area": "Guild and Treasury",
+    "label": "Year letter ({letter})",
+    "en": "Year letter {letter}."
+  },
+  "guild.registered": {
+    "area": "Guild and Treasury",
+    "label": "Date registered ({date})",
+    "en": "Registered {date}."
+  },
+  "guild.destroyed": {
+    "area": "Guild and Treasury",
+    "label": "Punch destroyed ({date})",
+    "en": "Punch destroyed {date}."
+  },
+  "treasury.account": {
+    "area": "Guild and Treasury",
+    "label": "Treasury account heading",
+    "en": "The account"
+  },
+  "treasury.patronage": {
+    "area": "Guild and Treasury",
+    "label": "Patronage line ({amount})",
+    "en": "Patronage share given from after-tax profit: {amount}"
+  },
+  "treasury.tithe": {
+    "area": "Guild and Treasury",
+    "label": "Tithe line ({amount})",
+    "en": "Tithe: {amount}"
+  },
+  "treasury.tithe-base": {
+    "area": "Guild and Treasury",
+    "label": "Tithe base ({amount})",
+    "en": "on a harmonised base of {amount}"
+  },
+  "treasury.largest-share": {
+    "area": "Guild and Treasury",
+    "label": "Largest share line ({pct})",
+    "en": "Largest single share of the year’s giving: {pct}%."
+  },
+  "treasury.rule-met": {
+    "area": "Guild and Treasury",
+    "label": "The one-fifth rule, met",
+    "en": "The one-fifth rule is met."
+  },
+  "treasury.rule-not-met": {
+    "area": "Guild and Treasury",
+    "label": "The one-fifth rule, not met",
+    "en": "The one-fifth rule is not met."
+  },
+  "treasury.instruments": {
+    "area": "Guild and Treasury",
+    "label": "Instruments line ({text})",
+    "en": "Instruments in force: {text}"
+  },
+  "words.spelling": {
+    "area": "The Record and the Commons",
+    "label": "Tag on a spelling entry",
+    "en": "spelling"
+  },
+  "commons.ladder": {
+    "area": "The Record and the Commons",
+    "label": "Heading above the ladder",
+    "en": "The ladder"
+  },
+  "commons.rung-guest": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 1",
+    "en": "Guest"
+  },
+  "commons.rung-companion": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 2",
+    "en": "Companion"
+  },
+  "commons.rung-denizen": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 3",
+    "en": "Denizen"
+  },
+  "commons.rung-steward": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 4",
+    "en": "Steward"
+  },
+  "commons.rung-elder": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 5",
+    "en": "Elder"
+  },
+  "commons.rung-ancestor": {
+    "area": "The Record and the Commons",
+    "label": "Ladder rung 6",
+    "en": "Ancestor"
+  },
+  "voice.memory-link": {
+    "area": "A voice",
+    "label": "Link to the Ethics of Memory",
+    "en": "The Ethics of Memory"
+  },
+  "voice.your-name": {
+    "area": "A voice",
+    "label": "Field: your name",
+    "en": "Your name"
+  },
+  "voice.reach-you": {
+    "area": "A voice",
+    "label": "Field: how to reach you",
+    "en": "How to reach you"
+  },
+  "voice.person": {
+    "area": "A voice",
+    "label": "Field: name of the person",
+    "en": "Name of the person"
+  },
+  "voice.place": {
+    "area": "A voice",
+    "label": "Field: place",
+    "en": "Place"
+  },
+  "voice.else": {
+    "area": "A voice",
+    "label": "Field: anything else",
+    "en": "Anything else"
+  },
+  "home.place": {
+    "area": "Home page",
+    "label": "Small line above the name",
+    "en": "Patan, Lalitpur"
+  },
+  "home.wall-eyebrow": {
+    "area": "Home page",
+    "label": "Small label above Recent work",
+    "en": "The Wall"
+  },
+  "home.recent-work": {
+    "area": "Home page",
+    "label": "Heading: recent work",
+    "en": "Recent work"
+  },
+  "home.wall-link": {
+    "area": "Home page",
+    "label": "Link to the Wall",
+    "en": "The Wall"
+  },
+  "home.press-eyebrow": {
+    "area": "Home page",
+    "label": "Small label above the Sattal",
+    "en": "The Press"
+  },
+  "home.sattal": {
+    "area": "Home page",
+    "label": "Heading: the Sattal",
+    "en": "The Sattal"
+  },
+  "home.all-pieces": {
+    "area": "Home page",
+    "label": "Link to every Sattal piece",
+    "en": "All pieces"
+  },
+  "home.house-eyebrow": {
+    "area": "Home page",
+    "label": "Small label above the Chronicle",
+    "en": "The House"
+  },
+  "home.chronicle": {
+    "area": "Home page",
+    "label": "Heading: the Chronicle",
+    "en": "The Chronicle"
+  },
+  "home.whole-run": {
+    "area": "Home page",
+    "label": "Link to the whole Chronicle",
+    "en": "The whole run"
+  },
+  "home.coming-up": {
+    "area": "Home page",
+    "label": "Heading: upcoming programmes",
+    "en": "Coming up"
+  },
+  "home.programmes-link": {
+    "area": "Home page",
+    "label": "Link to Programmes",
+    "en": "Programmes"
+  },
+  "home.organs-label": {
+    "area": "Home page",
+    "label": "Spoken label for the six organs list",
+    "en": "The six organs"
+  },
+  "home.organ-house": {
+    "area": "Home page",
+    "label": "Organ link: House",
+    "en": "House"
+  },
+  "home.organ-record": {
+    "area": "Home page",
+    "label": "Organ link: Record",
+    "en": "Record"
+  },
+  "home.organ-guild": {
+    "area": "Home page",
+    "label": "Organ link: Guild",
+    "en": "Guild"
+  },
+  "home.organ-press": {
+    "area": "Home page",
+    "label": "Organ link: Press",
+    "en": "Press"
+  },
+  "home.organ-hearth": {
+    "area": "Home page",
+    "label": "Organ link: Hearth",
+    "en": "Hearth"
+  },
+  "home.organ-treasury": {
+    "area": "Home page",
+    "label": "Organ link: Treasury",
+    "en": "Treasury"
+  },
+  "organ.kicker": {
+    "area": "The Press",
+    "label": "Small line above every organ's title",
+    "en": "An organ of the house"
+  },
+  "press.title": {
+    "area": "The Press",
+    "label": "The Press page title (until the house publishes one)",
+    "en": "The Press"
+  },
+  "series.papers": {
+    "area": "The Press",
+    "label": "Series name: Papers",
+    "en": "Papers"
+  },
+  "series.brief": {
+    "area": "The Press",
+    "label": "Series name: Brief",
+    "en": "Brief"
+  },
+  "series.dispatch": {
+    "area": "The Press",
+    "label": "Series name: Dispatch",
+    "en": "Dispatch"
+  },
+  "series.annual": {
+    "area": "The Press",
+    "label": "Series name: Annual",
+    "en": "Annual"
+  },
+  "series.pigeon-post": {
+    "area": "The Press",
+    "label": "Series name: Pigeon Post",
+    "en": "Pigeon Post"
+  },
+  "press.all-series": {
+    "area": "The Press",
+    "label": "Link to every item in a series ({series})",
+    "en": "All {series}"
+  },
+  "press.deposited-here": {
+    "area": "The Press",
+    "label": "Small label above the series list",
+    "en": "Deposited here"
+  },
+  "press.every-series": {
+    "area": "The Press",
+    "label": "Heading above the series list",
+    "en": "Every series the Press keeps"
+  },
+  "press.sattal": {
+    "area": "The Press",
+    "label": "The Sattal, in the series list",
+    "en": "The Sattal"
+  },
+  "press.all-pieces": {
+    "area": "The Press",
+    "label": "Link to every Sattal piece",
+    "en": "All pieces"
+  },
+  "press.sattal-note": {
+    "area": "The Press",
+    "label": "One line about the Sattal",
+    "en": "Signed work by authors who are not the house."
+  },
+  "press.send-pigeon": {
+    "area": "The Press",
+    "label": "Link to send a pigeon",
+    "en": "Send a pigeon, contribute something you noticed"
+  },
+  "organ.guild": {
+    "area": "The organs",
+    "label": "The Guild page title (until the house publishes one)",
+    "en": "The Guild"
+  },
+  "organ.hearth": {
+    "area": "The organs",
+    "label": "The Hearth page title (until the house publishes one)",
+    "en": "The Hearth"
+  },
+  "organ.treasury": {
+    "area": "The organs",
+    "label": "The Treasury page title (until the house publishes one)",
+    "en": "The Treasury"
+  },
+  "organ.record": {
+    "area": "The organs",
+    "label": "The Record page title (until the house publishes one)",
+    "en": "The Record"
+  },
+  "organ.house": {
+    "area": "The organs",
+    "label": "The House page title (until the house publishes one)",
+    "en": "The House"
+  },
+  "record.in-label": {
+    "area": "The organs",
+    "label": "Spoken label for the Record's links",
+    "en": "In the Record"
+  },
+  "record.deposit-register": {
+    "area": "The organs",
+    "label": "Link: the deposit register",
+    "en": "The deposit register"
+  },
+  "record.chronicle": {
+    "area": "The organs",
+    "label": "Link: the Chronicle",
+    "en": "The Chronicle"
+  },
+  "house.in-label": {
+    "area": "The organs",
+    "label": "Spoken label for the House's links",
+    "en": "In the house"
+  },
+  "house.hearth": {
+    "area": "The organs",
+    "label": "House link: The Hearth",
+    "en": "The Hearth"
+  },
+  "house.guild": {
+    "area": "The organs",
+    "label": "House link: The Guild",
+    "en": "The Guild"
+  },
+  "house.press": {
+    "area": "The organs",
+    "label": "House link: The Press",
+    "en": "The Press"
+  },
+  "house.record": {
+    "area": "The organs",
+    "label": "House link: The Record",
+    "en": "The Record"
+  },
+  "house.treasury": {
+    "area": "The organs",
+    "label": "House link: The Treasury",
+    "en": "The Treasury"
+  },
+  "house.chronicle": {
+    "area": "The organs",
+    "label": "House link: The Chronicle",
+    "en": "The Chronicle"
+  },
+  "house.commons": {
+    "area": "The organs",
+    "label": "House link: The Commons",
+    "en": "The Commons"
+  },
+  "house.friends": {
+    "area": "The organs",
+    "label": "House link: Friends of PAZ",
+    "en": "Friends of PAZ"
+  },
+  "house.table": {
+    "area": "The organs",
+    "label": "House link: The Table",
+    "en": "The Table"
+  },
+  "house.encounters": {
+    "area": "The organs",
+    "label": "House link: Encounters",
+    "en": "Encounters"
+  },
+  "house.name": {
+    "area": "The organs",
+    "label": "House link: The name",
+    "en": "The name"
+  },
+  "house.canon": {
+    "area": "The organs",
+    "label": "House link: The Canon",
+    "en": "The Canon"
+  },
+  "title.wall": {
+    "area": "The Wall",
+    "label": "The Wall page title",
+    "en": "The Wall"
+  },
+  "wall.people": {
+    "area": "The Wall",
+    "label": "Heading: people",
+    "en": "People"
+  },
+  "wall.work": {
+    "area": "The Wall",
+    "label": "Heading: work",
+    "en": "Work"
+  },
+  "wall.shows": {
+    "area": "The Wall",
+    "label": "Heading: shows",
+    "en": "Shows"
+  },
+  "wall.sold": {
+    "area": "The Wall",
+    "label": "Added after a sold work",
+    "en": "Sold."
+  },
+  "wall.to": {
+    "area": "The Wall",
+    "label": "Between two dates ({date})",
+    "en": "to {date}"
+  },
+  "title.sattal": {
+    "area": "The Sattal",
+    "label": "The Sattal page title",
+    "en": "The Sattal"
+  },
+  "sattal.kicker": {
+    "area": "The Sattal",
+    "label": "Line above the Sattal title",
+    "en": "Signed work by authors who are not the house"
+  },
+  "sattal.rule-heading": {
+    "area": "The Sattal",
+    "label": "Hidden heading for the rule (read aloud)",
+    "en": "The rule"
+  },
+  "sattal.rule": {
+    "area": "The Sattal",
+    "label": "The Sattal's rule, in full",
+    "en": "Work the house shows, sells or has formed, and anything critical of PAZ, is published here only when an author unconnected to it has written it and a named outside reader, whom the house cannot overrule, has accepted it."
+  },
+  "sattal.terms-link": {
+    "area": "The Sattal",
+    "label": "Link to the Sattal's terms",
+    "en": "The Sattal’s terms"
+  },
+  "sattal.reader-is": {
+    "area": "The Sattal",
+    "label": "One outside reader ({names})",
+    "en": "The outside reader is {names}."
+  },
+  "sattal.readers-are": {
+    "area": "The Sattal",
+    "label": "Several outside readers ({names})",
+    "en": "The outside readers are {names}."
+  },
+  "sattal.no-reader": {
+    "area": "The Sattal",
+    "label": "While no outside reader is named",
+    "en": "No outside reader has been named yet, so nothing in that category is published."
+  },
+  "sattal.pieces-label": {
+    "area": "The Sattal",
+    "label": "Spoken label for the list of pieces",
+    "en": "Pieces"
+  },
+  "sattal.form-study": {
+    "area": "The Sattal",
+    "label": "Form: Study",
+    "en": "Study"
+  },
+  "sattal.form-review": {
+    "area": "The Sattal",
+    "label": "Form: Review",
+    "en": "Review"
+  },
+  "sattal.form-account": {
+    "area": "The Sattal",
+    "label": "Form: Account",
+    "en": "Account"
+  },
+  "sattal.piece-number": {
+    "area": "The Sattal",
+    "label": "Form and number ({form}, {number})",
+    "en": "{form} no. {number}"
+  },
+  "sattal.lang-en": {
+    "area": "The Sattal",
+    "label": "Language name: English",
+    "en": "English"
+  },
+  "sattal.lang-ne": {
+    "area": "The Sattal",
+    "label": "Language name: Nepali",
+    "en": "Nepali"
+  },
+  "sattal.lang-new": {
+    "area": "The Sattal",
+    "label": "Language name: Nepal Bhasa",
+    "en": "Nepal Bhasa"
+  },
+  "sattal.sources-passage": {
+    "area": "The Sattal",
+    "label": "Spoken label: sources beside a passage",
+    "en": "Sources for this passage"
+  },
+  "sattal.sources": {
+    "area": "The Sattal",
+    "label": "Spoken label: sources",
+    "en": "Sources"
+  },
+  "sattal.english-translation": {
+    "area": "The Sattal",
+    "label": "Column heading when English is the translation",
+    "en": "English, translation"
+  },
+  "sattal.english-original": {
+    "area": "The Sattal",
+    "label": "Column heading when English is the original",
+    "en": "English, the original"
+  },
+  "sattal.original-language": {
+    "area": "The Sattal",
+    "label": "Note on the original ({language})",
+    "en": "Original language: {language}. The translation is set beside it."
+  },
+  "sattal.series": {
+    "area": "The Sattal",
+    "label": "Series name shown with a piece",
+    "en": "The Sattal"
+  },
+  "sattal.reply-to": {
+    "area": "The Sattal",
+    "label": "Before the piece this replies to",
+    "en": "A reply to"
+  },
+  "sattal.other-language": {
+    "area": "The Sattal",
+    "label": "Link to the other-language text",
+    "en": "The other-language text"
+  },
+  "sattal.corrections": {
+    "area": "The Sattal",
+    "label": "Heading above corrections",
+    "en": "Corrections, by addition"
+  },
+  "sattal.relation": {
+    "area": "The Sattal",
+    "label": "Label: relation to the subject",
+    "en": "Relation to the subject."
+  },
+  "sattal.accepted-by": {
+    "area": "The Sattal",
+    "label": "Label: accepted by the outside reader",
+    "en": "Accepted by the outside reader"
+  },
+  "sattal.about": {
+    "area": "The Sattal",
+    "label": "Label: what the piece is about",
+    "en": "About."
+  },
+  "sattal.colophon": {
+    "area": "The Sattal",
+    "label": "Last line of a piece ({number}, {ref})",
+    "en": "Sattal piece no. {number}. Deposited in the Record as {ref}."
+  },
+  "sattal.replies": {
+    "area": "The Sattal",
+    "label": "Heading above replies",
+    "en": "Replies"
+  },
+  "common.photograph": {
+    "area": "Everywhere",
+    "label": "Credit under a photograph ({name})",
+    "en": "Photograph: {name}"
+  },
+  "common.full-size": {
+    "area": "Everywhere",
+    "label": "Link to a photograph at full size",
+    "en": "Full size"
+  },
+  "common.form-down": {
+    "area": "Everywhere",
+    "label": "When a form cannot send",
+    "en": "The form is not working just now."
+  },
+  "common.form-write-to": {
+    "area": "Everywhere",
+    "label": "Before the email address, when a form cannot send",
+    "en": "Write to"
+  },
+  "common.form-instead": {
+    "area": "Everywhere",
+    "label": "After the email address, when a form cannot send",
+    "en": "instead."
+  },
+  "common.form-try-later": {
+    "area": "Everywhere",
+    "label": "When a form cannot send and there is no email",
+    "en": "Please try again later."
+  },
+  "common.nothing-here": {
+    "area": "Everywhere",
+    "label": "Title when an item is not published",
+    "en": "There's nothing at this address."
+  },
+  "common.nothing-here-note": {
+    "area": "Everywhere",
+    "label": "Note when an item is not published",
+    "en": "The page may have moved, or it may never have existed."
+  },
+  "common.correction": {
+    "area": "Everywhere",
+    "label": "Banner on a corrected item",
+    "en": "A correction has been deposited."
+  },
+  "common.see-newer": {
+    "area": "Everywhere",
+    "label": "Link to the newer version",
+    "en": "See the newer version"
+  },
+  "speaker.anonymous": {
+    "area": "Who is speaking",
+    "label": "Label: anonymous pieces",
+    "en": "Anonymous, of the house"
+  },
+  "speaker.anonymous-seal": {
+    "area": "Who is speaking",
+    "label": "Seal line: anonymous pieces",
+    "en": "The house sends this without a name."
+  },
+  "speaker.house": {
+    "area": "Who is speaking",
+    "label": "Label: the house, unsigned",
+    "en": "The house, unsigned"
+  },
+  "speaker.house-seal": {
+    "area": "Who is speaking",
+    "label": "Seal line: the house",
+    "en": "The seal says the house wrote this."
+  },
+  "speaker.signed": {
+    "area": "Who is speaking",
+    "label": "Label: signed pieces",
+    "en": "Signed, not the house"
+  },
+  "speaker.signed-seal": {
+    "area": "Who is speaking",
+    "label": "Seal line: signed pieces",
+    "en": "The seal attests provenance and deposit, never agreement."
+  },
+  "provenance.kept": {
+    "area": "Provenance",
+    "label": "Line under deposited work ({ref})",
+    "en": "Kept by the house · Deposited in the Record ({ref})"
+  },
+  "provenance.licence": {
+    "area": "Provenance",
+    "label": "Licence line ({licence})",
+    "en": "Licence: {licence}."
+  },
+  "provenance.cc-by": {
+    "area": "Provenance",
+    "label": "What CC BY means",
+    "en": "Anyone may copy, share and adapt this text, provided they credit it."
+  },
+  "provenance.cc-by-sa": {
+    "area": "Provenance",
+    "label": "What CC BY-SA means",
+    "en": "Anyone may copy, share and adapt this text, provided they credit it and share what they make on the same terms."
+  },
+  "provenance.cite-as": {
+    "area": "Provenance",
+    "label": "Citation line ({citation})",
+    "en": "Cite as: {citation}."
+  },
+  "provenance.place": {
+    "area": "Provenance",
+    "label": "The place in every citation",
+    "en": "PAZ, Patan, Lalitpur"
+  },
+  "brief.signup-heading": {
+    "area": "The Brief",
+    "label": "Heading on the sign-up form",
+    "en": "The Brief"
+  },
+  "brief.email": {
+    "area": "The Brief",
+    "label": "Field: email",
+    "en": "Email"
+  },
+  "brief.subscribe": {
+    "area": "The Brief",
+    "label": "Subscribe button",
+    "en": "Subscribe"
+  },
+  "brief.sent": {
+    "area": "The Brief",
+    "label": "After signing up",
+    "en": "A message has been sent to that address. Following its link confirms the subscription."
+  },
+  "common.untranslated": {
+    "area": "Everywhere",
+    "label": "Notice when a piece has no Nepali yet (shown only to Nepali readers)",
+    "en": "This piece is not yet available in Nepali. The English text is shown.",
+    "ne": "यो लेख अझै नेपालीमा उपलब्ध छैन। अंग्रेजी पाठ देखाइएको छ।"
+  },
+  "kind.person": {
+    "area": "Kinds of things",
+    "label": "Search result kind: person",
+    "en": "Person"
+  },
+  "kind.work": {
+    "area": "Kinds of things",
+    "label": "Search result kind: work",
+    "en": "Work"
+  },
+  "kind.show": {
+    "area": "Kinds of things",
+    "label": "Search result kind: show",
+    "en": "Show"
+  },
+  "kind.sattal": {
+    "area": "Kinds of things",
+    "label": "Kind: Sattal piece",
+    "en": "The Sattal"
+  },
+  "kind.word": {
+    "area": "Kinds of things",
+    "label": "Search result kind: word",
+    "en": "Words"
+  },
+  "kind.record": {
+    "area": "Kinds of things",
+    "label": "Search result kind: Record",
+    "en": "The Record"
+  },
+  "kind.paper": {
+    "area": "Kinds of things",
+    "label": "Kind: Paper",
+    "en": "Papers"
+  },
+  "kind.brief": {
+    "area": "Kinds of things",
+    "label": "Kind: Brief",
+    "en": "Brief"
+  },
+  "kind.dispatch": {
+    "area": "Kinds of things",
+    "label": "Kind: Dispatch",
+    "en": "Dispatch"
+  },
+  "kind.pigeon-post": {
+    "area": "Kinds of things",
+    "label": "Kind: Pigeon Post",
+    "en": "Pigeon Post"
+  },
+  "kind.annual": {
+    "area": "Kinds of things",
+    "label": "Kind: Annual",
+    "en": "Annual"
+  },
+  "kind.article": {
+    "area": "Kinds of things",
+    "label": "Kind: Journal article",
+    "en": "Journal"
+  },
+  "kind.page": {
+    "area": "Kinds of things",
+    "label": "Kind: page",
+    "en": "Page"
+  },
+  "kind.event": {
+    "area": "Kinds of things",
+    "label": "Kind: event",
+    "en": "Event"
+  },
+  "kind.terms": {
+    "area": "Kinds of things",
+    "label": "Kind: terms document",
+    "en": "Terms"
+  },
+  "search.title": {
+    "area": "Search",
+    "label": "Search page heading",
+    "en": "Search"
+  },
+  "search.box": {
+    "area": "Search",
+    "label": "Spoken label for the search box",
+    "en": "Search"
+  },
+  "search.button": {
+    "area": "Search",
+    "label": "Search button",
+    "en": "Search"
+  },
+  "search.searching": {
+    "area": "Search",
+    "label": "While searching",
+    "en": "Searching…"
+  },
+  "search.failed": {
+    "area": "Search",
+    "label": "When a search fails",
+    "en": "Search failed."
+  },
+  "search.nothing": {
+    "area": "Search",
+    "label": "No results ({q})",
+    "en": "Nothing found for \"{q}\"."
+  },
+  "contact.title": {
+    "area": "Contact",
+    "label": "Contact page heading",
+    "en": "Contact"
+  },
+  "contact.intro": {
+    "area": "Contact",
+    "label": "Line under the heading",
+    "en": "Write to the house. A person reads every message. This isn’t a live chat, so expect a reply by email rather than an instant response."
+  },
+  "contact.sent": {
+    "area": "Contact",
+    "label": "After sending, heading",
+    "en": "Message sent."
+  },
+  "contact.sent-note": {
+    "area": "Contact",
+    "label": "After sending, note",
+    "en": "Thank you. A reply goes to the email address you gave."
+  },
+  "contact.name": {
+    "area": "Contact",
+    "label": "Field: name",
+    "en": "Name"
+  },
+  "contact.email": {
+    "area": "Contact",
+    "label": "Field: email",
+    "en": "Email"
+  },
+  "contact.message": {
+    "area": "Contact",
+    "label": "Field: message",
+    "en": "Message"
+  },
+  "contact.button": {
+    "area": "Contact",
+    "label": "Send button",
+    "en": "Send message"
+  },
+  "pigeon.title": {
+    "area": "Send a pigeon",
+    "label": "Page heading",
+    "en": "Send a pigeon"
+  },
+  "pigeon.intro": {
+    "area": "Send a pigeon",
+    "label": "Line under the heading",
+    "en": "The art of noticing. Send the house something you noticed: a moment, a detail, a small truth. The house reads every one; not everything finds its way into print, and nothing is published without care."
+  },
+  "pigeon.sent": {
+    "area": "Send a pigeon",
+    "label": "After sending, heading",
+    "en": "Sent."
+  },
+  "pigeon.sent-note": {
+    "area": "Send a pigeon",
+    "label": "After sending, note",
+    "en": "Thank you. The house has received it."
+  },
+  "pigeon.noticed": {
+    "area": "Send a pigeon",
+    "label": "Field: what you noticed",
+    "en": "What you noticed"
+  },
+  "pigeon.name": {
+    "area": "Send a pigeon",
+    "label": "Field: name",
+    "en": "Name"
+  },
+  "pigeon.contact": {
+    "area": "Send a pigeon",
+    "label": "Field: contact",
+    "en": "Contact"
+  },
+  "pigeon.private": {
+    "area": "Send a pigeon",
+    "label": "Help under the name and contact fields",
+    "en": "Optional. Kept private."
+  },
+  "notfound.title": {
+    "area": "Not found",
+    "label": "Browser tab title",
+    "en": "Not found"
+  },
+  "notfound.description": {
+    "area": "Not found",
+    "label": "Description for search engines",
+    "en": "This reference does not resolve. The Record is the authority on everything this house has deposited."
+  },
+  "notfound.kicker": {
+    "area": "Not found",
+    "label": "Small line above the heading",
+    "en": "This reference does not resolve"
+  },
+  "notfound.heading": {
+    "area": "Not found",
+    "label": "Heading",
+    "en": "Nothing is kept at this address"
+  },
+  "notfound.subtitle": {
+    "area": "Not found",
+    "label": "Line under the heading",
+    "en": "The link may be old, mistyped, or the item it pointed to may never have existed. Nothing here was silently redirected to the homepage."
+  },
+  "notfound.record-note": {
+    "area": "Not found",
+    "label": "Paragraph pointing to the Record",
+    "en": "The Record is the authority on everything this house has deposited. If you were looking for something specific, that is the place to start."
+  },
+  "notfound.go-record": {
+    "area": "Not found",
+    "label": "Link to the Record",
+    "en": "Go to the Record"
+  },
+  "notfound.home": {
+    "area": "Not found",
+    "label": "Link home",
+    "en": "Return home"
+  },
+  "notfound.old-link": {
+    "area": "Not found",
+    "label": "Before the contact link",
+    "en": "Have a link that used to work?"
+  },
+  "notfound.tell-us": {
+    "area": "Not found",
+    "label": "Link to contact",
+    "en": "Tell us"
+  },
+  "notfound.old-link-end": {
+    "area": "Not found",
+    "label": "After the contact link",
+    "en": ", so it can be pointed to the right place."
+  },
+  "record.register-title": {
+    "area": "The Record and the Commons",
+    "label": "Deposit register heading",
+    "en": "The deposit register"
+  },
+  "record.register-intro": {
+    "area": "The Record and the Commons",
+    "label": "Line under the heading",
+    "en": "The public deposit index. Every public thing PAZ makes is entered here, in order, and stays."
+  },
+  "record.load-error": {
+    "area": "The Record and the Commons",
+    "label": "When the register cannot be loaded",
+    "en": "Couldn't load the Record."
+  },
+  "work.available": {
+    "area": "A work",
+    "label": "Availability: available",
+    "en": "Available"
+  },
+  "work.sold": {
+    "area": "A work",
+    "label": "Availability: sold",
+    "en": "Sold"
+  },
+  "work.not-for-sale": {
+    "area": "A work",
+    "label": "Availability: not for sale",
+    "en": "Not for sale"
+  },
+  "work.on-loan": {
+    "area": "A work",
+    "label": "Availability: on loan",
+    "en": "On loan"
+  },
+  "work.event-made": {
+    "area": "A work",
+    "label": "Its life: made",
+    "en": "Made"
+  },
+  "work.event-shown": {
+    "area": "A work",
+    "label": "Its life: shown",
+    "en": "Shown"
+  },
+  "work.event-sold": {
+    "area": "A work",
+    "label": "Its life: sold",
+    "en": "Sold"
+  },
+  "work.event-loaned": {
+    "area": "A work",
+    "label": "Its life: loaned",
+    "en": "Loaned"
+  },
+  "work.event-returned": {
+    "area": "A work",
+    "label": "Its life: returned",
+    "en": "Returned"
+  },
+  "work.event-damaged": {
+    "area": "A work",
+    "label": "Its life: damaged",
+    "en": "Damaged"
+  },
+  "work.event-restored": {
+    "area": "A work",
+    "label": "Its life: restored",
+    "en": "Restored"
+  },
+  "work.event-rehoused": {
+    "area": "A work",
+    "label": "Its life: rehoused",
+    "en": "Rehoused"
+  },
+  "work.no-photograph": {
+    "area": "A work",
+    "label": "When no photograph exists",
+    "en": "No photograph has been made yet."
+  },
+  "work.number": {
+    "area": "A work",
+    "label": "Work number ({number})",
+    "en": "Work no. {number}"
+  },
+  "work.friends-price": {
+    "area": "A work",
+    "label": "Second price ({price})",
+    "en": "Friends of PAZ price: {price}"
+  },
+  "work.struck-row": {
+    "area": "A work",
+    "label": "Spoken label for the hallmark line",
+    "en": "The struck row"
+  },
+  "work.text-heading": {
+    "area": "A work",
+    "label": "Hidden heading above texts (read aloud)",
+    "en": "Text about this work"
+  },
+  "work.makers-words": {
+    "area": "A work",
+    "label": "Label: text in the maker's own words",
+    "en": "In the maker's words"
+  },
+  "work.house-writes": {
+    "area": "A work",
+    "label": "Label: text the house wrote",
+    "en": "The house writes"
+  },
+  "work.its-life": {
+    "area": "A work",
+    "label": "Heading: the work's life",
+    "en": "Its life"
+  },
+  "work.life-empty": {
+    "area": "A work",
+    "label": "When nothing is recorded in its life",
+    "en": "Nothing has been recorded yet."
+  },
+  "work.where-hung": {
+    "area": "A work",
+    "label": "Heading: shows it hung in",
+    "en": "Where it has hung"
+  },
+  "work.written-about": {
+    "area": "A work",
+    "label": "Heading: Sattal pieces about it",
+    "en": "Written about it"
+  },
+  "work.by-sattal": {
+    "area": "A work",
+    "label": "After a Sattal piece ({name})",
+    "en": "by {name} · The Sattal"
+  },
+  "work.enquiry-sent": {
+    "area": "A work",
+    "label": "After an enquiry, heading",
+    "en": "Sent."
+  },
+  "work.enquiry-sent-note": {
+    "area": "A work",
+    "label": "After an enquiry, note",
+    "en": "A person will write back to the address you gave."
+  },
+  "work.enquiry-heading": {
+    "area": "A work",
+    "label": "Heading above the enquiry form",
+    "en": "Write about this work"
+  },
+  "work.painters-terms": {
+    "area": "A work",
+    "label": "Link to the painter's terms",
+    "en": "The painter’s terms"
+  },
+  "work.enquiry-intro": {
+    "area": "A work",
+    "label": "Line above the enquiry form",
+    "en": "A sale is a conversation. A person reads every message and writes back about condition, framing, shipping and the rest."
+  },
+  "work.name": {
+    "area": "A work",
+    "label": "Field: name",
+    "en": "Name"
+  },
+  "work.email": {
+    "area": "A work",
+    "label": "Field: email",
+    "en": "Email"
+  },
+  "work.message": {
+    "area": "A work",
+    "label": "Field: message",
+    "en": "Message"
+  },
+  "person.kept": {
+    "area": "A person",
+    "label": "On the page of someone the house no longer presents",
+    "en": "This page is kept as a record. The house does not currently present this person."
+  },
+  "person.own-words": {
+    "area": "A person",
+    "label": "Heading above their statement",
+    "en": "In their own words"
+  },
+  "person.work": {
+    "area": "A person",
+    "label": "Heading: work",
+    "en": "Work"
+  },
+  "person.sold": {
+    "area": "A person",
+    "label": "Added to a sold work",
+    "en": "Sold."
+  },
+  "person.where-shown": {
+    "area": "A person",
+    "label": "Heading: where they have shown",
+    "en": "Where they have shown"
+  },
+  "person.at-house": {
+    "area": "A person",
+    "label": "Label for shows at the house",
+    "en": "At the house"
+  },
+  "person.written-about": {
+    "area": "A person",
+    "label": "Heading: written about",
+    "en": "Written about"
+  },
+  "show.to": {
+    "area": "A show",
+    "label": "Between two dates ({date})",
+    "en": "to {date}"
+  },
+  "show.house-writes": {
+    "area": "A show",
+    "label": "Label above the house's text",
+    "en": "The house writes"
+  },
+  "show.what-hung": {
+    "area": "A show",
+    "label": "Heading: what hung",
+    "en": "What hung"
+  },
+  "papers.title": {
+    "area": "Press series pages",
+    "label": "Papers index heading",
+    "en": "The Paz Papers"
+  },
+  "papers.intro": {
+    "area": "Press series pages",
+    "label": "Papers index line",
+    "en": "Long-form essays. Numbered, permanent."
+  },
+  "papers.description": {
+    "area": "Press series pages",
+    "label": "Description of a Paper for search engines, when it has no abstract",
+    "en": "A Paz Paper, kept in the Record."
+  },
+  "papers.series": {
+    "area": "Press series pages",
+    "label": "Series name for Papers (in citations and search)",
+    "en": "Paz Papers"
+  },
+  "papers.number": {
+    "area": "Press series pages",
+    "label": "Paper number ({number})",
+    "en": "Paz Paper No. {number}"
+  },
+  "papers.byline": {
+    "area": "Press series pages",
+    "label": "Byline on every Paper",
+    "en": "A Paz Paper"
+  },
+  "papers.pdf": {
+    "area": "Press series pages",
+    "label": "Link to the typeset PDF",
+    "en": "Download the typeset PDF"
+  },
+  "papers.sources": {
+    "area": "Press series pages",
+    "label": "Sources line ({sources})",
+    "en": "Sources: {sources}"
+  },
+  "papers.citation-series": {
+    "area": "Press series pages",
+    "label": "Series name in a Paper's citation",
+    "en": "A Paz Paper"
+  },
+  "brief.index-title": {
+    "area": "Press series pages",
+    "label": "Brief index heading",
+    "en": "Brief"
+  },
+  "brief.index-intro": {
+    "area": "Press series pages",
+    "label": "Brief index line",
+    "en": "The fortnightly bulletin. Sent by email; archived here."
+  },
+  "brief.number": {
+    "area": "Press series pages",
+    "label": "Brief number ({number})",
+    "en": "Brief No. {number}"
+  },
+  "brief.description": {
+    "area": "Press series pages",
+    "label": "Description of a Brief ({number})",
+    "en": "Brief No. {number}, kept in the Record."
+  },
+  "brief.description-plain": {
+    "area": "Press series pages",
+    "label": "Description of a Brief with no number",
+    "en": "A Brief."
+  },
+  "brief.series": {
+    "area": "Press series pages",
+    "label": "Series name for the Brief",
+    "en": "Brief"
+  },
+  "brief.citation-series": {
+    "area": "Press series pages",
+    "label": "Series name in a Brief's citation",
+    "en": "The Brief"
+  },
+  "dispatch.index-title": {
+    "area": "Press series pages",
+    "label": "Dispatch index heading",
+    "en": "Dispatch"
+  },
+  "dispatch.index-intro": {
+    "area": "Press series pages",
+    "label": "Dispatch index line",
+    "en": "Announcements, roughly quarterly."
+  },
+  "dispatch.number": {
+    "area": "Press series pages",
+    "label": "Dispatch number ({number})",
+    "en": "Dispatch No. {number}"
+  },
+  "dispatch.description": {
+    "area": "Press series pages",
+    "label": "Description of a Dispatch ({number})",
+    "en": "Dispatch No. {number}, kept in the Record."
+  },
+  "dispatch.description-plain": {
+    "area": "Press series pages",
+    "label": "Description of a Dispatch with no number",
+    "en": "A Dispatch."
+  },
+  "dispatch.series": {
+    "area": "Press series pages",
+    "label": "Series name for Dispatch (and in its citation)",
+    "en": "Dispatch"
+  },
+  "annual.index-title": {
+    "area": "Press series pages",
+    "label": "Annual index heading",
+    "en": "Annual"
+  },
+  "annual.index-intro": {
+    "area": "Press series pages",
+    "label": "Annual index line",
+    "en": "The cloth-bound flagship, published at the yearly anniversary."
+  },
+  "annual.description": {
+    "area": "Press series pages",
+    "label": "Description of an Annual ({year})",
+    "en": "The Annual, {year}, kept in the Record."
+  },
+  "annual.description-plain": {
+    "area": "Press series pages",
+    "label": "Description of an Annual with no year",
+    "en": "The Annual."
+  },
+  "annual.series": {
+    "area": "Press series pages",
+    "label": "Series name for the Annual",
+    "en": "Annual"
+  },
+  "annual.citation-series": {
+    "area": "Press series pages",
+    "label": "Series name in an Annual's citation",
+    "en": "The Annual"
+  },
+  "annual.pdf": {
+    "area": "Press series pages",
+    "label": "Link to the PDF",
+    "en": "Download the PDF"
+  },
+  "pigeon.index-title": {
+    "area": "Press series pages",
+    "label": "Pigeon Post index heading",
+    "en": "Pigeon Post"
+  },
+  "pigeon.index-intro": {
+    "area": "Press series pages",
+    "label": "Pigeon Post index line",
+    "en": "The art of noticing. A quiet, anonymous keepsake."
+  },
+  "pigeon.index-empty": {
+    "area": "Press series pages",
+    "label": "Pigeon Post index, when empty",
+    "en": "No editions archived yet."
+  },
+  "pigeon.description": {
+    "area": "Press series pages",
+    "label": "Description of a Pigeon Post edition",
+    "en": "A quiet keepsake from Pigeon Post, kept in the Record."
+  },
+  "pigeon.series": {
+    "area": "Press series pages",
+    "label": "Series name for Pigeon Post (and in its citation)",
+    "en": "Pigeon Post"
+  },
+  "pigeon.view": {
+    "area": "Press series pages",
+    "label": "Link to the keepsake",
+    "en": "View the keepsake"
+  },
+  "friends.title": {
+    "area": "Friends of PAZ",
+    "label": "Page heading",
+    "en": "Become a Friend"
+  },
+  "friends.intro": {
+    "area": "Friends of PAZ",
+    "label": "Line under the heading",
+    "en": "Being a Friend of PAZ supports the public programme and comes with a few things back: see the tiers below."
+  },
+  "friends.patronage": {
+    "area": "Friends of PAZ",
+    "label": "The patronage rule, under the intro",
+    "en": "Friends of PAZ is patronage. It buys support and welcome, never a vote or a say in how PAZ is run."
+  },
+  "friends.form-title": {
+    "area": "Friends of PAZ",
+    "label": "Heading on the form",
+    "en": "Application"
+  },
+  "friends.form-note": {
+    "area": "Friends of PAZ",
+    "label": "Line under the form heading",
+    "en": "We’ll review it and follow up by email."
+  },
+  "friends.thanks": {
+    "area": "Friends of PAZ",
+    "label": "After applying, heading",
+    "en": "Thank you. Your application is in."
+  },
+  "friends.thanks-note": {
+    "area": "Friends of PAZ",
+    "label": "After applying, note",
+    "en": "Someone will write back once it's been reviewed."
+  },
+  "friends.full-name": {
+    "area": "Friends of PAZ",
+    "label": "Field: full name",
+    "en": "Full name"
+  },
+  "friends.email": {
+    "area": "Friends of PAZ",
+    "label": "Field: email",
+    "en": "Email"
+  },
+  "friends.phone": {
+    "area": "Friends of PAZ",
+    "label": "Field: phone",
+    "en": "Phone"
+  },
+  "friends.optional": {
+    "area": "Friends of PAZ",
+    "label": "Help under optional fields",
+    "en": "Optional."
+  },
+  "friends.tier": {
+    "area": "Friends of PAZ",
+    "label": "Heading above the tiers",
+    "en": "Tier"
+  },
+  "friends.tier-line": {
+    "area": "Friends of PAZ",
+    "label": "Each tier ({name}, {price})",
+    "en": "{name}: {price}/year"
+  },
+  "friends.why": {
+    "area": "Friends of PAZ",
+    "label": "Field: why they want to join",
+    "en": "Why do you want to join?"
+  },
+  "friends.stay-in-touch": {
+    "area": "Friends of PAZ",
+    "label": "Heading above the email choices",
+    "en": "Stay in touch"
+  },
+  "friends.dispatch-opt-in": {
+    "area": "Friends of PAZ",
+    "label": "Choice: the Dispatch by email",
+    "en": "Send me the Dispatch by email"
+  },
+  "friends.programmes-opt-in": {
+    "area": "Friends of PAZ",
+    "label": "Choice: programme announcements",
+    "en": "Send me programme announcements by email"
+  },
+  "friends.submit": {
+    "area": "Friends of PAZ",
+    "label": "Submit button",
+    "en": "Submit application"
+  },
+  "programmes.title": {
+    "area": "Programmes",
+    "label": "Calendar heading",
+    "en": "Programme calendar"
+  },
+  "programmes.encounters": {
+    "area": "Programmes",
+    "label": "Link to Encounters",
+    "en": "Encounters"
+  },
+  "programmes.encounters-note": {
+    "area": "Programmes",
+    "label": "Line under the Encounters link",
+    "en": "Field Studies, Common Ground, The Chautari: the public civic layer."
+  },
+  "programmes.load-error": {
+    "area": "Programmes",
+    "label": "When the calendar cannot be loaded",
+    "en": "Couldn't load the calendar."
+  },
+  "programmes.empty": {
+    "area": "Programmes",
+    "label": "Calendar, when nothing is scheduled",
+    "en": "Nothing scheduled yet."
+  },
+  "programmes.empty-note": {
+    "area": "Programmes",
+    "label": "Note under the empty calendar",
+    "en": "Check back soon."
+  },
+  "programmes.not-found-note": {
+    "area": "Programmes",
+    "label": "When a programme is not found",
+    "en": "This programme may have ended or never existed."
+  },
+  "programmes.upcoming": {
+    "area": "Programmes",
+    "label": "Heading: upcoming sessions",
+    "en": "Upcoming sessions"
+  },
+  "programmes.sessions-error": {
+    "area": "Programmes",
+    "label": "When sessions cannot be loaded",
+    "en": "Couldn't load sessions."
+  },
+  "programmes.no-sessions": {
+    "area": "Programmes",
+    "label": "When a programme has no sessions",
+    "en": "No sessions scheduled right now."
+  },
+  "programmes.waitlisted": {
+    "area": "Programmes",
+    "label": "After joining a waitlist",
+    "en": "You're on the waitlist. A message follows if a seat opens up."
+  },
+  "programmes.registered": {
+    "area": "Programmes",
+    "label": "After registering",
+    "en": "You're registered."
+  },
+  "programmes.waitlist": {
+    "area": "Programmes",
+    "label": "Badge on a full session",
+    "en": "Waitlist"
+  },
+  "programmes.seats-left": {
+    "area": "Programmes",
+    "label": "Seats left ({count})",
+    "en": "{count} seats left"
+  },
+  "programmes.join-waitlist": {
+    "area": "Programmes",
+    "label": "Button on a full session",
+    "en": "Join waitlist"
+  },
+  "programmes.register": {
+    "area": "Programmes",
+    "label": "Register button",
+    "en": "Register"
+  },
+  "programmes.confirm": {
+    "area": "Programmes",
+    "label": "Confirm button",
+    "en": "Confirm registration"
+  },
+  "programmes.full-name": {
+    "area": "Programmes",
+    "label": "Field: full name",
+    "en": "Full name"
+  },
+  "programmes.email": {
+    "area": "Programmes",
+    "label": "Field: email",
+    "en": "Email"
+  },
+  "programmes.phone": {
+    "area": "Programmes",
+    "label": "Field: phone",
+    "en": "Phone"
+  },
+  "programmes.optional": {
+    "area": "Programmes",
+    "label": "Help under the phone field",
+    "en": "Optional."
+  },
+  "nav.language": {
+    "area": "Menus and footer",
+    "label": "Spoken label for the language switch",
+    "en": "Language"
+  },
+  "terms.list-label": {
+    "area": "Terms",
+    "label": "Spoken label for the list of terms",
+    "en": "The four terms"
+  },
+  "static.needs-js": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "When a form needs JavaScript ({what} is one of the lines below)",
+    "en": "{what} needs JavaScript."
+  },
+  "static.write-instead": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "After that, when there is an email address ({email})",
+    "en": "Write to {email} instead."
+  },
+  "static.what-contact": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "The contact form, for the line above",
+    "en": "Writing from this page"
+  },
+  "static.what-pigeon": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "Send a pigeon, for the line above",
+    "en": "Sending a pigeon"
+  },
+  "static.what-form": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "Any other form, for the line above",
+    "en": "This form"
+  },
+  "static.what-concern": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "The concern form, for the line above",
+    "en": "Raising a concern from this page"
+  },
+  "static.what-step": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "Brief confirm and unsubscribe, for the line above",
+    "en": "This step"
+  },
+  "static.what-apply": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "The Friends form, for the line above",
+    "en": "Applying"
+  },
+  "static.search": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "The search page ({register} is a link to the deposit register)",
+    "en": "Search needs JavaScript. {register} lists everything deposited."
+  },
+  "static.moved": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "A page that has moved ({path})",
+    "en": "This is now kept at {path}."
+  },
+  "static.plain-text": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "Link to the plain-text copy",
+    "en": "Plain text"
+  },
+  "static.a-year": {
+    "area": "Plain copies (no JavaScript)",
+    "label": "After a tier's amount",
+    "en": "a year"
+  }
+}

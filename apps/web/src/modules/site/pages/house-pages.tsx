@@ -5,7 +5,8 @@ import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems } from "../api/use-site";
 import { useChronicle, useGlossary, useRecordEntry, useSubmitVoiceIntake } from "../api/use-wall";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording, type WordingKey } from "../wording";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
 import { FormUnavailable, isUnavailable, useEraDate } from "../components/wall-parts";
@@ -35,6 +36,7 @@ export function ShellPage({
 }) {
   const item = usePublishedItem("page", slug);
   const { lang } = useLanguage();
+  const w = useWording();
   const doc = item.data
     ? (pickLangDoc(item.data.body, item.data.body_ne, lang) as RichTextNode | null)
     : null;
@@ -47,17 +49,17 @@ export function ShellPage({
       <div className="w-reading py-12">
         {item.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
         {item.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(item.error).message} />
+          <StatePanel title={w("common.load-error")} description={toAppError(item.error).message} />
         )}
         {item.isSuccess &&
           (doc ? (
             <RichText doc={doc} className="rich-text" />
           ) : (
-            <p className="type-body">This page has not been written yet.</p>
+            <p className="type-body">{w("common.not-written")}</p>
           ))}
       </div>
       {children}
@@ -73,22 +75,25 @@ export function ShellPage({
 export function ChroniclePage() {
   const lines = useChronicle();
   const eraDate = useEraDate();
+  const w = useWording();
+  const empty = useEmptyState();
   return (
     <div>
-      <DocumentHead title="The Chronicle" path="/chronicle" feedPath="/chronicle/feed.xml" />
-      <PageHero title="The Chronicle" />
-      <section className="w-reading py-12" aria-label="The run">
+      <DocumentHead title={w("title.chronicle")} path="/chronicle" feedPath="/chronicle/feed.xml" />
+      <PageHero title={w("title.chronicle")} />
+      <section className="w-reading py-12" aria-label={w("title.chronicle")}>
         {lines.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
         {lines.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(lines.error).message} />
+          <StatePanel
+            title={w("common.load-error")}
+            description={toAppError(lines.error).message}
+          />
         )}
-        {lines.data && lines.data.length === 0 && (
-          <p className="type-body">{emptyState("chronicle")}</p>
-        )}
+        {lines.data && lines.data.length === 0 && <p className="type-body">{empty("chronicle")}</p>}
         <ol className="flex flex-col gap-3">
           {(lines.data ?? []).map((l) => (
             <li key={l.id} className="type-body">
@@ -107,26 +112,25 @@ export function ChroniclePage() {
 export function WordsPage() {
   const terms = useGlossary();
   const { lang } = useLanguage();
+  const w = useWording();
   return (
     <div>
-      <DocumentHead title="Words" path="/words" />
-      <PageHero title="Words" />
-      <section className="w-reading py-12" aria-label="Glossary">
+      <DocumentHead title={w("title.words")} path="/words" />
+      <PageHero title={w("title.words")} />
+      <section className="w-reading py-12" aria-label={w("title.words")}>
         {terms.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
-        {terms.data && terms.data.length === 0 && (
-          <p className="type-body">No words are listed yet.</p>
-        )}
+        {terms.data && terms.data.length === 0 && <p className="type-body">{w("empty.words")}</p>}
         <dl className="flex flex-col gap-6">
           {(terms.data ?? []).map((t) => (
             <div key={t.id} id={t.slug ?? undefined}>
               <dt className="font-semibold">
                 {pickLang(t.term as string, t.term_ne, lang)}
                 {t.kind === "spelling" && (
-                  <span className="type-small font-normal"> · spelling</span>
+                  <span className="type-small font-normal"> · {w("words.spelling")}</span>
                 )}
               </dt>
               <dd className="type-body">
@@ -145,16 +149,17 @@ export function WordsPage() {
 // ---------------------------------------------------------------------
 export function DepositPage({ deposit }: { deposit: string }) {
   const entry = useRecordEntry(deposit);
+  const w = useWording();
   if (entry.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (entry.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(entry.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(entry.error).message} />
       </div>
     );
   }
@@ -185,21 +190,30 @@ export function DepositPage({ deposit }: { deposit: string }) {
 // The Commons and Friends of PAZ must read as different in kind. The
 // covenanted ladder is described, never offered: there is no signup here.
 // ---------------------------------------------------------------------
-const LADDER = ["Guest", "Companion", "Denizen", "Steward", "Elder", "Ancestor"];
+const LADDER: WordingKey[] = [
+  "commons.rung-guest",
+  "commons.rung-companion",
+  "commons.rung-denizen",
+  "commons.rung-steward",
+  "commons.rung-elder",
+  "commons.rung-ancestor",
+];
 
 export function CommonsPage() {
+  const w = useWording();
+  const empty = useEmptyState();
   return (
-    <ShellPage slug="commons" title="The Commons">
+    <ShellPage slug="commons" title={w("title.commons")}>
       <section className="w-reading border-border border-t py-10" aria-labelledby="ladder">
         <h2 id="ladder" className="type-h3">
-          The ladder
+          {w("commons.ladder")}
         </h2>
         <ol className="type-body mt-4 flex flex-col gap-1">
           {LADDER.map((rung) => (
-            <li key={rung}>{rung}</li>
+            <li key={rung}>{w(rung)}</li>
           ))}
         </ol>
-        <p className="type-body mt-4">{emptyState("commons")}</p>
+        <p className="type-body mt-4">{empty("commons")}</p>
       </section>
     </ShellPage>
   );
@@ -214,22 +228,21 @@ export function CanonIndexPage() {
   const pages = usePublishedItems("page");
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
+  const w = useWording();
   const docs = (pages.data ?? [])
     .filter((p) => p.slug?.startsWith("canon-"))
     .sort((a, b) => (a.slug as string).localeCompare(b.slug as string));
   return (
     <div>
-      <DocumentHead title="The Canon" path="/canon" />
-      <PageHero title="The Canon" />
-      <section className="w-reading py-12" aria-label="Documents">
+      <DocumentHead title={w("title.canon")} path="/canon" />
+      <PageHero title={w("title.canon")} />
+      <section className="w-reading py-12" aria-label={w("title.canon")}>
         {pages.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
-        {pages.isSuccess && docs.length === 0 && (
-          <p className="type-body">No document has been published yet.</p>
-        )}
+        {pages.isSuccess && docs.length === 0 && <p className="type-body">{w("empty.canon")}</p>}
         <ol className="flex flex-col gap-3">
           {docs.map((d) => (
             <li key={d.id}>
@@ -248,7 +261,8 @@ export function CanonIndexPage() {
 }
 
 export function CanonDocPage({ doc }: { doc: string }) {
-  return <ShellPage slug={`canon-${doc}`} title="The Canon" />;
+  const w = useWording();
+  return <ShellPage slug={`canon-${doc}`} title={w("title.canon")} />;
 }
 
 // ---------------------------------------------------------------------
@@ -268,6 +282,7 @@ export function AVoicePage() {
   const [place, setPlace] = React.useState("");
   const [note, setNote] = React.useState("");
   const submit = useSubmitVoiceIntake();
+  const w = useWording();
   const doc = item.data
     ? (pickLangDoc(item.data.body, item.data.body_ne, lang) as RichTextNode | null)
     : null;
@@ -278,8 +293,8 @@ export function AVoicePage() {
 
   return (
     <div>
-      <DocumentHead title="A voice" path="/a-voice" noindex />
-      <PageHero title="A voice" />
+      <DocumentHead title={w("title.a-voice")} path="/a-voice" noindex />
+      <PageHero title={w("title.a-voice")} />
       <div className="w-reading flex flex-col gap-8 py-12">
         {doc && <RichText doc={doc} className="rich-text" />}
         {/* Its own statement, separate from the privacy page: who reads it, that
@@ -287,10 +302,10 @@ export function AVoicePage() {
             happens to what is written. The words are the house's. */}
         {statementDoc && <RichText doc={statementDoc} className="rich-text" />}
         <p className="type-small">
-          <TermsLink kind="memory">The Ethics of Memory</TermsLink>
+          <TermsLink kind="memory">{w("voice.memory-link")}</TermsLink>
         </p>
         {submit.isSuccess ? (
-          <StatePanel title="Received." description="" />
+          <StatePanel title={w("common.received")} description="" />
         ) : (
           <form
             className="flex flex-col gap-4"
@@ -299,31 +314,31 @@ export function AVoicePage() {
               if (canSubmit) submit.mutate({ writerName, contact, aboutName, place, note });
             }}
           >
-            <Field label="Your name" htmlFor="voice-writer">
+            <Field label={w("voice.your-name")} htmlFor="voice-writer">
               <Input
                 id="voice-writer"
                 value={writerName}
                 onChange={(e) => setWriterName(e.target.value)}
               />
             </Field>
-            <Field label="How to reach you" htmlFor="voice-contact">
+            <Field label={w("voice.reach-you")} htmlFor="voice-contact">
               <Input
                 id="voice-contact"
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
               />
             </Field>
-            <Field label="Name of the person" htmlFor="voice-about">
+            <Field label={w("voice.person")} htmlFor="voice-about">
               <Input
                 id="voice-about"
                 value={aboutName}
                 onChange={(e) => setAboutName(e.target.value)}
               />
             </Field>
-            <Field label="Place" htmlFor="voice-place">
+            <Field label={w("voice.place")} htmlFor="voice-place">
               <Input id="voice-place" value={place} onChange={(e) => setPlace(e.target.value)} />
             </Field>
-            <Field label="Anything else" htmlFor="voice-note">
+            <Field label={w("voice.else")} htmlFor="voice-note">
               <Textarea
                 id="voice-note"
                 rows={5}
@@ -345,7 +360,7 @@ export function AVoicePage() {
               disabled={!canSubmit}
               className="self-start"
             >
-              Send
+              {w("common.send")}
             </Button>
           </form>
         )}
@@ -366,8 +381,14 @@ export function CanonDocRoute() {
   return <CanonDocPage doc={doc ?? ""} />;
 }
 
-export const NamePage = () => <ShellPage slug="name" title="The name" />;
-export const TablePage = () => <ShellPage slug="table" title="The Table" />;
-export const LookingForPage = () => <ShellPage slug="looking-for" title="Looking for" />;
-export const PrivacyPage = () => <ShellPage slug="privacy" title="Privacy" />;
-export const CustodianPage = () => <ShellPage slug="custodian" title="The Custodian of the Name" />;
+/** A page whose title is one line of the site's wording. */
+function TitledShell({ slug, title }: { slug: string; title: WordingKey }) {
+  const w = useWording();
+  return <ShellPage slug={slug} title={w(title)} />;
+}
+
+export const NamePage = () => <TitledShell slug="name" title="title.name" />;
+export const TablePage = () => <TitledShell slug="table" title="title.table" />;
+export const LookingForPage = () => <TitledShell slug="looking-for" title="title.looking-for" />;
+export const PrivacyPage = () => <TitledShell slug="privacy" title="title.privacy" />;
+export const CustodianPage = () => <TitledShell slug="custodian" title="title.custodian" />;

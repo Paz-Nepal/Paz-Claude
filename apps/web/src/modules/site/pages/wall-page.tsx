@@ -4,7 +4,8 @@ import { toAppError } from "@paz/types";
 import { usePeople, useShows, useWorkImages, useWorks } from "../api/use-wall";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
 import { usePublishedItem } from "../api/use-site";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording } from "../wording";
 import { BriefSignup } from "../components/brief-signup";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
@@ -26,6 +27,8 @@ export function WallPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const t = useWording();
+  const empty = useEmptyState();
 
   const current = (people.data ?? []).filter((p) => p.active);
   const currentIds = new Set(current.map((p) => p.id));
@@ -39,8 +42,8 @@ export function WallPage() {
 
   return (
     <div>
-      <DocumentHead title="The Wall" path="/wall" />
-      <PageHero title="The Wall" />
+      <DocumentHead title={t("title.wall")} path="/wall" />
+      <PageHero title={t("title.wall")} />
       {/* Viewing is by arrangement, and what ships and roughly what it costs is
           answered before an enquiry. The words are the house's: each shows only
           once the house has published its page. */}
@@ -57,19 +60,20 @@ export function WallPage() {
 
       <section className="w-standard py-12" aria-labelledby="wall-people">
         <h2 id="wall-people" className="type-h2">
-          People
+          {t("wall.people")}
         </h2>
         {people.isPending && (
           <p role="status" className="type-small mt-4">
-            Loading…
+            {t("common.loading")}
           </p>
         )}
         {people.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(people.error).message} />
+          <StatePanel
+            title={t("common.load-error")}
+            description={toAppError(people.error).message}
+          />
         )}
-        {people.data && current.length === 0 && (
-          <p className="type-body mt-4">{emptyState("wall")}</p>
-        )}
+        {people.data && current.length === 0 && <p className="type-body mt-4">{empty("wall")}</p>}
         <ul className="mt-6 flex flex-col gap-2">
           {current.map((p) => (
             <li key={p.id} className="font-serif text-2xl">
@@ -84,11 +88,11 @@ export function WallPage() {
 
       <section className="w-wide border-border border-t py-12" aria-labelledby="wall-works">
         <h2 id="wall-works" className="type-h2">
-          Work
+          {t("wall.work")}
         </h2>
         {works.isPending && (
           <p role="status" className="type-small mt-4">
-            Loading…
+            {t("common.loading")}
           </p>
         )}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -115,7 +119,7 @@ export function WallPage() {
                 <p className="type-small">
                   {pickLang(w.person_name as string, w.person_name_ne, lang)}
                   {w.year ? `, ${w.year}` : ""}
-                  {w.availability === "sold" ? ". Sold." : ""}
+                  {w.availability === "sold" ? `. ${t("wall.sold")}` : ""}
                 </p>
               </li>
             );
@@ -125,10 +129,10 @@ export function WallPage() {
 
       <section className="w-standard border-border border-t py-12" aria-labelledby="wall-shows">
         <h2 id="wall-shows" className="type-h2">
-          Shows
+          {t("wall.shows")}
         </h2>
         {shows.data && shows.data.length === 0 && (
-          <p className="type-body mt-4">{emptyState("shows")}</p>
+          <p className="type-body mt-4">{empty("shows")}</p>
         )}
         <ol className="mt-6 flex flex-col gap-4">
           {(shows.data ?? []).map((s) => (
@@ -138,7 +142,7 @@ export function WallPage() {
               </Link>
               <p className="type-small">
                 {s.opened_on ? eraDate(s.opened_on) : ""}
-                {s.closed_on ? ` to ${eraDate(s.closed_on)}` : ""}
+                {s.closed_on ? ` ${t("wall.to", { date: eraDate(s.closed_on) })}` : ""}
               </p>
             </li>
           ))}

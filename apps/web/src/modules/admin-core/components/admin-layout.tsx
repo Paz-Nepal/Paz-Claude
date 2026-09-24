@@ -53,6 +53,8 @@ const NAV: Array<{ to: string; label: string; permissions: string[] }> = [
     permissions: ["crm.relationship.read"],
   },
   { to: "/admin/pledges", label: "Pledges", permissions: ["crm.pledge.read"] },
+  { to: "/admin/tiers", label: "Friends tiers", permissions: ["membership.tier.manage"] },
+  { to: "/admin/wording", label: "Wording", permissions: ["site.wording.manage"] },
   { to: "/admin/settings", label: "Settings", permissions: ["admin.settings.read"] },
 ];
 

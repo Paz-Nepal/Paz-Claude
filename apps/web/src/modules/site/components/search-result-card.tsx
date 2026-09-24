@@ -2,23 +2,25 @@ import { Link } from "react-router-dom";
 import { formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, publishedItemHref, type PublishedItem } from "../api/use-site";
 import { useLanguage, pickLang, useLocalizedPath } from "../language";
+import { useWording, type WordingKey } from "../wording";
 
-const TYPE_LABELS: Record<PublishedItem["type"] & string, string> = {
-  article: "Journal",
-  page: "Page",
-  paper: "Papers",
-  dispatch: "Dispatch",
-  pigeon_post: "Pigeon Post",
-  brief: "Brief",
-  annual: "Annual",
-  event: "Event",
-  sattal: "The Sattal",
-  terms: "Terms",
+const TYPE_LABELS: Record<PublishedItem["type"] & string, WordingKey> = {
+  article: "kind.article",
+  page: "kind.page",
+  paper: "kind.paper",
+  dispatch: "kind.dispatch",
+  pigeon_post: "kind.pigeon-post",
+  brief: "kind.brief",
+  annual: "kind.annual",
+  event: "kind.event",
+  sattal: "kind.sattal",
+  terms: "kind.terms",
 };
 
 export function SearchResultCard({ item }: { item: PublishedItem }) {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
+  const w = useWording();
   const href = publishedItemHref(item);
   const title = pickLang(item.title ?? "", item.title_ne, lang);
 
@@ -33,7 +35,7 @@ export function SearchResultCard({ item }: { item: PublishedItem }) {
         />
       )}
       <p className="text-muted-foreground text-xs uppercase tracking-wide">
-        {item.type ? TYPE_LABELS[item.type] : null}
+        {item.type ? w(TYPE_LABELS[item.type]) : null}
       </p>
       <h3 className="font-serif text-xl">{title}</h3>
       {item.summary && (

@@ -181,12 +181,37 @@ slug `painters-v2` and so on; the earlier version stays, and the page shows the
 history. Links to them sit where a person is asked for something: on every
 enquiry, on the Sattal's front page, on the Friends page, and on the voice form.
 
-## The empty sentences
+## Rewording the site
 
-What a room says before anything is in it lives in one file:
-`apps/web/src/modules/site/empty-states.json`. Each sentence is a promise, so
-each is the house's to word. Change it there and publish; the app and the static
-pages read the same file.
+Every fixed line the site says, in English and in Nepali, is changed from the
+desk. Sign in and choose **Wording**. That covers the menus and the footer, page
+headings and intros, the house's standing lines (the Sattal's rule, the Guild's
+punch, what Friends buys), form labels and buttons, and what an empty room says
+before anything is in it. Each of those sentences is a promise, so each is the
+house's to word.
+
+1. Find the line: type a few of its words, or open the part of the site it
+   belongs to.
+2. Change the English, the Nepali, or both. Press **Save**.
+3. To go back to the original words, press **Use the default again**.
+
+A Nepali box left empty shows Nepali readers the English, as everywhere else on
+the site. A word in curly brackets, such as `{name}` or `{date}`, is filled in
+by the site: keep it. An em dash is refused here as everywhere.
+
+The live site shows the change within a few minutes. The plain pages (the ones
+readers without JavaScript get) change the next time the pages are published.
+
+The original words live in `apps/web/src/modules/site/wording.json`. Only a
+programmer changes that file, and only to add a line or to change what a line
+says when the house has not reworded it.
+
+## Friends tiers
+
+The tiers on the Friends form (their names, what each costs a year, and the
+line under each, in both languages) are kept under **Friends tiers**. A tier
+someone has applied under cannot be removed; untick **Offered on the Friends
+form** to stop offering it.
 
 ## The mark
 

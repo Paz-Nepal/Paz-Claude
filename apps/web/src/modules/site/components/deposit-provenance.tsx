@@ -7,11 +7,11 @@
  * lives in the Record.
  */
 import { Mark } from "./mark";
+import { useWording, type WordingKey } from "../wording";
 
-const LICENCE_WORDS: Record<string, string> = {
-  "CC BY": "Anyone may copy, share and adapt this text, provided they credit it.",
-  "CC BY-SA":
-    "Anyone may copy, share and adapt this text, provided they credit it and share what they make on the same terms.",
+const LICENCE_WORDS: Record<string, WordingKey> = {
+  "CC BY": "provenance.cc-by",
+  "CC BY-SA": "provenance.cc-by-sa",
 };
 
 export function DepositProvenance({
@@ -25,22 +25,24 @@ export function DepositProvenance({
   title?: string;
   series?: string;
 }) {
+  const w = useWording();
   if (!depositRef) return null;
-  const citation = [title, series, "PAZ, Patan, Lalitpur", depositRef]
+  const licenceKey = license ? LICENCE_WORDS[license] : undefined;
+  const citation = [title, series, w("provenance.place"), depositRef]
     .filter((part) => part && part.trim())
     .join(". ");
   return (
     <div className="text-muted-foreground border-t pt-4 text-sm">
       <p>
         <Mark className="mr-2 inline-block align-text-bottom" />
-        Kept by the house · Deposited in the Record ({depositRef})
+        {w("provenance.kept", { ref: depositRef })}
       </p>
       {license && (
         <p className="mt-1">
-          Licence: {license}. {LICENCE_WORDS[license] ?? ""}
+          {w("provenance.licence", { licence: license })} {licenceKey ? w(licenceKey) : ""}
         </p>
       )}
-      <p className="mt-1">Cite as: {citation}.</p>
+      <p className="mt-1">{w("provenance.cite-as", { citation })}</p>
     </div>
   );
 }

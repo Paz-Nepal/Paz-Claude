@@ -4,7 +4,8 @@ import { toAppError } from "@paz/types";
 import { formatDualEraDate } from "@paz/utils";
 import { useRecordEntries } from "../api/use-site";
 import { useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording } from "../wording";
 
 /**
  * The spine of the site (spec §2/§59): every public deposit, in order,
@@ -19,32 +20,31 @@ import { emptyState } from "../empty-states";
 export function RecordPage() {
   const entries = useRecordEntries();
   const localize = useLocalizedPath();
+  const w = useWording();
+  const empty = useEmptyState();
 
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-3xl">The deposit register</h1>
-        <p className="text-muted-foreground">
-          The public deposit index. Every public thing PAZ makes is entered here, in order, and
-          stays.
-        </p>
+        <h1 className="font-serif text-3xl">{w("record.register-title")}</h1>
+        <p className="text-muted-foreground">{w("record.register-intro")}</p>
       </header>
 
       {entries.isPending && (
         <p role="status" className="text-muted-foreground">
-          Loading…
+          {w("common.loading")}
         </p>
       )}
       {entries.isError && (
         <StatePanel
-          title="Couldn't load the Record."
+          title={w("record.load-error")}
           description={toAppError(entries.error).message}
         />
       )}
 
       {entries.data &&
         (entries.data.length === 0 ? (
-          <p className="type-body">{emptyState("deposits")}</p>
+          <p className="type-body">{empty("deposits")}</p>
         ) : (
           <ol className="flex flex-col gap-4">
             {entries.data.map((entry) => (

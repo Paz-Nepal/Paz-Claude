@@ -2,13 +2,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Field, Input, Textarea, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
-import { formatCents } from "@paz/utils";
+import { formatMoney } from "@paz/utils";
+import { pickLang, useLanguage } from "@/modules/site/language";
+import { useWording } from "@/modules/site/wording";
 import { applicationSchema, type ApplicationInput } from "../schemas";
 import { useMembershipTiers, useSubmitApplication } from "../api/use-membership";
 
 export function ApplicationForm() {
   const tiers = useMembershipTiers();
   const submit = useSubmitApplication();
+  const w = useWording();
+  const { lang } = useLanguage();
   const {
     register,
     handleSubmit,
@@ -41,20 +45,15 @@ export function ApplicationForm() {
   });
 
   if (submit.isSuccess) {
-    return (
-      <StatePanel
-        title="Thank you. Your application is in."
-        description="Someone will write back once it's been reviewed."
-      />
-    );
+    return <StatePanel title={w("friends.thanks")} description={w("friends.thanks-note")} />;
   }
 
   return (
     <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-4" noValidate>
-      <Field label="Full name" htmlFor="fullName" error={errors.fullName?.message}>
+      <Field label={w("friends.full-name")} htmlFor="fullName" error={errors.fullName?.message}>
         <Input id="fullName" aria-invalid={Boolean(errors.fullName)} {...register("fullName")} />
       </Field>
-      <Field label="Email" htmlFor="email" error={errors.email?.message}>
+      <Field label={w("friends.email")} htmlFor="email" error={errors.email?.message}>
         <Input
           id="email"
           type="email"
@@ -63,11 +62,16 @@ export function ApplicationForm() {
           {...register("email")}
         />
       </Field>
-      <Field label="Phone" htmlFor="phone" hint="Optional." error={errors.phone?.message}>
+      <Field
+        label={w("friends.phone")}
+        htmlFor="phone"
+        hint={w("friends.optional")}
+        error={errors.phone?.message}
+      >
         <Input id="phone" type="tel" autoComplete="tel" {...register("phone")} />
       </Field>
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="text-sm font-medium">Tier</legend>
+        <legend className="text-sm font-medium">{w("friends.tier")}</legend>
         {errors.tierKey && <p className="text-destructive text-sm">{errors.tierKey.message}</p>}
         <div className="flex flex-col gap-2">
           {(tiers.data ?? []).map((tier) => (
@@ -83,12 +87,15 @@ export function ApplicationForm() {
               />
               <span className="flex flex-col">
                 <span className="font-medium">
-                  {tier.name}:{" "}
-                  {tier.annual_fee_cents != null ? formatCents(tier.annual_fee_cents) : ""}
-                  /year
+                  {w("friends.tier-line", {
+                    name: pickLang(tier.name ?? "", tier.name_ne, lang),
+                    price: tier.annual_fee_cents != null ? formatMoney(tier.annual_fee_cents) : "",
+                  })}
                 </span>
                 {tier.description && (
-                  <span className="text-muted-foreground text-sm">{tier.description}</span>
+                  <span className="text-muted-foreground text-sm">
+                    {pickLang(tier.description, tier.description_ne, lang)}
+                  </span>
                 )}
               </span>
             </label>
@@ -96,22 +103,22 @@ export function ApplicationForm() {
         </div>
       </fieldset>
       <Field
-        label="Why do you want to join?"
+        label={w("friends.why")}
         htmlFor="motivation"
-        hint="Optional."
+        hint={w("friends.optional")}
         error={errors.motivation?.message}
       >
         <Textarea id="motivation" {...register("motivation")} />
       </Field>
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-medium">Stay in touch</legend>
+        <legend className="text-sm font-medium">{w("friends.stay-in-touch")}</legend>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" {...register("dispatchOptIn")} />
-          Send me the Dispatch by email
+          {w("friends.dispatch-opt-in")}
         </label>
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" {...register("programsOptIn")} />
-          Send me programme announcements by email
+          {w("friends.programmes-opt-in")}
         </label>
       </fieldset>
       {submit.isError && (
@@ -120,7 +127,7 @@ export function ApplicationForm() {
         </p>
       )}
       <Button type="submit" loading={submit.isPending}>
-        Submit application
+        {w("friends.submit")}
       </Button>
     </form>
   );

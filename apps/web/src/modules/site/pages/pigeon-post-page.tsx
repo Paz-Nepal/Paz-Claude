@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePigeonPost, publicMediaUrl } from "../api/use-site";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { useWording } from "../wording";
 import { SupersededBanner } from "../components/superseded-banner";
 import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
@@ -16,17 +17,18 @@ export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
   const slug = slugProp ?? params.slug;
   const localize = useLocalizedPath();
   const post = usePigeonPost(slug);
+  const w = useWording();
 
   if (post.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (post.isError) {
     return (
       <div className="p-8">
-        <StatePanel title="Couldn't load this." description={toAppError(post.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(post.error).message} />
       </div>
     );
   }
@@ -44,11 +46,11 @@ export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
       <SpeakerNote speaker="anonymous" />
       <DocumentHead
         title={item.title ?? ""}
-        description="A quiet keepsake from Pigeon Post, kept in the Record."
+        description={w("pigeon.description")}
         path={`/pigeon-post/${item.slug}`}
         ogType="article"
         depositRef={item.deposit_ref}
-        seriesName="Pigeon Post"
+        seriesName={w("pigeon.series")}
       />
       <SupersededBanner basePath="/pigeon-post" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
@@ -60,11 +62,11 @@ export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
           href={publicMediaUrl(item.pdf_path)}
           className="self-start rounded-lg border px-4 py-2 text-sm font-medium hover:bg-black/5"
         >
-          View the keepsake
+          {w("pigeon.view")}
         </a>
       )}
       <DepositProvenance
-        series="Pigeon Post"
+        series={w("pigeon.series")}
         title={item.title ?? ""}
         depositRef={item.deposit_ref}
       />

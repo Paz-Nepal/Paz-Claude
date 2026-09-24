@@ -16,6 +16,7 @@ import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
+import { useWording } from "../wording";
 
 export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
   const params = useParams<{ slug: string; deposit: string }>();
@@ -23,17 +24,18 @@ export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
   const localize = useLocalizedPath();
   const brief = useBrief(slug);
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (brief.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (brief.isError) {
     return (
       <div className="p-8">
-        <StatePanel title="Couldn't load this." description={toAppError(brief.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(brief.error).message} />
       </div>
     );
   }
@@ -53,18 +55,20 @@ export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
       <DocumentHead
         title={pickLang(item.title ?? "", item.title_ne, lang)}
         description={
-          item.issue_no != null ? `Brief No. ${item.issue_no}, kept in the Record.` : "A Brief."
+          item.issue_no != null
+            ? w("brief.description", { number: item.issue_no })
+            : w("brief.description-plain")
         }
         path={`/brief/${item.slug}`}
         ogType="article"
         depositRef={item.deposit_ref}
-        seriesName="Brief"
+        seriesName={w("brief.series")}
       />
       <SupersededBanner basePath="/brief" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.issue_no != null && (
           <p className="text-muted-foreground text-sm">
-            Brief No. {item.issue_no}
+            {w("brief.number", { number: item.issue_no })}
             {item.issue_date ? ` · ${formatKathmanduDate(item.issue_date)}` : ""}
           </p>
         )}
@@ -73,7 +77,7 @@ export function BriefPage({ slug: slugProp }: { slug?: string } = {}) {
       {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
       <DepositProvenance
-        series="The Brief"
+        series={w("brief.citation-series")}
         title={item.title ?? ""}
         depositRef={item.deposit_ref}
       />

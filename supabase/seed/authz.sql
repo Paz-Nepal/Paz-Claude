@@ -69,6 +69,7 @@ insert into authz.permissions (key, description) values
   ('encounters.manage', 'Add and edit Encounters on the public calendar.'),
   ('mail.manage', 'Read the Brief subscriber list and send the Brief.'),
   ('safeguarding.read', 'Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about.'),
+  ('site.wording.manage', 'Reword the fixed lines of the public site: menus, footer, page intros, form labels, empty sections.'),
   ('analytics.dashboard.editorial', 'View the editorial pipeline dashboard.'),
   ('analytics.dashboard.programs', 'View the programme fill-rate dashboard.'),
   ('analytics.dashboard.membership', 'View the membership funnel dashboard.'),
@@ -92,6 +93,7 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('editor', 'chronicle.line.create'),
   ('editor', 'encounters.manage'),
   ('editor', 'mail.manage'),
+  ('editor', 'site.wording.manage'),
   ('author', 'publishing.item.create'),
   ('author', 'publishing.media.read'),
   ('author', 'publishing.media.create')

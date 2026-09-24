@@ -9,7 +9,8 @@ import {
   type SattalPiece,
 } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording, type WordingKey } from "../wording";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { PageHero } from "../components/paz-editorial";
@@ -17,17 +18,27 @@ import { SpeakerNote, useEraDate } from "../components/wall-parts";
 import { BriefSignup } from "../components/brief-signup";
 import { TermsLink } from "./more-pages";
 
-const FORM_LABEL: Record<string, string> = {
-  study: "Study",
-  review: "Review",
-  account: "Account",
+const FORM_LABEL: Record<string, WordingKey> = {
+  study: "sattal.form-study",
+  review: "sattal.form-review",
+  account: "sattal.form-account",
 };
 
-const LANGUAGE_LABEL: Record<string, string> = {
-  en: "English",
-  ne: "Nepali",
-  new: "Nepal Bhasa",
+const LANGUAGE_LABEL: Record<string, WordingKey> = {
+  en: "sattal.lang-en",
+  ne: "sattal.lang-ne",
+  new: "sattal.lang-new",
 };
+
+/** A lookup into one of the tables above, falling back to the raw value. */
+function labelFrom(
+  w: (k: WordingKey) => string,
+  table: Record<string, WordingKey>,
+  value: string | null | undefined,
+): string {
+  const k = table[value ?? ""];
+  return k ? w(k) : (value ?? "");
+}
 
 /**
  * The Sattal's front page: signed work by independent authors. It says
@@ -42,58 +53,60 @@ export function SattalIndexPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const w = useWording();
+  const empty = useEmptyState();
   const hasReader = (readers.data ?? []).length > 0;
 
   return (
     <div>
-      <DocumentHead title="The Sattal" path="/sattal" />
-      <PageHero title="The Sattal" kicker="Signed work by authors who are not the house" />
+      <DocumentHead title={w("title.sattal")} path="/sattal" />
+      <PageHero title={w("title.sattal")} kicker={w("sattal.kicker")} />
 
       <section className="w-reading py-10" aria-labelledby="sattal-rule">
         <h2 id="sattal-rule" className="sr-only">
-          The rule
+          {w("sattal.rule-heading")}
         </h2>
         <SpeakerNote speaker="signed" />
-        <p className="type-body mt-4">
-          Work the house shows, sells or has formed, and anything critical of PAZ, is published here
-          only when an author unconnected to it has written it and a named outside reader, whom the
-          house cannot overrule, has accepted it.
-        </p>
+        <p className="type-body mt-4">{w("sattal.rule")}</p>
         <p className="type-small mt-4">
-          <TermsLink kind="writers">The Sattal&rsquo;s terms</TermsLink>
+          <TermsLink kind="writers">{w("sattal.terms-link")}</TermsLink>
         </p>
         {readers.isSuccess &&
           (hasReader ? (
             <p className="type-body mt-4">
-              {(readers.data ?? []).length === 1
-                ? "The outside reader is "
-                : "The outside readers are "}
-              {(readers.data ?? []).map((r) => r.name).join(", ")}.
+              {w((readers.data ?? []).length === 1 ? "sattal.reader-is" : "sattal.readers-are", {
+                names: (readers.data ?? []).map((r) => r.name).join(", "),
+              })}
             </p>
           ) : (
-            <p className="type-body mt-4">
-              No outside reader has been named yet, so nothing in that category is published.
-            </p>
+            <p className="type-body mt-4">{w("sattal.no-reader")}</p>
           ))}
       </section>
 
-      <section className="w-standard border-border border-t py-10" aria-label="Pieces">
+      <section
+        className="w-standard border-border border-t py-10"
+        aria-label={w("sattal.pieces-label")}
+      >
         {pieces.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
         {pieces.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(pieces.error).message} />
+          <StatePanel
+            title={w("common.load-error")}
+            description={toAppError(pieces.error).message}
+          />
         )}
-        {pieces.data && pieces.data.length === 0 && (
-          <p className="type-body">{emptyState("sattal")}</p>
-        )}
+        {pieces.data && pieces.data.length === 0 && <p className="type-body">{empty("sattal")}</p>}
         <ol className="flex flex-col gap-8">
           {(pieces.data ?? []).map((x) => (
             <li key={x.id} className="speaker speaker-signed">
               <p className="type-caption">
-                {FORM_LABEL[x.form ?? ""] ?? x.form} no. {x.piece_number}
+                {w("sattal.piece-number", {
+                  form: labelFrom(w, FORM_LABEL, x.form),
+                  number: x.piece_number,
+                })}
                 {x.published_at ? ` · ${eraDate(x.published_at)}` : ""}
               </p>
               <p className="font-serif text-2xl">
@@ -150,11 +163,12 @@ function Block({ node }: { node: RichTextNode }) {
 }
 
 function Margin({ node, sources }: { node: RichTextNode | undefined; sources: Source[] }) {
+  const w = useWording();
   if (!node) return <div />;
   const keys = keysIn(node);
   if (keys.length === 0) return <div />;
   return (
-    <aside className="sattal-margin type-small" aria-label="Sources for this passage">
+    <aside className="sattal-margin type-small" aria-label={w("sattal.sources-passage")}>
       <ul className="flex flex-col gap-1">
         {keys.map((k) => (
           <li key={k}>
@@ -168,6 +182,7 @@ function Margin({ node, sources }: { node: RichTextNode | undefined; sources: So
 }
 
 function Leaf({ piece }: { piece: SattalPiece }) {
+  const w = useWording();
   const sources = ((piece.sources ?? []) as unknown as Source[]).filter((s) => s && s.key);
   const en = blocksOf(piece.body);
   const ne = blocksOf(piece.body_ne);
@@ -195,7 +210,9 @@ function Leaf({ piece }: { piece: SattalPiece }) {
   return (
     <div className="sattal-leaf">
       <div className="sattal-row sattal-row-parallel type-caption">
-        <p lang="en">English{originalIsNe ? ", translation" : ", the original"}</p>
+        <p lang="en">
+          {w(originalIsNe ? "sattal.english-translation" : "sattal.english-original")}
+        </p>
         <p lang="ne">नेपाली</p>
       </div>
       {Array.from({ length: rows }, (_, i) => (
@@ -206,13 +223,13 @@ function Leaf({ piece }: { piece: SattalPiece }) {
       ))}
       {originalIsNe && (
         <p className="type-small mt-6">
-          Original language:{" "}
-          {LANGUAGE_LABEL[piece.original_language ?? ""] ?? piece.original_language}. The
-          translation is set beside it.
+          {w("sattal.original-language", {
+            language: labelFrom(w, LANGUAGE_LABEL, piece.original_language),
+          })}
         </p>
       )}
       {sources.length > 0 && (
-        <aside className="sattal-margin type-small mt-8" aria-label="Sources">
+        <aside className="sattal-margin type-small mt-8" aria-label={w("sattal.sources")}>
           <ul className="flex flex-col gap-1">
             {sources.map((s) => (
               <li key={s.key}>
@@ -235,17 +252,18 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const w = useWording();
 
   if (piece.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (piece.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(piece.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(piece.error).message} />
       </div>
     );
   }
@@ -270,7 +288,7 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
         path={`/sattal/${x.slug}`}
         ogType="article"
         depositRef={x.deposit_ref}
-        seriesName="The Sattal"
+        seriesName={w("sattal.series")}
       />
 
       {/* Running head: the author's name. */}
@@ -278,13 +296,16 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
 
       <header className="mt-8 flex flex-col gap-3">
         <p className="type-caption">
-          {FORM_LABEL[x.form ?? ""] ?? x.form} no. {x.piece_number}
+          {w("sattal.piece-number", {
+            form: labelFrom(w, FORM_LABEL, x.form),
+            number: x.piece_number,
+          })}
         </p>
         <h1 className="type-h1 max-w-4xl">{title}</h1>
         <p className="type-body">{author}</p>
         {original && (
           <p className="type-small">
-            A reply to{" "}
+            {w("sattal.reply-to")}{" "}
             <Link to={localize(`/sattal/${original.slug}`)} className="link-underline">
               {pickLang(original.title as string, original.title_ne, lang)}
             </Link>
@@ -294,7 +315,7 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
         {translation && (
           <p className="type-small">
             <Link to={localize(`/sattal/${translation.slug}`)} className="link-underline">
-              The other-language text
+              {w("sattal.other-language")}
             </Link>
           </p>
         )}
@@ -311,7 +332,7 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
         <div className="type-small flex flex-col gap-3">
           {(corrections.data ?? []).length > 0 && (
             <div>
-              <p className="font-semibold">Corrections, by addition</p>
+              <p className="font-semibold">{w("sattal.corrections")}</p>
               <ul className="mt-1 flex flex-col gap-1">
                 {(corrections.data ?? []).map((c) => (
                   <li key={c.id}>
@@ -323,18 +344,18 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
             </div>
           )}
           <p>
-            <span className="font-semibold">Relation to the subject.</span> {x.relation_declaration}
+            <span className="font-semibold">{w("sattal.relation")}</span> {x.relation_declaration}
           </p>
           {x.outside_reader_name && (
             <p>
-              <span className="font-semibold">Accepted by the outside reader</span>{" "}
+              <span className="font-semibold">{w("sattal.accepted-by")}</span>{" "}
               {x.outside_reader_name}
               {x.reader_accepted_on ? `, ${eraDate(x.reader_accepted_on)}` : ""}.
             </p>
           )}
           {(x.subject_work_slug || x.subject_person_slug) && (
             <p>
-              <span className="font-semibold">About.</span>{" "}
+              <span className="font-semibold">{w("sattal.about")}</span>{" "}
               {x.subject_work_slug && (
                 <Link to={localize(`/works/${x.subject_work_slug}`)} className="link-underline">
                   {x.subject_work_title}
@@ -349,9 +370,7 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
             </p>
           )}
           <SpeakerNote speaker="signed" />
-          <p>
-            Sattal piece no. {x.piece_number}. Deposited in the Record as {x.deposit_ref}.
-          </p>
+          <p>{w("sattal.colophon", { number: x.piece_number, ref: x.deposit_ref })}</p>
         </div>
       </footer>
 
@@ -364,7 +383,7 @@ export function SattalPiecePage({ slug: slugProp }: { slug?: string }) {
           aria-labelledby="replies"
         >
           <h2 id="replies" className="type-h3">
-            Replies
+            {w("sattal.replies")}
           </h2>
           <ul className="mt-4 flex flex-col gap-3">
             {replies.map((r) => (

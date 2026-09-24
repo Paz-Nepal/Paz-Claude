@@ -70,11 +70,56 @@ if (!existsSync(join(DIST_DIR, "index.html"))) {
 const API = `${SUPABASE_URL}/rest/v1`;
 const PAGE = 1000;
 
-// The same file the app reads (apps/web/src/modules/site/empty-states.json),
-// so the static pages and the app never say different things.
-const EMPTY = JSON.parse(
-  readFileSync(new URL("../apps/web/src/modules/site/empty-states.json", import.meta.url), "utf8"),
+// The site's fixed wording: the same register the app reads
+// (apps/web/src/modules/site/wording.json), with the house's rewordings
+// from the desk laid over it once they are fetched (main, below), so the
+// static pages and the app never say different things. Until then, and if
+// the rewordings cannot be read, every line says its default.
+const WORDING = JSON.parse(
+  readFileSync(new URL("../apps/web/src/modules/site/wording.json", import.meta.url), "utf8"),
 );
+let WORDING_OVERRIDES = new Map();
+
+/** One line of the site's wording, in English, with {placeholders} filled. */
+function say(key, vars) {
+  const entry = WORDING[key];
+  if (!entry) throw new Error(`Unknown wording key "${key}" (add it to wording.json).`);
+  const text = WORDING_OVERRIDES.get(key)?.en ?? entry.en;
+  return text.replace(/\{(\w+)\}/g, (whole, name) =>
+    vars?.[name] === undefined || vars?.[name] === null ? whole : String(vars[name]),
+  );
+}
+
+/** The same, escaped, with some placeholders filled by ready-made HTML. */
+function wHtml(key, htmlVars) {
+  const marked = {};
+  for (const name of Object.keys(htmlVars)) marked[name] = `\u0000${name}\u0000`;
+  return esc(say(key, marked)).replace(/\u0000(\w+)\u0000/g, (_, name) => htmlVars[name]);
+}
+
+/** A lookup table whose values are wording keys, read as their words. */
+const worded = (table) =>
+  new Proxy(table, {
+    get: (t, prop) => (typeof prop === "string" && prop in t ? say(t[prop]) : undefined),
+  });
+
+// The empty-section sentences, by their old names.
+const EMPTY = worded({
+  wall: "empty.wall",
+  artistNoWork: "empty.artist-no-work",
+  shows: "empty.shows",
+  sattal: "empty.sattal",
+  sattalNoReader: "empty.sattal-no-reader",
+  series: "empty.series",
+  chronicle: "empty.chronicle",
+  deposits: "empty.deposits",
+  commons: "empty.commons",
+  guild: "empty.guild",
+  treasury: "empty.treasury",
+  hands: "empty.hands",
+  encounters: "empty.encounters",
+  terms: "empty.terms",
+});
 
 const HEADERS = {
   apikey: SUPABASE_ANON_KEY,
@@ -258,15 +303,56 @@ const hasNe = (d) => Boolean(d.title_ne?.trim()) || hasDoc(d.body_ne);
 
 const PAGES = new Map();
 
+// Names and bylines are getters, so they are read after the house's
+// rewordings have been fetched.
 const SERIES = {
-  paper: { path: "papers", name: "Paz Papers", fn: "get_paper", byline: "A Paz Paper" },
-  brief: { path: "brief", name: "Brief", fn: "get_brief", byline: null },
-  dispatch: { path: "dispatch", name: "Dispatch", fn: "get_dispatch", byline: null },
-  pigeon_post: { path: "pigeon-post", name: "Pigeon Post", fn: "get_pigeon_post", byline: null },
-  annual: { path: "annual", name: "Annual", fn: "get_annual", byline: null },
+  paper: {
+    path: "papers",
+    get name() {
+      return say("papers.series");
+    },
+    fn: "get_paper",
+    get byline() {
+      return say("papers.byline");
+    },
+  },
+  brief: {
+    path: "brief",
+    get name() {
+      return say("brief.series");
+    },
+    fn: "get_brief",
+    byline: null,
+  },
+  dispatch: {
+    path: "dispatch",
+    get name() {
+      return say("dispatch.series");
+    },
+    fn: "get_dispatch",
+    byline: null,
+  },
+  pigeon_post: {
+    path: "pigeon-post",
+    get name() {
+      return say("pigeon.series");
+    },
+    fn: "get_pigeon_post",
+    byline: null,
+  },
+  annual: {
+    path: "annual",
+    get name() {
+      return say("annual.series");
+    },
+    fn: "get_annual",
+    byline: null,
+  },
   terms: {
     path: "terms",
-    name: "Terms",
+    get name() {
+      return say("terms.series");
+    },
     fn: "get_published_item",
     extra: { p_type: "terms" },
     byline: null,
@@ -274,39 +360,45 @@ const SERIES = {
 };
 
 const SPEAKER = {
-  anonymous: "Anonymous, of the house. The house sends this without a name.",
-  house: "The house, unsigned. The seal says the house wrote this.",
-  signed: "Signed, not the house. The seal attests provenance and deposit, never agreement.",
+  get anonymous() {
+    return `${say("speaker.anonymous")}. ${say("speaker.anonymous-seal")}`;
+  },
+  get house() {
+    return `${say("speaker.house")}. ${say("speaker.house-seal")}`;
+  },
+  get signed() {
+    return `${say("speaker.signed")}. ${say("speaker.signed-seal")}`;
+  },
 };
 const SERIES_SPEAKER = { pigeon_post: "anonymous" };
 
 const NAV = [
-  ["/wall", "The Wall"],
-  ["/press", "The Press"],
-  ["/house", "The House"],
-  ["/record", "The Record"],
-  ["/search", "Search"],
+  ["/wall", "nav.wall"],
+  ["/press", "nav.press"],
+  ["/house", "nav.house"],
+  ["/record", "nav.record"],
+  ["/search", "nav.search"],
 ];
 const FOOT = [
-  ["/canon", "The Canon"],
-  ["/name", "The name"],
-  ["/words", "Words"],
-  ["/looking-for", "Looking for"],
-  ["/privacy", "Privacy"],
-  ["/terms", "Terms"],
-  ["/contact", "Contact"],
+  ["/canon", "footer.canon"],
+  ["/name", "footer.name"],
+  ["/words", "footer.words"],
+  ["/looking-for", "footer.looking-for"],
+  ["/privacy", "footer.privacy"],
+  ["/terms", "footer.terms"],
+  ["/contact", "footer.contact"],
 ];
 
 let SITE_NAME = "PAZ";
 let CONTACT_EMAIL = null;
 
 function chrome(main) {
-  const nav = NAV.map(([to, label]) => `<a href="${to}">${esc(label)}</a>`).join(" · ");
-  const foot = FOOT.map(([to, label]) => `<a href="${to}">${esc(label)}</a>`).join(" · ");
+  const nav = NAV.map(([to, label]) => `<a href="${to}">${esc(say(label))}</a>`).join(" · ");
+  const foot = FOOT.map(([to, label]) => `<a href="${to}">${esc(say(label))}</a>`).join(" · ");
   return [
     `<header><p><a href="/">${esc(SITE_NAME)}</a></p><nav aria-label="Main">${nav}</nav></header>`,
     `<main>${main}</main>`,
-    `<footer><p>${foot}</p><p>Patan, Lalitpur. No cookies, no analytics, no reader tracking of any kind.${
+    `<footer><p>${foot}</p><p>${esc(say("footer.place-line-1"))}. ${esc(say("footer.no-tracking", { year: new Date().getFullYear(), name: SITE_NAME }))}${
       CONTACT_EMAIL ? ` <a href="mailto:${esc(CONTACT_EMAIL)}">${esc(CONTACT_EMAIL)}</a>` : ""
     }</p></footer>`,
   ].join("\n");
@@ -422,7 +514,7 @@ function writeRedirectStub(fromPath, toPath, title) {
     <meta name="robots" content="noindex, follow" />
   </head>
   <body>
-    <p>This is now kept at <a href="${esc(toPath)}">${esc(toPath)}</a>.</p>
+    <p>${wHtml("static.moved", { path: `<a href="${esc(toPath)}">${esc(toPath)}</a>` })}</p>
   </body>
 </html>
 `;
@@ -444,14 +536,18 @@ function itemMain({ title, speaker, byline, bodyDoc, detail, series }) {
   if (byline) parts.push(`<p>${esc(byline)}</p>`);
   if (detail?.abstract) parts.push(`<p><em>${esc(detail.abstract)}</em></p>`);
   parts.push(renderDoc(bodyDoc));
-  if (detail?.sources_note) parts.push(`<p>Sources: ${esc(detail.sources_note)}</p>`);
+  if (detail?.sources_note)
+    parts.push(`<p>${esc(say("papers.sources", { sources: detail.sources_note }))}</p>`);
   if (detail?.deposit_ref) {
-    parts.push(`<p>Kept by the house · Deposited in the Record (${esc(detail.deposit_ref)})</p>`);
-    if (detail.license) parts.push(`<p>Licence: ${esc(detail.license)}.</p>`);
+    parts.push(`<p>${esc(say("provenance.kept", { ref: detail.deposit_ref }))}</p>`);
+    if (detail.license)
+      parts.push(`<p>${esc(say("provenance.licence", { licence: detail.license }))}</p>`);
     parts.push(
-      `<p>Cite as: ${esc([title, series, "PAZ, Patan, Lalitpur", detail.deposit_ref].filter(Boolean).join(". "))}.</p>`,
+      `<p>${esc(say("provenance.cite-as", { citation: [title, series, say("provenance.place"), detail.deposit_ref].filter(Boolean).join(". ") }))}</p>`,
     );
-    parts.push(`<p><a href="/record/${esc(detail.deposit_ref)}/text.txt">Plain text</a></p>`);
+    parts.push(
+      `<p><a href="/record/${esc(detail.deposit_ref)}/text.txt">${esc(say("static.plain-text"))}</a></p>`,
+    );
   }
   parts.push("</article>");
   return parts.join("\n");
@@ -613,22 +709,22 @@ function imageHtml(img, eager = false) {
   }${jpg ? `<source type="image/jpeg" srcset="${esc(jpg)}" sizes="(min-width: 1024px) 58vw, 92vw" />` : ""}<img src="${esc(media(fallback))}" alt="${esc(img.alt)}" width="${img.width}" height="${img.height}" loading="${eager ? "eager" : "lazy"}" decoding="async" /></picture></div><figcaption>Photograph: ${esc(img.photographer)} · <a href="${esc(media(img.original_path))}">Full size</a></figcaption></figure>`;
 }
 
-const EVENT_LABEL = {
-  made: "Made",
-  shown: "Shown",
-  sold: "Sold",
-  loaned: "Loaned",
-  returned: "Returned",
-  damaged: "Damaged",
-  restored: "Restored",
-  rehoused: "Rehoused",
-};
-const AVAIL = {
-  available: "Available",
-  sold: "Sold",
-  not_for_sale: "Not for sale",
-  on_loan: "On loan",
-};
+const EVENT_LABEL = worded({
+  made: "work.event-made",
+  shown: "work.event-shown",
+  sold: "work.event-sold",
+  loaned: "work.event-loaned",
+  returned: "work.event-returned",
+  damaged: "work.event-damaged",
+  restored: "work.event-restored",
+  rehoused: "work.event-rehoused",
+});
+const AVAIL = worded({
+  available: "work.available",
+  sold: "work.sold",
+  not_for_sale: "work.not-for-sale",
+  on_loan: "work.on-loan",
+});
 
 function renderWall(d) {
   const people = d.people;
@@ -661,8 +757,8 @@ function renderWall(d) {
   const listed = d.works.filter((w) => currentIds.has(w.person_id)).slice(0, 24);
   writePage(
     "/wall",
-    { title: "The Wall" },
-    `<h1>The Wall</h1>${pageBodyFrom("viewing")}${pageBodyFrom("shipping")}<h2>People</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>Work</h2><ul>${listed.map(workCard).join("")}</ul><h2>Shows</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
+    { title: say("title.wall") },
+    `<h1>${esc(say("title.wall"))}</h1>${pageBodyFrom("viewing")}${pageBodyFrom("shipping")}<h2>${esc(say("wall.people"))}</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>${esc(say("wall.work"))}</h2><ul>${listed.map(workCard).join("")}</ul><h2>${esc(say("wall.shows"))}</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
       .map(
         (s) =>
           `<li>${link(`/shows/${s.slug}`, s.title)} <span>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</span></li>`,
@@ -681,16 +777,14 @@ function renderWall(d) {
     const about = d.pieces.filter((x) => x.subject_person_id === p.id);
     const main = [
       `<article><h1>${esc(p.name)}</h1>`,
-      p.active
-        ? ""
-        : "<p>This page is kept as a record. The house does not currently present this person.</p>",
-      p.statement ? `<h2>In their own words</h2><p>${esc(p.statement)}</p>` : "",
-      `<h2>Work</h2><ul>${works.map(workCard).join("") || `<li>${esc(EMPTY.artistNoWork)}</li>`}</ul>`,
+      p.active ? "" : `<p>${esc(say("person.kept"))}</p>`,
+      p.statement ? `<h2>${esc(say("person.own-words"))}</h2><p>${esc(p.statement)}</p>` : "",
+      `<h2>${esc(say("person.work"))}</h2><ul>${works.map(workCard).join("") || `<li>${esc(EMPTY.artistNoWork)}</li>`}</ul>`,
       hung.length || elsewhere.length
-        ? `<h2>Where they have shown</h2><ul>${hung
+        ? `<h2>${esc(say("person.where-shown"))}</h2><ul>${hung
             .map(
               (s) =>
-                `<li>${link(`/shows/${s.slug}`, s.title)} · At the house · ${gregorian(s.opened_on)}</li>`,
+                `<li>${link(`/shows/${s.slug}`, s.title)} · ${esc(say("person.at-house"))} · ${gregorian(s.opened_on)}</li>`,
             )
             .join("")}${elsewhere
             .map(
@@ -700,7 +794,7 @@ function renderWall(d) {
             .join("")}</ul>`
         : "",
       about.length || writings.length
-        ? `<h2>Written about</h2><ul>${about
+        ? `<h2>${esc(say("person.written-about"))}</h2><ul>${about
             .map(
               (x) =>
                 `<li>${link(`/record/${x.deposit_ref}`, x.title)} · by ${esc(x.person_name)} · The Sattal</li>`,
@@ -742,31 +836,31 @@ function renderWall(d) {
     const main = [
       `<article>${frames.map((f, i) => imageHtml(f, i === 0)).join("")}`,
       `<p>${p ? link(`/people/${p.slug}`, p.name) : esc(w.person_name)}</p><h1>${esc(w.title)}</h1>`,
-      `<p>${[w.year, w.medium, dims].filter(Boolean).map(esc).join("<br />")}</p><p>Work no. ${w.work_number}</p>`,
+      `<p>${[w.year, w.medium, dims].filter(Boolean).map(esc).join("<br />")}</p><p>${esc(say("work.number", { number: w.work_number }))}</p>`,
       w.price_minor != null ? `<p>${esc(money(w.price_minor, w.currency))}</p>` : "",
       w.friends_price_minor != null
-        ? `<p>Friends of PAZ price: ${esc(money(w.friends_price_minor, w.currency))}</p>`
+        ? `<p>${esc(say("work.friends-price", { price: money(w.friends_price_minor, w.currency) }))}</p>`
         : "",
       `<p><strong>${esc(AVAIL[w.availability] ?? w.availability)}</strong></p>`,
-      `<p>${link("/terms/painters", "The painter's terms")}</p>`,
+      `<p>${link("/terms/painters", say("work.painters-terms"))}</p>`,
       w.provenance_note ? `<p>${esc(w.provenance_note)}</p>` : "",
       ...texts.map(
         (t) =>
-          `<p><em>${t.attribution === "maker" ? "In the maker's words" : "The house writes"}</em></p><p>${esc(t.body)}</p>`,
+          `<p><em>${esc(t.attribution === "maker" ? say("work.makers-words") : say("work.house-writes"))}</em></p><p>${esc(t.body)}</p>`,
       ),
-      `<h2>Its life</h2><ol>${
+      `<h2>${esc(say("work.its-life"))}</h2><ol>${
         events
           .map(
             (e) =>
               `<li>${gregorian(e.occurred_on)} ${esc(EVENT_LABEL[e.kind] ?? e.kind)}${e.note ? `. ${esc(e.note)}` : ""}</li>`,
           )
-          .join("") || "<li>Nothing has been recorded yet.</li>"
+          .join("") || `<li>${esc(say("work.life-empty"))}</li>`
       }</ol>`,
       hung.length
-        ? `<h2>Where it has hung</h2><ul>${hung.map((s) => `<li>${link(`/shows/${s.slug}`, s.title)} · ${gregorian(s.opened_on)}</li>`).join("")}</ul>`
+        ? `<h2>${esc(say("work.where-hung"))}</h2><ul>${hung.map((s) => `<li>${link(`/shows/${s.slug}`, s.title)} · ${gregorian(s.opened_on)}</li>`).join("")}</ul>`
         : "",
       about.length
-        ? `<h2>Written about it</h2><ul>${about.map((x) => `<li>${link(`/record/${x.deposit_ref}`, x.title)} · by ${esc(x.person_name)}</li>`).join("")}</ul>`
+        ? `<h2>${esc(say("work.written-about"))}</h2><ul>${about.map((x) => `<li>${link(`/record/${x.deposit_ref}`, x.title)} · ${esc(say("work.by-sattal", { name: x.person_name }))}</li>`).join("")}</ul>`
         : "",
       "</article>",
     ].join("\n");
@@ -799,8 +893,8 @@ function renderWall(d) {
       `/shows/${s.slug}`,
       { title: s.title },
       `<article><h1>${esc(s.title)}</h1><p>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</p>${
-        s.text ? `<p><em>The house writes</em></p><p>${esc(s.text)}</p>` : ""
-      }<h2>What hung</h2><ul>${hung.map(workCard).join("") || `<li>${esc(EMPTY.wall)}</li>`}</ul></article>`,
+        s.text ? `<p><em>${esc(say("show.house-writes"))}</em></p><p>${esc(s.text)}</p>` : ""
+      }<h2>${esc(say("show.what-hung"))}</h2><ul>${hung.map(workCard).join("") || `<li>${esc(EMPTY.wall)}</li>`}</ul></article>`,
     );
   }
 }
@@ -812,20 +906,26 @@ const KEY = /\[\[([^\]]+)\]\]/g;
 const showKeys = (html) => html.replace(KEY, "[$1]");
 
 function renderSattal(d) {
-  const FORM = { study: "Study", review: "Review", account: "Account" };
+  const FORM = worded({
+    study: "sattal.form-study",
+    review: "sattal.form-review",
+    account: "sattal.form-account",
+  });
   const readers = d.readers;
   writePage(
     "/sattal",
-    { title: "The Sattal" },
-    `<h1>The Sattal</h1><p><strong>${esc(SPEAKER.signed)}</strong></p><p>${link("/terms/writers", "The Sattal's terms")}</p><p>Work the house shows, sells or has formed, and anything critical of PAZ, is published here only when an author unconnected to it has written it and a named outside reader, whom the house cannot overrule, has accepted it.</p><p>${
+    { title: say("title.sattal") },
+    `<h1>${esc(say("title.sattal"))}</h1><p><strong>${esc(SPEAKER.signed)}</strong></p><p>${link("/terms/writers", say("sattal.terms-link"))}</p><p>${esc(say("sattal.rule"))}</p><p>${esc(
       readers.length
-        ? `${readers.length === 1 ? "The outside reader is" : "The outside readers are"} ${esc(readers.map((r) => r.name).join(", "))}.`
-        : EMPTY.sattalNoReader
-    }</p><ol>${
+        ? say(readers.length === 1 ? "sattal.reader-is" : "sattal.readers-are", {
+            names: readers.map((r) => r.name).join(", "),
+          })
+        : EMPTY.sattalNoReader,
+    )}</p><ol>${
       d.pieces
         .map(
           (x) =>
-            `<li>${esc(FORM[x.form] ?? x.form)} no. ${x.piece_number}<br />${link(`/record/${x.deposit_ref}`, x.title)}<br />${esc(x.person_name)}</li>`,
+            `<li>${esc(say("sattal.piece-number", { form: FORM[x.form] ?? x.form, number: x.piece_number }))}<br />${link(`/record/${x.deposit_ref}`, x.title)}<br />${esc(x.person_name)}</li>`,
         )
         .join("") || `<li>${esc(EMPTY.sattal)}</li>`
     }</ol>`,
@@ -868,24 +968,24 @@ function renderSattal(d) {
     const canonical = `/record/${x.deposit_ref}`;
     const main = [
       `<article><p>${esc(x.person_name)}</p>`,
-      `<p>${esc(FORM[x.form] ?? x.form)} no. ${x.piece_number}</p><h1>${esc(x.title)}</h1><p>${esc(x.person_name)}</p>`,
+      `<p>${esc(say("sattal.piece-number", { form: FORM[x.form] ?? x.form, number: x.piece_number }))}</p><h1>${esc(x.title)}</h1><p>${esc(x.person_name)}</p>`,
       original
-        ? `<p>A reply to ${link(`/record/${original.deposit_ref}`, original.title)}.</p>`
+        ? `<p>${esc(say("sattal.reply-to"))} ${link(`/record/${original.deposit_ref}`, original.title)}.</p>`
         : "",
       body,
       "<footer><hr />",
       corrections.length
-        ? `<p><strong>Corrections, by addition</strong></p><ul>${corrections.map((c) => `<li>${gregorian(c.added_at)}. ${esc(c.note)}</li>`).join("")}</ul>`
+        ? `<p><strong>${esc(say("sattal.corrections"))}</strong></p><ul>${corrections.map((c) => `<li>${gregorian(c.added_at)}. ${esc(c.note)}</li>`).join("")}</ul>`
         : "",
-      `<p><strong>Relation to the subject.</strong> ${esc(x.relation_declaration)}</p>`,
+      `<p><strong>${esc(say("sattal.relation"))}</strong> ${esc(x.relation_declaration)}</p>`,
       x.outside_reader_name
-        ? `<p><strong>Accepted by the outside reader</strong> ${esc(x.outside_reader_name)}${x.reader_accepted_on ? `, ${gregorian(x.reader_accepted_on)}` : ""}.</p>`
+        ? `<p><strong>${esc(say("sattal.accepted-by"))}</strong> ${esc(x.outside_reader_name)}${x.reader_accepted_on ? `, ${gregorian(x.reader_accepted_on)}` : ""}.</p>`
         : "",
       `<p><strong>${esc(SPEAKER.signed)}</strong></p>`,
-      `<p>Sattal piece no. ${x.piece_number}. Deposited in the Record as ${esc(x.deposit_ref)}. <a href="${canonical}/text.txt">Plain text</a></p>`,
+      `<p>${esc(say("sattal.colophon", { number: x.piece_number, ref: x.deposit_ref }))} <a href="${canonical}/text.txt">${esc(say("static.plain-text"))}</a></p>`,
       "</footer>",
       replies.length
-        ? `<h2>Replies</h2><ul>${replies.map((r) => `<li>${link(`/record/${r.deposit_ref}`, r.title)} · ${esc(r.person_name)}</li>`).join("")}</ul>`
+        ? `<h2>${esc(say("sattal.replies"))}</h2><ul>${replies.map((r) => `<li>${link(`/record/${r.deposit_ref}`, r.title)} · ${esc(r.person_name)}</li>`).join("")}</ul>`
         : "",
       "</article>",
     ].join("\n");
@@ -901,7 +1001,7 @@ function renderSattal(d) {
           identifier: x.deposit_ref,
           url: `${SITE_URL}${canonical}`,
           author: { "@type": "Person", name: x.person_name },
-          isPartOf: { "@type": "PublicationSeries", name: "The Sattal" },
+          isPartOf: { "@type": "PublicationSeries", name: say("sattal.series") },
         },
       },
       main,
@@ -932,8 +1032,8 @@ function renderSattal(d) {
 function renderChronicle(lines) {
   writePage(
     "/chronicle",
-    { title: "The Chronicle" },
-    `<h1>The Chronicle</h1><ol>${lines.map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`).join("") || `<li>${esc(EMPTY.chronicle)}</li>`}</ol>`,
+    { title: say("title.chronicle") },
+    `<h1>${esc(say("title.chronicle"))}</h1><ol>${lines.map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`).join("") || `<li>${esc(EMPTY.chronicle)}</li>`}</ol>`,
   );
   writeText(
     "chronicle.txt",
@@ -944,14 +1044,14 @@ function renderChronicle(lines) {
 function renderGlossary(terms) {
   writePage(
     "/words",
-    { title: "Words" },
-    `<h1>Words</h1><dl>${
+    { title: say("title.words") },
+    `<h1>${esc(say("title.words"))}</h1><dl>${
       terms
         .map(
           (t) =>
-            `<div id="${esc(t.slug)}"><dt>${esc(t.term)}${t.kind === "spelling" ? " · spelling" : ""}</dt><dd>${esc(t.definition)}</dd></div>`,
+            `<div id="${esc(t.slug)}"><dt>${esc(t.term)}${t.kind === "spelling" ? ` · ${esc(say("words.spelling"))}` : ""}</dt><dd>${esc(t.definition)}</dd></div>`,
         )
-        .join("") || "<p>No words are listed yet.</p>"
+        .join("") || `<p>${esc(say("empty.words"))}</p>`
     }</dl>`,
   );
 }
@@ -961,27 +1061,27 @@ function renderHome(d) {
   writePage(
     "/",
     { title: SITE_NAME, ogType: "website" },
-    `<h1>${esc(SITE_NAME)}</h1><p>Patan, Lalitpur</p><h2>The Wall</h2><ul>${
+    `<h1>${esc(SITE_NAME)}</h1><p>${esc(say("home.place"))}</p><h2>${esc(say("home.wall-eyebrow"))}</h2><ul>${
       recent
         .map((w) => `<li>${esc(w.person_name)}<br />${link(`/works/${w.slug}`, w.title)}</li>`)
         .join("") || `<li>${esc(EMPTY.wall)}</li>`
-    }</ul><h2>The Sattal</h2><ol>${d.pieces
+    }</ul><h2>${esc(say("home.sattal"))}</h2><ol>${d.pieces
       .slice(0, 3)
       .map(
         (x) => `<li>${link(`/record/${x.deposit_ref}`, x.title)}<br />${esc(x.person_name)}</li>`,
       )
-      .join("")}</ol><h2>The Chronicle</h2><ol>${d.chronicle
+      .join("")}</ol><h2>${esc(say("home.chronicle"))}</h2><ol>${d.chronicle
       .slice(0, 5)
       .map((l) => `<li>${gregorian(l.line_on)} ${esc(l.line)}</li>`)
-      .join("")}</ol><nav aria-label="The six organs">${[
-      ["/house", "House"],
-      ["/record", "Record"],
-      ["/guild", "Guild"],
-      ["/press", "Press"],
-      ["/hearth", "Hearth"],
-      ["/treasury", "Treasury"],
+      .join("")}</ol><nav aria-label="${esc(say("home.organs-label"))}">${[
+      ["/house", "home.organ-house"],
+      ["/record", "home.organ-record"],
+      ["/guild", "home.organ-guild"],
+      ["/press", "home.organ-press"],
+      ["/hearth", "home.organ-hearth"],
+      ["/treasury", "home.organ-treasury"],
     ]
-      .map(([to, label]) => link(to, label))
+      .map(([to, label]) => link(to, say(label)))
       .join(" · ")}</nav>`,
   );
 }
@@ -993,16 +1093,11 @@ function renderHome(d) {
 // house's own empty sentence and never an instruction to the desk.
 // ---------------------------------------------------------------------
 const SERIES_INDEX = [
-  {
-    type: "paper",
-    path: "/papers",
-    title: "Papers",
-    note: "Long-form essays. Numbered, permanent.",
-  },
-  { type: "brief", path: "/brief", title: "Brief" },
-  { type: "dispatch", path: "/dispatch", title: "Dispatch" },
-  { type: "pigeon_post", path: "/pigeon-post", title: "Pigeon Post" },
-  { type: "annual", path: "/annual", title: "Annual" },
+  { type: "paper", path: "/papers", title: "series.papers", note: "papers.intro" },
+  { type: "brief", path: "/brief", title: "series.brief" },
+  { type: "dispatch", path: "/dispatch", title: "series.dispatch" },
+  { type: "pigeon_post", path: "/pigeon-post", title: "series.pigeon-post" },
+  { type: "annual", path: "/annual", title: "series.annual" },
 ];
 
 function renderSeriesIndexes(items, deposits) {
@@ -1011,8 +1106,8 @@ function renderSeriesIndexes(items, deposits) {
     const rows = items.filter((i) => i.type === s.type);
     writePage(
       s.path,
-      { title: s.title, priority: "0.7" },
-      `<h1>${esc(s.title)}</h1>${s.note ? `<p>${esc(s.note)}</p>` : ""}<ul>${
+      { title: say(s.title), priority: "0.7" },
+      `<h1>${esc(say(s.title))}</h1>${s.note ? `<p>${esc(say(s.note))}</p>` : ""}<ul>${
         rows
           .map((i) => {
             const to = i.deposit_ref ? `/record/${i.deposit_ref}` : `${s.path}/${i.slug}`;
@@ -1030,48 +1125,50 @@ function pageBody(pagesBySlug, slug) {
   return p ? renderDoc(p.body) : "";
 }
 
+// Labels are wording keys, read when the page is written.
 const ORGAN_LINKS = {
   house: [
-    ["/hearth", "The Hearth"],
-    ["/guild", "The Guild"],
-    ["/press", "The Press"],
-    ["/record", "The Record"],
-    ["/treasury", "The Treasury"],
-    ["/chronicle", "The Chronicle"],
-    ["/commons", "The Commons"],
-    ["/friends", "Friends of PAZ"],
-    ["/table", "The Table"],
-    ["/encounters", "Encounters"],
-    ["/name", "The name"],
-    ["/custodian", "The Custodian of the Name"],
-    ["/canon", "The Canon"],
-    ["/hands", "Hands"],
-    ["/safeguarding", "Safeguarding"],
+    ["/hearth", "house.hearth"],
+    ["/guild", "house.guild"],
+    ["/press", "house.press"],
+    ["/record", "house.record"],
+    ["/treasury", "house.treasury"],
+    ["/chronicle", "house.chronicle"],
+    ["/commons", "house.commons"],
+    ["/friends", "house.friends"],
+    ["/table", "house.table"],
+    ["/encounters", "house.encounters"],
+    ["/name", "house.name"],
+    ["/custodian", "title.custodian"],
+    ["/canon", "house.canon"],
+    ["/hands", "title.hands"],
+    ["/safeguarding", "title.safeguarding"],
   ],
   record: [
-    ["/record/deposits", "The deposit register"],
-    ["/chronicle", "The Chronicle"],
+    ["/record/deposits", "record.deposit-register"],
+    ["/chronicle", "record.chronicle"],
   ],
   press: [
     ...SERIES_INDEX.map((s) => [s.path, s.title]),
-    ["/sattal", "The Sattal"],
-    ["/send-a-pigeon", "Send a pigeon"],
+    ["/sattal", "press.sattal"],
+    ["/send-a-pigeon", "nav.send-a-pigeon"],
   ],
 };
 
 function renderOrgans(pagesBySlug, extra = {}) {
   const ORGANS = [
-    ["house", "The House"],
-    ["hearth", "The Hearth"],
-    ["guild", "The Guild"],
-    ["press", "The Press"],
-    ["record", "The Record"],
-    ["treasury", "The Treasury"],
+    ["house", "organ.house"],
+    ["hearth", "organ.hearth"],
+    ["guild", "organ.guild"],
+    ["press", "press.title"],
+    ["record", "organ.record"],
+    ["treasury", "organ.treasury"],
   ];
-  for (const [slug, title] of ORGANS) {
+  for (const [slug, titleKey] of ORGANS) {
+    const title = say(titleKey);
     const p = pagesBySlug.get(slug);
     const links = (ORGAN_LINKS[slug] ?? [])
-      .map(([to, label]) => `<li>${link(to, label)}</li>`)
+      .map(([to, label]) => `<li>${link(to, say(label))}</li>`)
       .join("");
     writePage(
       `/${slug}`,
@@ -1080,7 +1177,7 @@ function renderOrgans(pagesBySlug, extra = {}) {
         description: p?.subtitle || null,
         priority: "0.8",
       },
-      `<h1>${esc(p?.title || title)}</h1><p>An organ of the house</p>${p ? renderDoc(p.body) : ""}${
+      `<h1>${esc(p?.title || title)}</h1><p>${esc(say("organ.kicker"))}</p>${p ? renderDoc(p.body) : ""}${
         extra[slug] ?? ""
       }${links ? `<nav aria-label="In ${esc(title)}"><ul>${links}</ul></nav>` : ""}`,
     );
@@ -1090,8 +1187,8 @@ function renderOrgans(pagesBySlug, extra = {}) {
 function renderDeposits(entries) {
   writePage(
     "/record/deposits",
-    { title: "The deposit register", priority: "0.6" },
-    `<h1>The deposit register</h1><ol>${
+    { title: say("record.register-title"), priority: "0.6" },
+    `<h1>${esc(say("record.register-title"))}</h1><ol>${
       entries
         .map(
           (e) =>
@@ -1121,8 +1218,8 @@ function renderProgrammes(sessions) {
     `<li>${esc(s.starts_at ? gregorian(s.starts_at) : "")}${s.venue_name ? ` · ${esc(s.venue_name)}` : ""}</li>`;
   writePage(
     "/programmes",
-    { title: "Programmes", priority: "0.6" },
-    `<h1>Programmes</h1><ul>${
+    { title: say("footer.programmes"), priority: "0.6" },
+    `<h1>${esc(say("footer.programmes"))}</h1><ul>${
       [...bySlug.entries()]
         .map(
           ([slug, rows]) =>
@@ -1143,59 +1240,67 @@ function renderProgrammes(sessions) {
 function renderFriends(tiers) {
   writePage(
     "/friends",
-    { title: "Friends of PAZ", priority: "0.5" },
-    `<h1>Friends of PAZ</h1><ul>${tiers
+    { title: say("footer.friends"), priority: "0.5" },
+    `<h1>${esc(say("footer.friends"))}</h1><ul>${tiers
       .map(
         (t) =>
-          `<li><strong>${esc(t.name)}</strong> · ${esc(money(t.annual_fee_cents, "NPR"))} a year${
+          `<li><strong>${esc(t.name)}</strong> · ${esc(money(t.annual_fee_cents, "NPR"))} ${esc(say("static.a-year"))}${
             t.description ? `<br />${esc(t.description)}` : ""
           }</li>`,
       )
-      .join("")}</ul>${formNote("Applying")}`,
+      .join("")}</ul>${formNote("static.what-apply")}`,
   );
 }
 
+/** What a form's page says without JavaScript. `what` is a wording key. */
 function formNote(what) {
-  return `<p>${esc(what)} needs JavaScript.${
-    CONTACT_EMAIL ? ` Write to ${link(`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL)} instead.` : ""
+  return `<p>${esc(say("static.needs-js", { what: say(what) }))}${
+    CONTACT_EMAIL
+      ? ` ${wHtml("static.write-instead", { email: link(`mailto:${CONTACT_EMAIL}`, CONTACT_EMAIL) })}`
+      : ""
   }</p>`;
 }
 
-const LADDER = ["Guest", "Companion", "Denizen", "Steward", "Elder", "Ancestor"];
+const LADDER = [
+  "commons.rung-guest",
+  "commons.rung-companion",
+  "commons.rung-denizen",
+  "commons.rung-steward",
+  "commons.rung-elder",
+  "commons.rung-ancestor",
+];
 
 // Pages whose words the house supplies: written from the published page of
 // the same slug if there is one, otherwise the plain shell.
 const SHELLS = [
-  ["name", "The name"],
-  ["table", "The Table"],
-  ["looking-for", "Looking for"],
-  ["privacy", "Privacy"],
+  ["name", "title.name"],
+  ["table", "title.table"],
+  ["looking-for", "title.looking-for"],
+  ["privacy", "title.privacy"],
 ];
 
 function renderShells(pagesBySlug, written) {
-  for (const [slug, title] of SHELLS) {
+  const notWritten = `<p>${esc(say("common.not-written"))}</p>`;
+  for (const [slug, titleKey] of SHELLS) {
     if (written.has(`/${slug}`)) continue;
-    writePage(
-      `/${slug}`,
-      { title, priority: "0.4" },
-      `<h1>${esc(title)}</h1><p>This page has not been written yet.</p>`,
-    );
+    const title = say(titleKey);
+    writePage(`/${slug}`, { title, priority: "0.4" }, `<h1>${esc(title)}</h1>${notWritten}`);
   }
   if (!written.has("/commons")) {
     writePage(
       "/commons",
-      { title: "The Commons", priority: "0.5" },
-      `<h1>The Commons</h1>${pageBody(pagesBySlug, "commons") || "<p>This page has not been written yet.</p>"}<h2>The ladder</h2><ol>${LADDER.map((r) => `<li>${esc(r)}</li>`).join("")}</ol><p>${esc(EMPTY.commons)}</p>`,
+      { title: say("title.commons"), priority: "0.5" },
+      `<h1>${esc(say("title.commons"))}</h1>${pageBody(pagesBySlug, "commons") || notWritten}<h2>${esc(say("commons.ladder"))}</h2><ol>${LADDER.map((r) => `<li>${esc(say(r))}</li>`).join("")}</ol><p>${esc(EMPTY.commons)}</p>`,
     );
   }
   writePage(
     "/canon",
-    { title: "The Canon", priority: "0.5" },
-    `<h1>The Canon</h1>${
+    { title: say("title.canon"), priority: "0.5" },
+    `<h1>${esc(say("title.canon"))}</h1>${
       [...pagesBySlug.values()]
         .filter((p) => p.slug.startsWith("canon-"))
         .map((p) => `<p>${link(`/canon/${p.slug.replace(/^canon-/, "")}`, p.title)}</p>`)
-        .join("") || "<p>No document has been published yet.</p>"
+        .join("") || `<p>${esc(say("empty.canon"))}</p>`
     }`,
   );
   for (const p of pagesBySlug.values()) {
@@ -1209,23 +1314,23 @@ function renderShells(pagesBySlug, written) {
   }
   writePage(
     "/contact",
-    { title: "Contact", priority: "0.4" },
-    `<h1>Contact</h1>${formNote("Writing from this page")}`,
+    { title: say("contact.title"), priority: "0.4" },
+    `<h1>${esc(say("contact.title"))}</h1>${formNote("static.what-contact")}`,
   );
   writePage(
     "/send-a-pigeon",
-    { title: "Send a pigeon", priority: "0.4" },
-    `<h1>Send a pigeon</h1>${formNote("Sending a pigeon")}`,
+    { title: say("pigeon.title"), priority: "0.4" },
+    `<h1>${esc(say("pigeon.title"))}</h1>${formNote("static.what-pigeon")}`,
   );
   writePage(
     "/a-voice",
-    { title: "A voice", noindex: true },
-    `<h1>A voice</h1>${pageBody(pagesBySlug, "a-voice")}${pageBody(pagesBySlug, "a-voice-statement")}<p>${link("/terms/memory", "The Ethics of Memory")}</p>${formNote("This form")}`,
+    { title: say("title.a-voice"), noindex: true },
+    `<h1>${esc(say("title.a-voice"))}</h1>${pageBody(pagesBySlug, "a-voice")}${pageBody(pagesBySlug, "a-voice-statement")}<p>${link("/terms/memory", say("voice.memory-link"))}</p>${formNote("static.what-form")}`,
   );
   writePage(
     "/search",
-    { title: "Search", noindex: true },
-    `<h1>Search</h1><p>Search needs JavaScript. ${link("/record/deposits", "The deposit register")} lists everything deposited.</p>`,
+    { title: say("search.title"), noindex: true },
+    `<h1>${esc(say("search.title"))}</h1><p>${wHtml("static.search", { register: link("/record/deposits", say("record.deposit-register")) })}</p>`,
   );
 }
 
@@ -1304,12 +1409,12 @@ function checkRoutesAndWriteSitemap() {
 // safeguarding, and the small pages that have no data of their own.
 // ---------------------------------------------------------------------
 const TERMS_KINDS = ["painters", "writers", "memory", "friends"];
-const TERMS_LABEL = {
-  painters: "The painter's terms",
-  writers: "The Sattal's terms",
-  memory: "The Ethics of Memory",
-  friends: "Friends of PAZ",
-};
+const TERMS_LABEL = worded({
+  painters: "terms.painters",
+  writers: "terms.writers",
+  memory: "terms.memory",
+  friends: "terms.friends",
+});
 const TERMS_DETAILS = new Map();
 
 function termsKindOf(slug) {
@@ -1339,12 +1444,12 @@ function renderTerms(versions) {
         priority: "0.5",
       },
       detail
-        ? `<article><h1>${esc(detail.title)}</h1>${renderDoc(detail.body)}<p>Version ${termsVersionOf(cur.slug)}.</p><p>Kept by the house · Deposited in the Record (${esc(detail.deposit_ref)})</p>${
+        ? `<article><h1>${esc(detail.title)}</h1>${renderDoc(detail.body)}<p>${esc(say("terms.version", { version: termsVersionOf(cur.slug) }))}.</p><p>${esc(say("provenance.kept", { ref: detail.deposit_ref }))}</p>${
             earlier.length
-              ? `<h2>Version history</h2><ul>${earlier
+              ? `<h2>${esc(say("terms.history"))}</h2><ul>${earlier
                   .map(
                     (v) =>
-                      `<li>${link(`/record/${v.deposit_ref}`, `Version ${termsVersionOf(v.slug)}`)}</li>`,
+                      `<li>${link(`/record/${v.deposit_ref}`, say("terms.version", { version: termsVersionOf(v.slug) }))}</li>`,
                   )
                   .join("")}</ul>`
               : ""
@@ -1354,8 +1459,8 @@ function renderTerms(versions) {
   }
   writePage(
     "/terms",
-    { title: "Terms", priority: "0.5" },
-    `<h1>Terms</h1>${pageBodyFrom("terms")}<ul>${TERMS_KINDS.map((kind) =>
+    { title: say("title.terms"), priority: "0.5" },
+    `<h1>${esc(say("title.terms"))}</h1>${pageBodyFrom("terms")}<ul>${TERMS_KINDS.map((kind) =>
       current.get(kind)
         ? `<li>${link(`/terms/${kind}`, TERMS_LABEL[kind])}</li>`
         : `<li>${esc(TERMS_LABEL[kind])}<br />${esc(EMPTY.terms)}</li>`,
@@ -1368,23 +1473,23 @@ function pageBodyFrom(slug) {
   return p ? renderDoc(p.body) : "";
 }
 
-const HAND_STATUS = { held: "Held", open: "Open", dormant: "Dormant" };
+const HAND_STATUS = worded({ held: "hands.held", open: "hands.open", dormant: "hands.dormant" });
 
 function renderHands(hands, readers) {
   const readerNames = readers.map((r) => r.name).join(", ");
   writePage(
     "/hands",
-    { title: "Hands", priority: "0.5" },
-    `<h1>Hands</h1><ul>${
+    { title: say("title.hands"), priority: "0.5" },
+    `<h1>${esc(say("title.hands"))}</h1><ul>${
       hands
         .map((h) => {
           const held =
             h.slug === "outside-reader" && readerNames
-              ? `Held by ${readerNames}`
+              ? say("hands.held-by", { name: readerNames })
               : h.status === "held"
-                ? `Held by ${h.holder_name}`
+                ? say("hands.held-by", { name: h.holder_name })
                 : (HAND_STATUS[h.status] ?? h.status);
-          return `<li>${link(`/hands/${h.slug}`, h.title)}<br />${esc(held)}${h.term_ends_on ? ` · term ends ${esc(h.term_ends_on)}` : ""}</li>`;
+          return `<li>${link(`/hands/${h.slug}`, h.title)}<br />${esc(held)}${h.term_ends_on ? ` · ${esc(say("hands.term-ends", { date: h.term_ends_on }))}` : ""}</li>`;
         })
         .join("") || `<li>${esc(EMPTY.hands)}</li>`
     }</ul>`,
@@ -1394,33 +1499,33 @@ function renderHands(hands, readers) {
       `/hands/${h.slug}`,
       { title: h.title, priority: "0.4" },
       `<article><h1>${esc(h.title)}</h1><p>${esc(HAND_STATUS[h.status] ?? h.status)}</p>${
-        h.status === "held" ? `<p>Held by ${esc(h.holder_name)}.</p>` : ""
-      }${h.status === "dormant" && h.waking_trigger ? `<p>This office wakes when ${esc(h.waking_trigger)}.</p>` : ""}${[
-        ["The work", h.work],
-        ["What it asks", h.asks],
-        ["What it gives back", h.gives],
-        ["How to say yes", h.how_to_say_yes],
+        h.status === "held" ? `<p>${esc(say("hands.held-by", { name: h.holder_name }))}.</p>` : ""
+      }${h.status === "dormant" && h.waking_trigger ? `<p>${esc(say("hands.wakes-when", { trigger: h.waking_trigger }))}</p>` : ""}${[
+        ["hands.the-work", h.work],
+        ["hands.asks", h.asks],
+        ["hands.gives", h.gives],
+        ["hands.how-to-say-yes", h.how_to_say_yes],
       ]
         .filter(([, t]) => t)
-        .map(([label, t]) => `<h2>${label}</h2><p>${esc(t)}</p>`)
+        .map(([label, t]) => `<h2>${esc(say(label))}</h2><p>${esc(t)}</p>`)
         .join("")}</article>`,
     );
   }
 }
 
-const ENCOUNTER_KIND = {
-  field_study: "Field Study",
-  common_ground: "Common Ground",
-  chautari: "The Chautari",
-  workshop: "Workshop",
-};
+const ENCOUNTER_KIND = worded({
+  field_study: "encounters.field-study",
+  common_ground: "encounters.common-ground",
+  chautari: "encounters.chautari",
+  workshop: "encounters.workshop",
+});
 
 function encounterHtml(e) {
   const order = (en, ne) => (ne ? (e.leads_ne ? [ne, en] : [en, ne]) : [en]).filter(Boolean);
   const langOf = (t) =>
     t && (t === e.title_ne || t === e.place_ne || t === e.how_to_turn_up_ne) ? "ne" : "en";
   const line = (t, tag) => `<${tag} lang="${langOf(t)}">${esc(t)}</${tag}>`;
-  return `<p>${esc(ENCOUNTER_KIND[e.kind] ?? e.kind)} · ${esc(dualEra(e.starts_on))}${e.ends_on ? ` to ${esc(dualEra(e.ends_on))}` : ""}</p>${order(
+  return `<p>${esc(ENCOUNTER_KIND[e.kind] ?? e.kind)} · ${esc(dualEra(e.starts_on))}${e.ends_on ? ` ${esc(say("encounters.to", { date: dualEra(e.ends_on) }))}` : ""}</p>${order(
     e.title,
     e.title_ne,
   )
@@ -1435,11 +1540,14 @@ function encounterHtml(e) {
 function renderEncounters(events) {
   writePage(
     "/encounters",
-    { title: "Encounters", priority: "0.6" },
-    `<h1>Encounters</h1>${pageBodyFrom("encounters")}${
+    { title: say("title.encounters"), priority: "0.6" },
+    `<h1>${esc(say("title.encounters"))}</h1>${pageBodyFrom("encounters")}${
       events.length ? "" : `<p>${esc(EMPTY.encounters)}</p>`
     }<ol>${events
-      .map((e) => `<li>${encounterHtml(e)}${link(`/encounters/${e.slug}`, "Details")}</li>`)
+      .map(
+        (e) =>
+          `<li>${encounterHtml(e)}${link(`/encounters/${e.slug}`, say("common.details"))}</li>`,
+      )
       .join("")}</ol>`,
   );
   for (const e of events) {
@@ -1452,7 +1560,7 @@ function renderEncounters(events) {
 }
 
 function guildExtra(register) {
-  return `<h2>The hallmark register</h2><p>The house's punch attests formation. It does not attest quality, ownership or endorsement.</p>${
+  return `<h2>${esc(say("guild.register"))}</h2><p>${esc(say("guild.punch-rule"))}</p>${
     register.length ? "" : `<p>${esc(EMPTY.guild)}</p>`
   }<ul>${register
     .map(
@@ -1467,48 +1575,50 @@ function guildExtra(register) {
 }
 
 function treasuryExtra(accounts) {
-  return `<h2>The account</h2>${accounts.length ? "" : `<p>${esc(EMPTY.treasury)}</p>`}${accounts
+  return `<h2>${esc(say("treasury.account"))}</h2>${accounts.length ? "" : `<p>${esc(EMPTY.treasury)}</p>`}${accounts
     .map(
       (a) =>
         `<article><h3>${esc(a.year_span)}</h3>${
           a.patronage_share_minor != null
-            ? `<p>Patronage share given from after-tax profit: ${esc(money(a.patronage_share_minor))}${a.patronage_note ? `. ${esc(a.patronage_note)}` : ""}</p>`
+            ? `<p>${esc(say("treasury.patronage", { amount: money(a.patronage_share_minor) }))}${a.patronage_note ? `. ${esc(a.patronage_note)}` : ""}</p>`
             : ""
         }${
           a.tithe_minor != null
-            ? `<p>Tithe: ${esc(money(a.tithe_minor))}${a.tithe_base_minor != null ? ` on a harmonised base of ${esc(money(a.tithe_base_minor))}` : ""}.</p>`
+            ? `<p>${esc(say("treasury.tithe", { amount: money(a.tithe_minor) }))}${a.tithe_base_minor != null ? ` ${esc(say("treasury.tithe-base", { amount: money(a.tithe_base_minor) }))}` : ""}.</p>`
             : ""
         }${
           a.largest_share_pct != null
-            ? `<p>Largest single share of the year's giving: ${esc(a.largest_share_pct)}%. The one-fifth rule is ${a.concentration_rule_met ? "met" : "not met"}.</p>`
+            ? `<p>${esc(say("treasury.largest-share", { pct: a.largest_share_pct }))} ${esc(say(a.concentration_rule_met ? "treasury.rule-met" : "treasury.rule-not-met"))}</p>`
             : ""
-        }${a.gifts_note ? `<p>${esc(a.gifts_note)}</p>` : ""}${a.instruments_note ? `<p>Instruments in force: ${esc(a.instruments_note)}</p>` : ""}</article>`,
+        }${a.gifts_note ? `<p>${esc(a.gifts_note)}</p>` : ""}${a.instruments_note ? `<p>${esc(say("treasury.instruments", { text: a.instruments_note }))}</p>` : ""}</article>`,
     )
     .join("")}`;
 }
 
 function renderSmallPages() {
-  const notWritten = "<p>This page has not been written yet.</p>";
+  const notWritten = `<p>${esc(say("common.not-written"))}</p>`;
   writePage(
     "/safeguarding",
-    { title: "Safeguarding", priority: "0.5" },
-    `<h1>Safeguarding</h1>${pageBodyFrom("safeguarding") || notWritten}${pageBodyFrom("safeguarding-route")}<p>${link("/safeguarding/children", "Photographs of children")}</p>${formNote("Raising a concern from this page")}`,
+    { title: say("title.safeguarding"), priority: "0.5" },
+    `<h1>${esc(say("title.safeguarding"))}</h1>${pageBodyFrom("safeguarding") || notWritten}${pageBodyFrom("safeguarding-route")}<p>${link("/safeguarding/children", say("safeguarding.children-link"))}</p>${formNote("static.what-concern")}`,
   );
   writePage(
     "/safeguarding/children",
-    { title: "Photographs of children", priority: "0.4" },
-    `<h1>Photographs of children</h1>${pageBodyFrom("children-photography") || notWritten}`,
+    { title: say("title.children-photography"), priority: "0.4" },
+    `<h1>${esc(say("title.children-photography"))}</h1>${pageBodyFrom("children-photography") || notWritten}`,
   );
   writePage(
     "/custodian",
-    { title: "The Custodian of the Name", priority: "0.4" },
-    `<h1>The Custodian of the Name</h1>${pageBodyFrom("custodian") || notWritten}`,
+    { title: say("title.custodian"), priority: "0.4" },
+    `<h1>${esc(say("title.custodian"))}</h1>${pageBodyFrom("custodian") || notWritten}`,
   );
-  for (const [path, title] of [
-    ["/brief/confirm", "The Brief"],
-    ["/brief/unsubscribe", "The Brief"],
-  ]) {
-    writePage(path, { title, noindex: true }, `<h1>${esc(title)}</h1>${formNote("This step")}`);
+  for (const path of ["/brief/confirm", "/brief/unsubscribe"]) {
+    const title = say("title.brief");
+    writePage(
+      path,
+      { title, noindex: true },
+      `<h1>${esc(title)}</h1>${formNote("static.what-step")}`,
+    );
   }
 }
 
@@ -1525,6 +1635,13 @@ async function main() {
   const info = await callRpc("site_info").catch(() => ({}));
   SITE_NAME = info?.["site.name"] || "PAZ";
   CONTACT_EMAIL = info?.["site.contact_email"] || null;
+
+  // The house's rewordings (migration 0080). A database without them yet,
+  // or a failed read, leaves every line at its default.
+  const wording = await callRpc("site_wording").catch(() => []);
+  WORDING_OVERRIDES = new Map(
+    (Array.isArray(wording) ? wording : []).filter((r) => r?.key).map((r) => [r.key, r]),
+  );
 
   const [
     items,
@@ -1609,12 +1726,12 @@ async function main() {
   // Old addresses that moved: a redirect stub for hosts that cannot
   // consult the redirect table (Build Programme 2.4).
   for (const [from, to, title] of [
-    ["/the-record", "/record", "The Record"],
-    ["/visit", "/wall", "The Wall"],
-    ["/journal", "/chronicle", "The Chronicle"],
-    ["/membership/apply", "/friends", "Friends of PAZ"],
+    ["/the-record", "/record", "organ.record"],
+    ["/visit", "/wall", "title.wall"],
+    ["/journal", "/chronicle", "title.chronicle"],
+    ["/membership/apply", "/friends", "footer.friends"],
   ]) {
-    writeRedirectStub(from, to, title);
+    writeRedirectStub(from, to, say(title));
   }
   checkRoutesAndWriteSitemap();
 

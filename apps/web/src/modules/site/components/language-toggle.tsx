@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLanguage, useOtherLanguagePath } from "../language";
+import { useWording } from "../wording";
 
 /**
  * A real navigation to the other language's URL, not a client-side state
@@ -11,9 +12,10 @@ import { useLanguage, useOtherLanguagePath } from "../language";
 export function LanguageToggle() {
   const { lang } = useLanguage();
   const other = useOtherLanguagePath();
+  const w = useWording();
 
   return (
-    <div className="flex items-center gap-1 text-sm" role="group" aria-label="Language">
+    <div className="flex items-center gap-1 text-sm" role="group" aria-label={w("nav.language")}>
       {lang === "en" ? (
         <span className="font-medium">EN</span>
       ) : (

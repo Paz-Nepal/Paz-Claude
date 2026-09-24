@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { PageHero, ArrowLink } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
 import { useLocalizedPath } from "../language";
+import { useWording } from "../wording";
 
 /**
  * A real 404, not a silent redirect to the homepage. Work plan Part II, #7:
@@ -15,34 +16,32 @@ import { useLocalizedPath } from "../language";
 export function NotFoundPage() {
   const { pathname } = useLocation();
   const localize = useLocalizedPath();
+  const w = useWording();
   return (
     <div className="flex min-h-[70vh] flex-col">
       <DocumentHead
-        title="Not found"
-        description="This reference does not resolve. The Record is the authority on everything this house has deposited."
+        title={w("notfound.title")}
+        description={w("notfound.description")}
         path={pathname}
         noindex
       />
       <PageHero
-        kicker="This reference does not resolve"
-        title="Nothing is kept at this address"
-        subtitle="The link may be old, mistyped, or the item it pointed to may never have existed. Nothing here was silently redirected to the homepage."
+        kicker={w("notfound.kicker")}
+        title={w("notfound.heading")}
+        subtitle={w("notfound.subtitle")}
       />
       <div className="w-reading flex flex-col gap-6 pb-24">
-        <p className="type-body">
-          The Record is the authority on everything this house has deposited. If you were looking
-          for something specific, that is the place to start.
-        </p>
+        <p className="type-body">{w("notfound.record-note")}</p>
         <div className="flex flex-wrap gap-6">
-          <ArrowLink to="/record/deposits">Go to the Record</ArrowLink>
-          <ArrowLink to="/">Return home</ArrowLink>
+          <ArrowLink to="/record/deposits">{w("notfound.go-record")}</ArrowLink>
+          <ArrowLink to="/">{w("notfound.home")}</ArrowLink>
         </div>
         <p className="type-small border-border border-t pt-6">
-          Have a link that used to work?{" "}
+          {w("notfound.old-link")}{" "}
           <Link to={localize("/contact")} className="link-underline">
-            Tell us
+            {w("notfound.tell-us")}
           </Link>
-          , so it can be pointed to the right place.
+          {w("notfound.old-link-end")}
         </p>
       </div>
     </div>

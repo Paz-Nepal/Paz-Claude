@@ -3,7 +3,8 @@ import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useShow, useShowWorkLinks, useWorkImages, useWorks } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording } from "../wording";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { PersonLink, WorkPicture, useEraDate } from "../components/wall-parts";
@@ -23,6 +24,8 @@ export function ShowPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const t = useWording();
+  const empty = useEmptyState();
 
   const ids = new Set((links.data ?? []).filter((l) => l.show_id === s?.id).map((l) => l.work_id));
   const hung = (works.data ?? []).filter((w) => ids.has(w.id));
@@ -31,13 +34,13 @@ export function ShowPage() {
   if (show.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {t("common.loading")}
       </p>
     );
   if (show.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(show.error).message} />
+        <StatePanel title={t("common.load-error")} description={toAppError(show.error).message} />
       </div>
     );
   }
@@ -56,22 +59,22 @@ export function ShowPage() {
         <h1 className="type-h1">{title}</h1>
         <p className="type-small mt-3">
           {s.opened_on ? eraDate(s.opened_on) : ""}
-          {s.closed_on ? ` to ${eraDate(s.closed_on)}` : ""}
+          {s.closed_on ? ` ${t("show.to", { date: eraDate(s.closed_on) })}` : ""}
         </p>
       </header>
 
       {text && (
         <section className="w-reading pb-10">
-          <p className="type-caption mb-2">The house writes</p>
+          <p className="type-caption mb-2">{t("show.house-writes")}</p>
           <p className="type-body whitespace-pre-line">{text}</p>
         </section>
       )}
 
       <section className="w-wide border-border border-t py-12" aria-labelledby="hung">
         <h2 id="hung" className="type-h2">
-          What hung
+          {t("show.what-hung")}
         </h2>
-        {hung.length === 0 && <p className="type-body mt-4">{emptyState("wall")}</p>}
+        {hung.length === 0 && <p className="type-body mt-4">{empty("wall")}</p>}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {hung.map((w) => {
             const img = whole.get(w.id);

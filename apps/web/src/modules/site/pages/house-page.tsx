@@ -11,22 +11,24 @@ import {
 } from "../language";
 import { PageHero } from "../components/paz-editorial";
 import { TranslationNotice } from "../components/translation-notice";
+import { useWording, type WordingKey } from "../wording";
 
 export function HousePage() {
   const page = usePublishedItem("page", "house");
   const { lang } = useLanguage();
+  const w = useWording();
   const localize = useLocalizedPath();
 
   if (page.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (page.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(page.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(page.error).message} />
       </div>
     );
   }
@@ -38,8 +40,8 @@ export function HousePage() {
   return (
     <div>
       <PageHero
-        kicker="An organ of the house"
-        title={pickLang(data?.title ?? "The House", data?.title_ne, lang)}
+        kicker={w("organ.kicker")}
+        title={pickLang(data?.title ?? w("organ.house"), data?.title_ne, lang)}
         subtitle={data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined}
       />
       {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
@@ -49,25 +51,27 @@ export function HousePage() {
         </div>
       )}
 
-      <nav className="w-standard border-border border-t py-12" aria-label="In the house">
+      <nav className="w-standard border-border border-t py-12" aria-label={w("house.in-label")}>
         <ul className="type-body flex flex-col gap-2">
-          {[
-            ["/hearth", "The Hearth"],
-            ["/guild", "The Guild"],
-            ["/press", "The Press"],
-            ["/record", "The Record"],
-            ["/treasury", "The Treasury"],
-            ["/chronicle", "The Chronicle"],
-            ["/commons", "The Commons"],
-            ["/friends", "Friends of PAZ"],
-            ["/table", "The Table"],
-            ["/encounters", "Encounters"],
-            ["/name", "The name"],
-            ["/canon", "The Canon"],
-          ].map(([to, label]) => (
+          {(
+            [
+              ["/hearth", "house.hearth"],
+              ["/guild", "house.guild"],
+              ["/press", "house.press"],
+              ["/record", "house.record"],
+              ["/treasury", "house.treasury"],
+              ["/chronicle", "house.chronicle"],
+              ["/commons", "house.commons"],
+              ["/friends", "house.friends"],
+              ["/table", "house.table"],
+              ["/encounters", "house.encounters"],
+              ["/name", "house.name"],
+              ["/canon", "house.canon"],
+            ] as const satisfies ReadonlyArray<readonly [string, WordingKey]>
+          ).map(([to, label]) => (
             <li key={to}>
-              <Link to={localize(to as string)} className="link-underline">
-                {label}
+              <Link to={localize(to)} className="link-underline">
+                {w(label)}
               </Link>
             </li>
           ))}

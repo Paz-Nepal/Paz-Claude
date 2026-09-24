@@ -4,6 +4,7 @@ import { toAppError } from "@paz/types";
 import { usePublishedItem } from "../api/use-site";
 import { PublishedBody } from "../components/published-body";
 import { ResolveNotFoundPage } from "./resolve-not-found-page";
+import { useWording } from "../wording";
 
 /**
  * Top-level CMS-controlled pages (/about, /visit, /membership, …): any
@@ -17,18 +18,19 @@ import { ResolveNotFoundPage } from "./resolve-not-found-page";
  */
 export function CmsPage() {
   const { slug } = useParams<{ slug: string }>();
+  const w = useWording();
   const item = usePublishedItem("page", slug);
 
   if (item.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (item.isError) {
     return (
       <div className="p-8">
-        <StatePanel title="Couldn't load this." description={toAppError(item.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(item.error).message} />
       </div>
     );
   }

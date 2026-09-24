@@ -19,6 +19,7 @@ import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { Mark } from "../components/mark";
 import { TermsLink } from "./more-pages";
+import { useWording, type WordingKey } from "../wording";
 import {
   FormUnavailable,
   PersonLink,
@@ -27,23 +28,32 @@ import {
   useEraDate,
 } from "../components/wall-parts";
 
-const AVAILABILITY: Record<string, string> = {
-  available: "Available",
-  sold: "Sold",
-  not_for_sale: "Not for sale",
-  on_loan: "On loan",
+const AVAILABILITY: Record<string, WordingKey> = {
+  available: "work.available",
+  sold: "work.sold",
+  not_for_sale: "work.not-for-sale",
+  on_loan: "work.on-loan",
 };
 
-const EVENT_LABEL: Record<string, string> = {
-  made: "Made",
-  shown: "Shown",
-  sold: "Sold",
-  loaned: "Loaned",
-  returned: "Returned",
-  damaged: "Damaged",
-  restored: "Restored",
-  rehoused: "Rehoused",
+const EVENT_LABEL: Record<string, WordingKey> = {
+  made: "work.event-made",
+  shown: "work.event-shown",
+  sold: "work.event-sold",
+  loaned: "work.event-loaned",
+  returned: "work.event-returned",
+  damaged: "work.event-damaged",
+  restored: "work.event-restored",
+  rehoused: "work.event-rehoused",
 };
+
+function labelFrom(
+  t: (k: WordingKey) => string,
+  table: Record<string, WordingKey>,
+  value: string | null | undefined,
+): string {
+  const k = table[value ?? ""];
+  return k ? t(k) : (value ?? "");
+}
 
 /**
  * A work's page. The price appears once, plainly, with the Friends price
@@ -66,17 +76,18 @@ export function WorkPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const t = useWording();
 
   if (work.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {t("common.loading")}
       </p>
     );
   if (work.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(work.error).message} />
+        <StatePanel title={t("common.load-error")} description={toAppError(work.error).message} />
       </div>
     );
   }
@@ -108,7 +119,7 @@ export function WorkPage() {
               sizes="(min-width: 1024px) 58vw, 92vw"
             />
           ))}
-          {frames.length === 0 && <p className="type-small">No photograph has been made yet.</p>}
+          {frames.length === 0 && <p className="type-small">{t("work.no-photograph")}</p>}
         </div>
 
         <div className="flex flex-col gap-6">
@@ -126,21 +137,23 @@ export function WorkPage() {
             {w.year != null && <div>{w.year}</div>}
             {w.medium && <div>{pickLang(w.medium, w.medium_ne, lang)}</div>}
             {dimensions && <div>{dimensions}</div>}
-            <div className="type-small">Work no. {w.work_number}</div>
+            <div className="type-small">{t("work.number", { number: w.work_number })}</div>
           </dl>
 
           <div className="type-body flex flex-col gap-1">
             {w.price_minor != null && <p>{formatMoney(w.price_minor, w.currency ?? "NPR")}</p>}
             {w.friends_price_minor != null && (
               <p className="type-small">
-                Friends of PAZ price: {formatMoney(w.friends_price_minor, w.currency ?? "NPR")}
+                {t("work.friends-price", {
+                  price: formatMoney(w.friends_price_minor, w.currency ?? "NPR"),
+                })}
               </p>
             )}
-            <p className="font-semibold">{AVAILABILITY[w.availability ?? ""] ?? w.availability}</p>
+            <p className="font-semibold">{labelFrom(t, AVAILABILITY, w.availability)}</p>
           </div>
 
           {w.hallmarked && (
-            <section aria-label="The struck row" data-slot="struck-row-line">
+            <section aria-label={t("work.struck-row")} data-slot="struck-row-line">
               {/* The gallery's one line explaining the struck row is blocked:
                   the house supplies it as the published page "struck-row".
                   Nothing is written here in its place. */}
@@ -154,15 +167,15 @@ export function WorkPage() {
           {(texts.data ?? []).length > 0 && (
             <section aria-labelledby="work-text" className="flex flex-col gap-4">
               <h2 id="work-text" className="sr-only">
-                Text about this work
+                {t("work.text-heading")}
               </h2>
-              {(texts.data ?? []).map((t) => (
-                <div key={t.id}>
+              {(texts.data ?? []).map((tx) => (
+                <div key={tx.id}>
                   <p className="type-caption">
-                    {t.attribution === "maker" ? "In the maker's words" : "The house writes"}
+                    {tx.attribution === "maker" ? t("work.makers-words") : t("work.house-writes")}
                   </p>
                   <p className="type-body whitespace-pre-line">
-                    {pickLang(t.body as string, t.body_ne, lang)}
+                    {pickLang(tx.body as string, tx.body_ne, lang)}
                   </p>
                 </div>
               ))}
@@ -175,16 +188,16 @@ export function WorkPage() {
 
       <section className="border-border mt-16 border-t py-10" aria-labelledby="life">
         <h2 id="life" className="type-h2">
-          Its life
+          {t("work.its-life")}
         </h2>
         {(events.data ?? []).length === 0 ? (
-          <p className="type-body mt-4">Nothing has been recorded yet.</p>
+          <p className="type-body mt-4">{t("work.life-empty")}</p>
         ) : (
           <ol className="mt-6 flex flex-col gap-2">
             {(events.data ?? []).map((e) => (
               <li key={e.id} className="type-body">
                 <span className="type-small">{e.occurred_on ? eraDate(e.occurred_on) : ""}</span>{" "}
-                {EVENT_LABEL[e.kind ?? ""] ?? e.kind}
+                {labelFrom(t, EVENT_LABEL, e.kind)}
                 {e.note ? `. ${e.note}` : ""}
               </li>
             ))}
@@ -195,7 +208,7 @@ export function WorkPage() {
       {hung.length > 0 && (
         <section className="border-border border-t py-10" aria-labelledby="hung">
           <h2 id="hung" className="type-h2">
-            Where it has hung
+            {t("work.where-hung")}
           </h2>
           <ul className="mt-6 flex flex-col gap-2">
             {hung.map((s) => (
@@ -216,7 +229,7 @@ export function WorkPage() {
       {writtenAbout.length > 0 && (
         <section className="border-border border-t py-10 pb-24" aria-labelledby="written">
           <h2 id="written" className="type-h2">
-            Written about it
+            {t("work.written-about")}
           </h2>
           <ul className="mt-6 flex flex-col gap-2">
             {writtenAbout.map((x) => (
@@ -224,7 +237,10 @@ export function WorkPage() {
                 <Link to={localize(`/sattal/${x.slug}`)} className="link-underline">
                   {pickLang(x.title as string, x.title_ne, lang)}
                 </Link>
-                <span className="type-small"> · by {x.person_name} · The Sattal</span>
+                <span className="type-small">
+                  {" "}
+                  · {t("work.by-sattal", { name: x.person_name })}
+                </span>
               </li>
             ))}
           </ul>
@@ -245,12 +261,11 @@ function Enquiry({ workId }: { workId: string }) {
   const [email, setEmail] = React.useState("");
   const [message, setMessage] = React.useState("");
   const submit = useSubmitEnquiry();
+  const t = useWording();
   const canSubmit = fullName.trim() && email.trim() && message.trim();
 
   if (submit.isSuccess) {
-    return (
-      <StatePanel title="Sent." description="A person will write back to the address you gave." />
-    );
+    return <StatePanel title={t("work.enquiry-sent")} description={t("work.enquiry-sent-note")} />;
   }
 
   return (
@@ -263,19 +278,16 @@ function Enquiry({ workId }: { workId: string }) {
       }}
     >
       <h2 id="enquiry-h" className="type-h3">
-        Write about this work
+        {t("work.enquiry-heading")}
       </h2>
       <p className="type-small">
-        <TermsLink kind="painters">The painter&rsquo;s terms</TermsLink>.
+        <TermsLink kind="painters">{t("work.painters-terms")}</TermsLink>.
       </p>
-      <p className="type-small">
-        A sale is a conversation. A person reads every message and writes back about condition,
-        framing, shipping and the rest.
-      </p>
-      <Field label="Name" htmlFor="enq-name">
+      <p className="type-small">{t("work.enquiry-intro")}</p>
+      <Field label={t("work.name")} htmlFor="enq-name">
         <Input id="enq-name" value={fullName} onChange={(e) => setFullName(e.target.value)} />
       </Field>
-      <Field label="Email" htmlFor="enq-email">
+      <Field label={t("work.email")} htmlFor="enq-email">
         <Input
           id="enq-email"
           type="email"
@@ -284,7 +296,7 @@ function Enquiry({ workId }: { workId: string }) {
           onChange={(e) => setEmail(e.target.value)}
         />
       </Field>
-      <Field label="Message" htmlFor="enq-message">
+      <Field label={t("work.message")} htmlFor="enq-message">
         <Textarea
           id="enq-message"
           rows={5}
@@ -301,7 +313,7 @@ function Enquiry({ workId }: { workId: string }) {
           </p>
         ))}
       <Button type="submit" loading={submit.isPending} disabled={!canSubmit} className="self-start">
-        Send
+        {t("common.send")}
       </Button>
     </form>
   );

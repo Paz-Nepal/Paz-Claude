@@ -6,6 +6,7 @@ import { TreasuryAccounts } from "./more-pages";
 import { PageHero } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
+import { useWording } from "../wording";
 
 /**
  * Site audit, 18 Sept 2026: "Two of the six organs, the Guild and the
@@ -16,17 +17,18 @@ import { TranslationNotice } from "../components/translation-notice";
 export function TreasuryPage() {
   const page = usePublishedItem("page", "treasury");
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (page.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (page.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(page.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(page.error).message} />
       </div>
     );
   }
@@ -35,13 +37,13 @@ export function TreasuryPage() {
   const data = page.data ?? null;
 
   const body = pickLangDoc(data?.body, data?.body_ne, lang) as RichTextNode | null;
-  const title = pickLang(data?.title ?? "The Treasury", data?.title_ne, lang);
+  const title = pickLang(data?.title ?? w("organ.treasury"), data?.title_ne, lang);
   const subtitle = data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined;
 
   return (
     <div>
       <DocumentHead title={title} description={subtitle || undefined} path="/treasury" />
-      <PageHero kicker="An organ of the house" title={title} subtitle={subtitle} />
+      <PageHero kicker={w("organ.kicker")} title={title} subtitle={subtitle} />
       {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
         <div className="w-reading py-16">
           {isUntranslatedDoc(data?.body_ne, lang) && <TranslationNotice />}

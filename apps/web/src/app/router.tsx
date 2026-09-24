@@ -45,6 +45,14 @@ const MediaPage = React.lazy(() =>
 const SettingsPage = React.lazy(() =>
   import("@/modules/admin-core/pages/settings-page").then((m) => ({ default: m.SettingsPage })),
 );
+const WordingPage = React.lazy(() =>
+  import("@/modules/admin-core/pages/wording-page").then((m) => ({ default: m.WordingPage })),
+);
+const AdminTiersPage = React.lazy(() =>
+  import("@/modules/membership/pages/admin-tiers-page").then((m) => ({
+    default: m.AdminTiersPage,
+  })),
+);
 const ArticlePage = React.lazy(() =>
   import("@/modules/site/pages/article-page").then((m) => ({ default: m.ArticlePage })),
 );
@@ -669,6 +677,16 @@ export const router = createBrowserRouter([
             path: "pigeon-submissions",
             element: withSuspense(<ProtectedRoute permission="publishing.item.read" />),
             children: [{ index: true, element: withSuspense(<PigeonSubmissionsPage />) }],
+          },
+          {
+            path: "wording",
+            element: withSuspense(<ProtectedRoute permission="site.wording.manage" />),
+            children: [{ index: true, element: withSuspense(<WordingPage />) }],
+          },
+          {
+            path: "tiers",
+            element: withSuspense(<ProtectedRoute permission="membership.tier.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminTiersPage />) }],
           },
           {
             path: "settings",

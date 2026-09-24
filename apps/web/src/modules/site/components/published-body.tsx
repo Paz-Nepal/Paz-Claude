@@ -5,6 +5,7 @@ import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../langua
 import { Reveal } from "./paz-editorial";
 import { DocumentHead } from "./document-head";
 import { TranslationNotice } from "./translation-notice";
+import { useWording } from "../wording";
 
 /**
  * Shared rendering for any published item's full view (article or page):
@@ -79,12 +80,10 @@ export function PublishedBody({
 }
 
 export function NotPublished() {
+  const w = useWording();
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-8">
-      <StatePanel
-        title="There's nothing at this address."
-        description="The page may have moved, or it may never have existed."
-      />
+      <StatePanel title={w("common.nothing-here")} description={w("common.nothing-here-note")} />
     </div>
   );
 }

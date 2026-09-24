@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording, type WordingKey } from "../wording";
 import { StatePanel, type RichTextNode, RichText } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems, type PublicItemType } from "../api/use-site";
@@ -13,28 +14,30 @@ import {
 import { PageHero, Eyebrow, ArrowLink, Reveal } from "../components/paz-editorial";
 import { TranslationNotice } from "../components/translation-notice";
 
-const SERIES = [
-  { type: "paper" as const, label: "Papers", to: "/papers" },
-  { type: "brief" as const, label: "Brief", to: "/brief" },
-  { type: "dispatch" as const, label: "Dispatch", to: "/dispatch" },
-  { type: "annual" as const, label: "Annual", to: "/annual" },
-  { type: "pigeon_post" as const, label: "Pigeon Post", to: "/pigeon-post" },
+const SERIES: ReadonlyArray<{ type: PublicItemType; label: WordingKey; to: string }> = [
+  { type: "paper", label: "series.papers", to: "/papers" },
+  { type: "brief", label: "series.brief", to: "/brief" },
+  { type: "dispatch", label: "series.dispatch", to: "/dispatch" },
+  { type: "annual", label: "series.annual", to: "/annual" },
+  { type: "pigeon_post", label: "series.pigeon-post", to: "/pigeon-post" },
 ];
 
 function SeriesFeed({ type, label, to }: { type: PublicItemType; label: string; to: string }) {
   const items = usePublishedItems(type);
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
+  const w = useWording();
+  const empty = useEmptyState();
   const recent = (items.data ?? []).slice(0, 3);
 
   return (
     <div className="border-border border-t pt-8">
       <div className="mb-4 flex items-baseline justify-between">
         <h3 className="type-h3">{label}</h3>
-        <ArrowLink to={to}>All {label}</ArrowLink>
+        <ArrowLink to={to}>{w("press.all-series", { series: label })}</ArrowLink>
       </div>
       {recent.length === 0 ? (
-        <p className="type-small">{emptyState("series")}</p>
+        <p className="type-small">{empty("series")}</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {recent.map((item) => (
@@ -56,17 +59,18 @@ function SeriesFeed({ type, label, to }: { type: PublicItemType; label: string; 
 export function PressPage() {
   const page = usePublishedItem("page", "press");
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (page.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (page.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(page.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(page.error).message} />
       </div>
     );
   }
@@ -79,8 +83,8 @@ export function PressPage() {
   return (
     <div>
       <PageHero
-        kicker="An organ of the house"
-        title={pickLang(data?.title ?? "The Press", data?.title_ne, lang)}
+        kicker={w("organ.kicker")}
+        title={pickLang(data?.title ?? w("press.title"), data?.title_ne, lang)}
         subtitle={data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined}
       />
       {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
@@ -92,23 +96,23 @@ export function PressPage() {
 
       <section className="w-wide border-border border-t py-16 md:py-24">
         <Reveal>
-          <Eyebrow>Deposited here</Eyebrow>
+          <Eyebrow>{w("press.deposited-here")}</Eyebrow>
         </Reveal>
-        <h2 className="type-h2 mb-10">Every series the Press keeps</h2>
+        <h2 className="type-h2 mb-10">{w("press.every-series")}</h2>
         <div className="grid gap-10 md:grid-cols-2">
           {SERIES.map((s) => (
-            <SeriesFeed key={s.type} type={s.type} label={s.label} to={s.to} />
+            <SeriesFeed key={s.type} type={s.type} label={w(s.label)} to={s.to} />
           ))}
           <div className="border-border border-t pt-8">
             <div className="mb-4 flex items-baseline justify-between">
-              <h3 className="type-h3">The Sattal</h3>
-              <ArrowLink to="/sattal">All pieces</ArrowLink>
+              <h3 className="type-h3">{w("press.sattal")}</h3>
+              <ArrowLink to="/sattal">{w("press.all-pieces")}</ArrowLink>
             </div>
-            <p className="type-small">Signed work by authors who are not the house.</p>
+            <p className="type-small">{w("press.sattal-note")}</p>
           </div>
         </div>
         <div className="mt-12">
-          <ArrowLink to="/send-a-pigeon">Send a pigeon, contribute something you noticed</ArrowLink>
+          <ArrowLink to="/send-a-pigeon">{w("press.send-pigeon")}</ArrowLink>
         </div>
       </section>
     </div>

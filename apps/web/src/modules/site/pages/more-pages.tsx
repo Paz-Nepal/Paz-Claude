@@ -18,7 +18,8 @@ import {
   type Encounter,
 } from "../api/use-house";
 import { useSattalReaders } from "../api/use-wall";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording, type WordingKey } from "../wording";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
@@ -33,19 +34,24 @@ import { ShellPage } from "./house-pages";
 // worse than no terms. The words are the house's; the pages exist and say
 // so plainly until they are deposited.
 // ---------------------------------------------------------------------
-const TERMS_LABEL: Record<string, string> = {
-  painters: "The painter's terms",
-  writers: "The Sattal's terms",
-  memory: "The Ethics of Memory",
-  friends: "Friends of PAZ",
+const TERMS_LABEL: Record<string, WordingKey> = {
+  painters: "terms.painters",
+  writers: "terms.writers",
+  memory: "terms.memory",
+  friends: "terms.friends",
 };
 
 export function TermsIndexPage() {
   const versions = useTermsVersions();
   const localize = useLocalizedPath();
+  const w = useWording();
+  const empty = useEmptyState();
   return (
-    <ShellPage slug="terms" title="Terms">
-      <section className="w-reading border-border border-t py-10" aria-label="The four terms">
+    <ShellPage slug="terms" title={w("title.terms")}>
+      <section
+        className="w-reading border-border border-t py-10"
+        aria-label={w("terms.list-label")}
+      >
         <ul className="flex flex-col gap-4">
           {TERMS_KINDS.map((kind) => {
             const cur = currentTerms(versions.data, kind);
@@ -56,12 +62,12 @@ export function TermsIndexPage() {
                     to={localize(`/terms/${kind}`)}
                     className="link-underline font-serif text-xl"
                   >
-                    {TERMS_LABEL[kind]}
+                    {w(TERMS_LABEL[kind] as WordingKey)}
                   </Link>
                 ) : (
                   <>
-                    <span className="font-serif text-xl">{TERMS_LABEL[kind]}</span>
-                    {versions.isSuccess && <p className="type-small">{emptyState("terms")}</p>}
+                    <span className="font-serif text-xl">{w(TERMS_LABEL[kind] as WordingKey)}</span>
+                    {versions.isSuccess && <p className="type-small">{empty("terms")}</p>}
                   </>
                 )}
               </li>
@@ -92,6 +98,8 @@ export function TermsDocPage({
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
   const eraDate = useEraDate();
+  const w = useWording();
+  const empty = useEmptyState();
 
   const isKindOnly = raw === kind;
   const cur = currentTerms(versions.data, kind);
@@ -102,25 +110,29 @@ export function TermsDocPage({
   if (versions.isPending || (Boolean(slug) && item.isPending)) {
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   }
   if (versions.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(versions.error).message} />
+        <StatePanel
+          title={w("common.load-error")}
+          description={toAppError(versions.error).message}
+        />
       </div>
     );
   }
 
-  const label = TERMS_LABEL[kind] ?? "Terms";
+  const labelKey = TERMS_LABEL[kind];
+  const label = labelKey ? w(labelKey) : w("terms.series");
   if (!slug || !item.data) {
     return (
       <div>
         <DocumentHead title={label} path={`/terms/${kind}`} />
         <PageHero title={label} />
-        <p className="w-reading type-body py-12">{emptyState("terms")}</p>
+        <p className="w-reading type-body py-12">{empty("terms")}</p>
       </div>
     );
   }
@@ -141,32 +153,36 @@ export function TermsDocPage({
         path={isKindOnly && !canonical ? `/terms/${kind}` : `/terms/${slug}`}
         ogType="article"
         depositRef={d.deposit_ref}
-        seriesName="Terms"
+        seriesName={w("terms.series")}
       />
       <PageHero title={pickLang(d.title ?? label, d.title_ne, lang)} />
       <div className="w-reading flex flex-col gap-6 py-12">
         {newer && (
           <p className="type-small">
-            A newer version has been deposited.{" "}
+            {w("terms.newer")}{" "}
             <Link
               to={localize(newer.deposit_ref ? `/record/${newer.deposit_ref}` : `/terms/${kind}`)}
               className="link-underline"
             >
-              Read the current version
+              {w("terms.read-current")}
             </Link>
             .
           </p>
         )}
         {body && <RichText doc={body} className="rich-text" />}
         <p className="type-small">
-          Version {mine?.version ?? 1}
-          {d.published_at ? `, deposited ${eraDate(d.published_at)}` : ""}.
+          {w("terms.version", { version: mine?.version ?? 1 })}
+          {d.published_at ? `, ${w("terms.deposited", { date: eraDate(d.published_at) })}` : ""}.
         </p>
-        <DepositProvenance depositRef={d.deposit_ref} title={d.title ?? label} series="Terms" />
+        <DepositProvenance
+          depositRef={d.deposit_ref}
+          title={d.title ?? label}
+          series={w("terms.series")}
+        />
         {earlier.length > 0 && (
           <section aria-labelledby="terms-history">
             <h2 id="terms-history" className="type-h4">
-              Version history
+              {w("terms.history")}
             </h2>
             <ul className="type-body mt-2 flex flex-col gap-1">
               {earlier.map((v) => (
@@ -175,7 +191,7 @@ export function TermsDocPage({
                     to={localize(v.deposit_ref ? `/record/${v.deposit_ref}` : `/terms/${v.slug}`)}
                     className="link-underline"
                   >
-                    Version {v.version}
+                    {w("terms.version", { version: v.version })}
                   </Link>
                   <span className="type-small">
                     {v.published_at ? ` · ${eraDate(v.published_at)}` : ""}
@@ -205,30 +221,39 @@ export function TermsLink({ kind, children }: { kind: string; children: React.Re
 // The Sattal already names its outside reader because the rule is worth
 // nothing if the reader is anonymous. This generalises it.
 // ---------------------------------------------------------------------
-const STATUS_LABEL: Record<string, string> = { held: "Held", open: "Open", dormant: "Dormant" };
+const STATUS_LABEL: Record<string, WordingKey> = {
+  held: "hands.held",
+  open: "hands.open",
+  dormant: "hands.dormant",
+};
 
 export function HandsPage() {
   const hands = useHands();
   const readers = useSattalReaders();
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
+  const w = useWording();
+  const empty = useEmptyState();
   const rows = hands.data ?? [];
   const readerNames = (readers.data ?? []).map((r) => r.name).join(", ");
 
   return (
     <div>
-      <DocumentHead title="Hands" path="/hands" />
-      <PageHero title="Hands" />
-      <section className="w-standard py-12" aria-label="Roles">
+      <DocumentHead title={w("title.hands")} path="/hands" />
+      <PageHero title={w("title.hands")} />
+      <section className="w-standard py-12" aria-label={w("title.hands")}>
         {hands.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
         {hands.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(hands.error).message} />
+          <StatePanel
+            title={w("common.load-error")}
+            description={toAppError(hands.error).message}
+          />
         )}
-        {hands.data && rows.length === 0 && <p className="type-body">{emptyState("hands")}</p>}
+        {hands.data && rows.length === 0 && <p className="type-body">{empty("hands")}</p>}
         <ul className="flex flex-col gap-4">
           {rows.map((r) => {
             const isReader = r.slug === "outside-reader" && readerNames;
@@ -242,11 +267,13 @@ export function HandsPage() {
                 </Link>
                 <p className="type-small">
                   {isReader
-                    ? `Held by ${readerNames}`
+                    ? w("hands.held-by", { name: readerNames })
                     : r.status === "held"
-                      ? `Held by ${r.holder_name}`
-                      : (STATUS_LABEL[r.status ?? ""] ?? r.status)}
-                  {r.term_ends_on ? ` · term ends ${r.term_ends_on}` : ""}
+                      ? w("hands.held-by", { name: r.holder_name })
+                      : STATUS_LABEL[r.status ?? ""]
+                        ? w(STATUS_LABEL[r.status ?? ""] as WordingKey)
+                        : r.status}
+                  {r.term_ends_on ? ` · ${w("hands.term-ends", { date: r.term_ends_on })}` : ""}
                 </p>
               </li>
             );
@@ -262,34 +289,35 @@ export function HandPage() {
   const hands = useHands();
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
+  const w = useWording();
   const r = (hands.data ?? []).find((h) => h.slug === slug);
 
   if (hands.isPending) {
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   }
   if (!r) return <NotFoundPage />;
   const fields: Array<[string, string | null]> = [
-    ["The work", r.work],
-    ["What it asks", r.asks],
-    ["What it gives back", r.gives],
-    ["How to say yes", r.how_to_say_yes],
+    [w("hands.the-work"), r.work],
+    [w("hands.asks"), r.asks],
+    [w("hands.gives"), r.gives],
+    [w("hands.how-to-say-yes"), r.how_to_say_yes],
   ];
   const title = pickLang(r.title as string, r.title_ne, lang);
+  const statusKey = STATUS_LABEL[r.status ?? ""];
   return (
     <article>
       <DocumentHead title={title} path={`/hands/${r.slug}`} />
-      <PageHero
-        title={title}
-        {...(STATUS_LABEL[r.status ?? ""] ? { kicker: STATUS_LABEL[r.status ?? ""] } : {})}
-      />
+      <PageHero title={title} {...(statusKey ? { kicker: w(statusKey) } : {})} />
       <div className="w-reading flex flex-col gap-6 py-12">
-        {r.status === "held" && <p className="type-body">Held by {r.holder_name}.</p>}
+        {r.status === "held" && (
+          <p className="type-body">{w("hands.held-by", { name: r.holder_name })}.</p>
+        )}
         {r.status === "dormant" && r.waking_trigger && (
-          <p className="type-body">This office wakes when {r.waking_trigger}.</p>
+          <p className="type-body">{w("hands.wakes-when", { trigger: r.waking_trigger })}</p>
         )}
         {fields.map(([label, text]) =>
           text ? (
@@ -300,7 +328,7 @@ export function HandPage() {
           ) : null,
         )}
         <Link to={localize("/hands")} className="link-underline type-small">
-          All hands
+          {w("hands.all")}
         </Link>
       </div>
     </article>
@@ -314,11 +342,11 @@ export function HandPage() {
 // Guild, formation, the Commons or Friends, and a workshop sells a day,
 // never formation and never a hallmark (Build Programme 11).
 // ---------------------------------------------------------------------
-const KIND_LABEL: Record<string, string> = {
-  field_study: "Field Study",
-  common_ground: "Common Ground",
-  chautari: "The Chautari",
-  workshop: "Workshop",
+const KIND_LABEL: Record<string, WordingKey> = {
+  field_study: "encounters.field-study",
+  common_ground: "encounters.common-ground",
+  chautari: "encounters.chautari",
+  workshop: "encounters.workshop",
 };
 
 /** Nepali first where the page is addressed to the neighbourhood. */
@@ -329,6 +357,8 @@ function bilingual(en: string | null, ne: string | null, leadsNe: boolean | null
 
 function EncounterBody({ e }: { e: Encounter }) {
   const eraDate = useEraDate();
+  const w = useWording();
+  const kindKey = KIND_LABEL[e.kind ?? ""];
   const lead = e.leads_ne ?? false;
   const titles = bilingual(e.title, e.title_ne, lead);
   const places = bilingual(e.place, e.place_ne, lead);
@@ -338,10 +368,10 @@ function EncounterBody({ e }: { e: Encounter }) {
   return (
     <>
       <p className="type-caption">
-        {KIND_LABEL[e.kind ?? ""] ?? e.kind}
+        {kindKey ? w(kindKey) : e.kind}
         {" · "}
         {e.starts_on ? eraDate(e.starts_on) : ""}
-        {e.ends_on ? ` to ${eraDate(e.ends_on)}` : ""}
+        {e.ends_on ? ` ${w("encounters.to", { date: eraDate(e.ends_on) })}` : ""}
       </p>
       {titles.map((t) => (
         <p key={t} lang={isNe(t) ? "ne" : "en"} className="font-serif text-2xl">
@@ -367,32 +397,32 @@ export function EncountersPage() {
   const item = usePublishedItem("page", "encounters");
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
+  const w = useWording();
+  const empty = useEmptyState();
   const body = item.data
     ? (pickLangDoc(item.data.body, item.data.body_ne, lang) as RichTextNode | null)
     : null;
   return (
     <div>
-      <DocumentHead title="Encounters" path="/encounters" />
-      <PageHero title="Encounters" />
+      <DocumentHead title={w("title.encounters")} path="/encounters" />
+      <PageHero title={w("title.encounters")} />
       <div className="w-standard flex flex-col gap-10 py-12">
         {body && <RichText doc={body} className="rich-text" />}
         {cal.isPending && (
           <p role="status" className="type-small">
-            Loading…
+            {w("common.loading")}
           </p>
         )}
         {cal.isError && (
-          <StatePanel title="Couldn't load this." description={toAppError(cal.error).message} />
+          <StatePanel title={w("common.load-error")} description={toAppError(cal.error).message} />
         )}
-        {cal.data && cal.data.length === 0 && (
-          <p className="type-body">{emptyState("encounters")}</p>
-        )}
+        {cal.data && cal.data.length === 0 && <p className="type-body">{empty("encounters")}</p>}
         <ol className="flex flex-col gap-8">
           {(cal.data ?? []).map((e) => (
             <li key={e.id} className="border-border border-t pt-4">
               <EncounterBody e={e} />
               <Link to={localize(`/encounters/${e.slug}`)} className="link-underline type-small">
-                Details
+                {w("common.details")}
               </Link>
             </li>
           ))}
@@ -405,10 +435,11 @@ export function EncountersPage() {
 export function EncounterPage() {
   const { slug } = useParams<{ slug: string }>();
   const enc = useEncounter(slug);
+  const w = useWording();
   if (enc.isPending) {
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   }
@@ -416,7 +447,7 @@ export function EncounterPage() {
   const e = enc.data;
   return (
     <article>
-      <DocumentHead title={e.title ?? "Encounter"} path={`/encounters/${e.slug}`} />
+      <DocumentHead title={e.title ?? w("title.encounter")} path={`/encounters/${e.slug}`} />
       <div className="w-reading flex flex-col gap-3 pb-16 pt-32 md:pt-40">
         <EncounterBody e={e} />
       </div>
@@ -439,21 +470,22 @@ export function SafeguardingPage() {
   const [contact, setContact] = React.useState("");
   const [body, setBody] = React.useState("");
   const submit = useSubmitConcern();
+  const w = useWording();
   const routeDoc = route.data
     ? (pickLangDoc(route.data.body, route.data.body_ne, lang) as RichTextNode | null)
     : null;
 
   return (
-    <ShellPage slug="safeguarding" title="Safeguarding">
+    <ShellPage slug="safeguarding" title={w("title.safeguarding")}>
       <div className="w-reading flex flex-col gap-8 pb-16">
         {routeDoc && <RichText doc={routeDoc} className="rich-text" />}
         <p className="type-body">
           <Link to={localize("/safeguarding/children")} className="link-underline">
-            Photographs of children
+            {w("safeguarding.children-link")}
           </Link>
         </p>
         {submit.isSuccess ? (
-          <StatePanel title="Received." description="" />
+          <StatePanel title={w("common.received")} description="" />
         ) : (
           <form
             className="flex flex-col gap-4"
@@ -464,23 +496,23 @@ export function SafeguardingPage() {
             }}
           >
             <h2 id="concern-h" className="type-h3">
-              Raise a concern
+              {w("safeguarding.raise")}
             </h2>
-            <Field label="Your name (optional)" htmlFor="concern-name">
+            <Field label={w("safeguarding.your-name")} htmlFor="concern-name">
               <Input
                 id="concern-name"
                 value={writerName}
                 onChange={(e) => setWriterName(e.target.value)}
               />
             </Field>
-            <Field label="How to reach you (optional)" htmlFor="concern-contact">
+            <Field label={w("safeguarding.reach-you")} htmlFor="concern-contact">
               <Input
                 id="concern-contact"
                 value={contact}
                 onChange={(e) => setContact(e.target.value)}
               />
             </Field>
-            <Field label="What you want to say" htmlFor="concern-body">
+            <Field label={w("safeguarding.what")} htmlFor="concern-body">
               <Textarea
                 id="concern-body"
                 rows={6}
@@ -502,7 +534,7 @@ export function SafeguardingPage() {
               disabled={!body.trim()}
               className="self-start"
             >
-              Send
+              {w("common.send")}
             </Button>
           </form>
         )}
@@ -511,9 +543,10 @@ export function SafeguardingPage() {
   );
 }
 
-export const ChildrenPhotographyPage = () => (
-  <ShellPage slug="children-photography" title="Photographs of children" />
-);
+export const ChildrenPhotographyPage = () => {
+  const w = useWording();
+  return <ShellPage slug="children-photography" title={w("title.children-photography")} />;
+};
 
 // ---------------------------------------------------------------------
 // The Brief: confirm (a deliberate act, so a mail scanner that opens the
@@ -523,14 +556,15 @@ export function BriefConfirmPage() {
   const [params] = useSearchParams();
   const token = params.get("token") ?? "";
   const confirm = useBriefToken("confirm");
+  const w = useWording();
   return (
     <div>
-      <DocumentHead title="The Brief" path="/brief/confirm" noindex />
-      <PageHero title="The Brief" />
+      <DocumentHead title={w("title.brief")} path="/brief/confirm" noindex />
+      <PageHero title={w("title.brief")} />
       <div className="w-reading flex flex-col gap-4 py-12">
         {confirm.isSuccess ? (
           <p role="status" className="type-body">
-            Confirmed.
+            {w("brief.confirmed")}
           </p>
         ) : (
           <>
@@ -541,7 +575,7 @@ export function BriefConfirmPage() {
               className="self-start"
               onClick={() => confirm.mutate(token)}
             >
-              Confirm the subscription
+              {w("brief.confirm-button")}
             </Button>
             {confirm.isError &&
               (isUnavailable(confirm.error) ? (
@@ -563,6 +597,7 @@ export function BriefUnsubscribePage() {
   const token = params.get("token") ?? "";
   const unsub = useBriefToken("unsubscribe");
   const mutate = unsub.mutate;
+  const w = useWording();
   const fired = React.useRef(false);
   React.useEffect(() => {
     if (token && !fired.current) {
@@ -572,17 +607,17 @@ export function BriefUnsubscribePage() {
   }, [token, mutate]);
   return (
     <div>
-      <DocumentHead title="The Brief" path="/brief/unsubscribe" noindex />
-      <PageHero title="The Brief" />
+      <DocumentHead title={w("title.brief")} path="/brief/unsubscribe" noindex />
+      <PageHero title={w("title.brief")} />
       <div className="w-reading py-12">
         {unsub.isSuccess && (
           <p role="status" className="type-body">
-            Unsubscribed. Nothing further will be sent.
+            {w("brief.unsubscribed")}
           </p>
         )}
         {unsub.isPending && (
           <p role="status" className="type-small">
-            Unsubscribing…
+            {w("brief.unsubscribing")}
           </p>
         )}
         {unsub.isError &&
@@ -591,7 +626,7 @@ export function BriefUnsubscribePage() {
           ) : (
             <p role="alert">{toAppError(unsub.error).message}</p>
           ))}
-        {!token && <p className="type-body">This link is incomplete.</p>}
+        {!token && <p className="type-body">{w("brief.link-incomplete")}</p>}
       </div>
     </div>
   );
@@ -610,22 +645,21 @@ export function GuildRegister() {
   const eraDate = useEraDate();
   const localize = useLocalizedPath();
   const { lang } = useLanguage();
+  const w = useWording();
+  const empty = useEmptyState();
   return (
     <section className="w-standard border-border border-t py-12" aria-labelledby="register-h">
       <h2 id="register-h" className="type-h2">
-        The hallmark register
+        {w("guild.register")}
       </h2>
-      <p className="type-small mt-2">
-        The house&rsquo;s punch attests formation. It does not attest quality, ownership or
-        endorsement.
-      </p>
+      <p className="type-small mt-2">{w("guild.punch-rule")}</p>
       {register.isPending && (
         <p role="status" className="type-small mt-4">
-          Loading…
+          {w("common.loading")}
         </p>
       )}
       {register.data && register.data.length === 0 && (
-        <p className="type-body mt-4">{emptyState("guild")}</p>
+        <p className="type-body mt-4">{empty("guild")}</p>
       )}
       <ul className="mt-6 flex flex-col gap-4">
         {(register.data ?? []).map((m) => (
@@ -637,10 +671,14 @@ export function GuildRegister() {
               {pickLang(m.person_name as string, m.person_name_ne, lang)}
             </Link>
             <p className="type-small">
-              {m.mark_description ? `Mark: ${m.mark_description}. ` : ""}
-              {m.year_letter ? `Year letter ${m.year_letter}. ` : ""}
-              {m.registered_on ? `Registered ${eraDate(m.registered_on)}.` : ""}
-              {m.destroyed_on ? ` Punch destroyed ${eraDate(m.destroyed_on)}.` : ""}
+              {[
+                m.mark_description ? w("guild.mark", { mark: m.mark_description }) : "",
+                m.year_letter ? w("guild.year-letter", { letter: m.year_letter }) : "",
+                m.registered_on ? w("guild.registered", { date: eraDate(m.registered_on) }) : "",
+                m.destroyed_on ? w("guild.destroyed", { date: eraDate(m.destroyed_on) }) : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
             </p>
           </li>
         ))}
@@ -654,18 +692,20 @@ export function GuildRegister() {
 // ---------------------------------------------------------------------
 export function TreasuryAccounts() {
   const accounts = useTreasuryAccounts();
+  const w = useWording();
+  const empty = useEmptyState();
   return (
     <section className="w-standard border-border border-t py-12" aria-labelledby="account-h">
       <h2 id="account-h" className="type-h2">
-        The account
+        {w("treasury.account")}
       </h2>
       {accounts.isPending && (
         <p role="status" className="type-small mt-4">
-          Loading…
+          {w("common.loading")}
         </p>
       )}
       {accounts.data && accounts.data.length === 0 && (
-        <p className="type-body mt-4">{emptyState("treasury")}</p>
+        <p className="type-body mt-4">{empty("treasury")}</p>
       )}
       <div className="mt-6 flex flex-col gap-10">
         {(accounts.data ?? []).map((a) => (
@@ -674,28 +714,29 @@ export function TreasuryAccounts() {
             <dl className="type-body mt-3 flex flex-col gap-2">
               {a.patronage_share_minor != null && (
                 <div>
-                  Patronage share given from after-tax profit:{" "}
-                  {formatMoney(a.patronage_share_minor)}
+                  {w("treasury.patronage", { amount: formatMoney(a.patronage_share_minor) })}
                   {a.patronage_note ? `. ${a.patronage_note}` : ""}
                 </div>
               )}
               {a.tithe_minor != null && (
                 <div>
-                  Tithe: {formatMoney(a.tithe_minor)}
+                  {w("treasury.tithe", { amount: formatMoney(a.tithe_minor) })}
                   {a.tithe_base_minor != null
-                    ? ` on a harmonised base of ${formatMoney(a.tithe_base_minor)}`
+                    ? ` ${w("treasury.tithe-base", { amount: formatMoney(a.tithe_base_minor) })}`
                     : ""}
                   .
                 </div>
               )}
               {a.largest_share_pct != null && (
                 <div>
-                  Largest single share of the year&rsquo;s giving: {a.largest_share_pct}%. The
-                  one-fifth rule is {a.concentration_rule_met ? "met" : "not met"}.
+                  {w("treasury.largest-share", { pct: a.largest_share_pct })}{" "}
+                  {a.concentration_rule_met ? w("treasury.rule-met") : w("treasury.rule-not-met")}
                 </div>
               )}
               {a.gifts_note && <div>{a.gifts_note}</div>}
-              {a.instruments_note && <div>Instruments in force: {a.instruments_note}</div>}
+              {a.instruments_note && (
+                <div>{w("treasury.instruments", { text: a.instruments_note })}</div>
+              )}
             </dl>
           </article>
         ))}
@@ -706,9 +747,10 @@ export function TreasuryAccounts() {
 
 /** Shown beneath the Friends application: what patronage buys and never buys. */
 export function FriendsTermsNote() {
+  const w = useWording();
   return (
     <p className="w-reading type-small pb-16">
-      <TermsLink kind="friends">Friends of PAZ: the terms</TermsLink>
+      <TermsLink kind="friends">{w("terms.friends-link")}</TermsLink>
     </p>
   );
 }

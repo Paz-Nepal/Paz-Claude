@@ -12,7 +12,8 @@ import {
   useWorks,
 } from "../api/use-wall";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording } from "../wording";
 import { DocumentHead } from "../components/document-head";
 import { NotPublished } from "../components/published-body";
 import { WorkPicture, useEraDate } from "../components/wall-parts";
@@ -38,17 +39,19 @@ export function PersonPage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const t = useWording();
+  const empty = useEmptyState();
 
   if (person.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {t("common.loading")}
       </p>
     );
   if (person.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(person.error).message} />
+        <StatePanel title={t("common.load-error")} description={toAppError(person.error).message} />
       </div>
     );
   }
@@ -71,17 +74,13 @@ export function PersonPage() {
       <DocumentHead title={name} path={`/people/${p.slug}`} />
       <header className="w-wide pb-10 pt-32 md:pt-40">
         <h1 className="type-display">{name}</h1>
-        {!p.active && (
-          <p className="type-small mt-4">
-            This page is kept as a record. The house does not currently present this person.
-          </p>
-        )}
+        {!p.active && <p className="type-small mt-4">{t("person.kept")}</p>}
       </header>
 
       {statement && (
         <section className="w-reading pb-12" aria-labelledby="statement">
           <h2 id="statement" className="type-caption mb-3">
-            In their own words
+            {t("person.own-words")}
           </h2>
           <p className="type-body whitespace-pre-line">{statement}</p>
         </section>
@@ -89,10 +88,10 @@ export function PersonPage() {
 
       <section className="w-wide border-border border-t py-12" aria-labelledby="work">
         <h2 id="work" className="type-h2">
-          Work
+          {t("person.work")}
         </h2>
         {works.data && works.data.length === 0 && (
-          <p className="type-body mt-4">{emptyState("artistNoWork")}</p>
+          <p className="type-body mt-4">{empty("artistNoWork")}</p>
         )}
         <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {(works.data ?? []).map((w) => {
@@ -117,7 +116,11 @@ export function PersonPage() {
                 </p>
                 <p className="type-small">
                   {w.year ?? ""}
-                  {w.availability === "sold" ? (w.year ? ". Sold." : "Sold.") : ""}
+                  {w.availability === "sold"
+                    ? w.year
+                      ? `. ${t("person.sold")}`
+                      : t("person.sold")
+                    : ""}
                 </p>
               </li>
             );
@@ -128,7 +131,7 @@ export function PersonPage() {
       {(hungHere.length > 0 || (elsewhere.data ?? []).length > 0) && (
         <section className="w-standard border-border border-t py-12" aria-labelledby="shown">
           <h2 id="shown" className="type-h2">
-            Where they have shown
+            {t("person.where-shown")}
           </h2>
           <ul className="mt-6 flex flex-col gap-3">
             {hungHere.map((s) => (
@@ -137,7 +140,7 @@ export function PersonPage() {
                   {pickLang(s.title as string, s.title_ne, lang)}
                 </Link>
                 <span className="type-small">
-                  {" · At the house · "}
+                  {` · ${t("person.at-house")} · `}
                   {s.opened_on ? eraDate(s.opened_on) : ""}
                 </span>
               </li>
@@ -158,7 +161,7 @@ export function PersonPage() {
       {(writtenAbout.length > 0 || (writings.data ?? []).length > 0) && (
         <section className="w-standard border-border border-t py-12" aria-labelledby="written">
           <h2 id="written" className="type-h2">
-            Written about
+            {t("person.written-about")}
           </h2>
           <ul className="mt-6 flex flex-col gap-3">
             {writtenAbout.map((x) => (
@@ -166,7 +169,10 @@ export function PersonPage() {
                 <Link to={localize(`/sattal/${x.slug}`)} className="link-underline">
                   {pickLang(x.title as string, x.title_ne, lang)}
                 </Link>
-                <span className="type-small"> · by {x.person_name} · The Sattal</span>
+                <span className="type-small">
+                  {" "}
+                  · {t("work.by-sattal", { name: x.person_name })}
+                </span>
               </li>
             ))}
             {(writings.data ?? []).map((w) => (

@@ -131,6 +131,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      site_wording: {
+        Row: {
+          en: string | null;
+          key: string;
+          ne: string | null;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          en?: string | null;
+          key: string;
+          ne?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          en?: string | null;
+          key?: string;
+          ne?: string | null;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -312,6 +336,36 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      admin_membership_tiers: {
+        Row: {
+          active: boolean | null;
+          annual_fee_cents: number | null;
+          description: string | null;
+          description_ne: string | null;
+          key: string | null;
+          name: string | null;
+          name_ne: string | null;
+        };
+        Insert: {
+          active?: boolean | null;
+          annual_fee_cents?: number | null;
+          description?: string | null;
+          description_ne?: string | null;
+          key?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+        };
+        Update: {
+          active?: boolean | null;
+          annual_fee_cents?: number | null;
+          description?: string | null;
+          description_ne?: string | null;
+          key?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+        };
+        Relationships: [];
       };
       admin_program_sessions: {
         Row: {
@@ -1311,6 +1365,13 @@ export type Database = {
             foreignKeyName: "members_tier_key_fkey";
             columns: ["tier_key"];
             isOneToOne: false;
+            referencedRelation: "admin_membership_tiers";
+            referencedColumns: ["key"];
+          },
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
             referencedRelation: "membership_tiers";
             referencedColumns: ["key"];
           },
@@ -1348,6 +1409,13 @@ export type Database = {
           tier_key?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "admin_membership_tiers";
+            referencedColumns: ["key"];
+          },
           {
             foreignKeyName: "members_tier_key_fkey";
             columns: ["tier_key"];
@@ -1396,6 +1464,13 @@ export type Database = {
             foreignKeyName: "applications_tier_key_fkey";
             columns: ["tier_key"];
             isOneToOne: false;
+            referencedRelation: "admin_membership_tiers";
+            referencedColumns: ["key"];
+          },
+          {
+            foreignKeyName: "applications_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
             referencedRelation: "membership_tiers";
             referencedColumns: ["key"];
           },
@@ -1405,20 +1480,26 @@ export type Database = {
         Row: {
           annual_fee_cents: number | null;
           description: string | null;
+          description_ne: string | null;
           key: string | null;
           name: string | null;
+          name_ne: string | null;
         };
         Insert: {
           annual_fee_cents?: number | null;
           description?: string | null;
+          description_ne?: string | null;
           key?: string | null;
           name?: string | null;
+          name_ne?: string | null;
         };
         Update: {
           annual_fee_cents?: number | null;
           description?: string | null;
+          description_ne?: string | null;
           key?: string | null;
           name?: string | null;
+          name_ne?: string | null;
         };
         Relationships: [];
       };
@@ -1433,6 +1514,13 @@ export type Database = {
           tier_name: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "members_tier_key_fkey";
+            columns: ["tier_key"];
+            isOneToOne: false;
+            referencedRelation: "admin_membership_tiers";
+            referencedColumns: ["key"];
+          },
           {
             foreignKeyName: "members_tier_key_fkey";
             columns: ["tier_key"];
@@ -2527,6 +2615,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      brief_begin_send: { Args: { p_item: string }; Returns: undefined };
       brief_confirm: { Args: { p_token: string }; Returns: boolean };
       brief_recipients: {
         Args: never;
@@ -3026,6 +3115,7 @@ export type Database = {
         };
         Returns: string;
       };
+      save_membership_tier: { Args: { p: Json }; Returns: string };
       save_organization: {
         Args: { p_id: string; p_kind: string; p_name: string; p_notes: string };
         Returns: string;
@@ -3092,6 +3182,10 @@ export type Database = {
         Returns: string;
       };
       save_show: { Args: { p: Json }; Returns: string };
+      save_site_wording: {
+        Args: { p_en: string; p_key: string; p_ne: string };
+        Returns: undefined;
+      };
       save_treasury_account: { Args: { p: Json }; Returns: string };
       save_work: { Args: { p: Json }; Returns: string };
       save_work_image: { Args: { p: Json }; Returns: string };
@@ -3157,6 +3251,15 @@ export type Database = {
         Returns: Database["membership"]["Enums"]["member_status"];
       };
       site_info: { Args: never; Returns: Json };
+      site_wording: {
+        Args: never;
+        Returns: {
+          en: string;
+          key: string;
+          ne: string;
+          updated_at: string;
+        }[];
+      };
       submit_concern: {
         Args: { p_body: string; p_contact: string; p_writer_name: string };
         Returns: string;
@@ -4412,22 +4515,28 @@ export type Database = {
           active: boolean;
           annual_fee_cents: number;
           description: string | null;
+          description_ne: string | null;
           key: string;
           name: string;
+          name_ne: string | null;
         };
         Insert: {
           active?: boolean;
           annual_fee_cents: number;
           description?: string | null;
+          description_ne?: string | null;
           key: string;
           name: string;
+          name_ne?: string | null;
         };
         Update: {
           active?: boolean;
           annual_fee_cents?: number;
           description?: string | null;
+          description_ne?: string | null;
           key?: string;
           name?: string;
+          name_ne?: string | null;
         };
         Relationships: [];
       };

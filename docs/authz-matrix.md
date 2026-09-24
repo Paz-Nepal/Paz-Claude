@@ -45,7 +45,7 @@ dependency order.
 | `publishing.media.read`          | super_admin, administrator, editor, author              | Browse the media library                               |
 | `publishing.media.create`        | super_admin, administrator, editor, author              | Upload media and register it in the library            |
 | `publishing.media.manage`        | super_admin, administrator, editor                      | Edit any media's alt/credit metadata                   |
-| `membership.tier.manage`         | super_admin, administrator, membership_manager          | Create or edit membership tiers and fees               |
+| `membership.tier.manage`         | super_admin, administrator, membership_manager          | Create or edit membership tiers and fees (the Friends of PAZ tiers form, 0080) |
 | `membership.application.read`    | super_admin, administrator, membership_manager          | View the membership application queue                  |
 | `membership.application.decide`  | super_admin, administrator, membership_manager          | Accept or decline a membership application             |
 | `membership.member.read`         | super_admin, administrator, membership_manager, finance | View the member roster                                 |
@@ -78,6 +78,7 @@ dependency order.
 | `treasury.manage` | super_admin, administrator | Write the Treasury account that goes into the Annual. |
 | `encounters.manage` | super_admin, administrator, editor | Add and edit Encounters on the public calendar. |
 | `mail.manage` | super_admin, administrator, editor | Read the Brief subscriber list and send the Brief. |
+| `site.wording.manage` | super_admin, administrator, editor | Reword the fixed lines of the public site: menus, footer, page intros, form labels, empty sections. |
 | `safeguarding.read` | super_admin | Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about. |
 
 ## Adding a new permission

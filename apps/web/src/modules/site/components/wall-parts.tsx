@@ -5,6 +5,7 @@ import { publicMediaUrl, useSiteInfo } from "../api/use-site";
 import type { ImageVariant, WallWorkImage } from "../api/use-wall";
 import { useLanguage, useLocalizedPath } from "../language";
 import { Mark } from "./mark";
+import { useWording, type WordingKey } from "../wording";
 
 /**
  * A work's picture: responsive sizes, modern format with a fallback,
@@ -37,6 +38,7 @@ export function WorkPicture({
   const fallback = largest?.jpg ?? image.original_path;
   const width = image.width ?? undefined;
   const height = image.height ?? undefined;
+  const w = useWording();
 
   return (
     <figure>
@@ -55,14 +57,14 @@ export function WorkPicture({
         </picture>
       </div>
       <figcaption className="type-small mt-2 flex flex-wrap justify-between gap-x-4">
-        <span>Photograph: {image.photographer}</span>
+        <span>{w("common.photograph", { name: image.photographer })}</span>
         {fullSizeLink && (
           <a
             href={publicMediaUrl(image.original_path as string)}
             className="link-underline"
             rel="noopener noreferrer"
           >
-            Full size
+            {w("common.full-size")}
           </a>
         )}
       </figcaption>
@@ -99,20 +101,21 @@ export function PersonLink({ slug, name }: { slug: string; name: string }) {
 export function FormUnavailable() {
   const info = useSiteInfo();
   const email = info.data?.["site.contact_email"];
+  const w = useWording();
   return (
     <p role="alert" aria-live="assertive" className="type-small">
-      The form is not working just now.
+      {w("common.form-down")}
       {email ? (
         <>
           {" "}
-          Write to{" "}
+          {w("common.form-write-to")}{" "}
           <a href={`mailto:${email}`} className="link-underline">
             {email}
           </a>{" "}
-          instead.
+          {w("common.form-instead")}
         </>
       ) : (
-        " Please try again later."
+        ` ${w("common.form-try-later")}`
       )}
     </p>
   );
@@ -131,19 +134,10 @@ export function isUnavailable(error: unknown): boolean {
  */
 export type Speaker = "anonymous" | "house" | "signed";
 
-const SPEAKER_TEXT: Record<Speaker, { label: string; seal: string }> = {
-  anonymous: {
-    label: "Anonymous, of the house",
-    seal: "The house sends this without a name.",
-  },
-  house: {
-    label: "The house, unsigned",
-    seal: "The seal says the house wrote this.",
-  },
-  signed: {
-    label: "Signed, not the house",
-    seal: "The seal attests provenance and deposit, never agreement.",
-  },
+const SPEAKER_TEXT: Record<Speaker, { label: WordingKey; seal: WordingKey }> = {
+  anonymous: { label: "speaker.anonymous", seal: "speaker.anonymous-seal" },
+  house: { label: "speaker.house", seal: "speaker.house-seal" },
+  signed: { label: "speaker.signed", seal: "speaker.signed-seal" },
 };
 
 export function SpeakerNote({
@@ -154,11 +148,12 @@ export function SpeakerNote({
   showSeal?: boolean;
 }) {
   const t = SPEAKER_TEXT[speaker];
+  const w = useWording();
   return (
     <p className={`speaker speaker-${speaker} type-small`}>
       {speaker !== "anonymous" && <Mark className="mr-2 inline-block align-text-bottom" />}
-      <span className="font-semibold">{t.label}.</span>
-      {showSeal && <> {t.seal}</>}
+      <span className="font-semibold">{w(t.label)}.</span>
+      {showSeal && <> {w(t.seal)}</>}
     </p>
   );
 }

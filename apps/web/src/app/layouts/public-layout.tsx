@@ -5,7 +5,9 @@ import {
   LanguageProvider,
   LanguageToggle,
   useLocalizedPath,
+  useWording,
   type Lang,
+  type WordingKey,
 } from "@/modules/site";
 
 /**
@@ -19,20 +21,21 @@ import {
  * on the current language's "/ne" prefix instead of silently dropping a
  * Nepali reader back into English mid-click.
  */
-const PRESS_ITEMS = [
-  { to: "/papers", label: "Papers" },
-  { to: "/sattal", label: "The Sattal" },
-  { to: "/pigeon-post", label: "Pigeon Post" },
-  { to: "/brief", label: "Brief" },
-  { to: "/dispatch", label: "Dispatch" },
-  { to: "/annual", label: "Annual" },
-  { to: "/send-a-pigeon", label: "Send a pigeon" },
+const PRESS_ITEMS: ReadonlyArray<{ to: string; label: WordingKey }> = [
+  { to: "/papers", label: "nav.papers" },
+  { to: "/sattal", label: "nav.sattal" },
+  { to: "/pigeon-post", label: "nav.pigeon-post" },
+  { to: "/brief", label: "nav.brief" },
+  { to: "/dispatch", label: "nav.dispatch" },
+  { to: "/annual", label: "nav.annual" },
+  { to: "/send-a-pigeon", label: "nav.send-a-pigeon" },
 ];
 
 function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   const localize = useLocalizedPath();
+  const w = useWording();
 
   React.useEffect(() => {
     if (!open) return;
@@ -52,7 +55,7 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
         aria-haspopup="true"
         className="text-foreground/80 hover:text-brand font-sans text-sm transition-colors"
       >
-        The Press ▾
+        {w("nav.press")} ▾
       </button>
       {open && (
         <div className="bg-background border-border absolute left-0 top-full z-50 mt-3 flex min-w-40 flex-col gap-1 border p-2 shadow-lg">
@@ -65,7 +68,7 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
             }}
             className="hover:bg-secondary px-3 py-2 font-sans text-sm"
           >
-            The Press (overview)
+            {w("nav.press-overview")}
           </NavLink>
           <div className="border-border my-1 border-t" />
           {PRESS_ITEMS.map((item) => (
@@ -78,7 +81,7 @@ function PressMenu({ onNavigate }: { onNavigate?: () => void }) {
               }}
               className="hover:bg-secondary px-3 py-2 font-sans text-sm"
             >
-              {item.label}
+              {w(item.label)}
             </NavLink>
           ))}
         </div>
@@ -105,6 +108,7 @@ function Header({ siteName }: { siteName: string }) {
   const [scrolled, setScrolled] = React.useState(false);
   const { pathname } = useLocation();
   const localize = useLocalizedPath();
+  const w = useWording();
 
   React.useEffect(() => setMobileOpen(false), [pathname]);
   React.useEffect(() => {
@@ -127,16 +131,16 @@ function Header({ siteName }: { siteName: string }) {
         <Logo siteName={siteName} />
         <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
           <NavLink to={localize("/wall")} className={navLinkClass}>
-            The Wall
+            {w("nav.wall")}
           </NavLink>
           <PressMenu />
           <NavLink to={localize("/house")} className={navLinkClass}>
-            The House
+            {w("nav.house")}
           </NavLink>
           <NavLink to={localize("/record")} className={navLinkClass}>
-            The Record
+            {w("nav.record")}
           </NavLink>
-          <NavLink to={localize("/search")} className={navLinkClass} aria-label="Search">
+          <NavLink to={localize("/search")} className={navLinkClass} aria-label={w("nav.search")}>
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -154,7 +158,7 @@ function Header({ siteName }: { siteName: string }) {
           type="button"
           className="p-2 lg:hidden"
           onClick={() => setMobileOpen(true)}
-          aria-label="Open menu"
+          aria-label={w("nav.open-menu")}
         >
           <svg
             viewBox="0 0 24 24"
@@ -176,7 +180,7 @@ function Header({ siteName }: { siteName: string }) {
               type="button"
               className="p-2"
               onClick={() => setMobileOpen(false)}
-              aria-label="Close menu"
+              aria-label={w("nav.close-menu")}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -191,16 +195,16 @@ function Header({ siteName }: { siteName: string }) {
           </div>
           <nav className="w-wide mt-4 flex flex-1 flex-col gap-1 pb-12">
             <Link to={localize("/wall")} className="text-foreground/90 py-2 font-serif text-2xl">
-              The Wall
+              {w("nav.wall")}
             </Link>
             <p className="text-muted-foreground mb-1 mt-2 font-sans text-xs tracking-[0.14em]">
-              The Press
+              {w("nav.press")}
             </p>
             <Link
               to={localize("/press")}
               className="text-foreground/90 py-1 pl-4 font-serif text-xl"
             >
-              Overview
+              {w("nav.overview")}
             </Link>
             {PRESS_ITEMS.map((item) => (
               <Link
@@ -208,20 +212,20 @@ function Header({ siteName }: { siteName: string }) {
                 to={localize(item.to)}
                 className="text-foreground/90 py-1 pl-4 font-serif text-xl"
               >
-                {item.label}
+                {w(item.label)}
               </Link>
             ))}
             <Link
               to={localize("/house")}
               className="text-foreground/90 mt-2 py-2 font-serif text-2xl"
             >
-              The House
+              {w("nav.house")}
             </Link>
             <Link to={localize("/record")} className="text-foreground/90 py-2 font-serif text-2xl">
-              The Record
+              {w("nav.record")}
             </Link>
             <Link to={localize("/search")} className="text-foreground/90 py-2 font-serif text-2xl">
-              Search
+              {w("nav.search")}
             </Link>
             <div className="mt-4">
               <LanguageToggle />
@@ -242,49 +246,53 @@ function Footer({
 }) {
   const year = new Date().getFullYear();
   const localize = useLocalizedPath();
-  const columns = [
+  const w = useWording();
+  const columns: ReadonlyArray<{
+    heading: WordingKey;
+    links: ReadonlyArray<readonly [WordingKey, string]>;
+  }> = [
     {
-      heading: "The Wall",
+      heading: "footer.col-wall",
       links: [
-        ["The Wall", "/wall"],
-        ["The Sattal", "/sattal"],
+        ["nav.wall", "/wall"],
+        ["nav.sattal", "/sattal"],
       ],
     },
     {
-      heading: "The Press",
+      heading: "footer.col-press",
       links: [
-        ["Overview", "/press"],
-        ["Papers", "/papers"],
-        ["Pigeon Post", "/pigeon-post"],
-        ["Brief", "/brief"],
-        ["Dispatch", "/dispatch"],
-        ["Annual", "/annual"],
+        ["nav.overview", "/press"],
+        ["nav.papers", "/papers"],
+        ["nav.pigeon-post", "/pigeon-post"],
+        ["nav.brief", "/brief"],
+        ["nav.dispatch", "/dispatch"],
+        ["nav.annual", "/annual"],
       ],
     },
     {
-      heading: "The House",
+      heading: "footer.col-house",
       links: [
-        ["The House", "/house"],
-        ["The Record", "/record"],
-        ["The Chronicle", "/chronicle"],
-        ["Friends of PAZ", "/friends"],
-        ["The Commons", "/commons"],
-        ["Programmes", "/programmes"],
-        ["Contact", "/contact"],
+        ["nav.house", "/house"],
+        ["nav.record", "/record"],
+        ["footer.chronicle", "/chronicle"],
+        ["footer.friends", "/friends"],
+        ["footer.commons", "/commons"],
+        ["footer.programmes", "/programmes"],
+        ["footer.contact", "/contact"],
       ],
     },
-  ] as const;
+  ];
 
   // Governance material is public and belongs at the foot of the site,
   // not the front (Build Specification 3).
-  const governance = [
-    ["The Canon", "/canon"],
-    ["The name", "/name"],
-    ["Words", "/words"],
-    ["Looking for", "/looking-for"],
-    ["Privacy", "/privacy"],
-    ["Terms", "/terms"],
-  ] as const;
+  const governance: ReadonlyArray<readonly [WordingKey, string]> = [
+    ["footer.canon", "/canon"],
+    ["footer.name", "/name"],
+    ["footer.words", "/words"],
+    ["footer.looking-for", "/looking-for"],
+    ["footer.privacy", "/privacy"],
+    ["footer.terms", "/terms"],
+  ];
 
   return (
     <footer className="border-border border-t">
@@ -299,16 +307,16 @@ function Footer({
               was retired brand language ("hospitality-led cultural
               institution...") and is removed rather than reworded; the
               house supplies the replacement. */}
-          <p className="type-small mt-5 max-w-xs">Rhymes with &ldquo;cause,&rdquo; z sounded.</p>
+          <p className="type-small mt-5 max-w-xs">{w("footer.pronunciation")}</p>
           <p className="type-small mt-6">
-            Patan, Lalitpur
+            {w("footer.place-line-1")}
             <br />
-            Kathmandu Valley, Nepal
+            {w("footer.place-line-2")}
           </p>
         </div>
         {columns.map((col) => (
           <div key={col.heading}>
-            <p className="type-caption mb-5">{col.heading}</p>
+            <p className="type-caption mb-5">{w(col.heading)}</p>
             <ul className="space-y-3">
               {col.links.map(([label, to]) => (
                 <li key={to}>
@@ -316,7 +324,7 @@ function Footer({
                     to={localize(to)}
                     className="text-foreground/80 hover:text-brand font-sans text-sm transition-colors"
                   >
-                    {label}
+                    {w(label)}
                   </Link>
                 </li>
               ))}
@@ -325,13 +333,11 @@ function Footer({
         ))}
       </div>
       <div className="w-wide type-small border-border flex flex-col justify-between gap-4 border-t py-8 md:flex-row md:items-center">
-        <p>
-          © {year} {siteName}. No cookies, no analytics, no reader tracking of any kind.
-        </p>
+        <p>{w("footer.no-tracking", { year, name: siteName })}</p>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           {governance.map(([label, to]) => (
             <Link key={to} to={localize(to)} className="hover:text-brand transition-colors">
-              {label}
+              {w(label)}
             </Link>
           ))}
           {contactEmail && (

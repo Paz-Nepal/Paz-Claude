@@ -5,6 +5,7 @@ import { Button, Field, Input, Badge } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduTime } from "@paz/utils";
 import { useAuthorization } from "@/modules/auth-core";
+import { useWording } from "@/modules/site/wording";
 import { registerSchema, type RegisterFormInput } from "../schemas";
 import { useRegisterForSession, type ProgramSession } from "../api/use-programs";
 
@@ -12,6 +13,7 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
   const { signedIn } = useAuthorization();
   const [expanded, setExpanded] = React.useState(false);
   const register = useRegisterForSession();
+  const w = useWording();
   const {
     register: registerField,
     handleSubmit,
@@ -49,9 +51,7 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
           {session.starts_at ? formatKathmanduTime(session.starts_at) : ""}
         </p>
         <p className="text-foreground mt-2 text-sm">
-          {register.data === "waitlisted"
-            ? "You're on the waitlist. A message follows if a seat opens up."
-            : "You're registered."}
+          {register.data === "waitlisted" ? w("programmes.waitlisted") : w("programmes.registered")}
         </p>
       </div>
     );
@@ -70,10 +70,12 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
         </div>
         <div className="flex items-center gap-2">
           {full ? (
-            <Badge variant="outline">Waitlist</Badge>
+            <Badge variant="outline">{w("programmes.waitlist")}</Badge>
           ) : (
             seatsLeft !== null && (
-              <span className="text-muted-foreground text-sm">{seatsLeft} seats left</span>
+              <span className="text-muted-foreground text-sm">
+                {w("programmes.seats-left", { count: seatsLeft })}
+              </span>
             )
           )}
         </div>
@@ -88,23 +90,35 @@ export function SessionRegisterCard({ session }: { session: ProgramSession }) {
           onClick={() => (signedIn ? registerSignedIn() : setExpanded(true))}
           loading={signedIn && register.isPending}
         >
-          {full ? "Join waitlist" : "Register"}
+          {full ? w("programmes.join-waitlist") : w("programmes.register")}
         </Button>
       )}
 
       {expanded && !signedIn && (
         <form onSubmit={(e) => void onSubmit(e)} className="flex flex-col gap-3" noValidate>
-          <Field label="Full name" htmlFor={`name-${session.id}`} error={errors.fullName?.message}>
+          <Field
+            label={w("programmes.full-name")}
+            htmlFor={`name-${session.id}`}
+            error={errors.fullName?.message}
+          >
             <Input id={`name-${session.id}`} {...registerField("fullName")} />
           </Field>
-          <Field label="Email" htmlFor={`email-${session.id}`} error={errors.email?.message}>
+          <Field
+            label={w("programmes.email")}
+            htmlFor={`email-${session.id}`}
+            error={errors.email?.message}
+          >
             <Input id={`email-${session.id}`} type="email" {...registerField("email")} />
           </Field>
-          <Field label="Phone" htmlFor={`phone-${session.id}`} hint="Optional.">
+          <Field
+            label={w("programmes.phone")}
+            htmlFor={`phone-${session.id}`}
+            hint={w("programmes.optional")}
+          >
             <Input id={`phone-${session.id}`} type="tel" {...registerField("phone")} />
           </Field>
           <Button type="submit" size="sm" loading={register.isPending} className="self-start">
-            {full ? "Join waitlist" : "Confirm registration"}
+            {full ? w("programmes.join-waitlist") : w("programmes.confirm")}
           </Button>
         </form>
       )}

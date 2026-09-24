@@ -4,21 +4,23 @@ import { usePublishedItem } from "../api/use-site";
 import { useLanguage, pickLang, pickLangDoc, isUntranslatedDoc } from "../language";
 import { PageHero } from "../components/paz-editorial";
 import { TranslationNotice } from "../components/translation-notice";
+import { useWording } from "../wording";
 
 export function HearthPage() {
   const page = usePublishedItem("page", "hearth");
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (page.isPending)
     return (
       <p role="status" className="type-small p-16 text-center">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (page.isError) {
     return (
       <div className="p-16">
-        <StatePanel title="Couldn't load this." description={toAppError(page.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(page.error).message} />
       </div>
     );
   }
@@ -31,8 +33,8 @@ export function HearthPage() {
   return (
     <div>
       <PageHero
-        kicker="An organ of the house"
-        title={pickLang(data?.title ?? "The Hearth", data?.title_ne, lang)}
+        kicker={w("organ.kicker")}
+        title={pickLang(data?.title ?? w("organ.hearth"), data?.title_ne, lang)}
         subtitle={data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined}
       />
       {(isUntranslatedDoc(data?.body_ne, lang) || body) && (

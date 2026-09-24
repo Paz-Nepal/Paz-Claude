@@ -16,6 +16,7 @@ import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
+import { useWording } from "../wording";
 
 export function DispatchPage({ slug: slugProp }: { slug?: string } = {}) {
   const params = useParams<{ slug: string; deposit: string }>();
@@ -23,17 +24,21 @@ export function DispatchPage({ slug: slugProp }: { slug?: string } = {}) {
   const localize = useLocalizedPath();
   const dispatch = useDispatch(slug);
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (dispatch.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (dispatch.isError) {
     return (
       <div className="p-8">
-        <StatePanel title="Couldn't load this." description={toAppError(dispatch.error).message} />
+        <StatePanel
+          title={w("common.load-error")}
+          description={toAppError(dispatch.error).message}
+        />
       </div>
     );
   }
@@ -54,19 +59,19 @@ export function DispatchPage({ slug: slugProp }: { slug?: string } = {}) {
         title={pickLang(item.title ?? "", item.title_ne, lang)}
         description={
           item.issue_no != null
-            ? `Dispatch No. ${item.issue_no}, kept in the Record.`
-            : "A Dispatch."
+            ? w("dispatch.description", { number: item.issue_no })
+            : w("dispatch.description-plain")
         }
         path={`/dispatch/${item.slug}`}
         ogType="article"
         depositRef={item.deposit_ref}
-        seriesName="Dispatch"
+        seriesName={w("dispatch.series")}
       />
       <SupersededBanner basePath="/dispatch" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
         {item.issue_no != null && (
           <p className="text-muted-foreground text-sm">
-            Dispatch No. {item.issue_no}
+            {w("dispatch.number", { number: item.issue_no })}
             {item.issue_date ? ` · ${formatKathmanduDate(item.issue_date)}` : ""}
           </p>
         )}
@@ -74,7 +79,11 @@ export function DispatchPage({ slug: slugProp }: { slug?: string } = {}) {
       </header>
       {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
-      <DepositProvenance series="Dispatch" title={item.title ?? ""} depositRef={item.deposit_ref} />
+      <DepositProvenance
+        series={w("dispatch.series")}
+        title={item.title ?? ""}
+        depositRef={item.deposit_ref}
+      />
     </article>
   );
 }

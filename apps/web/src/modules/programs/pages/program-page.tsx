@@ -2,28 +2,27 @@ import { useParams } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePrograms, useProgramSessions } from "../api/use-programs";
+import { useWording } from "@/modules/site/wording";
 import { SessionRegisterCard } from "../components/session-register-card";
 
 export function ProgramPage() {
   const { slug } = useParams<{ slug: string }>();
   const programs = usePrograms();
   const sessions = useProgramSessions(slug);
+  const w = useWording();
 
   const program = programs.data?.find((p) => p.slug === slug);
 
   if (programs.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (!program) {
     return (
       <div className="p-8">
-        <StatePanel
-          title="There's nothing at this address."
-          description="This programme may have ended or never existed."
-        />
+        <StatePanel title={w("common.nothing-here")} description={w("programmes.not-found-note")} />
       </div>
     );
   }
@@ -36,16 +35,16 @@ export function ProgramPage() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h2 className="font-serif text-xl">Upcoming sessions</h2>
+        <h2 className="font-serif text-xl">{w("programmes.upcoming")}</h2>
         {sessions.isError && (
           <StatePanel
-            title="Couldn't load sessions."
+            title={w("programmes.sessions-error")}
             description={toAppError(sessions.error).message}
           />
         )}
         {sessions.data &&
           (sessions.data.length === 0 ? (
-            <p className="text-muted-foreground">No sessions scheduled right now.</p>
+            <p className="text-muted-foreground">{w("programmes.no-sessions")}</p>
           ) : (
             sessions.data.map((session) => (
               <SessionRegisterCard key={session.id} session={session} />

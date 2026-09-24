@@ -3,6 +3,7 @@ import { Button, Field, Input } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useSubscribeBrief } from "../api/use-house";
 import { FormUnavailable, isUnavailable } from "./wall-parts";
+import { useWording } from "../wording";
 
 /**
  * The Brief is the whole of the house's growth, so its subscription is the
@@ -14,11 +15,12 @@ import { FormUnavailable, isUnavailable } from "./wall-parts";
 export function BriefSignup() {
   const [email, setEmail] = React.useState("");
   const subscribe = useSubscribeBrief();
+  const w = useWording();
 
   if (subscribe.isSuccess) {
     return (
       <p role="status" className="type-small">
-        A message has been sent to that address. Following its link confirms the subscription.
+        {w("brief.sent")}
       </p>
     );
   }
@@ -33,9 +35,9 @@ export function BriefSignup() {
       }}
     >
       <h2 id="brief-signup-h" className="type-h4">
-        The Brief
+        {w("brief.signup-heading")}
       </h2>
-      <Field label="Email" htmlFor="brief-email">
+      <Field label={w("brief.email")} htmlFor="brief-email">
         <Input
           id="brief-email"
           type="email"
@@ -58,7 +60,7 @@ export function BriefSignup() {
         disabled={!email.trim()}
         className="self-start"
       >
-        Subscribe
+        {w("brief.subscribe")}
       </Button>
     </form>
   );

@@ -2,14 +2,16 @@ import { Link } from "react-router-dom";
 import { StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { formatKathmanduTime } from "@paz/utils";
+import { useWording } from "@/modules/site/wording";
 import { useProgramSessions } from "../api/use-programs";
 
 export function CalendarPage() {
   const sessions = useProgramSessions();
+  const w = useWording();
 
   return (
     <div className="max-w-standard mx-auto flex flex-col gap-8 px-6 py-16">
-      <h1 className="font-serif text-3xl">Programme calendar</h1>
+      <h1 className="font-serif text-3xl">{w("programmes.title")}</h1>
 
       {/* Encounters — the public civic layer (Field Studies, Common Ground,
           The Chautari) lives here rather than its own nav entry, per the
@@ -19,29 +21,27 @@ export function CalendarPage() {
         className="hover:bg-muted flex items-center justify-between rounded-lg border p-4"
       >
         <div>
-          <p className="font-medium">Encounters</p>
-          <p className="text-muted-foreground text-sm">
-            Field Studies, Common Ground, The Chautari: the public civic layer.
-          </p>
+          <p className="font-medium">{w("programmes.encounters")}</p>
+          <p className="text-muted-foreground text-sm">{w("programmes.encounters-note")}</p>
         </div>
         <span className="text-muted-foreground text-sm">→</span>
       </Link>
 
       {sessions.isPending && (
         <p role="status" className="text-muted-foreground">
-          Loading…
+          {w("common.loading")}
         </p>
       )}
       {sessions.isError && (
         <StatePanel
-          title="Couldn't load the calendar."
+          title={w("programmes.load-error")}
           description={toAppError(sessions.error).message}
         />
       )}
 
       {sessions.data &&
         (sessions.data.length === 0 ? (
-          <StatePanel title="Nothing scheduled yet." description="Check back soon." />
+          <StatePanel title={w("programmes.empty")} description={w("programmes.empty-note")} />
         ) : (
           <ul className="flex flex-col gap-3">
             {sessions.data.map((session) => (

@@ -7,7 +7,8 @@ import { DocumentHead } from "../components/document-head";
 import { ArrowLink, Eyebrow } from "../components/paz-editorial";
 import { WorkPicture, useEraDate } from "../components/wall-parts";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
+import { useWording, type WordingKey } from "../wording";
 
 /**
  * The subject of this site is the people sheltering under the roof, not
@@ -25,6 +26,8 @@ export function HomePage() {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
+  const t = useWording();
+  const empty = useEmptyState();
 
   const siteName = siteInfo.data?.["site.name"] ?? "PAZ";
   const tagline = siteInfo.data?.["site.tagline"];
@@ -40,7 +43,7 @@ export function HomePage() {
       <DocumentHead title={siteName} description={tagline || undefined} path="/" ogType="website" />
 
       <section className="border-border w-wide border-b pb-12 pt-32 md:pb-16 md:pt-40">
-        <p className="type-label">Patan, Lalitpur</p>
+        <p className="type-label">{t("home.place")}</p>
         <h1 className="type-display mt-4">{siteName}</h1>
         {tagline && <p className="type-body-lg mt-6 max-w-2xl">{tagline}</p>}
       </section>
@@ -48,14 +51,14 @@ export function HomePage() {
       <section className="w-wide border-border border-b py-14" aria-labelledby="home-wall">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <Eyebrow>The Wall</Eyebrow>
+            <Eyebrow>{t("home.wall-eyebrow")}</Eyebrow>
             <h2 id="home-wall" className="type-h2">
-              Recent work
+              {t("home.recent-work")}
             </h2>
           </div>
-          <ArrowLink to="/wall">The Wall</ArrowLink>
+          <ArrowLink to="/wall">{t("home.wall-link")}</ArrowLink>
         </div>
-        {works.data && recent.length === 0 && <p className="type-body">{emptyState("wall")}</p>}
+        {works.data && recent.length === 0 && <p className="type-body">{empty("wall")}</p>}
         <ul className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {recent.map((w) => {
             const img = whole.get(w.id);
@@ -89,16 +92,14 @@ export function HomePage() {
       <section className="w-standard border-border border-b py-14" aria-labelledby="home-sattal">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <Eyebrow>The Press</Eyebrow>
+            <Eyebrow>{t("home.press-eyebrow")}</Eyebrow>
             <h2 id="home-sattal" className="type-h2">
-              The Sattal
+              {t("home.sattal")}
             </h2>
           </div>
-          <ArrowLink to="/sattal">All pieces</ArrowLink>
+          <ArrowLink to="/sattal">{t("home.all-pieces")}</ArrowLink>
         </div>
-        {pieces.data && pieces.data.length === 0 && (
-          <p className="type-body">{emptyState("sattal")}</p>
-        )}
+        {pieces.data && pieces.data.length === 0 && <p className="type-body">{empty("sattal")}</p>}
         <ol className="flex flex-col gap-6">
           {(pieces.data ?? []).slice(0, 3).map((x) => (
             <li key={x.id} className="speaker speaker-signed">
@@ -118,15 +119,15 @@ export function HomePage() {
       <section className="w-standard border-border border-b py-14" aria-labelledby="home-chronicle">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <Eyebrow>The House</Eyebrow>
+            <Eyebrow>{t("home.house-eyebrow")}</Eyebrow>
             <h2 id="home-chronicle" className="type-h2">
-              The Chronicle
+              {t("home.chronicle")}
             </h2>
           </div>
-          <ArrowLink to="/chronicle">The whole run</ArrowLink>
+          <ArrowLink to="/chronicle">{t("home.whole-run")}</ArrowLink>
         </div>
         {chronicle.data && chronicle.data.length === 0 && (
-          <p className="type-body">{emptyState("chronicle")}</p>
+          <p className="type-body">{empty("chronicle")}</p>
         )}
         <ol className="flex flex-col gap-3">
           {(chronicle.data ?? []).slice(0, 5).map((l) => (
@@ -141,9 +142,9 @@ export function HomePage() {
         <section className="w-standard border-border border-b py-14" aria-labelledby="home-prog">
           <div className="mb-6 flex items-end justify-between">
             <h2 id="home-prog" className="type-h2">
-              Coming up
+              {t("home.coming-up")}
             </h2>
-            <ArrowLink to="/programmes">Programmes</ArrowLink>
+            <ArrowLink to="/programmes">{t("home.programmes-link")}</ArrowLink>
           </div>
           {upcoming.map((s) => (
             <Link
@@ -163,19 +164,21 @@ export function HomePage() {
       )}
 
       {/* The six organs, all shown alike, as the colophon of the site. */}
-      <nav className="w-wide py-14" aria-label="The six organs">
+      <nav className="w-wide py-14" aria-label={t("home.organs-label")}>
         <ul className="type-body flex flex-wrap gap-x-8 gap-y-2">
-          {[
-            ["/house", "House"],
-            ["/record", "Record"],
-            ["/guild", "Guild"],
-            ["/press", "Press"],
-            ["/hearth", "Hearth"],
-            ["/treasury", "Treasury"],
-          ].map(([to, label]) => (
+          {(
+            [
+              ["/house", "home.organ-house"],
+              ["/record", "home.organ-record"],
+              ["/guild", "home.organ-guild"],
+              ["/press", "home.organ-press"],
+              ["/hearth", "home.organ-hearth"],
+              ["/treasury", "home.organ-treasury"],
+            ] as const satisfies ReadonlyArray<readonly [string, WordingKey]>
+          ).map(([to, label]) => (
             <li key={to}>
-              <Link to={localize(to as string)} className="link-underline">
-                {label}
+              <Link to={localize(to)} className="link-underline">
+                {t(label)}
               </Link>
             </li>
           ))}

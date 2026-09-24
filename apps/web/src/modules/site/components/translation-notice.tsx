@@ -1,3 +1,5 @@
+import { useWording } from "../wording";
+
 /**
  * Work plan Part III, #21: "the fallback is silent... a reader in Nepali
  * mode cannot tell the difference between 'translated' and 'not
@@ -9,9 +11,12 @@
  * anything.
  */
 export function TranslationNotice() {
+  // Worded in the desk like every other fixed line ("common.untranslated");
+  // its default Nepali is the sentence that used to be written here.
+  const w = useWording();
   return (
     <p className="type-small border-brand/40 bg-brand/5 mb-8 border-l-2 py-2 pl-4 italic">
-      यो लेख अझै नेपालीमा उपलब्ध छैन। अंग्रेजी पाठ देखाइएको छ।
+      {w("common.untranslated")}
     </p>
   );
 }

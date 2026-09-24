@@ -4,6 +4,7 @@ import { toAppError } from "@paz/types";
 import { useAnnual, publicMediaUrl } from "../api/use-site";
 import { useLanguage, pickLang, useLocalizedPath } from "../language";
 import { DepositProvenance } from "../components/deposit-provenance";
+import { useWording } from "../wording";
 import { SupersededBanner } from "../components/superseded-banner";
 import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
@@ -15,17 +16,18 @@ export function AnnualPage({ slug: slugProp }: { slug?: string } = {}) {
   const localize = useLocalizedPath();
   const annual = useAnnual(slug);
   const { lang } = useLanguage();
+  const w = useWording();
 
   if (annual.isPending)
     return (
       <p role="status" className="text-muted-foreground p-8">
-        Loading…
+        {w("common.loading")}
       </p>
     );
   if (annual.isError) {
     return (
       <div className="p-8">
-        <StatePanel title="Couldn't load this." description={toAppError(annual.error).message} />
+        <StatePanel title={w("common.load-error")} description={toAppError(annual.error).message} />
       </div>
     );
   }
@@ -45,12 +47,14 @@ export function AnnualPage({ slug: slugProp }: { slug?: string } = {}) {
         title={pickLang(item.title ?? "", item.title_ne, lang)}
         description={
           item.contents?.slice(0, 200) ||
-          (item.year != null ? `The Annual, ${item.year}, kept in the Record.` : "The Annual.")
+          (item.year != null
+            ? w("annual.description", { year: item.year })
+            : w("annual.description-plain"))
         }
         path={`/annual/${item.slug}`}
         ogType="article"
         depositRef={item.deposit_ref}
-        seriesName="Annual"
+        seriesName={w("annual.series")}
       />
       <SupersededBanner basePath="/annual" slug={item.superseded_by_slug} />
       <header className="flex flex-col gap-2">
@@ -63,11 +67,11 @@ export function AnnualPage({ slug: slugProp }: { slug?: string } = {}) {
           href={publicMediaUrl(item.pdf_path)}
           className="self-start rounded-lg border px-4 py-2 text-sm font-medium hover:bg-black/5"
         >
-          Download the PDF
+          {w("annual.pdf")}
         </a>
       )}
       <DepositProvenance
-        series="The Annual"
+        series={w("annual.citation-series")}
         title={item.title ?? ""}
         depositRef={item.deposit_ref}
       />

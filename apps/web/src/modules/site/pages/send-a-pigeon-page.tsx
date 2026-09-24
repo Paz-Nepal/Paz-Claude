@@ -2,6 +2,7 @@ import * as React from "react";
 import { Button, Field, Input, Textarea, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { useSendAPigeon } from "../api/use-site";
+import { useWording } from "../wording";
 
 /**
  * "A simple, non-tracking submission route — content goes to house staff,
@@ -15,20 +16,17 @@ export function SendAPigeonPage() {
   const [contact, setContact] = React.useState("");
   const [content, setContent] = React.useState("");
   const send = useSendAPigeon();
+  const w = useWording();
 
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
       <header className="flex flex-col gap-2">
-        <h1 className="font-serif text-3xl">Send a pigeon</h1>
-        <p className="text-muted-foreground">
-          The art of noticing. Send the house something you noticed: a moment, a detail, a small
-          truth. The house reads every one; not everything finds its way into print, and nothing is
-          published without care.
-        </p>
+        <h1 className="font-serif text-3xl">{w("pigeon.title")}</h1>
+        <p className="text-muted-foreground">{w("pigeon.intro")}</p>
       </header>
 
       {send.isSuccess ? (
-        <StatePanel title="Sent." description="Thank you. The house has received it." />
+        <StatePanel title={w("pigeon.sent")} description={w("pigeon.sent-note")} />
       ) : (
         <form
           className="flex flex-col gap-4"
@@ -42,7 +40,7 @@ export function SendAPigeonPage() {
             });
           }}
         >
-          <Field label="What you noticed" htmlFor="pigeon-content">
+          <Field label={w("pigeon.noticed")} htmlFor="pigeon-content">
             <Textarea
               id="pigeon-content"
               rows={8}
@@ -51,10 +49,10 @@ export function SendAPigeonPage() {
             />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Name" htmlFor="pigeon-name" hint="Optional. Kept private.">
+            <Field label={w("pigeon.name")} htmlFor="pigeon-name" hint={w("pigeon.private")}>
               <Input id="pigeon-name" value={name} onChange={(e) => setName(e.target.value)} />
             </Field>
-            <Field label="Contact" htmlFor="pigeon-contact" hint="Optional. Kept private.">
+            <Field label={w("pigeon.contact")} htmlFor="pigeon-contact" hint={w("pigeon.private")}>
               <Input
                 id="pigeon-contact"
                 value={contact}
@@ -73,7 +71,7 @@ export function SendAPigeonPage() {
             disabled={!content.trim()}
             className="self-start"
           >
-            Send
+            {w("common.send")}
           </Button>
         </form>
       )}

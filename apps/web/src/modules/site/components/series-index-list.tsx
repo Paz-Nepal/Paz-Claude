@@ -2,7 +2,7 @@ import type * as React from "react";
 import { Link } from "react-router-dom";
 import { useLanguage, pickLang, useLocalizedPath } from "../language";
 import type { PublishedItem } from "../api/use-site";
-import { emptyState } from "../empty-states";
+import { useEmptyState } from "../empty-states";
 
 /**
  * Shared list chrome for the archive/index page of a series (Brief,
@@ -22,10 +22,11 @@ export function SeriesIndexList({
 }) {
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
+  const empty = useEmptyState();
 
   if (!items) return null;
   if (items.length === 0) {
-    return <p className="type-body">{emptyState("series")}</p>;
+    return <p className="type-body">{empty("series")}</p>;
   }
 
   return (

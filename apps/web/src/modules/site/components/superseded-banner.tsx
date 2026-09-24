@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useLocalizedPath } from "../language";
+import { useWording } from "../wording";
 
 /** Non-negotiable §3: corrections happen by addition, never by editing
  * the original in place — this is how a reader finds the newer version. */
@@ -11,12 +12,13 @@ export function SupersededBanner({
   slug: string | null | undefined;
 }) {
   const localize = useLocalizedPath();
+  const w = useWording();
   if (!slug) return null;
   return (
     <p className="border-b bg-black/5 px-4 py-3 text-sm">
-      A correction has been deposited.{" "}
+      {w("common.correction")}{" "}
       <Link to={localize(`${basePath}/${slug}`)} className="font-medium underline">
-        See the newer version
+        {w("common.see-newer")}
       </Link>
       .
     </p>

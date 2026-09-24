@@ -1,33 +1,37 @@
-import { useMutation } from "@tanstack/react-query";
-import type { AuthMFAEnrollTOTPResponse } from "@supabase/supabase-js";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import type { AuthMFAEnrollTOTPResponse, Factor } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
 import { toAppError } from "@paz/types";
 
 type Enrolment = NonNullable<AuthMFAEnrollTOTPResponse["data"]>;
 
-// The enrollment screen starts enrollment when it opens. A reload, or React
-// running the effect twice in development, would otherwise start two at once,
-// so concurrent calls share one attempt.
+/**
+ * The enrollment screen needs to know, before it does anything else, whether
+ * this account already has a confirmed authenticator: if it does, the screen
+ * asks for that app's code instead of enrolling a second one. Also surfaces
+ * any abandoned (never-confirmed) factor so the caller can clear it first.
+ */
+export function useMfaFactors() {
+  return useQuery({
+    queryKey: ["mfa-factors"],
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw toAppError(error);
+      return data;
+    },
+  });
+}
+
+// A reload, or React running the effect twice in development, would
+// otherwise start two enrollments at once, so concurrent calls share one.
 let inflight: Promise<Enrolment> | null = null;
 
-async function startEnrollment(): Promise<Enrolment> {
-  const { data: factors, error: listError } = await supabase.auth.mfa.listFactors();
-  if (listError) throw toAppError(listError);
-
-  // A person who already has a working authenticator does not enrol another.
-  if ((factors?.totp ?? []).length > 0) {
-    throw new Error(
-      "This account already has an authenticator app. Sign in again and enter the code it shows.",
-    );
-  }
-
+async function startEnrollment(abandoned: Factor[]): Promise<Enrolment> {
   // Any earlier attempt that was never confirmed is abandoned. Left in place,
   // each one blocks the next (the same friendly name cannot be enrolled twice).
-  for (const factor of factors?.all ?? []) {
-    if (factor.factor_type === "totp" && factor.status === "unverified") {
-      const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
-      if (error) throw toAppError(error);
-    }
+  for (const factor of abandoned) {
+    const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+    if (error) throw toAppError(error);
   }
 
   const { data, error } = await supabase.auth.mfa.enroll({
@@ -40,8 +44,8 @@ async function startEnrollment(): Promise<Enrolment> {
 
 export function useMfaEnroll() {
   return useMutation({
-    mutationFn: async () => {
-      inflight ??= startEnrollment().finally(() => {
+    mutationFn: async (abandoned: Factor[]) => {
+      inflight ??= startEnrollment(abandoned).finally(() => {
         inflight = null;
       });
       return inflight;
@@ -49,7 +53,9 @@ export function useMfaEnroll() {
   });
 }
 
-export function useMfaVerifyEnrollment() {
+/** Confirms a 6-digit code against a factor — a freshly enrolled one, or an
+ * existing confirmed one being used to reach aal2 at sign-in. */
+export function useMfaVerify() {
   return useMutation({
     mutationFn: async ({ factorId, code }: { factorId: string; code: string }) => {
       const { data: challenge, error: challengeError } = await supabase.auth.mfa.challenge({

@@ -182,3 +182,11 @@ verify_jwt = true
 # check (item.publish) and human-actor requirement.
 [functions.schedule-item]
 verify_jwt = true
+
+[functions.submit-offer]
+verify_jwt = true
+
+# Called only by .github/workflows/strip-listening-names.yml; the body
+# requires the service-role key.
+[functions.strip-listening-names]
+verify_jwt = true

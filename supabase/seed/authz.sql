@@ -71,6 +71,8 @@ insert into authz.permissions (key, description) values
   ('safeguarding.read', 'Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about.'),
   ('site.wording.manage', 'Reword the fixed lines of the public site: menus, footer, page intros, form labels, empty sections.'),
   ('house.manage', 'Keep the house as a place: rooms and their photographs, things and where they came from, what the house would welcome, books, studio months, the days the house keeps.'),
+  ('record.manage', 'Keep the Record''s catalogue (the open layer), the house''s papers, consent lines and the listening log.'),
+  ('record.closed.read', 'Read and keep the closed layer of the Record: giver, witness, how the family is reached. Held by the Keeper.'),
   ('analytics.dashboard.editorial', 'View the editorial pipeline dashboard.'),
   ('analytics.dashboard.programs', 'View the programme fill-rate dashboard.'),
   ('analytics.dashboard.membership', 'View the membership funnel dashboard.'),
@@ -96,6 +98,7 @@ insert into authz.role_permissions (role_key, permission_key) values
   ('editor', 'mail.manage'),
   ('editor', 'site.wording.manage'),
   ('editor', 'house.manage'),
+  ('editor', 'record.manage'),
   ('author', 'publishing.item.create'),
   ('author', 'publishing.media.read'),
   ('author', 'publishing.media.create')

@@ -1,0 +1,39 @@
+name: Strip listening names
+
+# docs/website-additions.md C4: the Record's listening log keeps names for a
+# fixed period, then counts only. This workflow's only job is to trigger the
+# deployed strip-listening-names Edge Function, authenticated as service_role.
+# The period is the setting record.listening_names_days; until the house sets
+# it the function strips nothing.
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  strip-listening-names:
+    name: Trigger strip-listening-names
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the strip-listening-names Edge Function
+        env:
+          SUPABASE_PROJECT_URL: ${{ secrets.SUPABASE_PROJECT_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_PROJECT_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "SUPABASE_PROJECT_URL / SUPABASE_SERVICE_ROLE_KEY are not set." >&2
+            exit 1
+          fi
+
+          http_status=$(curl -sS -o /tmp/response.json -w '%{http_code}' -X POST \
+            "${SUPABASE_PROJECT_URL}/functions/v1/strip-listening-names" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json")
+
+          cat /tmp/response.json
+          echo
+
+          if [ "$http_status" -ge 300 ]; then
+            echo "strip-listening-names returned HTTP ${http_status}" >&2
+            exit 1
+          fi

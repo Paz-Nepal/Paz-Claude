@@ -16,7 +16,7 @@
 // architecture, no unverifiable architecture either" standard the rest of
 // this repo holds to).
 
-export type MediaCategory = "image" | "document";
+export type MediaCategory = "image" | "document" | "audio";
 
 export interface SniffedType {
   mimeType: string;
@@ -32,6 +32,10 @@ const SIGNATURES: Array<{ mimeType: string; category: MediaCategory; magic: numb
   },
   { mimeType: "image/gif", category: "image", magic: [0x47, 0x49, 0x46, 0x38] },
   { mimeType: "application/pdf", category: "document", magic: [0x25, 0x50, 0x44, 0x46, 0x2d] },
+  // A reading of a Paper (docs/website-additions.md D2): MP3 with an ID3 tag,
+  // or Ogg. A bare MP3 frame is matched separately in sniffMimeType.
+  { mimeType: "audio/mpeg", category: "audio", magic: [0x49, 0x44, 0x33] },
+  { mimeType: "audio/ogg", category: "audio", magic: [0x4f, 0x67, 0x67, 0x53] },
 ];
 
 function matches(bytes: Uint8Array, magic: number[]): boolean {
@@ -53,14 +57,21 @@ export function sniffMimeType(bytes: Uint8Array): SniffedType | null {
       return { mimeType: sig.mimeType, category: sig.category };
     }
   }
+  // An MP3 with no ID3 tag starts directly with a frame header: eleven set
+  // sync bits, then a valid MPEG version and layer III (0xFB, 0xF3, 0xF2).
+  if (bytes.length >= 2 && bytes[0] === 0xff && [0xfb, 0xf3, 0xf2].includes(bytes[1])) {
+    return { mimeType: "audio/mpeg", category: "audio" };
+  }
   return null;
 }
 
 export const MAX_IMAGE_BYTES = 15 * 1024 * 1024;
 export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
+export const MAX_AUDIO_BYTES = 50 * 1024 * 1024;
 
 export function maxBytesFor(category: MediaCategory): number {
-  return category === "image" ? MAX_IMAGE_BYTES : MAX_DOCUMENT_BYTES;
+  if (category === "image") return MAX_IMAGE_BYTES;
+  return category === "audio" ? MAX_AUDIO_BYTES : MAX_DOCUMENT_BYTES;
 }
 
 /**
@@ -226,6 +237,10 @@ export function extensionFor(mimeType: string): string {
       return "gif";
     case "application/pdf":
       return "pdf";
+    case "audio/mpeg":
+      return "mp3";
+    case "audio/ogg":
+      return "ogg";
     default:
       return "bin";
   }

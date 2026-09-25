@@ -233,6 +233,8 @@ export interface PaperDetailsInput {
   p_pdf_media: string | null;
   p_license: string;
   p_sources_note: string | null;
+  p_audio_media: string | null;
+  p_audio_reader: string | null;
 }
 
 export interface IssueDetailsInput {

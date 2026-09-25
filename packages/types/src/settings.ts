@@ -8,6 +8,10 @@ export interface SettingsRegistry {
   "site.name": string;
   "site.tagline": string;
   "site.contact_email": string;
+  /** Paisa; empty until the house decides. Saved as text or a number. */
+  "wall.early_price_minor": string | number | null;
+  "sattal.rate_minor": string | number | null;
+  "record.listening_names_days": string | number | null;
   "house.status": string;
   "house.status_ne": string;
   /** ISO time the status was last set; written by api.set_house_status. */

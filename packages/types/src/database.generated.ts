@@ -244,6 +244,98 @@ export type Database = {
           },
         ];
       };
+      admin_encounter_place_visits: {
+        Row: {
+          after_image: Json | null;
+          before_image: Json | null;
+          created_at: string | null;
+          done_on: string | null;
+          event_id: string | null;
+          id: string | null;
+          note: string | null;
+          note_ne: string | null;
+          people_count: number | null;
+          place_id: string | null;
+          place_name: string | null;
+          published: boolean | null;
+          updated_at: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "place_visits_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_encounters";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "place_visits_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "encounters_calendar";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "place_visits_place_id_fkey";
+            columns: ["place_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_encounter_places";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "place_visits_place_id_fkey";
+            columns: ["place_id"];
+            isOneToOne: false;
+            referencedRelation: "encounter_places";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_encounter_places: {
+        Row: {
+          created_at: string | null;
+          id: string | null;
+          kind: string | null;
+          location: string | null;
+          location_ne: string | null;
+          name: string | null;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean | null;
+          slug: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          location?: string | null;
+          location_ne?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          location?: string | null;
+          location_ne?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       admin_encounters: {
         Row: {
           created_at: string | null;
@@ -255,7 +347,10 @@ export type Database = {
           leads_ne: boolean | null;
           place: string | null;
           place_ne: string | null;
+          price_note: string | null;
+          price_note_ne: string | null;
           published: boolean | null;
+          series: string | null;
           slug: string | null;
           starts_on: string | null;
           title: string | null;
@@ -272,7 +367,10 @@ export type Database = {
           leads_ne?: boolean | null;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
           published?: boolean | null;
+          series?: string | null;
           slug?: string | null;
           starts_on?: string | null;
           title?: string | null;
@@ -289,7 +387,10 @@ export type Database = {
           leads_ne?: boolean | null;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
           published?: boolean | null;
+          series?: string | null;
           slug?: string | null;
           starts_on?: string | null;
           title?: string | null;
@@ -337,6 +438,403 @@ export type Database = {
           },
         ];
       };
+      admin_house_books: {
+        Row: {
+          author: string | null;
+          created_at: string | null;
+          id: string | null;
+          language: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean | null;
+          shelf: string | null;
+          title: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          author?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          shelf?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          author?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          shelf?: string | null;
+          title?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_house_day_dates: {
+        Row: {
+          created_at: string | null;
+          day_id: string | null;
+          falls_on: string | null;
+          id: string | null;
+          sambat_text: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          day_id?: string | null;
+          falls_on?: string | null;
+          id?: string | null;
+          sambat_text?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          day_id?: string | null;
+          falls_on?: string | null;
+          id?: string | null;
+          sambat_text?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "day_dates_day_id_fkey";
+            columns: ["day_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_days";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "day_dates_day_id_fkey";
+            columns: ["day_id"];
+            isOneToOne: false;
+            referencedRelation: "house_days";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_house_days: {
+        Row: {
+          created_at: string | null;
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          published: boolean | null;
+          reckoned_as: string | null;
+          reckoned_as_ne: string | null;
+          reckoning: string | null;
+          slug: string | null;
+          updated_at: string | null;
+          what_the_house_does: string | null;
+          what_the_house_does_ne: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          published?: boolean | null;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning?: string | null;
+          slug?: string | null;
+          updated_at?: string | null;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          published?: boolean | null;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning?: string | null;
+          slug?: string | null;
+          updated_at?: string | null;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_house_room_images: {
+        Row: {
+          alt: string | null;
+          alt_ne: string | null;
+          created_at: string | null;
+          height: number | null;
+          id: string | null;
+          original_path: string | null;
+          photographer: string | null;
+          room_id: string | null;
+          sort: number | null;
+          variants: Json | null;
+          width: number | null;
+        };
+        Insert: {
+          alt?: string | null;
+          alt_ne?: string | null;
+          created_at?: string | null;
+          height?: number | null;
+          id?: string | null;
+          original_path?: string | null;
+          photographer?: string | null;
+          room_id?: string | null;
+          sort?: number | null;
+          variants?: Json | null;
+          width?: number | null;
+        };
+        Update: {
+          alt?: string | null;
+          alt_ne?: string | null;
+          created_at?: string | null;
+          height?: number | null;
+          id?: string | null;
+          original_path?: string | null;
+          photographer?: string | null;
+          room_id?: string | null;
+          sort?: number | null;
+          variants?: Json | null;
+          width?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "room_images_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_rooms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "room_images_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "house_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_house_rooms: {
+        Row: {
+          created_at: string | null;
+          floor: string | null;
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean | null;
+          slug: string | null;
+          sort: number | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          floor?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          sort?: number | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          floor?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          slug?: string | null;
+          sort?: number | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_house_studio_months: {
+        Row: {
+          created_at: string | null;
+          from_on: string | null;
+          id: string | null;
+          note: string | null;
+          note_ne: string | null;
+          person_id: string | null;
+          published: boolean | null;
+          to_on: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          from_on?: string | null;
+          id?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          person_id?: string | null;
+          published?: boolean | null;
+          to_on?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          from_on?: string | null;
+          id?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          person_id?: string | null;
+          published?: boolean | null;
+          to_on?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "studio_months_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "studio_months_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "sattal_pieces";
+            referencedColumns: ["person_id"];
+          },
+          {
+            foreignKeyName: "studio_months_person_id_fkey";
+            columns: ["person_id"];
+            isOneToOne: false;
+            referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_house_things: {
+        Row: {
+          came_from: string | null;
+          came_from_ne: string | null;
+          created_at: string | null;
+          for_use: boolean | null;
+          given_by: string | null;
+          given_by_shown: boolean | null;
+          id: string | null;
+          image_alt: string | null;
+          image_height: number | null;
+          image_path: string | null;
+          image_photographer: string | null;
+          image_variants: Json | null;
+          image_width: number | null;
+          name: string | null;
+          name_ne: string | null;
+          published: boolean | null;
+          room_id: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          created_at?: string | null;
+          for_use?: boolean | null;
+          given_by?: string | null;
+          given_by_shown?: boolean | null;
+          id?: string | null;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json | null;
+          image_width?: number | null;
+          name?: string | null;
+          name_ne?: string | null;
+          published?: boolean | null;
+          room_id?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          created_at?: string | null;
+          for_use?: boolean | null;
+          given_by?: string | null;
+          given_by_shown?: boolean | null;
+          id?: string | null;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json | null;
+          image_width?: number | null;
+          name?: string | null;
+          name_ne?: string | null;
+          published?: boolean | null;
+          room_id?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "things_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_rooms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "things_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "house_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_house_wanted: {
+        Row: {
+          created_at: string | null;
+          id: string | null;
+          kind: string | null;
+          note: string | null;
+          note_ne: string | null;
+          sort: number | null;
+          still_wanted: boolean | null;
+          updated_at: string | null;
+          what: string | null;
+          what_ne: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          sort?: number | null;
+          still_wanted?: boolean | null;
+          updated_at?: string | null;
+          what?: string | null;
+          what_ne?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          sort?: number | null;
+          still_wanted?: boolean | null;
+          updated_at?: string | null;
+          what?: string | null;
+          what_ne?: string | null;
+        };
+        Relationships: [];
+      };
       admin_membership_tiers: {
         Row: {
           active: boolean | null;
@@ -366,6 +864,33 @@ export type Database = {
           name_ne?: string | null;
         };
         Relationships: [];
+      };
+      admin_pigeon_distribution: {
+        Row: {
+          copies: number | null;
+          country: string | null;
+          id: string | null;
+          item_id: string | null;
+          item_slug: string | null;
+          item_title: string | null;
+          noted_on: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pigeon_post_distribution_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "desk_items";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pigeon_post_distribution_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "published_items";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       admin_program_sessions: {
         Row: {
@@ -441,6 +966,238 @@ export type Database = {
             columns: ["description_item"];
             isOneToOne: false;
             referencedRelation: "published_items";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_record_accessions: {
+        Row: {
+          copy_first: string | null;
+          copy_second: string | null;
+          copy_third: string | null;
+          created_at: string | null;
+          dates_from: string | null;
+          dates_to: string | null;
+          description: string | null;
+          description_level: string | null;
+          description_ne: string | null;
+          id: string | null;
+          kin_note: string | null;
+          kind: string | null;
+          listening_tier: string | null;
+          listenings: number | null;
+          number: string | null;
+          opens_on: string | null;
+          published: boolean | null;
+          updated_at: string | null;
+          withdrawn_on: string | null;
+        };
+        Insert: {
+          copy_first?: string | null;
+          copy_second?: string | null;
+          copy_third?: string | null;
+          created_at?: string | null;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: string | null;
+          description_level?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kin_note?: string | null;
+          kind?: string | null;
+          listening_tier?: string | null;
+          listenings?: never;
+          number?: string | null;
+          opens_on?: string | null;
+          published?: boolean | null;
+          updated_at?: string | null;
+          withdrawn_on?: string | null;
+        };
+        Update: {
+          copy_first?: string | null;
+          copy_second?: string | null;
+          copy_third?: string | null;
+          created_at?: string | null;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: string | null;
+          description_level?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kin_note?: string | null;
+          kind?: string | null;
+          listening_tier?: string | null;
+          listenings?: never;
+          number?: string | null;
+          opens_on?: string | null;
+          published?: boolean | null;
+          updated_at?: string | null;
+          withdrawn_on?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_record_closed: {
+        Row: {
+          accession_id: string | null;
+          cross_refs: string[] | null;
+          family_reached: string | null;
+          giver: string | null;
+          updated_at: string | null;
+          witness: string | null;
+        };
+        Insert: {
+          accession_id?: string | null;
+          cross_refs?: string[] | null;
+          family_reached?: string | null;
+          giver?: string | null;
+          updated_at?: string | null;
+          witness?: string | null;
+        };
+        Update: {
+          accession_id?: string | null;
+          cross_refs?: string[] | null;
+          family_reached?: string | null;
+          giver?: string | null;
+          updated_at?: string | null;
+          witness?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "closed_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: true;
+            referencedRelation: "admin_record_accessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_record_consent_lines: {
+        Row: {
+          accession_id: string | null;
+          created_at: string | null;
+          id: string | null;
+          kind: string | null;
+          line: string | null;
+          recorded_by: string | null;
+          recorded_on: string | null;
+        };
+        Insert: {
+          accession_id?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          line?: string | null;
+          recorded_by?: string | null;
+          recorded_on?: string | null;
+        };
+        Update: {
+          accession_id?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          line?: string | null;
+          recorded_by?: string | null;
+          recorded_on?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "consent_lines_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_record_accessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "consent_lines_recorded_by_fkey";
+            columns: ["recorded_by"];
+            isOneToOne: false;
+            referencedRelation: "my_profile";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_record_house_papers: {
+        Row: {
+          created_at: string | null;
+          dated_on: string | null;
+          id: string | null;
+          kind: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean | null;
+          reference: string | null;
+          title: string | null;
+          title_ne: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          dated_on?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          reference?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          dated_on?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean | null;
+          reference?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_record_parts: {
+        Row: {
+          accession_id: string | null;
+          created_at: string | null;
+          id: string | null;
+          is_consents: boolean | null;
+          label: string | null;
+          online_path: string | null;
+          opened_online: boolean | null;
+          part_no: number | null;
+          sha256: string | null;
+        };
+        Insert: {
+          accession_id?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          is_consents?: boolean | null;
+          label?: string | null;
+          online_path?: string | null;
+          opened_online?: boolean | null;
+          part_no?: number | null;
+          sha256?: string | null;
+        };
+        Update: {
+          accession_id?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          is_consents?: boolean | null;
+          label?: string | null;
+          online_path?: string | null;
+          opened_online?: boolean | null;
+          part_no?: number | null;
+          sha256?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "parts_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_record_accessions";
             referencedColumns: ["id"];
           },
         ];
@@ -714,6 +1471,7 @@ export type Database = {
           slug: string | null;
           statement: string | null;
           statement_ne: string | null;
+          tier: string | null;
           updated_at: string | null;
         };
         Relationships: [];
@@ -783,6 +1541,7 @@ export type Database = {
           price_minor: number | null;
           provenance_note: string | null;
           published: boolean | null;
+          room_id: string | null;
           slug: string | null;
           title: string | null;
           title_ne: string | null;
@@ -811,6 +1570,20 @@ export type Database = {
             columns: ["person_id"];
             isOneToOne: false;
             referencedRelation: "wall_people";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "works_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_rooms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "works_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "house_rooms";
             referencedColumns: ["id"];
           },
         ];
@@ -881,7 +1654,32 @@ export type Database = {
             referencedRelation: "chronicle_lines";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "chronicle_lines_corrects_id_fkey";
+            columns: ["corrects_id"];
+            isOneToOne: false;
+            referencedRelation: "chronicle_on_this_day";
+            referencedColumns: ["id"];
+          },
         ];
+      };
+      chronicle_on_this_day: {
+        Row: {
+          id: string | null;
+          line: string | null;
+          line_on: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          line?: string | null;
+          line_on?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          line?: string | null;
+          line_on?: string | null;
+        };
+        Relationships: [];
       };
       commons_assemblies: {
         Row: {
@@ -967,6 +1765,7 @@ export type Database = {
           kept_by: string | null;
           kept_by_person_id: string | null;
           place: string | null;
+          reported_by: string | null;
         };
         Insert: {
           chronicle_line_id?: string | null;
@@ -977,6 +1776,7 @@ export type Database = {
           kept_by?: never;
           kept_by_person_id?: string | null;
           place?: string | null;
+          reported_by?: string | null;
         };
         Update: {
           chronicle_line_id?: string | null;
@@ -987,6 +1787,7 @@ export type Database = {
           kept_by?: never;
           kept_by_person_id?: string | null;
           place?: string | null;
+          reported_by?: string | null;
         };
         Relationships: [
           {
@@ -994,6 +1795,13 @@ export type Database = {
             columns: ["chronicle_line_id"];
             isOneToOne: false;
             referencedRelation: "chronicle_lines";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tables_kept_chronicle_line_id_fkey";
+            columns: ["chronicle_line_id"];
+            isOneToOne: false;
+            referencedRelation: "chronicle_on_this_day";
             referencedColumns: ["id"];
           },
           {
@@ -1127,6 +1935,72 @@ export type Database = {
           },
         ];
       };
+      encounter_place_visits: {
+        Row: {
+          after_image: Json | null;
+          before_image: Json | null;
+          done_on: string | null;
+          event_slug: string | null;
+          id: string | null;
+          note: string | null;
+          note_ne: string | null;
+          people_count: number | null;
+          place_id: string | null;
+          place_slug: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "place_visits_place_id_fkey";
+            columns: ["place_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_encounter_places";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "place_visits_place_id_fkey";
+            columns: ["place_id"];
+            isOneToOne: false;
+            referencedRelation: "encounter_places";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      encounter_places: {
+        Row: {
+          id: string | null;
+          kind: string | null;
+          location: string | null;
+          location_ne: string | null;
+          name: string | null;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          slug: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          kind?: string | null;
+          location?: string | null;
+          location_ne?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          slug?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          kind?: string | null;
+          location?: string | null;
+          location_ne?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          slug?: string | null;
+        };
+        Relationships: [];
+      };
       encounters_calendar: {
         Row: {
           ends_on: string | null;
@@ -1137,6 +2011,9 @@ export type Database = {
           leads_ne: boolean | null;
           place: string | null;
           place_ne: string | null;
+          price_note: string | null;
+          price_note_ne: string | null;
+          series: string | null;
           slug: string | null;
           starts_on: string | null;
           title: string | null;
@@ -1151,6 +2028,9 @@ export type Database = {
           leads_ne?: boolean | null;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
+          series?: string | null;
           slug?: string | null;
           starts_on?: string | null;
           title?: string | null;
@@ -1165,6 +2045,9 @@ export type Database = {
           leads_ne?: boolean | null;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
+          series?: string | null;
           slug?: string | null;
           starts_on?: string | null;
           title?: string | null;
@@ -1176,29 +2059,35 @@ export type Database = {
         Row: {
           definition: string | null;
           definition_ne: string | null;
+          definition_new: string | null;
           id: string | null;
           kind: string | null;
           slug: string | null;
           term: string | null;
           term_ne: string | null;
+          term_new: string | null;
         };
         Insert: {
           definition?: string | null;
           definition_ne?: string | null;
+          definition_new?: string | null;
           id?: string | null;
           kind?: string | null;
           slug?: string | null;
           term?: string | null;
           term_ne?: string | null;
+          term_new?: string | null;
         };
         Update: {
           definition?: string | null;
           definition_ne?: string | null;
+          definition_new?: string | null;
           id?: string | null;
           kind?: string | null;
           slug?: string | null;
           term?: string | null;
           term_ne?: string | null;
+          term_new?: string | null;
         };
         Relationships: [];
       };
@@ -1267,6 +2156,264 @@ export type Database = {
           title_ne?: string | null;
           waking_trigger?: string | null;
           work?: string | null;
+        };
+        Relationships: [];
+      };
+      house_books: {
+        Row: {
+          author: string | null;
+          id: string | null;
+          language: string | null;
+          note: string | null;
+          note_ne: string | null;
+          shelf: string | null;
+          title: string | null;
+        };
+        Insert: {
+          author?: string | null;
+          id?: string | null;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          shelf?: string | null;
+          title?: string | null;
+        };
+        Update: {
+          author?: string | null;
+          id?: string | null;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          shelf?: string | null;
+          title?: string | null;
+        };
+        Relationships: [];
+      };
+      house_day_dates: {
+        Row: {
+          day_id: string | null;
+          falls_on: string | null;
+          id: string | null;
+          sambat_text: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "day_dates_day_id_fkey";
+            columns: ["day_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_days";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "day_dates_day_id_fkey";
+            columns: ["day_id"];
+            isOneToOne: false;
+            referencedRelation: "house_days";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      house_days: {
+        Row: {
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          reckoned_as: string | null;
+          reckoned_as_ne: string | null;
+          reckoning: string | null;
+          slug: string | null;
+          what_the_house_does: string | null;
+          what_the_house_does_ne: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning?: string | null;
+          slug?: string | null;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning?: string | null;
+          slug?: string | null;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      house_room_images: {
+        Row: {
+          alt: string | null;
+          alt_ne: string | null;
+          height: number | null;
+          id: string | null;
+          original_path: string | null;
+          photographer: string | null;
+          room_id: string | null;
+          sort: number | null;
+          variants: Json | null;
+          width: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "room_images_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_rooms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "room_images_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "house_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      house_rooms: {
+        Row: {
+          floor: string | null;
+          id: string | null;
+          name: string | null;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          slug: string | null;
+          sort: number | null;
+        };
+        Insert: {
+          floor?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          slug?: string | null;
+          sort?: number | null;
+        };
+        Update: {
+          floor?: string | null;
+          id?: string | null;
+          name?: string | null;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          slug?: string | null;
+          sort?: number | null;
+        };
+        Relationships: [];
+      };
+      house_studio_months: {
+        Row: {
+          from_on: string | null;
+          id: string | null;
+          note: string | null;
+          note_ne: string | null;
+          person_name: string | null;
+          person_slug: string | null;
+          to_on: string | null;
+        };
+        Relationships: [];
+      };
+      house_things: {
+        Row: {
+          came_from: string | null;
+          came_from_ne: string | null;
+          for_use: boolean | null;
+          given_by: string | null;
+          id: string | null;
+          image_alt: string | null;
+          image_height: number | null;
+          image_path: string | null;
+          image_photographer: string | null;
+          image_variants: Json | null;
+          image_width: number | null;
+          name: string | null;
+          name_ne: string | null;
+          room_id: string | null;
+        };
+        Insert: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          for_use?: boolean | null;
+          given_by?: never;
+          id?: string | null;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json | null;
+          image_width?: number | null;
+          name?: string | null;
+          name_ne?: string | null;
+          room_id?: string | null;
+        };
+        Update: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          for_use?: boolean | null;
+          given_by?: never;
+          id?: string | null;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json | null;
+          image_width?: number | null;
+          name?: string | null;
+          name_ne?: string | null;
+          room_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "things_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_house_rooms";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "things_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "house_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      house_wanted: {
+        Row: {
+          id: string | null;
+          kind: string | null;
+          note: string | null;
+          note_ne: string | null;
+          what: string | null;
+          what_ne: string | null;
+        };
+        Insert: {
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          what?: string | null;
+          what_ne?: string | null;
+        };
+        Update: {
+          id?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          what?: string | null;
+          what_ne?: string | null;
         };
         Relationships: [];
       };
@@ -1579,6 +2726,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      offers: {
+        Row: {
+          contact: string | null;
+          created_at: string | null;
+          id: string | null;
+          kind: string | null;
+          name: string | null;
+          note: string | null;
+          ref: Json | null;
+          reviewed_at: string | null;
+          subject: string | null;
+        };
+        Insert: {
+          contact?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          name?: string | null;
+          note?: string | null;
+          ref?: Json | null;
+          reviewed_at?: string | null;
+          subject?: string | null;
+        };
+        Update: {
+          contact?: string | null;
+          created_at?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          name?: string | null;
+          note?: string | null;
+          ref?: Json | null;
+          reviewed_at?: string | null;
+          subject?: string | null;
+        };
+        Relationships: [];
+      };
       organizations: {
         Row: {
           created_at: string | null;
@@ -1600,6 +2783,21 @@ export type Database = {
           kind?: string | null;
           name?: string | null;
           notes?: string | null;
+        };
+        Relationships: [];
+      };
+      pigeon_post_reach: {
+        Row: {
+          copies: number | null;
+          country: string | null;
+        };
+        Relationships: [];
+      };
+      pigeon_post_reach_by_item: {
+        Row: {
+          copies: number | null;
+          country: string | null;
+          item_slug: string | null;
         };
         Relationships: [];
       };
@@ -1744,6 +2942,63 @@ export type Database = {
         };
         Relationships: [];
       };
+      record_accessions: {
+        Row: {
+          consent_now: string | null;
+          copy_first: string | null;
+          copy_second: string | null;
+          copy_third: string | null;
+          dates_from: string | null;
+          dates_to: string | null;
+          description: string | null;
+          description_level: string | null;
+          description_ne: string | null;
+          is_open: boolean | null;
+          kin_note: string | null;
+          kind: string | null;
+          listening_tier: string | null;
+          listenings: number | null;
+          number: string | null;
+          opens_on: string | null;
+        };
+        Insert: {
+          consent_now?: never;
+          copy_first?: string | null;
+          copy_second?: string | null;
+          copy_third?: string | null;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: never;
+          description_level?: string | null;
+          description_ne?: never;
+          is_open?: never;
+          kin_note?: string | null;
+          kind?: string | null;
+          listening_tier?: string | null;
+          listenings?: never;
+          number?: string | null;
+          opens_on?: string | null;
+        };
+        Update: {
+          consent_now?: never;
+          copy_first?: string | null;
+          copy_second?: string | null;
+          copy_third?: string | null;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: never;
+          description_level?: string | null;
+          description_ne?: never;
+          is_open?: never;
+          kin_note?: string | null;
+          kind?: string | null;
+          listening_tier?: string | null;
+          listenings?: never;
+          number?: string | null;
+          opens_on?: string | null;
+        };
+        Relationships: [];
+      };
       record_entries: {
         Row: {
           deposit_number: string | null;
@@ -1774,6 +3029,60 @@ export type Database = {
           provenance?: string | null;
           readable_path?: string | null;
           title?: string | null;
+        };
+        Relationships: [];
+      };
+      record_house_papers: {
+        Row: {
+          dated_on: string | null;
+          kind: string | null;
+          note: string | null;
+          note_ne: string | null;
+          reference: string | null;
+          title: string | null;
+          title_ne: string | null;
+        };
+        Insert: {
+          dated_on?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          reference?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Update: {
+          dated_on?: string | null;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          reference?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      record_parts: {
+        Row: {
+          is_consents: boolean | null;
+          label: string | null;
+          number: string | null;
+          online_path: string | null;
+          part_label: string | null;
+          part_no: number | null;
+          sha256: string | null;
+        };
+        Relationships: [];
+      };
+      record_withdrawn: {
+        Row: {
+          number: string | null;
+        };
+        Insert: {
+          number?: string | null;
+        };
+        Update: {
+          number?: string | null;
         };
         Relationships: [];
       };
@@ -2110,6 +3419,7 @@ export type Database = {
           about_name: string | null;
           contact: string | null;
           id: string | null;
+          kind: string | null;
           note: string | null;
           place: string | null;
           submitted_at: string | null;
@@ -2119,6 +3429,7 @@ export type Database = {
           about_name?: string | null;
           contact?: string | null;
           id?: string | null;
+          kind?: string | null;
           note?: string | null;
           place?: string | null;
           submitted_at?: string | null;
@@ -2128,6 +3439,7 @@ export type Database = {
           about_name?: string | null;
           contact?: string | null;
           id?: string | null;
+          kind?: string | null;
           note?: string | null;
           place?: string | null;
           submitted_at?: string | null;
@@ -2147,6 +3459,7 @@ export type Database = {
           slug: string | null;
           statement: string | null;
           statement_ne: string | null;
+          tier: string | null;
         };
         Insert: {
           active?: boolean | null;
@@ -2159,6 +3472,7 @@ export type Database = {
           slug?: string | null;
           statement?: string | null;
           statement_ne?: string | null;
+          tier?: string | null;
         };
         Update: {
           active?: boolean | null;
@@ -2171,6 +3485,7 @@ export type Database = {
           slug?: string | null;
           statement?: string | null;
           statement_ne?: string | null;
+          tier?: string | null;
         };
         Relationships: [];
       };
@@ -2497,6 +3812,7 @@ export type Database = {
           person_slug: string | null;
           price_minor: number | null;
           provenance_note: string | null;
+          room_id: string | null;
           slug: string | null;
           title: string | null;
           title_ne: string | null;
@@ -2574,6 +3890,15 @@ export type Database = {
         };
         Returns: string;
       };
+      add_record_consent_line: {
+        Args: {
+          p_accession: string;
+          p_kind: string;
+          p_line: string;
+          p_on?: string;
+        };
+        Returns: string;
+      };
       add_sattal_correction: {
         Args: { p_note: string; p_piece: string };
         Returns: string;
@@ -2604,6 +3929,10 @@ export type Database = {
           five_years_on: string;
           ready: boolean;
         }[];
+      };
+      assign_record_accession_number: {
+        Args: { p_id: string };
+        Returns: string;
       };
       autosave_item: {
         Args: {
@@ -2799,6 +4128,8 @@ export type Database = {
         Args: { p_slug: string };
         Returns: {
           abstract: string;
+          audio_path: string;
+          audio_reader: string;
           body: Json;
           body_ne: Json;
           deposit_ref: string;
@@ -2997,6 +4328,10 @@ export type Database = {
         Args: { p_id: string; p_on?: string; p_stage: string };
         Returns: string;
       };
+      record_listening: {
+        Args: { p_accession: string; p_part?: string; p_who?: string };
+        Returns: string;
+      };
       record_online_payment: {
         Args: {
           p_amount_cents: number;
@@ -3053,8 +4388,16 @@ export type Database = {
           token: string;
         }[];
       };
+      remove_house_day_date: { Args: { p_id: string }; Returns: undefined };
+      remove_house_room_image: { Args: { p_id: string }; Returns: undefined };
+      remove_pigeon_distribution: { Args: { p_id: string }; Returns: undefined };
       report_table_kept: {
-        Args: { p_held_on: string; p_person: string; p_place: string };
+        Args: {
+          p_held_on: string;
+          p_person: string;
+          p_place: string;
+          p_reported_by?: string;
+        };
         Returns: string;
       };
       resolve_item_comment: {
@@ -3071,6 +4414,7 @@ export type Database = {
         Args: { p_revision: string };
         Returns: undefined;
       };
+      review_offer: { Args: { p_id: string }; Returns: undefined };
       save_annual_details: {
         Args: {
           p_contents: string;
@@ -3092,12 +4436,22 @@ export type Database = {
         Returns: undefined;
       };
       save_encounter: { Args: { p: Json }; Returns: string };
+      save_encounter_place: { Args: { p: Json }; Returns: string };
+      save_encounter_place_visit: { Args: { p: Json }; Returns: string };
       save_event_details: {
         Args: { p_event_date: string; p_item: string; p_location: string };
         Returns: undefined;
       };
       save_glossary_term: { Args: { p: Json }; Returns: string };
       save_guild_maker: { Args: { p: Json }; Returns: string };
+      save_house_book: { Args: { p: Json }; Returns: string };
+      save_house_day: { Args: { p: Json }; Returns: string };
+      save_house_day_date: { Args: { p: Json }; Returns: string };
+      save_house_room: { Args: { p: Json }; Returns: string };
+      save_house_room_image: { Args: { p: Json }; Returns: string };
+      save_house_studio_month: { Args: { p: Json }; Returns: string };
+      save_house_thing: { Args: { p: Json }; Returns: string };
+      save_house_wanted: { Args: { p: Json }; Returns: string };
       save_item: {
         Args: {
           p_body: Json;
@@ -3124,6 +4478,8 @@ export type Database = {
       save_paper_details: {
         Args: {
           p_abstract: string;
+          p_audio_media?: string;
+          p_audio_reader?: string;
           p_item: string;
           p_license: string;
           p_pdf_media: string;
@@ -3132,6 +4488,7 @@ export type Database = {
         Returns: undefined;
       };
       save_person: { Args: { p: Json }; Returns: string };
+      save_pigeon_distribution: { Args: { p: Json }; Returns: string };
       save_pigeon_post_details: {
         Args: { p_edition_no: string; p_item: string; p_pdf_media: string };
         Returns: undefined;
@@ -3156,6 +4513,10 @@ export type Database = {
         };
         Returns: string;
       };
+      save_record_accession: { Args: { p: Json }; Returns: string };
+      save_record_closed: { Args: { p: Json }; Returns: undefined };
+      save_record_house_paper: { Args: { p: Json }; Returns: string };
+      save_record_part: { Args: { p: Json }; Returns: string };
       save_relationship: {
         Args: {
           p_id: string;
@@ -3242,6 +4603,10 @@ export type Database = {
           status: Database["programs"]["Enums"]["registration_status"];
         }[];
       };
+      set_house_status: {
+        Args: { p_status: string; p_status_ne: string };
+        Returns: undefined;
+      };
       set_item_tags: {
         Args: { p_item: string; p_tags: string[] };
         Returns: undefined;
@@ -3260,6 +4625,7 @@ export type Database = {
           updated_at: string;
         }[];
       };
+      strip_listening_names: { Args: never; Returns: number };
       submit_concern: {
         Args: { p_body: string; p_contact: string; p_writer_name: string };
         Returns: string;
@@ -3284,10 +4650,22 @@ export type Database = {
         };
         Returns: string;
       };
+      submit_offer: {
+        Args: {
+          p_contact: string;
+          p_kind: string;
+          p_name: string;
+          p_note: string;
+          p_ref: Json;
+          p_subject: string;
+        };
+        Returns: string;
+      };
       submit_voice_intake: {
         Args: {
           p_about_name: string;
           p_contact: string;
+          p_kind?: string;
           p_note: string;
           p_place: string;
           p_writer_name: string;
@@ -3348,6 +4726,20 @@ export type Database = {
         Args: { p_key: string; p_value: Json };
         Returns: undefined;
       };
+      verify_hallmark: {
+        Args: { p_query: string };
+        Returns: {
+          destroyed_on: string;
+          mark_description: string;
+          person_name: string;
+          person_name_ne: string;
+          person_slug: string;
+          punch_status: string;
+          registered_on: string;
+          stage: string;
+          year_letter: string;
+        }[];
+      };
       verify_member_card: {
         Args: { p_token: string };
         Returns: {
@@ -3357,6 +4749,32 @@ export type Database = {
           tier_name: string;
           valid: boolean;
         }[];
+      };
+      verify_work: {
+        Args: { p_number: number };
+        Returns: {
+          depth_mm: number;
+          events: Json;
+          hallmarked: boolean;
+          height_mm: number;
+          mark_description: string;
+          medium: string;
+          medium_ne: string;
+          person_name: string;
+          person_name_ne: string;
+          person_slug: string;
+          slug: string;
+          title: string;
+          title_ne: string;
+          width_mm: number;
+          work_number: number;
+          year: number;
+          year_letter: string;
+        }[];
+      };
+      withdraw_record_accession: {
+        Args: { p_id: string; p_on?: string };
+        Returns: undefined;
       };
     };
     Enums: {
@@ -3603,8 +5021,9 @@ export type Database = {
           created_at: string;
           held_on: string;
           id: string;
-          kept_by_person_id: string;
+          kept_by_person_id: string | null;
           place: string | null;
+          reported_by: string | null;
         };
         Insert: {
           chronicle_line_id?: string | null;
@@ -3612,8 +5031,9 @@ export type Database = {
           created_at?: string;
           held_on: string;
           id?: string;
-          kept_by_person_id: string;
+          kept_by_person_id?: string | null;
           place?: string | null;
+          reported_by?: string | null;
         };
         Update: {
           chronicle_line_id?: string | null;
@@ -3621,8 +5041,9 @@ export type Database = {
           created_at?: string;
           held_on?: string;
           id?: string;
-          kept_by_person_id?: string;
+          kept_by_person_id?: string | null;
           place?: string | null;
+          reported_by?: string | null;
         };
         Relationships: [
           {
@@ -3708,6 +5129,45 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      offers: {
+        Row: {
+          contact: string;
+          created_at: string;
+          id: string;
+          kind: string;
+          name: string;
+          note: string | null;
+          ref: Json;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          subject: string | null;
+        };
+        Insert: {
+          contact: string;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          name: string;
+          note?: string | null;
+          ref?: Json;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          subject?: string | null;
+        };
+        Update: {
+          contact?: string;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          name?: string;
+          note?: string | null;
+          ref?: Json;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          subject?: string | null;
+        };
+        Relationships: [];
       };
       org_people: {
         Row: {
@@ -3880,6 +5340,7 @@ export type Database = {
           about_name: string | null;
           contact: string;
           id: string;
+          kind: string;
           note: string | null;
           place: string | null;
           submitted_at: string;
@@ -3889,6 +5350,7 @@ export type Database = {
           about_name?: string | null;
           contact: string;
           id?: string;
+          kind?: string;
           note?: string | null;
           place?: string | null;
           submitted_at?: string;
@@ -3898,6 +5360,7 @@ export type Database = {
           about_name?: string | null;
           contact?: string;
           id?: string;
+          kind?: string;
           note?: string | null;
           place?: string | null;
           submitted_at?: string;
@@ -3910,7 +5373,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      offer_permission: { Args: { p_kind: string }; Returns: string };
     };
     Enums: {
       relationship_status: "active" | "ended";
@@ -3932,7 +5395,10 @@ export type Database = {
           leads_ne: boolean;
           place: string | null;
           place_ne: string | null;
+          price_note: string | null;
+          price_note_ne: string | null;
           published: boolean;
+          series: string | null;
           slug: string;
           starts_on: string;
           title: string;
@@ -3949,7 +5415,10 @@ export type Database = {
           leads_ne?: boolean;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
           published?: boolean;
+          series?: string | null;
           slug: string;
           starts_on: string;
           title: string;
@@ -3966,11 +5435,119 @@ export type Database = {
           leads_ne?: boolean;
           place?: string | null;
           place_ne?: string | null;
+          price_note?: string | null;
+          price_note_ne?: string | null;
           published?: boolean;
+          series?: string | null;
           slug?: string;
           starts_on?: string;
           title?: string;
           title_ne?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      place_visits: {
+        Row: {
+          after_image: Json | null;
+          before_image: Json | null;
+          created_at: string;
+          done_on: string;
+          event_id: string | null;
+          id: string;
+          note: string | null;
+          note_ne: string | null;
+          people_count: number | null;
+          place_id: string;
+          published: boolean;
+          updated_at: string;
+        };
+        Insert: {
+          after_image?: Json | null;
+          before_image?: Json | null;
+          created_at?: string;
+          done_on: string;
+          event_id?: string | null;
+          id?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          people_count?: number | null;
+          place_id: string;
+          published?: boolean;
+          updated_at?: string;
+        };
+        Update: {
+          after_image?: Json | null;
+          before_image?: Json | null;
+          created_at?: string;
+          done_on?: string;
+          event_id?: string | null;
+          id?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          people_count?: number | null;
+          place_id?: string;
+          published?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "place_visits_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "place_visits_place_id_fkey";
+            columns: ["place_id"];
+            isOneToOne: false;
+            referencedRelation: "places";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      places: {
+        Row: {
+          created_at: string;
+          id: string;
+          kind: string;
+          location: string | null;
+          location_ne: string | null;
+          name: string;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean;
+          slug: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          location?: string | null;
+          location_ne?: string | null;
+          name: string;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          location?: string | null;
+          location_ne?: string | null;
+          name?: string;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          slug?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -3980,7 +5557,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      image_ok: { Args: { j: Json }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
@@ -4147,6 +5724,376 @@ export type Database = {
     };
     Functions: {
       [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+  house: {
+    Tables: {
+      books: {
+        Row: {
+          author: string | null;
+          created_at: string;
+          id: string;
+          language: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean;
+          shelf: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          author?: string | null;
+          created_at?: string;
+          id?: string;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          shelf?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          author?: string | null;
+          created_at?: string;
+          id?: string;
+          language?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          shelf?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      day_dates: {
+        Row: {
+          created_at: string;
+          day_id: string;
+          falls_on: string;
+          id: string;
+          sambat_text: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          day_id: string;
+          falls_on: string;
+          id?: string;
+          sambat_text?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          day_id?: string;
+          falls_on?: string;
+          id?: string;
+          sambat_text?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "day_dates_day_id_fkey";
+            columns: ["day_id"];
+            isOneToOne: false;
+            referencedRelation: "days";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      days: {
+        Row: {
+          created_at: string;
+          id: string;
+          name: string;
+          name_ne: string | null;
+          published: boolean;
+          reckoned_as: string | null;
+          reckoned_as_ne: string | null;
+          reckoning: string;
+          slug: string;
+          updated_at: string;
+          what_the_house_does: string | null;
+          what_the_house_does_ne: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          name: string;
+          name_ne?: string | null;
+          published?: boolean;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning: string;
+          slug: string;
+          updated_at?: string;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          name?: string;
+          name_ne?: string | null;
+          published?: boolean;
+          reckoned_as?: string | null;
+          reckoned_as_ne?: string | null;
+          reckoning?: string;
+          slug?: string;
+          updated_at?: string;
+          what_the_house_does?: string | null;
+          what_the_house_does_ne?: string | null;
+        };
+        Relationships: [];
+      };
+      room_images: {
+        Row: {
+          alt: string;
+          alt_ne: string | null;
+          created_at: string;
+          height: number;
+          id: string;
+          original_path: string;
+          photographer: string;
+          room_id: string;
+          sort: number;
+          variants: Json;
+          width: number;
+        };
+        Insert: {
+          alt: string;
+          alt_ne?: string | null;
+          created_at?: string;
+          height: number;
+          id?: string;
+          original_path: string;
+          photographer: string;
+          room_id: string;
+          sort?: number;
+          variants?: Json;
+          width: number;
+        };
+        Update: {
+          alt?: string;
+          alt_ne?: string | null;
+          created_at?: string;
+          height?: number;
+          id?: string;
+          original_path?: string;
+          photographer?: string;
+          room_id?: string;
+          sort?: number;
+          variants?: Json;
+          width?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "room_images_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      rooms: {
+        Row: {
+          created_at: string;
+          floor: string | null;
+          id: string;
+          name: string;
+          name_ne: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean;
+          slug: string;
+          sort: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          floor?: string | null;
+          id?: string;
+          name: string;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          slug: string;
+          sort?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          floor?: string | null;
+          id?: string;
+          name?: string;
+          name_ne?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          slug?: string;
+          sort?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      studio_months: {
+        Row: {
+          created_at: string;
+          from_on: string;
+          id: string;
+          note: string | null;
+          note_ne: string | null;
+          person_id: string;
+          published: boolean;
+          to_on: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          from_on: string;
+          id?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          person_id: string;
+          published?: boolean;
+          to_on: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          from_on?: string;
+          id?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          person_id?: string;
+          published?: boolean;
+          to_on?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      things: {
+        Row: {
+          came_from: string | null;
+          came_from_ne: string | null;
+          created_at: string;
+          for_use: boolean;
+          given_by: string | null;
+          given_by_shown: boolean;
+          id: string;
+          image_alt: string | null;
+          image_height: number | null;
+          image_path: string | null;
+          image_photographer: string | null;
+          image_variants: Json;
+          image_width: number | null;
+          name: string;
+          name_ne: string | null;
+          published: boolean;
+          room_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          created_at?: string;
+          for_use?: boolean;
+          given_by?: string | null;
+          given_by_shown?: boolean;
+          id?: string;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json;
+          image_width?: number | null;
+          name: string;
+          name_ne?: string | null;
+          published?: boolean;
+          room_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          came_from?: string | null;
+          came_from_ne?: string | null;
+          created_at?: string;
+          for_use?: boolean;
+          given_by?: string | null;
+          given_by_shown?: boolean;
+          id?: string;
+          image_alt?: string | null;
+          image_height?: number | null;
+          image_path?: string | null;
+          image_photographer?: string | null;
+          image_variants?: Json;
+          image_width?: number | null;
+          name?: string;
+          name_ne?: string | null;
+          published?: boolean;
+          room_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "things_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "rooms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      wanted: {
+        Row: {
+          created_at: string;
+          id: string;
+          kind: string;
+          note: string | null;
+          note_ne: string | null;
+          sort: number;
+          still_wanted: boolean;
+          updated_at: string;
+          what: string;
+          what_ne: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          sort?: number;
+          still_wanted?: boolean;
+          updated_at?: string;
+          what: string;
+          what_ne?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          note?: string | null;
+          note_ne?: string | null;
+          sort?: number;
+          still_wanted?: boolean;
+          updated_at?: string;
+          what?: string;
+          what_ne?: string | null;
+        };
+        Relationships: [];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      room_is_published: { Args: { p_room: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;
@@ -5016,33 +6963,39 @@ export type Database = {
       glossary_terms: {
         Row: {
           created_at: string;
-          definition: string;
+          definition: string | null;
           definition_ne: string | null;
+          definition_new: string | null;
           id: string;
           kind: string;
           slug: string;
           term: string;
           term_ne: string | null;
+          term_new: string | null;
         };
         Insert: {
           created_at?: string;
-          definition: string;
+          definition?: string | null;
           definition_ne?: string | null;
+          definition_new?: string | null;
           id?: string;
           kind?: string;
           slug: string;
           term: string;
           term_ne?: string | null;
+          term_new?: string | null;
         };
         Update: {
           created_at?: string;
-          definition?: string;
+          definition?: string | null;
           definition_ne?: string | null;
+          definition_new?: string | null;
           id?: string;
           kind?: string;
           slug?: string;
           term?: string;
           term_ne?: string | null;
+          term_new?: string | null;
         };
         Relationships: [];
       };
@@ -5315,6 +7268,8 @@ export type Database = {
       paper_details: {
         Row: {
           abstract: string | null;
+          audio_media: string | null;
+          audio_reader: string | null;
           item_id: string;
           license: string;
           paper_no: number;
@@ -5323,6 +7278,8 @@ export type Database = {
         };
         Insert: {
           abstract?: string | null;
+          audio_media?: string | null;
+          audio_reader?: string | null;
           item_id: string;
           license: string;
           paper_no?: number;
@@ -5331,6 +7288,8 @@ export type Database = {
         };
         Update: {
           abstract?: string | null;
+          audio_media?: string | null;
+          audio_reader?: string | null;
           item_id?: string;
           license?: string;
           paper_no?: number;
@@ -5338,6 +7297,13 @@ export type Database = {
           sources_note?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "paper_details_audio_media_fkey";
+            columns: ["audio_media"];
+            isOneToOne: false;
+            referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "paper_details_item_id_fkey";
             columns: ["item_id"];
@@ -5383,6 +7349,41 @@ export type Database = {
             columns: ["pdf_media"];
             isOneToOne: false;
             referencedRelation: "media";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      pigeon_post_distribution: {
+        Row: {
+          copies: number;
+          country: string;
+          created_at: string;
+          id: string;
+          item_id: string;
+          noted_on: string;
+        };
+        Insert: {
+          copies: number;
+          country: string;
+          created_at?: string;
+          id?: string;
+          item_id: string;
+          noted_on?: string;
+        };
+        Update: {
+          copies?: number;
+          country?: string;
+          created_at?: string;
+          id?: string;
+          item_id?: string;
+          noted_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pigeon_post_distribution_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "items";
             referencedColumns: ["id"];
           },
         ];
@@ -5673,6 +7674,286 @@ export type Database = {
         | "event"
         | "sattal"
         | "terms";
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
+  record: {
+    Tables: {
+      accessions: {
+        Row: {
+          copy_first: string;
+          copy_second: string;
+          copy_third: string;
+          created_at: string;
+          dates_from: string | null;
+          dates_to: string | null;
+          description: string | null;
+          description_level: string;
+          description_ne: string | null;
+          id: string;
+          kin_note: string | null;
+          kind: string;
+          listening_tier: string;
+          number: string | null;
+          opens_on: string | null;
+          published: boolean;
+          updated_at: string;
+          withdrawn_on: string | null;
+        };
+        Insert: {
+          copy_first?: string;
+          copy_second?: string;
+          copy_third?: string;
+          created_at?: string;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: string | null;
+          description_level?: string;
+          description_ne?: string | null;
+          id?: string;
+          kin_note?: string | null;
+          kind: string;
+          listening_tier: string;
+          number?: string | null;
+          opens_on?: string | null;
+          published?: boolean;
+          updated_at?: string;
+          withdrawn_on?: string | null;
+        };
+        Update: {
+          copy_first?: string;
+          copy_second?: string;
+          copy_third?: string;
+          created_at?: string;
+          dates_from?: string | null;
+          dates_to?: string | null;
+          description?: string | null;
+          description_level?: string;
+          description_ne?: string | null;
+          id?: string;
+          kin_note?: string | null;
+          kind?: string;
+          listening_tier?: string;
+          number?: string | null;
+          opens_on?: string | null;
+          published?: boolean;
+          updated_at?: string;
+          withdrawn_on?: string | null;
+        };
+        Relationships: [];
+      };
+      closed: {
+        Row: {
+          accession_id: string;
+          cross_refs: string[];
+          family_reached: string | null;
+          giver: string | null;
+          updated_at: string;
+          witness: string | null;
+        };
+        Insert: {
+          accession_id: string;
+          cross_refs?: string[];
+          family_reached?: string | null;
+          giver?: string | null;
+          updated_at?: string;
+          witness?: string | null;
+        };
+        Update: {
+          accession_id?: string;
+          cross_refs?: string[];
+          family_reached?: string | null;
+          giver?: string | null;
+          updated_at?: string;
+          witness?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "closed_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: true;
+            referencedRelation: "accessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      consent_lines: {
+        Row: {
+          accession_id: string;
+          created_at: string;
+          id: string;
+          kind: string;
+          line: string;
+          recorded_by: string | null;
+          recorded_on: string;
+        };
+        Insert: {
+          accession_id: string;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          line: string;
+          recorded_by?: string | null;
+          recorded_on?: string;
+        };
+        Update: {
+          accession_id?: string;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          line?: string;
+          recorded_by?: string | null;
+          recorded_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "consent_lines_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: false;
+            referencedRelation: "accessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      house_papers: {
+        Row: {
+          created_at: string;
+          dated_on: string | null;
+          id: string;
+          kind: string | null;
+          note: string | null;
+          note_ne: string | null;
+          published: boolean;
+          reference: string;
+          title: string;
+          title_ne: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          dated_on?: string | null;
+          id?: string;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          reference: string;
+          title: string;
+          title_ne?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          dated_on?: string | null;
+          id?: string;
+          kind?: string | null;
+          note?: string | null;
+          note_ne?: string | null;
+          published?: boolean;
+          reference?: string;
+          title?: string;
+          title_ne?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      listenings: {
+        Row: {
+          accession_id: string;
+          id: string;
+          listened_at: string;
+          names_stripped_at: string | null;
+          part_id: string | null;
+          who: string | null;
+        };
+        Insert: {
+          accession_id: string;
+          id?: string;
+          listened_at?: string;
+          names_stripped_at?: string | null;
+          part_id?: string | null;
+          who?: string | null;
+        };
+        Update: {
+          accession_id?: string;
+          id?: string;
+          listened_at?: string;
+          names_stripped_at?: string | null;
+          part_id?: string | null;
+          who?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "listenings_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: false;
+            referencedRelation: "accessions";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "listenings_part_id_fkey";
+            columns: ["part_id"];
+            isOneToOne: false;
+            referencedRelation: "parts";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      parts: {
+        Row: {
+          accession_id: string;
+          created_at: string;
+          id: string;
+          is_consents: boolean;
+          label: string;
+          online_path: string | null;
+          opened_online: boolean;
+          part_no: number;
+          sha256: string | null;
+        };
+        Insert: {
+          accession_id: string;
+          created_at?: string;
+          id?: string;
+          is_consents: boolean;
+          label: string;
+          online_path?: string | null;
+          opened_online?: boolean;
+          part_no: number;
+          sha256?: string | null;
+        };
+        Update: {
+          accession_id?: string;
+          created_at?: string;
+          id?: string;
+          is_consents?: boolean;
+          label?: string;
+          online_path?: string | null;
+          opened_online?: boolean;
+          part_no?: number;
+          sha256?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "parts_accession_id_fkey";
+            columns: ["accession_id"];
+            isOneToOne: false;
+            referencedRelation: "accessions";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      strip_listening_names: { Args: never; Returns: number };
+    };
+    Enums: {
+      [_ in never]: never;
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -6063,6 +8344,7 @@ export type Database = {
           slug: string;
           statement: string | null;
           statement_ne: string | null;
+          tier: string | null;
           updated_at: string;
         };
         Insert: {
@@ -6078,6 +8360,7 @@ export type Database = {
           slug: string;
           statement?: string | null;
           statement_ne?: string | null;
+          tier?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -6093,6 +8376,7 @@ export type Database = {
           slug?: string;
           statement?: string | null;
           statement_ne?: string | null;
+          tier?: string | null;
           updated_at?: string;
         };
         Relationships: [];
@@ -6436,6 +8720,7 @@ export type Database = {
           price_minor: number | null;
           provenance_note: string | null;
           published: boolean;
+          room_id: string | null;
           slug: string;
           title: string;
           title_ne: string | null;
@@ -6462,6 +8747,7 @@ export type Database = {
           price_minor?: number | null;
           provenance_note?: string | null;
           published?: boolean;
+          room_id?: string | null;
           slug: string;
           title: string;
           title_ne?: string | null;
@@ -6488,6 +8774,7 @@ export type Database = {
           price_minor?: number | null;
           provenance_note?: string | null;
           published?: boolean;
+          room_id?: string | null;
           slug?: string;
           title?: string;
           title_ne?: string | null;
@@ -6523,6 +8810,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      early_price_minor: { Args: never; Returns: number };
       require: { Args: { p_permission: string }; Returns: string };
     };
     Enums: {
@@ -6672,6 +8960,9 @@ export const Constants = {
   guild: {
     Enums: {},
   },
+  house: {
+    Enums: {},
+  },
   identity: {
     Enums: {},
   },
@@ -6706,6 +8997,9 @@ export const Constants = {
         "terms",
       ],
     },
+  },
+  record: {
+    Enums: {},
   },
   sattal: {
     Enums: {},

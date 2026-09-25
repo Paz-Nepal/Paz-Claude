@@ -80,6 +80,8 @@ dependency order.
 | `mail.manage` | super_admin, administrator, editor | Read the Brief subscriber list and send the Brief. |
 | `site.wording.manage` | super_admin, administrator, editor | Reword the fixed lines of the public site: menus, footer, page intros, form labels, empty sections. |
 | `house.manage` | super_admin, administrator, editor | Keep the house as a place: rooms and their photographs, things and where they came from, what the house would welcome, books, studio months, the days the house keeps. |
+| `record.manage` | super_admin, administrator, editor | Keep the Record's catalogue (the open layer), the house's papers, consent lines and the listening log. |
+| `record.closed.read` | super_admin | Read and keep the closed layer of the Record: giver, witness, how the family is reached. Held by the Keeper. |
 | `safeguarding.read` | super_admin | Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about. |
 
 ## Adding a new permission

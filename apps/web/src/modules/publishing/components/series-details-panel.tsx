@@ -12,20 +12,24 @@ import {
 } from "../api/use-publishing";
 
 /** A single-file, non-image upload control (MediaPicker is image-only —
- * PDFs render nothing useful in its thumbnail grid). */
-function PdfPicker({
+ * PDFs and recordings render nothing useful in its thumbnail grid). */
+function FilePicker({
   mediaId,
   onSelect,
+  accept = "application/pdf",
+  noun = "PDF",
 }: {
   mediaId: string | null;
   onSelect: (id: string) => void;
+  accept?: string;
+  noun?: string;
 }) {
   const upload = useUploadMedia();
   const fileInput = React.useRef<HTMLInputElement>(null);
 
   return (
     <div className="flex flex-col gap-2">
-      {mediaId && <p className="text-muted-foreground text-sm">A PDF is attached.</p>}
+      {mediaId && <p className="text-muted-foreground text-sm">A {noun} is attached.</p>}
       <Button
         type="button"
         size="sm"
@@ -34,12 +38,12 @@ function PdfPicker({
         onClick={() => fileInput.current?.click()}
         className="self-start"
       >
-        {mediaId ? "Replace PDF" : "Upload PDF"}
+        {mediaId ? `Replace ${noun}` : `Upload ${noun}`}
       </Button>
       <input
         ref={fileInput}
         type="file"
-        accept="application/pdf"
+        accept={accept}
         className="hidden"
         aria-hidden="true"
         tabIndex={-1}
@@ -71,6 +75,8 @@ export interface SeriesDetails {
   paper_no?: number | null;
   abstract?: string | null;
   pdf_media?: string | null;
+  audio_media?: string | null;
+  audio_reader?: string | null;
   license?: string | null;
   sources_note?: string | null;
   issue_no?: number | null;
@@ -112,6 +118,8 @@ function PaperDetailsForm({ itemId, details }: { itemId: string; details: Series
   const [license, setLicense] = React.useState(details?.license ?? "CC BY");
   const [sourcesNote, setSourcesNote] = React.useState(details?.sources_note ?? "");
   const [pdfMedia, setPdfMedia] = React.useState<string | null>(details?.pdf_media ?? null);
+  const [audioMedia, setAudioMedia] = React.useState<string | null>(details?.audio_media ?? null);
+  const [audioReader, setAudioReader] = React.useState(details?.audio_reader ?? "");
   const save = useSavePaperDetails();
 
   return (
@@ -151,7 +159,30 @@ function PaperDetailsForm({ itemId, details }: { itemId: string; details: Series
         />
       </Field>
       <Field label="Typeset PDF" htmlFor="paper-pdf">
-        <PdfPicker mediaId={pdfMedia} onSelect={setPdfMedia} />
+        <FilePicker mediaId={pdfMedia} onSelect={setPdfMedia} />
+      </Field>
+      <Field
+        label="A reading of the Paper (audio)"
+        htmlFor="paper-audio"
+        hint="An MP3 or Ogg recording of the Paper read aloud. It is played only when a reader presses play."
+      >
+        <FilePicker
+          mediaId={audioMedia}
+          onSelect={setAudioMedia}
+          accept="audio/mpeg,audio/ogg"
+          noun="recording"
+        />
+      </Field>
+      <Field
+        label="Read by"
+        htmlFor="paper-audio-reader"
+        hint="The person's name, shown beside the recording. Required when there is a recording."
+      >
+        <Input
+          id="paper-audio-reader"
+          value={audioReader}
+          onChange={(e) => setAudioReader(e.target.value)}
+        />
       </Field>
       {save.isError && (
         <p role="alert" className="text-destructive text-sm">
@@ -171,6 +202,8 @@ function PaperDetailsForm({ itemId, details }: { itemId: string; details: Series
             p_pdf_media: pdfMedia,
             p_license: license,
             p_sources_note: sourcesNote || null,
+            p_audio_media: audioMedia,
+            p_audio_reader: audioReader.trim() || null,
           })
         }
       >
@@ -256,7 +289,7 @@ function PigeonPostDetailsForm({
         <Input id="pp-edition" value={editionNo} onChange={(e) => setEditionNo(e.target.value)} />
       </Field>
       <Field label="Keepsake PDF / scan" htmlFor="pp-pdf">
-        <PdfPicker mediaId={pdfMedia} onSelect={setPdfMedia} />
+        <FilePicker mediaId={pdfMedia} onSelect={setPdfMedia} />
       </Field>
       {save.isError && (
         <p role="alert" className="text-destructive text-sm">
@@ -306,7 +339,7 @@ function AnnualDetailsForm({ itemId, details }: { itemId: string; details: Serie
         />
       </Field>
       <Field label="PDF" htmlFor="annual-pdf">
-        <PdfPicker mediaId={pdfMedia} onSelect={setPdfMedia} />
+        <FilePicker mediaId={pdfMedia} onSelect={setPdfMedia} />
       </Field>
       {save.isError && (
         <p role="alert" className="text-destructive text-sm">

@@ -15,6 +15,7 @@ interface VoiceIntakeBody {
   aboutName?: string;
   place?: string;
   note?: string;
+  kind?: string;
 }
 
 function jsonError(message: string, status: number): Response {
@@ -61,6 +62,7 @@ Deno.serve(async (req) => {
     p_about_name: body.aboutName ?? null,
     p_place: body.place ?? null,
     p_note: body.note ?? null,
+    p_kind: body.kind ?? "voice",
   });
   if (error) {
     return jsonError(error.message, 400);

@@ -1,9 +1,11 @@
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { RichText, StatePanel, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePeople, useShows, useWorkImages, useWorks } from "../api/use-wall";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
-import { usePublishedItem } from "../api/use-site";
+import { usePublishedItem, useSiteInfo } from "../api/use-site";
+import { settingNumber, useHouseRooms } from "../api/use-place";
+import { formatMoney } from "@paz/utils";
 import { useEmptyState } from "../empty-states";
 import { useWording } from "../wording";
 import { BriefSignup } from "../components/brief-signup";
@@ -29,6 +31,11 @@ export function WallPage() {
   const eraDate = useEraDate();
   const t = useWording();
   const empty = useEmptyState();
+  const info = useSiteInfo();
+  const rooms = useHouseRooms();
+  const [params, setParams] = useSearchParams();
+  const byRoom = params.get("by") === "room";
+  const earlyPrice = settingNumber(info.data?.["wall.early_price_minor"]);
 
   const current = (people.data ?? []).filter((p) => p.active);
   const currentIds = new Set(current.map((p) => p.id));
@@ -44,6 +51,11 @@ export function WallPage() {
     <div>
       <DocumentHead title={t("title.wall")} path="/wall" />
       <PageHero title={t("title.wall")} />
+      {earlyPrice != null && (
+        <div className="w-reading pt-8">
+          <p className="type-body">{t("wall.early-price", { price: formatMoney(earlyPrice) })}</p>
+        </div>
+      )}
       {/* Viewing is by arrangement, and what ships and roughly what it costs is
           answered before an enquiry. The words are the house's: each shows only
           once the house has published its page. */}
@@ -87,15 +99,58 @@ export function WallPage() {
       </section>
 
       <section className="w-wide border-border border-t py-12" aria-labelledby="wall-works">
-        <h2 id="wall-works" className="type-h2">
-          {t("wall.work")}
-        </h2>
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 id="wall-works" className="type-h2">
+            {t("wall.work")}
+          </h2>
+          {(rooms.data ?? []).length > 0 && (
+            <button
+              type="button"
+              className="link-underline type-small"
+              onClick={() => setParams(byRoom ? {} : { by: "room" })}
+            >
+              {byRoom ? t("wall.all-work") : t("wall.by-room")}
+            </button>
+          )}
+        </div>
+        {byRoom && (
+          <div className="mt-6 flex flex-col gap-4">
+            {[...(rooms.data ?? []), null].map((room) => {
+              const inRoom = listed.filter((x) => (room ? x.room_id === room.id : !x.room_id));
+              if (inRoom.length === 0) return null;
+              return (
+                <div key={room?.id ?? "none"}>
+                  <h3 className="type-h4">
+                    {room ? (
+                      <Link to={localize(`/house/rooms/${room.slug}`)} className="link-underline">
+                        {pickLang(room.name as string, room.name_ne, lang)}
+                      </Link>
+                    ) : (
+                      t("wall.no-room")
+                    )}
+                  </h3>
+                  <ul className="type-body mt-1 flex flex-col gap-1">
+                    {inRoom.map((x) => (
+                      <li key={x.id}>
+                        <Link to={localize(`/works/${x.slug}`)} className="link-underline">
+                          {pickLang(x.title as string, x.title_ne, lang)}
+                        </Link>
+                        {", "}
+                        {pickLang(x.person_name as string, x.person_name_ne, lang)}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
         {works.isPending && (
           <p role="status" className="type-small mt-4">
             {t("common.loading")}
           </p>
         )}
-        <ul className="mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className={`mt-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-3 ${byRoom ? "hidden" : ""}`}>
           {listed.map((w) => {
             const img = whole.get(w.id);
             return (
@@ -148,6 +203,11 @@ export function WallPage() {
           ))}
         </ol>
       </section>
+      <p className="type-body w-standard pb-8">
+        <Link to={localize("/wall/offer")} className="link-underline">
+          {t("wall.offer-link")}
+        </Link>
+      </p>
       <div className="w-standard pb-16">
         <BriefSignup />
       </div>

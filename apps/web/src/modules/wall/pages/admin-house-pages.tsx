@@ -156,6 +156,19 @@ const ENCOUNTER_SPECS: FieldSpec[] = [
   { key: "how_to_turn_up", label: "How to turn up", type: "textarea", rows: 3 },
   { key: "how_to_turn_up_ne", label: "How to turn up, in Nepali", type: "textarea", rows: 3 },
   {
+    key: "series",
+    label: "Series",
+    type: "text",
+    hint: "A short address for a named run, such as the-painting-afternoon. Its page is /afternoons/<series>.",
+  },
+  {
+    key: "price_note",
+    label: "What it costs",
+    type: "text",
+    hint: "A workshop sells a day, never formation.",
+  },
+  { key: "price_note_ne", label: "What it costs, in Nepali", type: "text" },
+  {
     key: "leads_ne",
     label: "Nepali first",
     type: "checkbox",
@@ -190,6 +203,9 @@ export function AdminEncountersPage() {
           place_ne: s(v["place_ne"]),
           how_to_turn_up: s(v["how_to_turn_up"]),
           how_to_turn_up_ne: s(v["how_to_turn_up_ne"]),
+          series: s(v["series"]),
+          price_note: s(v["price_note"]),
+          price_note_ne: s(v["price_note_ne"]),
           leads_ne: v["leads_ne"],
           published: v["published"],
         },
@@ -499,7 +515,8 @@ export function AdminCommonsPage() {
           {(tables.data ?? []).map((t) => (
             <li key={t.id} className="flex items-center justify-between gap-4">
               <span>
-                {t.held_on} · kept by {t.kept_by}
+                {t.held_on} · kept by{" "}
+                {t.kept_by ?? `${t.reported_by ?? ""} (reported from elsewhere)`}
                 {t.place ? ` · ${t.place}` : ""}
                 {t.confirmed_on ? " · confirmed" : ""}
               </span>
@@ -517,6 +534,26 @@ export function AdminCommonsPage() {
             </li>
           ))}
         </ul>
+        <RecordForm
+          specs={[
+            { key: "held_on", label: "Held on", type: "date", required: true },
+            { key: "place", label: "Where", type: "text" },
+            { key: "reported_by", label: "Reported by", type: "text", required: true },
+          ]}
+          initial={{ held_on: "", place: "", reported_by: "" }}
+          resetKey={`te-${report.submittedAt}`}
+          submitLabel="Report a Table kept elsewhere"
+          pending={report.isPending}
+          error={report.error}
+          onSubmit={(v) =>
+            report.mutate({
+              p_person: null,
+              p_held_on: s(v["held_on"]),
+              p_place: s(v["place"]),
+              p_reported_by: s(v["reported_by"]),
+            })
+          }
+        />
         {found && (
           <RecordForm
             specs={[

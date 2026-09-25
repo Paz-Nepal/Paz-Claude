@@ -3,6 +3,7 @@ import { StatePanel } from "@paz/ui";
 import { usePublishedItems } from "../api/use-site";
 import { DocumentHead } from "../components/document-head";
 import { useWording } from "../wording";
+import { useLocalizedPath } from "../language";
 
 /**
  * A quiet index, not a feed (spec §2/§3): no images, no summaries, no
@@ -13,6 +14,7 @@ import { useWording } from "../wording";
 export function PigeonPostIndexPage() {
   const items = usePublishedItems("pigeon_post");
   const w = useWording();
+  const localize = useLocalizedPath();
 
   return (
     <div className="max-w-reading mx-auto flex flex-col gap-8 px-6 py-16">
@@ -43,6 +45,11 @@ export function PigeonPostIndexPage() {
             ))}
           </ul>
         ))}
+      <p className="text-sm">
+        <Link to={localize("/pigeon-post/where")} className="underline">
+          {w("reach.index-link")}
+        </Link>
+      </p>
     </div>
   );
 }

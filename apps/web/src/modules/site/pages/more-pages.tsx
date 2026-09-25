@@ -27,6 +27,7 @@ import { DepositProvenance } from "../components/deposit-provenance";
 import { FormUnavailable, isUnavailable, useEraDate } from "../components/wall-parts";
 import { NotFoundPage } from "./not-found-page";
 import { ShellPage } from "./house-pages";
+import { EncounterPlaceVisits } from "./reach-pages";
 
 // ---------------------------------------------------------------------
 // The four terms documents (Build Programme 4). Each is a deposited
@@ -427,6 +428,11 @@ export function EncountersPage() {
             </li>
           ))}
         </ol>
+        <p className="type-small">
+          <Link to={localize("/encounters/places")} className="link-underline">
+            {w("places.index-link")}
+          </Link>
+        </p>
       </div>
     </div>
   );
@@ -436,6 +442,8 @@ export function EncounterPage() {
   const { slug } = useParams<{ slug: string }>();
   const enc = useEncounter(slug);
   const w = useWording();
+  const { lang } = useLanguage();
+  const localize = useLocalizedPath();
   if (enc.isPending) {
     return (
       <p role="status" className="type-small p-16 text-center">
@@ -450,6 +458,17 @@ export function EncounterPage() {
       <DocumentHead title={e.title ?? w("title.encounter")} path={`/encounters/${e.slug}`} />
       <div className="w-reading flex flex-col gap-3 pb-16 pt-32 md:pt-40">
         <EncounterBody e={e} />
+        {e.price_note && (
+          <p className="type-body">{pickLang(e.price_note, e.price_note_ne, lang)}</p>
+        )}
+        {e.series && (
+          <p className="type-small">
+            <Link to={localize(`/afternoons/${e.series}`)} className="link-underline">
+              {w("afternoons.series-link")}
+            </Link>
+          </p>
+        )}
+        <EncounterPlaceVisits slug={e.slug as string} />
       </div>
     </article>
   );

@@ -381,6 +381,8 @@ export interface VoiceIntakeInput {
   aboutName: string;
   place: string;
   note: string;
+  /** What is being offered to the Record: a voice, photographs, papers, the present. */
+  kind?: string;
 }
 
 export function useSubmitVoiceIntake() {

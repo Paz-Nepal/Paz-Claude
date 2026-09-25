@@ -273,6 +273,7 @@ function Footer({
       heading: "footer.col-house",
       links: [
         ["nav.house", "/house"],
+        ["footer.at-the-house", "/at-the-house"],
         ["nav.record", "/record"],
         ["footer.chronicle", "/chronicle"],
         ["footer.friends", "/friends"],
@@ -291,6 +292,8 @@ function Footer({
     ["footer.words", "/words"],
     ["footer.looking-for", "/looking-for"],
     ["footer.privacy", "/privacy"],
+    ["footer.leaving", "/leaving"],
+    ["footer.verify", "/verify"],
     ["footer.terms", "/terms"],
   ];
 

@@ -3,12 +3,19 @@ import { Link, useParams } from "react-router-dom";
 import { Button, Field, Input, RichText, StatePanel, Textarea, type RichTextNode } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { usePublishedItem, usePublishedItems } from "../api/use-site";
-import { useChronicle, useGlossary, useRecordEntry, useSubmitVoiceIntake } from "../api/use-wall";
+import {
+  useChronicle,
+  useGlossary,
+  useRecordEntry,
+  useSubmitVoiceIntake,
+  type GlossaryTerm,
+} from "../api/use-wall";
 import { pickLang, pickLangDoc, useLanguage, useLocalizedPath } from "../language";
 import { useEmptyState } from "../empty-states";
 import { useWording, type WordingKey } from "../wording";
 import { DocumentHead } from "../components/document-head";
 import { PageHero } from "../components/paz-editorial";
+import { OfferForm } from "../components/offer-form";
 import { FormUnavailable, isUnavailable, useEraDate } from "../components/wall-parts";
 import { PaperPage } from "./paper-page";
 import { BriefPage } from "./brief-page";
@@ -28,10 +35,13 @@ import { TermsDocPage, TermsLink } from "./more-pages";
 export function ShellPage({
   slug,
   title,
+  path,
   children,
 }: {
   slug: string;
   title: string;
+  /** The public address, where it is not simply /<slug>. */
+  path?: string;
   children?: React.ReactNode;
 }) {
   const item = usePublishedItem("page", slug);
@@ -44,7 +54,7 @@ export function ShellPage({
 
   return (
     <div>
-      <DocumentHead title={heading} path={`/${slug}`} />
+      <DocumentHead title={heading} path={path ?? `/${slug}`} />
       <PageHero title={heading} />
       <div className="w-reading py-12">
         {item.isPending && (
@@ -125,22 +135,63 @@ export function WordsPage() {
         )}
         {terms.data && terms.data.length === 0 && <p className="type-body">{w("empty.words")}</p>}
         <dl className="flex flex-col gap-6">
-          {(terms.data ?? []).map((t) => (
-            <div key={t.id} id={t.slug ?? undefined}>
-              <dt className="font-semibold">
-                {pickLang(t.term as string, t.term_ne, lang)}
-                {t.kind === "spelling" && (
-                  <span className="type-small font-normal"> · {w("words.spelling")}</span>
-                )}
-              </dt>
-              <dd className="type-body">
-                {pickLang(t.definition as string, t.definition_ne, lang)}
-              </dd>
-            </div>
-          ))}
+          {(terms.data ?? [])
+            .filter((t) => t.kind !== "sought")
+            .map((t) => (
+              <div key={t.id} id={t.slug ?? undefined}>
+                <dt className="font-semibold">
+                  {pickLang(t.term as string, t.term_ne, lang)}
+                  {t.kind === "spelling" && (
+                    <span className="type-small font-normal"> · {w("words.spelling")}</span>
+                  )}
+                </dt>
+                <dd className="type-body">
+                  {pickLang(t.definition as string, t.definition_ne, lang)}
+                </dd>
+              </div>
+            ))}
         </dl>
       </section>
+      <SoughtWords terms={terms.data ?? []} />
     </div>
+  );
+}
+
+/**
+ * Words the house has met and cannot yet explain, with a way to write in.
+ * No word is linked to a giver or to any deposit: the table has no such
+ * column, and an offer of a word is kept apart from the word itself.
+ */
+function SoughtWords({ terms }: { terms: GlossaryTerm[] }) {
+  const { lang } = useLanguage();
+  const w = useWording();
+  const sought = terms.filter((t) => t.kind === "sought");
+  return (
+    <section className="w-reading border-border border-t py-12" aria-labelledby="sought-words">
+      <h2 id="sought-words" className="type-h3">
+        {w("words.sought-heading")}
+      </h2>
+      <p className="type-body mb-6 mt-3">{w("words.sought-intro")}</p>
+      {sought.length === 0 ? (
+        <p className="type-body mb-6">{w("empty.sought")}</p>
+      ) : (
+        <ul className="type-body mb-8 flex flex-col gap-1">
+          {sought.map((t) => (
+            <li key={t.id} id={t.slug ?? undefined}>
+              {pickLang(t.term as string, t.term_ne, lang)}
+            </li>
+          ))}
+        </ul>
+      )}
+      <OfferForm
+        kind="word"
+        idPrefix="offer-word"
+        asks={[
+          { key: "subject", label: "words.offer-word", required: true },
+          { key: "note", label: "words.offer-note", type: "textarea" },
+        ]}
+      />
+    </section>
   );
 }
 
@@ -276,6 +327,7 @@ export function AVoicePage() {
   const item = usePublishedItem("page", "a-voice");
   const statement = usePublishedItem("page", "a-voice-statement");
   const { lang } = useLanguage();
+  const [offering, setOffering] = React.useState("voice");
   const [writerName, setWriterName] = React.useState("");
   const [contact, setContact] = React.useState("");
   const [aboutName, setAboutName] = React.useState("");
@@ -311,9 +363,24 @@ export function AVoicePage() {
             className="flex flex-col gap-4"
             onSubmit={(e) => {
               e.preventDefault();
-              if (canSubmit) submit.mutate({ writerName, contact, aboutName, place, note });
+              if (canSubmit)
+                submit.mutate({ writerName, contact, aboutName, place, note, kind: offering });
             }}
           >
+            <Field label={w("voice.offering")} htmlFor="voice-offering">
+              <select
+                id="voice-offering"
+                className="border-input bg-background text-foreground h-10 w-full rounded-lg border px-3 py-2 text-base"
+                value={offering}
+                onChange={(e) => setOffering(e.target.value)}
+              >
+                <option value="voice">{w("voice.offer-voice")}</option>
+                <option value="photographs">{w("voice.offer-photographs")}</option>
+                <option value="papers">{w("voice.offer-papers")}</option>
+                <option value="the_present">{w("voice.offer-present")}</option>
+                <option value="other">{w("voice.offer-other")}</option>
+              </select>
+            </Field>
             <Field label={w("voice.your-name")} htmlFor="voice-writer">
               <Input
                 id="voice-writer"
@@ -390,5 +457,17 @@ function TitledShell({ slug, title }: { slug: string; title: WordingKey }) {
 export const NamePage = () => <TitledShell slug="name" title="title.name" />;
 export const TablePage = () => <TitledShell slug="table" title="title.table" />;
 export const LookingForPage = () => <TitledShell slug="looking-for" title="title.looking-for" />;
-export const PrivacyPage = () => <TitledShell slug="privacy" title="title.privacy" />;
+export function PrivacyPage() {
+  const w = useWording();
+  const localize = useLocalizedPath();
+  return (
+    <ShellPage slug="privacy" title={w("title.privacy")}>
+      <p className="type-body w-reading pb-12">
+        <Link to={localize("/leaving")} className="link-underline">
+          {w("privacy.leaving")}
+        </Link>
+      </p>
+    </ShellPage>
+  );
+}
 export const CustodianPage = () => <TitledShell slug="custodian" title="title.custodian" />;

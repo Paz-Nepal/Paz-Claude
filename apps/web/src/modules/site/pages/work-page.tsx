@@ -4,6 +4,7 @@ import { Button, Field, Input, RichText, StatePanel, Textarea, type RichTextNode
 import { toAppError } from "@paz/types";
 import { formatDimensions, formatMoney } from "@paz/utils";
 import { usePublishedItem } from "../api/use-site";
+import { useHouseRooms } from "../api/use-place";
 import {
   useSattalPieces,
   useShowWorkLinks,
@@ -73,6 +74,7 @@ export function WorkPage() {
   const links = useShowWorkLinks();
   const pieces = useSattalPieces();
   const struckRow = usePublishedItem("page", w?.hallmarked ? "struck-row" : undefined);
+  const rooms = useHouseRooms();
   const { lang } = useLanguage();
   const localize = useLocalizedPath();
   const eraDate = useEraDate();
@@ -95,6 +97,7 @@ export function WorkPage() {
 
   const title = pickLang(w.title as string, w.title_ne, lang);
   const frames = (images.data ?? []).filter((i) => i.work_id === w.id);
+  const hangingIn = w.room_id ? (rooms.data ?? []).find((r) => r.id === w.room_id) : undefined;
   const dimensions = formatDimensions(w.height_mm, w.width_mm, w.depth_mm);
   const showIds = new Set(
     (links.data ?? []).filter((l) => l.work_id === w.id).map((l) => l.show_id),
@@ -138,6 +141,15 @@ export function WorkPage() {
             {w.medium && <div>{pickLang(w.medium, w.medium_ne, lang)}</div>}
             {dimensions && <div>{dimensions}</div>}
             <div className="type-small">{t("work.number", { number: w.work_number })}</div>
+            {hangingIn && hangingIn.slug && (
+              <div className="type-small">
+                <Link to={localize(`/house/rooms/${hangingIn.slug}`)} className="link-underline">
+                  {t("place.in-room", {
+                    room: pickLang(hangingIn.name as string, hangingIn.name_ne, lang),
+                  })}
+                </Link>
+              </div>
+            )}
           </dl>
 
           <div className="type-body flex flex-col gap-1">

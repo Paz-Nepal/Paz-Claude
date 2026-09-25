@@ -68,6 +68,8 @@ supabase functions deploy register-for-session
 supabase functions deploy ingest-media
 supabase functions deploy submit-contact-message
 supabase functions deploy submit-voice-intake
+supabase functions deploy submit-offer
+supabase functions deploy strip-listening-names
 supabase functions deploy send-a-pigeon
 supabase functions deploy send-renewal-notices
 supabase functions deploy invite-membership-applicant

@@ -252,6 +252,9 @@ export function CertificatePage() {
       </p>
       <p>{[w.medium, dims].filter(Boolean).join(". ")}</p>
       <p>Work no. {w.work_number}</p>
+      <p className="type-small">
+        Check this certificate at {window.location.origin}/verify/work/{w.work_number}
+      </p>
       {w.hallmarked && (
         <p>
           This work carries the struck row: the house&rsquo;s punch beside the maker&rsquo;s own

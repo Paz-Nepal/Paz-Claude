@@ -336,8 +336,8 @@
   },
   "title.a-voice": {
     "area": "Page titles",
-    "label": "A voice page title",
-    "en": "A voice"
+    "label": "The page for offering something to the Record",
+    "en": "Offer something to the Record"
   },
   "title.name": {
     "area": "Page titles",
@@ -2179,5 +2179,1000 @@
     "area": "Plain copies (no JavaScript)",
     "label": "After a tier's amount",
     "en": "a year"
+  },
+  "afternoons.series-link": {
+    "area": "Encounters",
+    "label": "Link to every afternoon in the same series",
+    "en": "Every afternoon in this series"
+  },
+  "afternoons.to": {
+    "area": "Encounters",
+    "label": "Between two dates of an afternoon",
+    "en": "to"
+  },
+  "catalogue.consent": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: consent as it stands",
+    "en": "Consent as it stands"
+  },
+  "catalogue.copies": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: where the copies are",
+    "en": "The three copies"
+  },
+  "catalogue.copies-line": {
+    "area": "The catalogue",
+    "label": "The state of the three copies",
+    "en": "First {first}, second {second}, third {third}."
+  },
+  "catalogue.copy-held": {
+    "area": "The catalogue",
+    "label": "A copy that is held",
+    "en": "held"
+  },
+  "catalogue.copy-lost": {
+    "area": "The catalogue",
+    "label": "A copy that is lost",
+    "en": "lost"
+  },
+  "catalogue.copy-not-yet": {
+    "area": "The catalogue",
+    "label": "A copy not yet made",
+    "en": "not yet made"
+  },
+  "catalogue.description": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: how much is said about the content",
+    "en": "What is said about it"
+  },
+  "catalogue.fingerprint": {
+    "area": "The catalogue",
+    "label": "The fingerprint of a part opened online",
+    "en": "Fingerprint (SHA-256): {hash}"
+  },
+  "catalogue.gap": {
+    "area": "The catalogue",
+    "label": "A withdrawn giver's numbered gap",
+    "en": "Withdrawn. Nothing else about it is kept in the open record."
+  },
+  "catalogue.heard": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: how often it has been heard",
+    "en": "Listening"
+  },
+  "catalogue.heard-count": {
+    "area": "The catalogue",
+    "label": "How many times an entry has been heard",
+    "en": "Heard {count} times."
+  },
+  "catalogue.kind-other": {
+    "area": "The catalogue",
+    "label": "Kind of entry: something else",
+    "en": "Something else"
+  },
+  "catalogue.kind-papers": {
+    "area": "The catalogue",
+    "label": "Kind of entry: papers",
+    "en": "Papers"
+  },
+  "catalogue.kind-photographs": {
+    "area": "The catalogue",
+    "label": "Kind of entry: photographs",
+    "en": "Photographs"
+  },
+  "catalogue.kind-the-present": {
+    "area": "The catalogue",
+    "label": "Kind of entry: the present",
+    "en": "Documentation of the present"
+  },
+  "catalogue.kind-voice": {
+    "area": "The catalogue",
+    "label": "Kind of entry: a voice",
+    "en": "A voice"
+  },
+  "catalogue.level-account": {
+    "area": "The catalogue",
+    "label": "Description level: a short account",
+    "en": "A short account"
+  },
+  "catalogue.level-none": {
+    "area": "The catalogue",
+    "label": "Description level: none",
+    "en": "Nothing is said about the content"
+  },
+  "catalogue.level-subjects": {
+    "area": "The catalogue",
+    "label": "Description level: subjects only",
+    "en": "The subjects only"
+  },
+  "catalogue.listening": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: who may listen",
+    "en": "Who may listen"
+  },
+  "catalogue.no-date": {
+    "area": "The catalogue",
+    "label": "An entry with no opening date",
+    "en": "No opening date is set. It stays as it was given."
+  },
+  "catalogue.open-file": {
+    "area": "The catalogue",
+    "label": "Link to a part opened online",
+    "en": "Open the file"
+  },
+  "catalogue.open-from-start": {
+    "area": "The catalogue",
+    "label": "An entry that is online from the start",
+    "en": "Open online from the start."
+  },
+  "catalogue.opened-on": {
+    "area": "The catalogue",
+    "label": "The date an entry opened",
+    "en": "Opened on {date}."
+  },
+  "catalogue.opens": {
+    "area": "The catalogue",
+    "label": "Catalogue entry: what would open it",
+    "en": "What opens it"
+  },
+  "catalogue.opens-on": {
+    "area": "The catalogue",
+    "label": "The date an entry opens",
+    "en": "Opens on {date}."
+  },
+  "catalogue.tier-anyone-in-house": {
+    "area": "The catalogue",
+    "label": "Listening tier: anyone who comes and asks",
+    "en": "Anyone who comes and asks, in the house"
+  },
+  "catalogue.tier-family-only": {
+    "area": "The catalogue",
+    "label": "Listening tier: the family only",
+    "en": "The family only"
+  },
+  "catalogue.tier-in-house-works": {
+    "area": "The catalogue",
+    "label": "Listening tier: in the house's own works",
+    "en": "In the house's own works"
+  },
+  "catalogue.tier-no-one": {
+    "area": "The catalogue",
+    "label": "Listening tier: no one",
+    "en": "No one, until the date it opens"
+  },
+  "catalogue.tier-online": {
+    "area": "The catalogue",
+    "label": "Listening tier: online",
+    "en": "Online"
+  },
+  "catalogue.tier-people-of-house": {
+    "area": "The catalogue",
+    "label": "Listening tier: the people of the house",
+    "en": "The people of the house"
+  },
+  "empty.books": {
+    "area": "Empty sections",
+    "label": "The reading room, before any book is shelved",
+    "en": "No book has been shelved yet."
+  },
+  "empty.catalogue": {
+    "area": "Empty sections",
+    "label": "The catalogue, before anything is opened to the public record",
+    "en": "Nothing is listed in the catalogue yet."
+  },
+  "empty.house-papers": {
+    "area": "Empty sections",
+    "label": "The house's papers, before any is listed",
+    "en": "No paper is listed yet."
+  },
+  "empty.objects": {
+    "area": "Empty sections",
+    "label": "What the house sells, before anything is offered",
+    "en": "Nothing is offered as an object yet."
+  },
+  "empty.pigeon-where": {
+    "area": "Empty sections",
+    "label": "Where the pigeons went, before any count is entered",
+    "en": "No count has been entered yet."
+  },
+  "empty.place-visits": {
+    "area": "Empty sections",
+    "label": "A place's page, before a visit is recorded",
+    "en": "No visit has been recorded here yet."
+  },
+  "empty.places": {
+    "area": "Empty sections",
+    "label": "Places tended, before any is described",
+    "en": "No place has been described yet."
+  },
+  "empty.rooms": {
+    "area": "Empty sections",
+    "label": "The rooms page, before any room is published",
+    "en": "No room has been described yet."
+  },
+  "empty.sought": {
+    "area": "Empty sections",
+    "label": "Words the house is looking for, when there are none",
+    "en": "The house is not looking for any word just now."
+  },
+  "empty.studio": {
+    "area": "Empty sections",
+    "label": "The studio, when no one is making there this month",
+    "en": "No one is making in the studio this month."
+  },
+  "empty.things": {
+    "area": "Empty sections",
+    "label": "The things page, before any thing is listed",
+    "en": "No thing has been listed yet."
+  },
+  "empty.wanted": {
+    "area": "Empty sections",
+    "label": "What the house would welcome, when nothing is asked for",
+    "en": "The house is not asking for anything just now."
+  },
+  "empty.year": {
+    "area": "Empty sections",
+    "label": "The house's year, when no day is entered for the coming months",
+    "en": "No day is entered for the coming months yet."
+  },
+  "footer.at-the-house": {
+    "area": "Menus and footer",
+    "label": "Footer link to what you may do at the house",
+    "en": "At the house"
+  },
+  "footer.leaving": {
+    "area": "Menus and footer",
+    "label": "Footer link to how to leave",
+    "en": "Leaving"
+  },
+  "footer.verify": {
+    "area": "Menus and footer",
+    "label": "Footer link to checking a certificate or hallmark",
+    "en": "Check a certificate"
+  },
+  "home.on-this-day": {
+    "area": "Home page",
+    "label": "Heading for what the house did on this day in an earlier year",
+    "en": "On this day"
+  },
+  "home.show-now": {
+    "area": "Home page",
+    "label": "Label before the show on the walls now",
+    "en": "On the walls now"
+  },
+  "home.studio-now": {
+    "area": "Home page",
+    "label": "Label before who is making in the studio",
+    "en": "In the studio"
+  },
+  "home.today-label": {
+    "area": "Home page",
+    "label": "Accessible label for the lines that change by the day",
+    "en": "Today at the house"
+  },
+  "house.at-the-house": {
+    "area": "The organs",
+    "label": "House page link to what you may do there",
+    "en": "At the house"
+  },
+  "house.finding-the-house": {
+    "area": "The organs",
+    "label": "House page link to finding the house",
+    "en": "Finding the house"
+  },
+  "house.neighbours": {
+    "area": "The organs",
+    "label": "House page link to the neighbours' page",
+    "en": "For the neighbours"
+  },
+  "house.reading-room": {
+    "area": "The organs",
+    "label": "House page link to the reading room",
+    "en": "The reading room"
+  },
+  "house.rooms": {
+    "area": "The organs",
+    "label": "House page link to the rooms",
+    "en": "The rooms"
+  },
+  "house.the-year": {
+    "area": "The organs",
+    "label": "House page link to the house's year",
+    "en": "The house's year"
+  },
+  "house.things": {
+    "area": "The organs",
+    "label": "House page link to the things in the house",
+    "en": "The house's things"
+  },
+  "leaving.brief": {
+    "area": "The Brief",
+    "label": "On the leaving page, link to unsubscribe from the Brief",
+    "en": "Unsubscribe from the Brief"
+  },
+  "leaving.form-heading": {
+    "area": "The Brief",
+    "label": "On the leaving page, heading for the request form",
+    "en": "To stop being a Friend, have your details removed, or withdraw something you offered"
+  },
+  "leaving.form-note": {
+    "area": "The Brief",
+    "label": "On the leaving page, words above the request form",
+    "en": "Write here and it reaches the person who does this. Nothing is kept longer than it needs to be."
+  },
+  "leaving.note": {
+    "area": "The Brief",
+    "label": "Leaving form: a note",
+    "en": "Anything the house should know"
+  },
+  "leaving.what": {
+    "area": "The Brief",
+    "label": "Leaving form: what you are asking",
+    "en": "What are you asking?"
+  },
+  "leaving.what-details": {
+    "area": "The Brief",
+    "label": "Leaving form: remove details",
+    "en": "To have my details removed"
+  },
+  "leaving.what-friend": {
+    "area": "The Brief",
+    "label": "Leaving form: stop being a Friend",
+    "en": "To stop being a Friend of PAZ"
+  },
+  "leaving.what-offer": {
+    "area": "The Brief",
+    "label": "Leaving form: withdraw an offer",
+    "en": "To withdraw something I offered"
+  },
+  "leaving.what-other": {
+    "area": "The Brief",
+    "label": "Leaving form: something else",
+    "en": "Something else"
+  },
+  "objects.email": {
+    "area": "Press series pages",
+    "label": "Enquiry form: your email",
+    "en": "Your email"
+  },
+  "objects.enquire": {
+    "area": "Press series pages",
+    "label": "Button to enquire about an object",
+    "en": "Ask about this"
+  },
+  "objects.enquiry-prefix": {
+    "area": "Press series pages",
+    "label": "First line of an object enquiry, sent to the desk",
+    "en": "An enquiry about: {title}"
+  },
+  "objects.intro": {
+    "area": "Press series pages",
+    "label": "What the house sells: what this is",
+    "en": "What the house makes as objects. There is no basket. A sale is a conversation."
+  },
+  "objects.message": {
+    "area": "Press series pages",
+    "label": "Enquiry form: your message",
+    "en": "Your message"
+  },
+  "offer.book-author": {
+    "area": "Offers and forms",
+    "label": "Offering a book: author",
+    "en": "Author"
+  },
+  "offer.book-note": {
+    "area": "Offers and forms",
+    "label": "Offering a book: a note",
+    "en": "Anything the house should know"
+  },
+  "offer.book-title": {
+    "area": "Offers and forms",
+    "label": "Offering a book: title",
+    "en": "Title"
+  },
+  "offer.choose": {
+    "area": "Offers and forms",
+    "label": "First option of a drop-down on an offer form",
+    "en": "Choose"
+  },
+  "offer.painter-intro": {
+    "area": "Offers and forms",
+    "label": "Words above the form for showing the house your work",
+    "en": "Tell the house where your work can be seen. Nothing is uploaded here, and nothing is promised until the house has looked."
+  },
+  "offer.painter-kind": {
+    "area": "Offers and forms",
+    "label": "Showing your work: what kind",
+    "en": "What kind of work"
+  },
+  "offer.painter-link": {
+    "area": "Offers and forms",
+    "label": "Showing your work: a link",
+    "en": "A link where the work can be seen"
+  },
+  "offer.painter-note": {
+    "area": "Offers and forms",
+    "label": "Showing your work: a note",
+    "en": "Anything else you would like the house to know"
+  },
+  "offer.reach-you": {
+    "area": "Offers and forms",
+    "label": "Label on every offer form: how to reach you",
+    "en": "How to reach you"
+  },
+  "offer.table-date": {
+    "area": "Offers and forms",
+    "label": "Reporting a Table: the date",
+    "en": "The date it was kept"
+  },
+  "offer.table-heading": {
+    "area": "Offers and forms",
+    "label": "Heading above the form reporting a Table kept elsewhere",
+    "en": "Tell the house about a Table"
+  },
+  "offer.table-line": {
+    "area": "Offers and forms",
+    "label": "Reporting a Table: one line",
+    "en": "One line about it"
+  },
+  "offer.table-note": {
+    "area": "Offers and forms",
+    "label": "Words above the form reporting a Table",
+    "en": "A Table can be kept anywhere the spirit is kept. Send the date and the place, and one line. The Chronicle names no one."
+  },
+  "offer.table-place": {
+    "area": "Offers and forms",
+    "label": "Reporting a Table: the place",
+    "en": "The place"
+  },
+  "offer.thing-story": {
+    "area": "Offers and forms",
+    "label": "Offering a thing: where it came from",
+    "en": "Where it came from, and anything the house should know"
+  },
+  "offer.thing-what": {
+    "area": "Offers and forms",
+    "label": "Offering a thing: what is it",
+    "en": "What is it?"
+  },
+  "offer.your-name": {
+    "area": "Offers and forms",
+    "label": "Label on every offer form: your name",
+    "en": "Your name"
+  },
+  "papers.audio-fallback": {
+    "area": "Press series pages",
+    "label": "Shown where a browser cannot play audio",
+    "en": "Your browser cannot play this recording."
+  },
+  "papers.read-by": {
+    "area": "Press series pages",
+    "label": "Above a Paper's audio reading",
+    "en": "Read by {name}"
+  },
+  "place.back-to-rooms": {
+    "area": "The house as a place",
+    "label": "Link back to the list of rooms",
+    "en": "All the rooms"
+  },
+  "place.books-welcome": {
+    "area": "The house as a place",
+    "label": "Heading for the books the house would welcome",
+    "en": "Books the house would welcome"
+  },
+  "place.came-from": {
+    "area": "The house as a place",
+    "label": "Where a thing came from",
+    "en": "Came from {place}."
+  },
+  "place.for-use": {
+    "area": "The house as a place",
+    "label": "Marks a thing that visitors may use",
+    "en": "For use"
+  },
+  "place.for-use-list": {
+    "area": "The house as a place",
+    "label": "Heading for the things you may use",
+    "en": "What you may use"
+  },
+  "place.given-by": {
+    "area": "The house as a place",
+    "label": "Who gave a thing, shown only when they said yes",
+    "en": "Given by {name}."
+  },
+  "place.in-room": {
+    "area": "The house as a place",
+    "label": "On a work's page, the room it hangs in",
+    "en": "Hanging in {room}"
+  },
+  "place.offer-book": {
+    "area": "The house as a place",
+    "label": "Heading for offering a book",
+    "en": "Offer a book"
+  },
+  "place.offer-thing": {
+    "area": "The house as a place",
+    "label": "Heading for offering something to the house",
+    "en": "Offer something to the house"
+  },
+  "place.offer-thing-note": {
+    "area": "The house as a place",
+    "label": "Words above the form for offering a thing",
+    "en": "Tell the house what you would like to give and where it came from. Nothing is promised until the house has answered."
+  },
+  "place.reading-room-note": {
+    "area": "The house as a place",
+    "label": "Under the reading room's title",
+    "en": "A room to read in. Books are not lent."
+  },
+  "place.reckon-bikram-sambat": {
+    "area": "The house as a place",
+    "label": "A day reckoned by Bikram Sambat",
+    "en": "Reckoned by Bikram Sambat"
+  },
+  "place.reckon-gregorian": {
+    "area": "The house as a place",
+    "label": "A day reckoned by the Gregorian calendar",
+    "en": "Reckoned by the Gregorian calendar"
+  },
+  "place.reckon-nepal-sambat": {
+    "area": "The house as a place",
+    "label": "A day reckoned by Nepal Sambat",
+    "en": "Reckoned by Nepal Sambat"
+  },
+  "place.status-as-of": {
+    "area": "The house as a place",
+    "label": "The time the house's status line was set",
+    "en": "As of {time}"
+  },
+  "place.studio-now": {
+    "area": "The house as a place",
+    "label": "The studio room, heading for who is making there",
+    "en": "Making in the studio now"
+  },
+  "place.studio-past": {
+    "area": "The house as a place",
+    "label": "The studio, heading for earlier months",
+    "en": "Earlier months"
+  },
+  "place.studio-until": {
+    "area": "The house as a place",
+    "label": "The studio, when the present month ends",
+    "en": "until {date}"
+  },
+  "place.things-here": {
+    "area": "The house as a place",
+    "label": "A room's page, heading for the things in it",
+    "en": "Things in this room"
+  },
+  "place.welcome": {
+    "area": "The house as a place",
+    "label": "Heading for what the house would welcome",
+    "en": "What the house would welcome"
+  },
+  "place.works-here": {
+    "area": "The house as a place",
+    "label": "A room's page, heading for the work that hangs there",
+    "en": "Work hanging here"
+  },
+  "places.after": {
+    "area": "Encounters",
+    "label": "Label on an after photograph",
+    "en": "After"
+  },
+  "places.all": {
+    "area": "Encounters",
+    "label": "Link back to all places",
+    "en": "All the places"
+  },
+  "places.before": {
+    "area": "Encounters",
+    "label": "Label on a before photograph",
+    "en": "Before"
+  },
+  "places.came": {
+    "area": "Encounters",
+    "label": "How many people came to a visit",
+    "en": "{count} came"
+  },
+  "places.index-link": {
+    "area": "Encounters",
+    "label": "Link from the Encounters page to places tended",
+    "en": "Places the house has tended"
+  },
+  "places.tended-here": {
+    "area": "Encounters",
+    "label": "Under an Encounter, heading for what was done at its place",
+    "en": "What was done here"
+  },
+  "places.the-place": {
+    "area": "Encounters",
+    "label": "Link to the place's own page",
+    "en": "The place"
+  },
+  "privacy.leaving": {
+    "area": "Contact",
+    "label": "Link from the privacy page to how to leave",
+    "en": "How to leave, and how to have your details removed"
+  },
+  "reach.all-editions": {
+    "area": "Press series pages",
+    "label": "Link to every edition's reach",
+    "en": "All editions"
+  },
+  "reach.edition-heading": {
+    "area": "Press series pages",
+    "label": "Under an edition, heading for where its copies went",
+    "en": "Where its copies went"
+  },
+  "reach.index-link": {
+    "area": "Press series pages",
+    "label": "Link from the Pigeon Post index to where the pigeons went",
+    "en": "Where the pigeons went"
+  },
+  "reach.intro": {
+    "area": "Press series pages",
+    "label": "Where the pigeons went: what this is",
+    "en": "How many copies of the Pigeon Post reached each country."
+  },
+  "reach.line": {
+    "area": "Press series pages",
+    "label": "One country and its copies",
+    "en": "{country}: {copies} copies"
+  },
+  "reach.never": {
+    "area": "Press series pages",
+    "label": "Where the pigeons went: what is never kept",
+    "en": "The house keeps counts only. It does not keep who received a copy."
+  },
+  "record.catalogue": {
+    "area": "The Record and the Commons",
+    "label": "Record page link to the catalogue",
+    "en": "The catalogue: what was given in"
+  },
+  "record.house-papers": {
+    "area": "The Record and the Commons",
+    "label": "Record page link to the house's papers",
+    "en": "The house's own papers"
+  },
+  "record.offer": {
+    "area": "The Record and the Commons",
+    "label": "Record page link to offering something",
+    "en": "Offer something to the Record"
+  },
+  "sattal.propose-form": {
+    "area": "The Sattal",
+    "label": "Proposal form: which form",
+    "en": "Which form"
+  },
+  "sattal.propose-heading": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: heading for proposing a piece",
+    "en": "Propose a piece"
+  },
+  "sattal.propose-note": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: words above the proposal form",
+    "en": "Say what you would write and how you stand to the subject. Nothing is promised until the Sattal has read it."
+  },
+  "sattal.propose-paragraph": {
+    "area": "The Sattal",
+    "label": "Proposal form: a paragraph",
+    "en": "A paragraph about the piece"
+  },
+  "sattal.propose-relation": {
+    "area": "The Sattal",
+    "label": "Proposal form: your relation to the subject",
+    "en": "Your relation to the subject"
+  },
+  "sattal.propose-subject": {
+    "area": "The Sattal",
+    "label": "Proposal form: the subject",
+    "en": "The subject"
+  },
+  "sattal.rate-heading": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: heading for the rate",
+    "en": "What the Sattal pays"
+  },
+  "sattal.rate-line": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: the rate once set",
+    "en": "The Sattal pays {rate} for a piece."
+  },
+  "sattal.rate-not-set": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: before the rate is set",
+    "en": "The rate is not yet set."
+  },
+  "sattal.reader-heading": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: heading for the outside reader",
+    "en": "The outside reader"
+  },
+  "sattal.reader-named": {
+    "area": "The Sattal",
+    "label": "Writing for the Sattal: who the outside reader is",
+    "en": "The outside reader is {names}."
+  },
+  "sattal.writers-terms": {
+    "area": "The Sattal",
+    "label": "Link to the Sattal's terms",
+    "en": "The Sattal's terms"
+  },
+  "title.at-the-house": {
+    "area": "Page titles",
+    "label": "What you may do at the house",
+    "en": "At the house"
+  },
+  "title.catalogue": {
+    "area": "Page titles",
+    "label": "The Record's catalogue",
+    "en": "The catalogue"
+  },
+  "title.finding-the-house": {
+    "area": "Page titles",
+    "label": "How to find the house",
+    "en": "Finding the house"
+  },
+  "title.house-papers": {
+    "area": "Page titles",
+    "label": "The house's own papers",
+    "en": "The house's papers"
+  },
+  "title.leaving": {
+    "area": "Page titles",
+    "label": "How to leave",
+    "en": "How to leave"
+  },
+  "title.neighbours": {
+    "area": "Page titles",
+    "label": "The page for the neighbours",
+    "en": "For the neighbours"
+  },
+  "title.objects": {
+    "area": "Page titles",
+    "label": "What can be bought",
+    "en": "What the house sells"
+  },
+  "title.pigeon-where": {
+    "area": "Page titles",
+    "label": "Where the pigeons went",
+    "en": "Where the pigeons went"
+  },
+  "title.places": {
+    "area": "Page titles",
+    "label": "Places the house has tended",
+    "en": "Places tended"
+  },
+  "title.reading-room": {
+    "area": "Page titles",
+    "label": "The reading room",
+    "en": "The reading room"
+  },
+  "title.rooms": {
+    "area": "Page titles",
+    "label": "The rooms page",
+    "en": "The rooms"
+  },
+  "title.sattal-writing": {
+    "area": "Page titles",
+    "label": "Writing for the Sattal",
+    "en": "Writing for the Sattal"
+  },
+  "title.table-elsewhere": {
+    "area": "Page titles",
+    "label": "A Table kept elsewhere",
+    "en": "A Table kept elsewhere"
+  },
+  "title.the-year": {
+    "area": "Page titles",
+    "label": "The house's year",
+    "en": "The house's year"
+  },
+  "title.things": {
+    "area": "Page titles",
+    "label": "The house's things page",
+    "en": "The house's things"
+  },
+  "title.verify": {
+    "area": "Page titles",
+    "label": "Checking a certificate",
+    "en": "Check a certificate"
+  },
+  "title.wall-offer": {
+    "area": "Page titles",
+    "label": "Showing the house your work",
+    "en": "Show the house your work"
+  },
+  "verify.check": {
+    "area": "Checking",
+    "label": "Button that checks a number or a mark",
+    "en": "Check"
+  },
+  "verify.hallmark": {
+    "area": "Checking",
+    "label": "Result: the hallmark",
+    "en": "Hallmark"
+  },
+  "verify.hallmark-check": {
+    "area": "Checking",
+    "label": "The Guild page: heading for checking a hallmark",
+    "en": "Check a hallmark"
+  },
+  "verify.hallmark-field": {
+    "area": "Checking",
+    "label": "The hallmark field",
+    "en": "A mark, a year letter or a name"
+  },
+  "verify.hallmark-intro": {
+    "area": "Checking",
+    "label": "The Guild page: what checking a hallmark does",
+    "en": "Enter a maker's mark, a year letter or a name. The register says whether the punch is in use or has been destroyed."
+  },
+  "verify.hallmark-none": {
+    "area": "Checking",
+    "label": "When the register has no such mark",
+    "en": "The register has nothing under that."
+  },
+  "verify.hallmarked": {
+    "area": "Checking",
+    "label": "Result: hallmarked, no further description",
+    "en": "Hallmarked"
+  },
+  "verify.intro": {
+    "area": "Checking",
+    "label": "Under the title of the certificate check",
+    "en": "Enter the number printed on a certificate to see what the house says about that work."
+  },
+  "verify.life": {
+    "area": "Checking",
+    "label": "Result: heading for the work's life",
+    "en": "The work's life"
+  },
+  "verify.maker": {
+    "area": "Checking",
+    "label": "Result: the maker",
+    "en": "Maker"
+  },
+  "verify.medium": {
+    "area": "Checking",
+    "label": "Result: the medium",
+    "en": "Medium"
+  },
+  "verify.never": {
+    "area": "Checking",
+    "label": "What a check never shows",
+    "en": "This shows only what the house already says on the work's own page. It never shows who bought a work or what was paid."
+  },
+  "verify.not-found": {
+    "area": "Checking",
+    "label": "When no published work has that number",
+    "en": "The house has no published work with that number."
+  },
+  "verify.not-hallmarked": {
+    "area": "Checking",
+    "label": "Result: not hallmarked",
+    "en": "Not hallmarked"
+  },
+  "verify.punch-destroyed": {
+    "area": "Checking",
+    "label": "A punch that has been destroyed",
+    "en": "The punch was destroyed on {date}."
+  },
+  "verify.punch-in-use": {
+    "area": "Checking",
+    "label": "A punch that is in use",
+    "en": "The punch is in use."
+  },
+  "verify.result-title": {
+    "area": "Checking",
+    "label": "Title of a check result",
+    "en": "Work no. {number}"
+  },
+  "verify.size": {
+    "area": "Checking",
+    "label": "Result: the size",
+    "en": "Size"
+  },
+  "verify.title": {
+    "area": "Checking",
+    "label": "Result: the title",
+    "en": "Title"
+  },
+  "verify.work-number": {
+    "area": "Checking",
+    "label": "The work number field",
+    "en": "Work number"
+  },
+  "verify.work-number-hint": {
+    "area": "Checking",
+    "label": "Hint under the work number field",
+    "en": "The number after Work no. on the certificate."
+  },
+  "verify.year": {
+    "area": "Checking",
+    "label": "Result: the year",
+    "en": "Year"
+  },
+  "verify.year-letter": {
+    "area": "Checking",
+    "label": "Result: the year letter of a mark",
+    "en": "Year letter {letter}"
+  },
+  "voice.offer-other": {
+    "area": "A voice",
+    "label": "Offering to the Record: something else",
+    "en": "Something else"
+  },
+  "voice.offer-papers": {
+    "area": "A voice",
+    "label": "Offering to the Record: papers",
+    "en": "Family papers"
+  },
+  "voice.offer-photographs": {
+    "area": "A voice",
+    "label": "Offering to the Record: photographs",
+    "en": "Photographs"
+  },
+  "voice.offer-present": {
+    "area": "A voice",
+    "label": "Offering to the Record: the present",
+    "en": "Documentation of the present"
+  },
+  "voice.offer-voice": {
+    "area": "A voice",
+    "label": "Offering to the Record: a voice",
+    "en": "A voice"
+  },
+  "voice.offering": {
+    "area": "A voice",
+    "label": "First question on the Record's offer form",
+    "en": "What are you offering?"
+  },
+  "wall.all-work": {
+    "area": "The Wall",
+    "label": "Switch back to all the work",
+    "en": "See all the work"
+  },
+  "wall.by-room": {
+    "area": "The Wall",
+    "label": "Switch to seeing work by room",
+    "en": "See the work by room"
+  },
+  "wall.early-price": {
+    "area": "The Wall",
+    "label": "The one house price for an early painter's work",
+    "en": "The house price for an early painter's work is {price}."
+  },
+  "wall.no-room": {
+    "area": "The Wall",
+    "label": "Heading for work not hanging in any room",
+    "en": "Not hanging now"
+  },
+  "wall.offer-link": {
+    "area": "The Wall",
+    "label": "Link to showing the house your work",
+    "en": "Show the house your work"
+  },
+  "words.offer-note": {
+    "area": "A voice",
+    "label": "Offering a word: what you know",
+    "en": "What you know about it"
+  },
+  "words.offer-word": {
+    "area": "A voice",
+    "label": "Offering a word: the word",
+    "en": "The word"
+  },
+  "words.sought-heading": {
+    "area": "A voice",
+    "label": "The Words page: heading for words the house is looking for",
+    "en": "Words the house is looking for"
+  },
+  "words.sought-intro": {
+    "area": "A voice",
+    "label": "The Words page: what the list is",
+    "en": "Words the house has met and cannot yet explain. If you know one, write in."
   }
 }

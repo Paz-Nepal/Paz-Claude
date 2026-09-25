@@ -9,6 +9,7 @@ import { ResolveNotFoundPage } from "./resolve-not-found-page";
 import { SpeakerNote } from "../components/wall-parts";
 import { DocumentHead } from "../components/document-head";
 import { useLocalizedPath } from "../language";
+import { PigeonReach } from "./reach-pages";
 
 /** No author_name field is read or rendered anywhere in this page -- there
  * is none to read (spec §2/§5: Pigeon Post is anonymous on the page). */
@@ -65,6 +66,7 @@ export function PigeonPostPage({ slug: slugProp }: { slug?: string } = {}) {
           {w("pigeon.view")}
         </a>
       )}
+      <PigeonReach slug={item.slug} />
       <DepositProvenance
         series={w("pigeon.series")}
         title={item.title ?? ""}

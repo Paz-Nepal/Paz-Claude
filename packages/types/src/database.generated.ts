@@ -865,6 +865,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      admin_objects: {
+        Row: {
+          created_at: string | null;
+          currency: string | null;
+          description: string | null;
+          description_ne: string | null;
+          id: string | null;
+          kind: string | null;
+          price_minor: number | null;
+          published: boolean | null;
+          slug: string | null;
+          sort: number | null;
+          title: string | null;
+          title_ne: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          created_at?: string | null;
+          currency?: string | null;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          price_minor?: number | null;
+          published?: boolean | null;
+          slug?: string | null;
+          sort?: number | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          created_at?: string | null;
+          currency?: string | null;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          price_minor?: number | null;
+          published?: boolean | null;
+          slug?: string | null;
+          sort?: number | null;
+          title?: string | null;
+          title_ne?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       admin_pigeon_distribution: {
         Row: {
           copies: number | null;
@@ -2726,6 +2774,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      objects: {
+        Row: {
+          currency: string | null;
+          description: string | null;
+          description_ne: string | null;
+          id: string | null;
+          kind: string | null;
+          price_minor: number | null;
+          slug: string | null;
+          title: string | null;
+          title_ne: string | null;
+        };
+        Insert: {
+          currency?: string | null;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          price_minor?: number | null;
+          slug?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Update: {
+          currency?: string | null;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string | null;
+          kind?: string | null;
+          price_minor?: number | null;
+          slug?: string | null;
+          title?: string | null;
+          title_ne?: string | null;
+        };
+        Relationships: [];
+      };
       offers: {
         Row: {
           contact: string | null;
@@ -4470,6 +4554,7 @@ export type Database = {
         Returns: string;
       };
       save_membership_tier: { Args: { p: Json }; Returns: string };
+      save_object: { Args: { p: Json }; Returns: string };
       save_organization: {
         Args: { p_id: string; p_kind: string; p_name: string; p_notes: string };
         Returns: string;
@@ -7262,6 +7347,54 @@ export type Database = {
           size_bytes?: number | null;
           storage_path?: string;
           width?: number | null;
+        };
+        Relationships: [];
+      };
+      objects: {
+        Row: {
+          created_at: string;
+          currency: string;
+          description: string | null;
+          description_ne: string | null;
+          id: string;
+          kind: string;
+          price_minor: number | null;
+          published: boolean;
+          slug: string;
+          sort: number;
+          title: string;
+          title_ne: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          currency?: string;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string;
+          kind?: string;
+          price_minor?: number | null;
+          published?: boolean;
+          slug: string;
+          sort?: number;
+          title: string;
+          title_ne?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          currency?: string;
+          description?: string | null;
+          description_ne?: string | null;
+          id?: string;
+          kind?: string;
+          price_minor?: number | null;
+          published?: boolean;
+          slug?: string;
+          sort?: number;
+          title?: string;
+          title_ne?: string | null;
+          updated_at?: string;
         };
         Relationships: [];
       };

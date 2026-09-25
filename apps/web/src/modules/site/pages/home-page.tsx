@@ -6,6 +6,7 @@ import { useChronicle, useSattalPieces, useWorkImages, useWorks } from "../api/u
 import { DocumentHead } from "../components/document-head";
 import { ArrowLink, Eyebrow } from "../components/paz-editorial";
 import { WorkPicture, useEraDate } from "../components/wall-parts";
+import { HomeTodaySection, HouseStatusLine } from "./place-pages";
 import { pickLang, useLanguage, useLocalizedPath } from "../language";
 import { useEmptyState } from "../empty-states";
 import { useWording, type WordingKey } from "../wording";
@@ -46,7 +47,10 @@ export function HomePage() {
         <p className="type-label">{t("home.place")}</p>
         <h1 className="type-display mt-4">{siteName}</h1>
         {tagline && <p className="type-body-lg mt-6 max-w-2xl">{tagline}</p>}
+        <HouseStatusLine className="mt-6 max-w-2xl" />
       </section>
+
+      <HomeTodaySection />
 
       <section className="w-wide border-border border-b py-14" aria-labelledby="home-wall">
         <div className="mb-8 flex items-end justify-between">

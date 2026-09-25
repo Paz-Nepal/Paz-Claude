@@ -82,6 +82,18 @@ export function PaperPage({ slug: slugProp }: { slug?: string } = {}) {
           {w("papers.pdf")}
         </a>
       )}
+      {item.audio_path && (
+        <div className="flex flex-col gap-2">
+          <p className="text-muted-foreground text-sm">
+            {w("papers.read-by", { name: item.audio_reader ?? "" })}
+          </p>
+          {/* The recording reads the text printed below it, which is its transcript. */}
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio controls preload="none" src={publicMediaUrl(item.audio_path)} className="w-full">
+            {w("papers.audio-fallback")}
+          </audio>
+        </div>
+      )}
       {isUntranslatedDoc(item.body_ne, lang) && <TranslationNotice />}
       {body && <RichText doc={body} className="rich-text" />}
       {item.sources_note && (

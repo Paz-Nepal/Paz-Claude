@@ -29,13 +29,13 @@ type RpcClient = {
  * The generated types render that as `Json`, so calls go through this one
  * narrow, named cast instead of scattering casts across the pages.
  */
-async function callRpc<T = unknown>(fn: string, args: Record<string, unknown>): Promise<T> {
+export async function callRpc<T = unknown>(fn: string, args: Record<string, unknown>): Promise<T> {
   const { data, error } = await (api() as unknown as RpcClient).rpc(fn, args);
   if (error) throw toAppError(error);
   return data as T;
 }
 
-function useAdminRpc(fn: string, invalidate: string[][]) {
+export function useAdminRpc(fn: string, invalidate: string[][]) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (args: Record<string, unknown>) => callRpc(fn, args),

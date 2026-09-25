@@ -57,7 +57,7 @@ describe("the wording register", () => {
       .map((m) => m[1] as string)
       .filter((k) => !/\.(txt|xml|html|json|svg)$/.test(k)) // file names, not keys
       .filter((k) =>
-        /^(nav|footer|title|home|house|record|organ|press|series|papers|hands|terms|encounters|work|sattal|commons|empty|static|speaker|provenance|common|pigeon|brief|dispatch|annual|voice|safeguarding|guild|treasury|contact|search|person|show|words|wall)\./.test(
+        /^(nav|footer|title|home|house|record|organ|press|series|papers|hands|terms|encounters|work|sattal|commons|empty|static|speaker|provenance|common|pigeon|brief|dispatch|annual|voice|safeguarding|guild|treasury|contact|search|person|show|words|wall|catalogue|place|places|offer|verify|reach|objects|afternoons|leaving|privacy)\./.test(
           k,
         ),
       );

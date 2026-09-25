@@ -385,10 +385,14 @@ const FOOT = [
   ["/words", "footer.words"],
   ["/looking-for", "footer.looking-for"],
   ["/privacy", "footer.privacy"],
+  ["/leaving", "footer.leaving"],
+  ["/verify", "footer.verify"],
   ["/terms", "footer.terms"],
   ["/contact", "footer.contact"],
+  ["/at-the-house", "footer.at-the-house"],
 ];
 
+let INFO = {};
 let SITE_NAME = "PAZ";
 let CONTACT_EMAIL = null;
 
@@ -535,6 +539,11 @@ function itemMain({ title, speaker, byline, bodyDoc, detail, series }) {
   parts.push(`<article><h1>${esc(title)}</h1>`);
   if (byline) parts.push(`<p>${esc(byline)}</p>`);
   if (detail?.abstract) parts.push(`<p><em>${esc(detail.abstract)}</em></p>`);
+  if (detail?.audio_path) {
+    parts.push(
+      `<p>${esc(say("papers.read-by", { name: detail.audio_reader ?? "" }))}</p><audio controls preload="none" src="${esc(mediaUrl(detail.audio_path))}"></audio>`,
+    );
+  }
   parts.push(renderDoc(bodyDoc));
   if (detail?.sources_note)
     parts.push(`<p>${esc(say("papers.sources", { sources: detail.sources_note }))}</p>`);
@@ -611,7 +620,7 @@ async function renderItems(items) {
         detail,
         series: series.name,
       });
-      writePage(canonical, opts, main);
+      writePage(canonical, opts, type === "pigeon_post" ? main + reachBlock(slug) : main);
       if (type === "terms") TERMS_DETAILS.set(slug, detail);
       // The kind-only address of a terms document is its "current" view,
       // written in renderTerms, so it gets no redirect stub.
@@ -655,8 +664,10 @@ async function renderItems(items) {
         PAGES.set(slug, {
           slug,
           title: detail.title,
+          title_ne: detail.title_ne,
           subtitle: detail.subtitle,
           body: detail.body,
+          body_ne: detail.body_ne,
         });
       const path = type === "article" ? `/journal/${slug}` : `/${slug}`;
       const opts = {
@@ -665,7 +676,7 @@ async function renderItems(items) {
         ogType: "article",
       };
       const build = (t, doc) =>
-        `<article><h1>${esc(t)}</h1>${detail.subtitle ? `<p>${esc(detail.subtitle)}</p>` : ""}${renderDoc(doc)}</article>`;
+        `<article><h1>${esc(t)}</h1>${detail.subtitle ? `<p>${esc(detail.subtitle)}</p>` : ""}${renderDoc(doc)}${slug === "privacy" ? `<p>${link("/leaving", say("privacy.leaving"))}</p>` : ""}</article>`;
       // The canon documents live at /canon/<n>, never at their page slug.
       if (!slug.startsWith("canon-")) writePage(path, opts, build(detail.title, detail.body));
       if (hasNe(detail)) {
@@ -747,6 +758,10 @@ function renderWall(d) {
   const personById = new Map(people.map((p) => [p.id, p]));
   const workById = new Map(d.works.map((w) => [w.id, w]));
   const whole = (wid) => (imagesByWork.get(wid) ?? []).find((i) => i.frame === "whole");
+  const roomById = new Map((d.rooms ?? []).map((r) => [r.id, r]));
+  const earlyRaw = INFO?.["wall.early_price_minor"];
+  const early =
+    earlyRaw != null && earlyRaw !== "" && Number.isFinite(Number(earlyRaw)) ? Number(earlyRaw) : null;
 
   const workCard = (w) =>
     `<li>${whole(w.id) ? `<a href="/works/${esc(w.slug)}">${imageHtml(whole(w.id))}</a>` : ""}<p>${link(`/works/${w.slug}`, w.title)}</p><p>${esc(w.person_name)}${w.year ? `, ${w.year}` : ""}${w.availability === "sold" ? ". Sold." : ""}</p></li>`;
@@ -758,12 +773,12 @@ function renderWall(d) {
   writePage(
     "/wall",
     { title: say("title.wall") },
-    `<h1>${esc(say("title.wall"))}</h1>${pageBodyFrom("viewing")}${pageBodyFrom("shipping")}<h2>${esc(say("wall.people"))}</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>${esc(say("wall.work"))}</h2><ul>${listed.map(workCard).join("")}</ul><h2>${esc(say("wall.shows"))}</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
+    `<h1>${esc(say("title.wall"))}</h1>${early != null ? `<p>${esc(say("wall.early-price", { price: money(early) }))}</p>` : ""}${pageBodyFrom("viewing")}${pageBodyFrom("shipping")}<h2>${esc(say("wall.people"))}</h2><ul>${current.map((p) => `<li>${link(`/people/${p.slug}`, p.name)}</li>`).join("")}</ul><h2>${esc(say("wall.work"))}</h2><ul>${listed.map(workCard).join("")}</ul><h2>${esc(say("wall.shows"))}</h2>${d.shows.length ? "" : `<p>${esc(EMPTY.shows)}</p>`}<ol>${d.shows
       .map(
         (s) =>
           `<li>${link(`/shows/${s.slug}`, s.title)} <span>${gregorian(s.opened_on)}${s.closed_on ? ` to ${gregorian(s.closed_on)}` : ""}</span></li>`,
       )
-      .join("")}</ol>`,
+      .join("")}</ol><p>${link("/wall/offer", say("wall.offer-link"))}</p>`,
   );
 
   for (const p of people) {
@@ -837,6 +852,9 @@ function renderWall(d) {
       `<article>${frames.map((f, i) => imageHtml(f, i === 0)).join("")}`,
       `<p>${p ? link(`/people/${p.slug}`, p.name) : esc(w.person_name)}</p><h1>${esc(w.title)}</h1>`,
       `<p>${[w.year, w.medium, dims].filter(Boolean).map(esc).join("<br />")}</p><p>${esc(say("work.number", { number: w.work_number }))}</p>`,
+      roomById.get(w.room_id)
+        ? `<p>${link(`/house/rooms/${roomById.get(w.room_id).slug}`, say("place.in-room", { room: roomById.get(w.room_id).name }))}</p>`
+        : "",
       w.price_minor != null ? `<p>${esc(money(w.price_minor, w.currency))}</p>` : "",
       w.friends_price_minor != null
         ? `<p>${esc(say("work.friends-price", { price: money(w.friends_price_minor, w.currency) }))}</p>`
@@ -1047,12 +1065,20 @@ function renderGlossary(terms) {
     { title: say("title.words") },
     `<h1>${esc(say("title.words"))}</h1><dl>${
       terms
+        .filter((t) => t.kind !== "sought")
         .map(
           (t) =>
             `<div id="${esc(t.slug)}"><dt>${esc(t.term)}${t.kind === "spelling" ? ` · ${esc(say("words.spelling"))}` : ""}</dt><dd>${esc(t.definition)}</dd></div>`,
         )
         .join("") || `<p>${esc(say("empty.words"))}</p>`
-    }</dl>`,
+    }</dl><h2>${esc(say("words.sought-heading"))}</h2><p>${esc(say("words.sought-intro"))}</p>${
+      terms.some((t) => t.kind === "sought")
+        ? `<ul>${terms
+            .filter((t) => t.kind === "sought")
+            .map((t) => `<li id="${esc(t.slug)}">${esc(t.term)}</li>`)
+            .join("")}</ul>`
+        : `<p>${esc(say("empty.sought"))}</p>`
+    }${formNote("static.what-form")}`,
   );
 }
 
@@ -1128,6 +1154,13 @@ function pageBody(pagesBySlug, slug) {
 // Labels are wording keys, read when the page is written.
 const ORGAN_LINKS = {
   house: [
+    ["/house/rooms", "house.rooms"],
+    ["/house/things", "house.things"],
+    ["/reading-room", "house.reading-room"],
+    ["/the-year", "house.the-year"],
+    ["/at-the-house", "house.at-the-house"],
+    ["/finding-the-house", "house.finding-the-house"],
+    ["/neighbours", "house.neighbours"],
     ["/hearth", "house.hearth"],
     ["/guild", "house.guild"],
     ["/press", "house.press"],
@@ -1145,6 +1178,9 @@ const ORGAN_LINKS = {
     ["/safeguarding", "title.safeguarding"],
   ],
   record: [
+    ["/record/catalogue", "record.catalogue"],
+    ["/record/papers", "record.house-papers"],
+    ["/record/offer", "record.offer"],
     ["/record/deposits", "record.deposit-register"],
     ["/chronicle", "record.chronicle"],
   ],
@@ -1284,7 +1320,11 @@ function renderShells(pagesBySlug, written) {
   for (const [slug, titleKey] of SHELLS) {
     if (written.has(`/${slug}`)) continue;
     const title = say(titleKey);
-    writePage(`/${slug}`, { title, priority: "0.4" }, `<h1>${esc(title)}</h1>${notWritten}`);
+    writePage(
+      `/${slug}`,
+      { title, priority: "0.4" },
+      `<h1>${esc(title)}</h1>${notWritten}${slug === "privacy" ? `<p>${link("/leaving", say("privacy.leaving"))}</p>` : ""}`,
+    );
   }
   if (!written.has("/commons")) {
     writePage(
@@ -1322,11 +1362,13 @@ function renderShells(pagesBySlug, written) {
     { title: say("pigeon.title"), priority: "0.4" },
     `<h1>${esc(say("pigeon.title"))}</h1>${formNote("static.what-pigeon")}`,
   );
-  writePage(
-    "/a-voice",
-    { title: say("title.a-voice"), noindex: true },
-    `<h1>${esc(say("title.a-voice"))}</h1>${pageBody(pagesBySlug, "a-voice")}${pageBody(pagesBySlug, "a-voice-statement")}<p>${link("/terms/memory", say("voice.memory-link"))}</p>${formNote("static.what-form")}`,
-  );
+  for (const voicePath of ["/a-voice", "/record/offer"]) {
+    writePage(
+      voicePath,
+      { title: say("title.a-voice"), noindex: true },
+      `<h1>${esc(say("title.a-voice"))}</h1>${pageBody(pagesBySlug, "a-voice")}${pageBody(pagesBySlug, "a-voice-statement")}<p>${link("/terms/memory", say("voice.memory-link"))}</p>${formNote("static.what-form")}`,
+    );
+  }
   writePage(
     "/search",
     { title: say("search.title"), noindex: true },
@@ -1534,8 +1576,12 @@ function encounterHtml(e) {
     .map((t) => line(t, "p"))
     .join("")}${order(e.how_to_turn_up, e.how_to_turn_up_ne)
     .map((t) => line(t, "p"))
-    .join("")}`;
+    .join("")}${e.price_note ? `<p>${esc(e.price_note)}</p>` : ""}${
+    e.series ? `<p>${link(`/afternoons/${e.series}`, say("afternoons.series-link"))}</p>` : ""
+  }`;
 }
+
+let PLACE_VISITS = [];
 
 function renderEncounters(events) {
   writePage(
@@ -1548,13 +1594,18 @@ function renderEncounters(events) {
         (e) =>
           `<li>${encounterHtml(e)}${link(`/encounters/${e.slug}`, say("common.details"))}</li>`,
       )
-      .join("")}</ol>`,
+      .join("")}</ol><p>${link("/encounters/places", say("places.index-link"))}</p>`,
   );
   for (const e of events) {
+    const visits = PLACE_VISITS.filter((v) => v.event_slug === e.slug);
     writePage(
       `/encounters/${e.slug}`,
       { title: e.title, priority: "0.5" },
-      `<article>${encounterHtml(e)}</article>`,
+      `<article>${encounterHtml(e)}${
+        visits.length
+          ? `<h2>${esc(say("places.tended-here"))}</h2><ol>${visits.map(placeVisitHtml).join("")}</ol>`
+          : ""
+      }</article>`,
     );
   }
 }
@@ -1571,7 +1622,7 @@ function guildExtra(register) {
           m.registered_on ? `Registered ${esc(gregorian(m.registered_on))}.` : ""
         }${m.destroyed_on ? ` Punch destroyed ${esc(gregorian(m.destroyed_on))}.` : ""}</li>`,
     )
-    .join("")}</ul>`;
+    .join("")}</ul><h2>${esc(say("verify.hallmark-check"))}</h2><p>${esc(say("verify.hallmark-intro"))}</p>${formNote("static.what-form")}`;
 }
 
 function treasuryExtra(accounts) {
@@ -1622,6 +1673,392 @@ function renderSmallPages() {
   }
 }
 
+// ---------------------------------------------------------------------
+// The house as a place, the catalogue, where the pigeons went, places
+// tended, the afternoons, what the house sells, checking a certificate,
+// and the small offers. What changes by the hour or the day (is anyone
+// home, on this day, who is making now) is never written here: the app
+// says it, and a page with no JavaScript simply does without it.
+// ---------------------------------------------------------------------
+const mediaUrl = (p) => `${SUPABASE_URL}/storage/v1/object/public/media/${p}`;
+
+/** A published page of the house's own words, or the plain "not written" line. */
+function shellPage(path, slug, titleKey, extra = "", priority = "0.4") {
+  const p = PAGES.get(slug);
+  const title = p?.title || say(titleKey);
+  writePage(
+    path,
+    { title, priority },
+    `<h1>${esc(title)}</h1>${p ? renderDoc(p.body) : `<p>${esc(say("common.not-written"))}</p>`}${extra}`,
+  );
+}
+
+const hasBody = (doc) => Array.isArray(doc?.content) && doc.content.length > 0;
+
+function renderHousePlace(d) {
+  const roomImages = (roomId) => d.roomImages.filter((i) => i.room_id === roomId);
+  const roomById = new Map(d.rooms.map((r) => [r.id, r]));
+
+  writePage(
+    "/house/rooms",
+    { title: say("title.rooms"), priority: "0.5" },
+    `<h1>${esc(say("title.rooms"))}</h1>${d.rooms.length ? "" : `<p>${esc(say("empty.rooms"))}</p>`}<ul>${d.rooms
+      .map(
+        (r) =>
+          `<li>${roomImages(r.id)[0] ? imageHtml(roomImages(r.id)[0]) : ""}<p>${link(`/house/rooms/${r.slug}`, r.name)}</p>${
+            r.floor ? `<p>${esc(r.floor)}</p>` : ""
+          }</li>`,
+      )
+      .join("")}</ul>`,
+  );
+
+  for (const r of d.rooms) {
+    const things = d.things.filter((t) => t.room_id === r.id);
+    const hanging = d.works.filter((w) => w.room_id === r.id);
+    const months = r.slug === "studio" ? d.studioMonths : [];
+    writePage(
+      `/house/rooms/${r.slug}`,
+      { title: r.name, priority: "0.5" },
+      [
+        `<article><h1>${esc(r.name)}</h1>`,
+        r.floor ? `<p>${esc(r.floor)}</p>` : "",
+        r.note ? `<p>${esc(r.note)}</p>` : "",
+        ...roomImages(r.id).map((i) => imageHtml(i)),
+        months.length
+          ? `<h2>${esc(say("place.studio-past"))}</h2><ul>${months
+              .map((m) => `<li>${link(`/people/${m.person_slug}`, m.person_name)} · ${esc(gregorian(m.from_on))}</li>`)
+              .join("")}</ul>`
+          : "",
+        hanging.length
+          ? `<h2>${esc(say("place.works-here"))}</h2><ul>${hanging
+              .map((w) => `<li>${link(`/works/${w.slug}`, w.title)}, ${esc(w.person_name)}</li>`)
+              .join("")}</ul>`
+          : "",
+        things.length
+          ? `<h2>${esc(say("place.things-here"))}</h2><ul>${things.map((t) => `<li>${esc(t.name)}</li>`).join("")}</ul>`
+          : "",
+        `<p>${link("/house/rooms", say("place.back-to-rooms"))}</p></article>`,
+      ].join("\n"),
+    );
+  }
+
+  const welcomeThings = d.wanted.filter((x) => x.kind === "thing");
+  writePage(
+    "/house/things",
+    { title: say("title.things"), priority: "0.5" },
+    `<h1>${esc(say("title.things"))}</h1>${d.things.length ? "" : `<p>${esc(say("empty.things"))}</p>`}<ul>${d.things
+      .map((t) => {
+        const room = roomById.get(t.room_id);
+        return `<li>${
+          t.image_path
+            ? imageHtml({
+                original_path: t.image_path,
+                width: t.image_width,
+                height: t.image_height,
+                variants: t.image_variants,
+                alt: t.image_alt,
+                photographer: t.image_photographer,
+              })
+            : ""
+        }<p>${esc(t.name)}</p>${t.came_from ? `<p>${esc(say("place.came-from", { place: t.came_from }))}</p>` : ""}${
+          t.given_by ? `<p>${esc(say("place.given-by", { name: t.given_by }))}</p>` : ""
+        }<p>${room ? link(`/house/rooms/${room.slug}`, room.name) : ""}${t.for_use ? `${room ? " · " : ""}${esc(say("place.for-use"))}` : ""}</p></li>`;
+      })
+      .join("")}</ul><h2>${esc(say("place.welcome"))}</h2>${
+      welcomeThings.length
+        ? `<ul>${welcomeThings.map((x) => `<li>${esc(x.what)}${x.note ? `<br />${esc(x.note)}` : ""}</li>`).join("")}</ul>`
+        : `<p>${esc(say("empty.wanted"))}</p>`
+    }<h2>${esc(say("place.offer-thing"))}</h2><p>${esc(say("place.offer-thing-note"))}</p>${formNote("static.what-form")}`,
+  );
+
+  const shelves = new Map();
+  for (const b of d.books) shelves.set(b.shelf ?? "", [...(shelves.get(b.shelf ?? "") ?? []), b]);
+  const welcomeBooks = d.wanted.filter((x) => x.kind === "book");
+  writePage(
+    "/reading-room",
+    { title: say("title.reading-room"), priority: "0.5" },
+    `<h1>${esc(say("title.reading-room"))}</h1><p>${esc(say("place.reading-room-note"))}</p>${d.books.length ? "" : `<p>${esc(say("empty.books"))}</p>`}${[
+      ...shelves.entries(),
+    ]
+      .map(
+        ([shelf, list]) =>
+          `${shelf ? `<h2>${esc(shelf)}</h2>` : ""}<ul>${list
+            .map(
+              (b) =>
+                `<li>${esc(b.title)}${b.author ? `, ${esc(b.author)}` : ""}${b.language ? ` · ${esc(b.language)}` : ""}${b.note ? `<br />${esc(b.note)}` : ""}</li>`,
+            )
+            .join("")}</ul>`,
+      )
+      .join("")}<h2>${esc(say("place.books-welcome"))}</h2>${
+      welcomeBooks.length
+        ? `<ul>${welcomeBooks.map((x) => `<li>${esc(x.what)}</li>`).join("")}</ul>`
+        : `<p>${esc(say("empty.wanted"))}</p>`
+    }<h2>${esc(say("place.offer-book"))}</h2>${formNote("static.what-form")}`,
+  );
+
+  // The coming twelve months, as of the day this page is written.
+  const today = new Date();
+  const from = new Date(today.getTime() - 24 * 3600 * 1000).toISOString().slice(0, 10);
+  const to = new Date(today.getTime() + 366 * 24 * 3600 * 1000).toISOString().slice(0, 10);
+  const dayById = new Map(d.days.map((x) => [x.id, x]));
+  const coming = d.dayDates
+    .filter((x) => x.falls_on >= from && x.falls_on <= to && dayById.has(x.day_id))
+    .sort((a, b) => a.falls_on.localeCompare(b.falls_on));
+  const reckon = {
+    nepal_sambat: "place.reckon-nepal-sambat",
+    bikram_sambat: "place.reckon-bikram-sambat",
+    gregorian: "place.reckon-gregorian",
+  };
+  writePage(
+    "/the-year",
+    { title: say("title.the-year"), priority: "0.5" },
+    `<h1>${esc(say("title.the-year"))}</h1>${coming.length ? "" : `<p>${esc(say("empty.year"))}</p>`}<ol>${coming
+      .map((x) => {
+        const day = dayById.get(x.day_id);
+        return `<li><p>${esc(dualEra(x.falls_on))}${x.sambat_text ? ` · ${esc(x.sambat_text)}` : ""}</p><h2>${esc(day.name)}</h2><p>${esc(say(reckon[day.reckoning] ?? "place.reckon-gregorian"))}</p>${
+          day.reckoned_as ? `<p>${esc(day.reckoned_as)}</p>` : ""
+        }${day.what_the_house_does ? `<p>${esc(day.what_the_house_does)}</p>` : ""}</li>`;
+      })
+      .join("")}</ol>`,
+  );
+
+  const forUse = d.things.filter((t) => t.for_use);
+  shellPage(
+    "/at-the-house",
+    "at-the-house",
+    "title.at-the-house",
+    forUse.length
+      ? `<h2>${esc(say("place.for-use-list"))}</h2><ul>${forUse.map((t) => `<li>${esc(t.name)}</li>`).join("")}</ul>`
+      : "",
+  );
+  shellPage("/finding-the-house", "finding-the-house", "title.finding-the-house");
+
+  // The standing welcome to the neighbours: Nepali first, whichever language was chosen.
+  const n = PAGES.get("neighbours");
+  const nTitle = n?.title_ne?.trim() || n?.title || say("title.neighbours");
+  writePage(
+    "/neighbours",
+    { title: nTitle, priority: "0.4" },
+    `<h1>${esc(nTitle)}</h1>${
+      n && (hasBody(n.body_ne) || hasBody(n.body))
+        ? `${hasBody(n.body_ne) ? `<div lang="ne">${renderDoc(n.body_ne)}</div>` : ""}${hasBody(n.body) ? `<div lang="en">${renderDoc(n.body)}</div>` : ""}`
+        : `<p>${esc(say("common.not-written"))}</p>`
+    }`,
+  );
+}
+
+// ---------------------------------------------------------------------
+// The Record's catalogue and the house's papers
+// ---------------------------------------------------------------------
+const CATALOGUE_KIND = worded({
+  voice: "catalogue.kind-voice",
+  photographs: "catalogue.kind-photographs",
+  papers: "catalogue.kind-papers",
+  the_present: "catalogue.kind-the-present",
+  other: "catalogue.kind-other",
+});
+const CATALOGUE_TIER = worded({
+  online: "catalogue.tier-online",
+  in_house_works: "catalogue.tier-in-house-works",
+  anyone_in_house: "catalogue.tier-anyone-in-house",
+  people_of_house: "catalogue.tier-people-of-house",
+  family_only: "catalogue.tier-family-only",
+  no_one: "catalogue.tier-no-one",
+});
+const CATALOGUE_LEVEL = worded({
+  none: "catalogue.level-none",
+  subjects: "catalogue.level-subjects",
+  account: "catalogue.level-account",
+});
+const CATALOGUE_COPY = worded({
+  held: "catalogue.copy-held",
+  not_yet: "catalogue.copy-not-yet",
+  lost: "catalogue.copy-lost",
+});
+
+function renderCatalogue(d) {
+  const partsOf = (number) => d.parts.filter((p) => p.number === number);
+  const dates = (a) =>
+    a.dates_from
+      ? a.dates_to && a.dates_to !== a.dates_from
+        ? `${gregorian(a.dates_from)} to ${gregorian(a.dates_to)}`
+        : gregorian(a.dates_from)
+      : null;
+  const entries = d.accessions.map(
+    (a) =>
+      `<li id="${esc(a.number)}"><h2>${esc(a.number)}</h2><p>${esc(CATALOGUE_KIND[a.kind] ?? a.kind)}${dates(a) ? ` · ${esc(dates(a))}` : ""}</p><dl><dt>${esc(say("catalogue.listening"))}</dt><dd>${esc(CATALOGUE_TIER[a.listening_tier] ?? a.listening_tier)}</dd><dt>${esc(say("catalogue.description"))}</dt><dd>${esc(CATALOGUE_LEVEL[a.description_level] ?? a.description_level)}</dd>${
+        a.consent_now ? `<dt>${esc(say("catalogue.consent"))}</dt><dd>${esc(a.consent_now)}</dd>` : ""
+      }<dt>${esc(say("catalogue.opens"))}</dt><dd>${esc(
+        a.listening_tier === "online"
+          ? say("catalogue.open-from-start")
+          : a.opens_on
+            ? say(a.is_open ? "catalogue.opened-on" : "catalogue.opens-on", { date: gregorian(a.opens_on) })
+            : say("catalogue.no-date"),
+      )}</dd><dt>${esc(say("catalogue.copies"))}</dt><dd>${esc(
+        say("catalogue.copies-line", {
+          first: CATALOGUE_COPY[a.copy_first] ?? "",
+          second: CATALOGUE_COPY[a.copy_second] ?? "",
+          third: CATALOGUE_COPY[a.copy_third] ?? "",
+        }),
+      )}</dd></dl>${a.description ? `<p>${esc(a.description)}</p>` : ""}${a.kin_note ? `<p>${esc(a.kin_note)}</p>` : ""}${
+        partsOf(a.number).length
+          ? `<ul>${partsOf(a.number)
+              .map(
+                (p) =>
+                  `<li>${esc(p.part_label)} ${esc(p.label)}${p.online_path ? ` · <a href="${esc(mediaUrl(p.online_path))}">${esc(say("catalogue.open-file"))}</a>` : ""}${
+                    p.sha256 ? `<br /><code>${esc(say("catalogue.fingerprint", { hash: p.sha256 }))}</code>` : ""
+                  }</li>`,
+              )
+              .join("")}</ul>`
+          : ""
+      }</li>`,
+  );
+  const gaps = d.withdrawn.map(
+    (g) => `<li><h2>${esc(g.number)}</h2><p>${esc(say("catalogue.gap"))}</p></li>`,
+  );
+  writePage(
+    "/record/catalogue",
+    { title: say("title.catalogue"), priority: "0.5" },
+    `<h1>${esc(say("title.catalogue"))}</h1>${entries.length || gaps.length ? "" : `<p>${esc(say("empty.catalogue"))}</p>`}<ol>${[...entries, ...gaps].join("")}</ol>`,
+  );
+  writePage(
+    "/record/papers",
+    { title: say("title.house-papers"), priority: "0.5" },
+    `<h1>${esc(say("title.house-papers"))}</h1>${d.housePapers.length ? "" : `<p>${esc(say("empty.house-papers"))}</p>`}<ol>${d.housePapers
+      .map(
+        (p) =>
+          `<li><p>${esc(p.reference)}${p.kind ? ` · ${esc(p.kind)}` : ""}${p.dated_on ? ` · ${esc(gregorian(p.dated_on))}` : ""}</p><p>${esc(p.title)}</p>${p.note ? `<p>${esc(p.note)}</p>` : ""}</li>`,
+      )
+      .join("")}</ol>`,
+  );
+}
+
+// ---------------------------------------------------------------------
+// Pigeon Post reach, places tended, the afternoons, objects, verify, offers
+// ---------------------------------------------------------------------
+let REACH_BY_ITEM = new Map();
+
+function reachBlock(slug) {
+  const rows = REACH_BY_ITEM.get(slug) ?? [];
+  if (!rows.length) return "";
+  return `<section><h2>${esc(say("reach.edition-heading"))}</h2><ul>${rows
+    .map((r) => `<li>${esc(say("reach.line", { country: r.country, copies: r.copies }))}</li>`)
+    .join("")}</ul><p>${link("/pigeon-post/where", say("reach.all-editions"))}</p></section>`;
+}
+
+function placeVisitHtml(v) {
+  const pic = (img, label) =>
+    img && img.original_path
+      ? `<div><p>${esc(say(label))}</p>${imageHtml({ ...img, variants: img.variants ?? [] })}</div>`
+      : "";
+  return `<li><p>${esc(gregorian(v.done_on))}${v.people_count != null ? ` · ${esc(say("places.came", { count: v.people_count }))}` : ""}</p>${pic(v.before_image, "places.before")}${pic(v.after_image, "places.after")}${
+    v.note ? `<p>${esc(v.note)}</p>` : ""
+  }</li>`;
+}
+
+function renderReachAndPlaces(d) {
+  const total = new Map();
+  for (const r of d.reach) total.set(r.country, r.copies);
+  writePage(
+    "/pigeon-post/where",
+    { title: say("title.pigeon-where"), priority: "0.4" },
+    `<h1>${esc(say("title.pigeon-where"))}</h1><p>${esc(say("reach.intro"))}</p>${total.size ? "" : `<p>${esc(say("empty.pigeon-where"))}</p>`}<ul>${[
+      ...total.entries(),
+    ]
+      .map(([country, copies]) => `<li>${esc(say("reach.line", { country, copies }))}</li>`)
+      .join("")}</ul><p>${esc(say("reach.never"))}</p>`,
+  );
+
+  writePage(
+    "/encounters/places",
+    { title: say("title.places"), priority: "0.5" },
+    `<h1>${esc(say("title.places"))}</h1>${d.places.length ? "" : `<p>${esc(say("empty.places"))}</p>`}<ul>${d.places
+      .map(
+        (p) =>
+          `<li>${link(`/encounters/places/${p.slug}`, p.name)}${p.location ? `<br />${esc(p.location)}` : ""}</li>`,
+      )
+      .join("")}</ul>`,
+  );
+  for (const p of d.places) {
+    const mine = d.visits.filter((v) => v.place_slug === p.slug);
+    writePage(
+      `/encounters/places/${p.slug}`,
+      { title: p.name, priority: "0.4" },
+      `<article><h1>${esc(p.name)}</h1>${p.location ? `<p>${esc(p.location)}</p>` : ""}${p.note ? `<p>${esc(p.note)}</p>` : ""}${
+        mine.length ? "" : `<p>${esc(say("empty.place-visits"))}</p>`
+      }<ol>${mine.map(placeVisitHtml).join("")}</ol><p>${link("/encounters/places", say("places.all"))}</p></article>`,
+    );
+  }
+
+  const series = [...new Set(d.encounters.map((e) => e.series).filter(Boolean))];
+  for (const s of series) {
+    const mine = d.encounters.filter((e) => e.series === s);
+    const name = s
+      .split("-")
+      .map((x) => x.charAt(0).toUpperCase() + x.slice(1))
+      .join(" ");
+    writePage(
+      `/afternoons/${s}`,
+      { title: name, priority: "0.4" },
+      `<h1>${esc(name)}</h1><ol>${mine
+        .map(
+          (e) =>
+            `<li><p>${esc(gregorian(e.starts_on))}${e.ends_on ? ` ${esc(say("afternoons.to"))} ${esc(gregorian(e.ends_on))}` : ""}</p><h2>${link(`/encounters/${e.slug}`, e.title)}</h2>${
+              e.place ? `<p>${esc(e.place)}</p>` : ""
+            }${e.how_to_turn_up ? `<p>${esc(e.how_to_turn_up)}</p>` : ""}${e.price_note ? `<p>${esc(e.price_note)}</p>` : ""}</li>`,
+        )
+        .join("")}</ol>`,
+    );
+  }
+
+  writePage(
+    "/objects",
+    { title: say("title.objects"), priority: "0.5" },
+    `<h1>${esc(say("title.objects"))}</h1><p>${esc(say("objects.intro"))}</p>${d.objects.length ? "" : `<p>${esc(say("empty.objects"))}</p>`}<ul>${d.objects
+      .map(
+        (o) =>
+          `<li><h2>${esc(o.title)}</h2>${o.description ? `<p>${esc(o.description)}</p>` : ""}${o.price_minor != null ? `<p>${esc(money(o.price_minor, o.currency ?? "NPR"))}</p>` : ""}</li>`,
+      )
+      .join("")}</ul>${formNote("static.what-form")}`,
+  );
+}
+
+function renderOfferAndVerifyPages(readers) {
+  writePage(
+    "/verify",
+    { title: say("title.verify"), priority: "0.5" },
+    `<h1>${esc(say("title.verify"))}</h1><p>${esc(say("verify.intro"))}</p>${formNote("static.what-form")}<p>${esc(say("verify.never"))}</p>`,
+  );
+  writePage(
+    "/wall/offer",
+    { title: say("title.wall-offer"), priority: "0.4" },
+    `<h1>${esc(say("title.wall-offer"))}</h1><p>${esc(say("offer.painter-intro"))}</p>${formNote("static.what-form")}`,
+  );
+
+  const rate = Number(INFO?.["sattal.rate_minor"]);
+  const hasRate = INFO?.["sattal.rate_minor"] != null && INFO["sattal.rate_minor"] !== "" && Number.isFinite(rate);
+  shellPage(
+    "/sattal/writing",
+    "sattal-writing",
+    "title.sattal-writing",
+    `<h2>${esc(say("sattal.rate-heading"))}</h2><p>${esc(hasRate ? say("sattal.rate-line", { rate: money(rate) }) : say("sattal.rate-not-set"))}</p><h2>${esc(say("sattal.reader-heading"))}</h2><p>${esc(
+      readers.length ? say("sattal.reader-named", { names: readers.map((r) => r.name).join(", ") }) : say("empty.sattal-no-reader"),
+    )}</p><h2>${esc(say("sattal.propose-heading"))}</h2><p>${esc(say("sattal.propose-note"))}</p>${formNote("static.what-form")}<p>${link("/terms/writers", say("sattal.writers-terms"))}</p>`,
+  );
+  shellPage(
+    "/table/elsewhere",
+    "a-table-elsewhere",
+    "title.table-elsewhere",
+    `<h2>${esc(say("offer.table-heading"))}</h2><p>${esc(say("offer.table-note"))}</p>${formNote("static.what-form")}`,
+  );
+  shellPage(
+    "/leaving",
+    "leaving",
+    "title.leaving",
+    `<p>${link("/brief/unsubscribe", say("leaving.brief"))}</p><h2>${esc(say("leaving.form-heading"))}</h2><p>${esc(say("leaving.form-note"))}</p>${formNote("static.what-form")}`,
+  );
+}
+
 async function main() {
   // app.html is the untouched shell every unmatched path falls back to.
   // index.html becomes the prerendered home page, so it can no longer be
@@ -1633,6 +2070,7 @@ async function main() {
   writeFileSync(shell, baseHtml, "utf8");
 
   const info = await callRpc("site_info").catch(() => ({}));
+  INFO = info ?? {};
   SITE_NAME = info?.["site.name"] || "PAZ";
   CONTACT_EMAIL = info?.["site.contact_email"] || null;
 
@@ -1667,6 +2105,23 @@ async function main() {
     guildRegister,
     treasuryAccounts,
     encounters,
+    rooms,
+    roomImages,
+    things,
+    wanted,
+    books,
+    days,
+    dayDates,
+    studioMonths,
+    accessions,
+    withdrawn,
+    recordParts,
+    housePapers,
+    reach,
+    reachByItem,
+    places,
+    placeVisits,
+    objects,
   ] = await Promise.all([
     all("published_items", "select=type,slug,title,deposit_ref&order=published_at.desc,id"),
     all("wall_people", "select=*&order=name,id"),
@@ -1691,10 +2146,33 @@ async function main() {
     all("guild_register", "select=*&order=registered_on,id"),
     all("treasury_accounts", "select=*&order=year_span.desc,id"),
     all("encounters_calendar", "select=*&order=starts_on.desc,id"),
+    all("house_rooms", "select=*&order=sort,name"),
+    all("house_room_images", "select=*&order=room_id,sort"),
+    all("house_things", "select=*&order=name,id"),
+    all("house_wanted", "select=*&order=kind,what"),
+    all("house_books", "select=*&order=shelf,title"),
+    all("house_days", "select=*&order=name,id"),
+    all("house_day_dates", "select=*&order=falls_on,id"),
+    all("house_studio_months", "select=*&order=from_on.desc,id"),
+    all("record_accessions", "select=*&order=number"),
+    all("record_withdrawn", "select=*&order=number"),
+    all("record_parts", "select=*&order=number,part_no"),
+    all("record_house_papers", "select=*&order=reference"),
+    all("pigeon_post_reach", "select=*&order=copies.desc,country"),
+    all("pigeon_post_reach_by_item", "select=*&order=item_slug,country"),
+    all("encounter_places", "select=*&order=name,id"),
+    all("encounter_place_visits", "select=*&order=done_on.desc,id"),
+    all("objects", "select=*&order=title,id"),
   ]);
+  REACH_BY_ITEM = new Map();
+  for (const r of reachByItem) {
+    REACH_BY_ITEM.set(r.item_slug, [...(REACH_BY_ITEM.get(r.item_slug) ?? []), r]);
+  }
+  PLACE_VISITS = placeVisits;
 
   const neCount = await renderItems(items);
   renderWall({
+    rooms,
     people,
     works,
     images,
@@ -1719,6 +2197,10 @@ async function main() {
   renderTerms(termsVersions);
   renderHands(hands, readers);
   renderEncounters(encounters);
+  renderHousePlace({ rooms, roomImages, things, wanted, books, days, dayDates, studioMonths, works });
+  renderCatalogue({ accessions, withdrawn, parts: recordParts, housePapers });
+  renderReachAndPlaces({ reach, places, visits: placeVisits, encounters, objects });
+  renderOfferAndVerifyPages(readers);
   renderSmallPages();
   renderProgrammes(sessions);
   renderFriends(tiers);

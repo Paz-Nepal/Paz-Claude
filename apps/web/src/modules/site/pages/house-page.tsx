@@ -12,6 +12,7 @@ import {
 import { PageHero } from "../components/paz-editorial";
 import { TranslationNotice } from "../components/translation-notice";
 import { useWording, type WordingKey } from "../wording";
+import { HouseStatusLine } from "./place-pages";
 
 export function HousePage() {
   const page = usePublishedItem("page", "house");
@@ -44,6 +45,9 @@ export function HousePage() {
         title={pickLang(data?.title ?? w("organ.house"), data?.title_ne, lang)}
         subtitle={data?.subtitle ? pickLang(data?.subtitle, data?.subtitle_ne, lang) : undefined}
       />
+      <div className="w-standard empty:hidden">
+        <HouseStatusLine className="pt-10" />
+      </div>
       {(isUntranslatedDoc(data?.body_ne, lang) || body) && (
         <div className="w-reading py-16">
           {isUntranslatedDoc(data?.body_ne, lang) && <TranslationNotice />}
@@ -55,6 +59,13 @@ export function HousePage() {
         <ul className="type-body flex flex-col gap-2">
           {(
             [
+              ["/house/rooms", "house.rooms"],
+              ["/house/things", "house.things"],
+              ["/reading-room", "house.reading-room"],
+              ["/the-year", "house.the-year"],
+              ["/at-the-house", "house.at-the-house"],
+              ["/finding-the-house", "house.finding-the-house"],
+              ["/neighbours", "house.neighbours"],
               ["/hearth", "house.hearth"],
               ["/guild", "house.guild"],
               ["/press", "house.press"],

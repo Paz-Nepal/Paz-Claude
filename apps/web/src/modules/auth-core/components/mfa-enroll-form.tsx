@@ -82,8 +82,8 @@ export function MfaEnrollForm() {
       ) : (
         <>
           <p className="text-muted-foreground text-sm">
-            Staff accounts require multi-factor authentication. Scan this code with an
-            authenticator app, then enter the 6-digit code it shows.
+            Staff accounts require multi-factor authentication. Scan this code with an authenticator
+            app, then enter the 6-digit code it shows.
           </p>
           <img
             src={enroll.data?.totp.qr_code}

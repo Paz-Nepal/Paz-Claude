@@ -365,6 +365,123 @@ const PigeonSubmissionsPage = React.lazy(() =>
   })),
 );
 
+const RoomsPage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.RoomsPage })),
+);
+const RoomRoute = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.RoomRoute })),
+);
+const ThingsPage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.ThingsPage })),
+);
+const ReadingRoomPage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.ReadingRoomPage })),
+);
+const TheYearPage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.TheYearPage })),
+);
+const AtTheHousePage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.AtTheHousePage })),
+);
+const FindingTheHousePage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.FindingTheHousePage })),
+);
+const NeighboursPage = React.lazy(() =>
+  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.NeighboursPage })),
+);
+const CataloguePage = React.lazy(() =>
+  import("@/modules/site/pages/record-catalogue-pages").then((m) => ({ default: m.CataloguePage })),
+);
+const HousePapersPage = React.lazy(() =>
+  import("@/modules/site/pages/record-catalogue-pages").then((m) => ({
+    default: m.HousePapersPage,
+  })),
+);
+const VerifyPage = React.lazy(() =>
+  import("@/modules/site/pages/verify-pages").then((m) => ({ default: m.VerifyPage })),
+);
+const VerifyWorkPage = React.lazy(() =>
+  import("@/modules/site/pages/verify-pages").then((m) => ({ default: m.VerifyWorkPage })),
+);
+const PigeonWherePage = React.lazy(() =>
+  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PigeonWherePage })),
+);
+const ObjectsPage = React.lazy(() =>
+  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.ObjectsPage })),
+);
+const PlacesIndexPage = React.lazy(() =>
+  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PlacesIndexPage })),
+);
+const PlaceRoute = React.lazy(() =>
+  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PlaceRoute })),
+);
+const AfternoonsRoute = React.lazy(() =>
+  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.AfternoonsRoute })),
+);
+const WallOfferPage = React.lazy(() =>
+  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.WallOfferPage })),
+);
+const SattalWritingPage = React.lazy(() =>
+  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.SattalWritingPage })),
+);
+const TableElsewherePage = React.lazy(() =>
+  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.TableElsewherePage })),
+);
+const LeavingPage = React.lazy(() =>
+  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.LeavingPage })),
+);
+
+const SectionLayout = React.lazy(() =>
+  import("@/modules/wall/components/section-layout").then((m) => ({ default: m.SectionLayout })),
+);
+const AdminHouseTodayPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({
+    default: m.AdminHouseTodayPage,
+  })),
+);
+const AdminRoomsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminRoomsPage })),
+);
+const AdminThingsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminThingsPage })),
+);
+const AdminWantedPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminWantedPage })),
+);
+const AdminBooksPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminBooksPage })),
+);
+const AdminStudioPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminStudioPage })),
+);
+const AdminDaysPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminDaysPage })),
+);
+const AdminCataloguePage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-record-pages").then((m) => ({
+    default: m.AdminCataloguePage,
+  })),
+);
+const AdminHousePapersPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-record-pages").then((m) => ({
+    default: m.AdminHousePapersPage,
+  })),
+);
+const AdminOffersPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-offers-page").then((m) => ({ default: m.AdminOffersPage })),
+);
+const AdminPlacesPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-press-pages").then((m) => ({ default: m.AdminPlacesPage })),
+);
+const AdminPigeonReachPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-press-pages").then((m) => ({
+    default: m.AdminPigeonReachPage,
+  })),
+);
+const AdminObjectsPage = React.lazy(() =>
+  import("@/modules/wall/pages/admin-press-pages").then((m) => ({ default: m.AdminObjectsPage })),
+);
+
 function withSuspense(element: React.ReactNode) {
   return (
     <React.Suspense
@@ -409,22 +526,29 @@ function publicRouteChildren() {
     { path: "dispatch", element: withSuspense(<DispatchIndexPage />) },
     { path: "dispatch/:slug", element: withSuspense(<DispatchPage />) },
     { path: "pigeon-post", element: withSuspense(<PigeonPostIndexPage />) },
+    { path: "pigeon-post/where", element: withSuspense(<PigeonWherePage />) },
     { path: "pigeon-post/:slug", element: withSuspense(<PigeonPostPage />) },
     { path: "annual", element: withSuspense(<AnnualIndexPage />) },
     { path: "annual/:slug", element: withSuspense(<AnnualPage />) },
     { path: "record", element: withSuspense(<RecordOrganPage />) },
     { path: "record/deposits", element: withSuspense(<RecordPage />) },
+    { path: "record/catalogue", element: withSuspense(<CataloguePage />) },
+    { path: "record/papers", element: withSuspense(<HousePapersPage />) },
+    { path: "record/offer", element: withSuspense(<AVoicePage />) },
     { path: "wall", element: withSuspense(<WallPage />) },
+    { path: "wall/offer", element: withSuspense(<WallOfferPage />) },
     { path: "people/:slug", element: withSuspense(<PersonPage />) },
     { path: "works/:slug", element: withSuspense(<WorkPage />) },
     { path: "shows/:slug", element: withSuspense(<ShowPage />) },
     { path: "sattal", element: withSuspense(<SattalIndexPage />) },
+    { path: "sattal/writing", element: withSuspense(<SattalWritingPage />) },
     { path: "sattal/:slug", element: withSuspense(<SattalPiecePage />) },
     { path: "chronicle", element: withSuspense(<ChroniclePage />) },
     { path: "words", element: withSuspense(<WordsPage />) },
     { path: "record/:deposit", element: withSuspense(<DepositRoute />) },
     { path: "name", element: withSuspense(<NamePage />) },
     { path: "table", element: withSuspense(<TablePage />) },
+    { path: "table/elsewhere", element: withSuspense(<TableElsewherePage />) },
     { path: "commons", element: withSuspense(<CommonsPage />) },
     {
       path: "friends",
@@ -436,7 +560,10 @@ function publicRouteChildren() {
       ),
     },
     { path: "encounters", element: withSuspense(<EncountersPage />) },
+    { path: "encounters/places", element: withSuspense(<PlacesIndexPage />) },
+    { path: "encounters/places/:slug", element: withSuspense(<PlaceRoute />) },
     { path: "encounters/:slug", element: withSuspense(<EncounterPage />) },
+    { path: "afternoons/:series", element: withSuspense(<AfternoonsRoute />) },
     { path: "canon", element: withSuspense(<CanonIndexPage />) },
     { path: "canon/:doc", element: withSuspense(<CanonDocRoute />) },
     { path: "looking-for", element: withSuspense(<LookingForPage />) },
@@ -463,6 +590,18 @@ function publicRouteChildren() {
     // house" kicker, translation-notice handling).
     { path: "press", element: withSuspense(<PressPage />) },
     { path: "house", element: withSuspense(<HousePage />) },
+    { path: "house/rooms", element: withSuspense(<RoomsPage />) },
+    { path: "house/rooms/:slug", element: withSuspense(<RoomRoute />) },
+    { path: "house/things", element: withSuspense(<ThingsPage />) },
+    { path: "reading-room", element: withSuspense(<ReadingRoomPage />) },
+    { path: "the-year", element: withSuspense(<TheYearPage />) },
+    { path: "at-the-house", element: withSuspense(<AtTheHousePage />) },
+    { path: "finding-the-house", element: withSuspense(<FindingTheHousePage />) },
+    { path: "neighbours", element: withSuspense(<NeighboursPage />) },
+    { path: "objects", element: withSuspense(<ObjectsPage />) },
+    { path: "leaving", element: withSuspense(<LeavingPage />) },
+    { path: "verify", element: withSuspense(<VerifyPage />) },
+    { path: "verify/work/:number", element: withSuspense(<VerifyWorkPage />) },
     { path: "hearth", element: withSuspense(<HearthPage />) },
     { path: "guild", element: withSuspense(<GuildPage />) },
     { path: "treasury", element: withSuspense(<TreasuryPage />) },
@@ -677,6 +816,78 @@ export const router = createBrowserRouter([
             path: "pigeon-submissions",
             element: withSuspense(<ProtectedRoute permission="publishing.item.read" />),
             children: [{ index: true, element: withSuspense(<PigeonSubmissionsPage />) }],
+          },
+          {
+            path: "house",
+            element: withSuspense(<ProtectedRoute permission="house.manage" />),
+            children: [
+              {
+                element: withSuspense(
+                  <SectionLayout
+                    title="The house"
+                    intro="The house as a place: its rooms, the things in them, what it would welcome, its shelves, who is making in the studio, and the days it keeps."
+                    tabs={[
+                      { to: "/admin/house/rooms", label: "Rooms" },
+                      { to: "/admin/house/things", label: "Things" },
+                      { to: "/admin/house/wanted", label: "Would welcome" },
+                      { to: "/admin/house/books", label: "Reading room" },
+                      { to: "/admin/house/studio", label: "Studio" },
+                      { to: "/admin/house/days", label: "The year" },
+                      { to: "/admin/house/today", label: "Today" },
+                    ]}
+                  />,
+                ),
+                children: [
+                  { index: true, element: <Navigate to="/admin/house/rooms" replace /> },
+                  { path: "rooms", element: withSuspense(<AdminRoomsPage />) },
+                  { path: "things", element: withSuspense(<AdminThingsPage />) },
+                  { path: "wanted", element: withSuspense(<AdminWantedPage />) },
+                  { path: "books", element: withSuspense(<AdminBooksPage />) },
+                  { path: "studio", element: withSuspense(<AdminStudioPage />) },
+                  { path: "days", element: withSuspense(<AdminDaysPage />) },
+                  { path: "today", element: withSuspense(<AdminHouseTodayPage />) },
+                ],
+              },
+            ],
+          },
+          {
+            path: "record",
+            element: withSuspense(<ProtectedRoute permission="record.manage" />),
+            children: [
+              {
+                element: withSuspense(
+                  <SectionLayout
+                    title="The Record"
+                    intro="The catalogue of what was given in, and the house's own papers. What the Press has published is kept in the deposit register."
+                    tabs={[
+                      { to: "/admin/record/catalogue", label: "Catalogue" },
+                      { to: "/admin/record/papers", label: "The house's papers" },
+                    ]}
+                  />,
+                ),
+                children: [
+                  { index: true, element: <Navigate to="/admin/record/catalogue" replace /> },
+                  { path: "catalogue", element: withSuspense(<AdminCataloguePage />) },
+                  { path: "papers", element: withSuspense(<AdminHousePapersPage />) },
+                ],
+              },
+            ],
+          },
+          { path: "offers", element: withSuspense(<AdminOffersPage />) },
+          {
+            path: "places",
+            element: withSuspense(<ProtectedRoute permission="encounters.manage" />),
+            children: [{ index: true, element: withSuspense(<AdminPlacesPage />) }],
+          },
+          {
+            path: "pigeon-reach",
+            element: withSuspense(<ProtectedRoute permission="publishing.item.update" />),
+            children: [{ index: true, element: withSuspense(<AdminPigeonReachPage />) }],
+          },
+          {
+            path: "objects",
+            element: withSuspense(<ProtectedRoute permission="publishing.item.update" />),
+            children: [{ index: true, element: withSuspense(<AdminObjectsPage />) }],
           },
           {
             path: "wording",

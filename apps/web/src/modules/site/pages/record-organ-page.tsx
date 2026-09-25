@@ -64,6 +64,21 @@ export function RecordOrganPage() {
       <nav className="w-standard border-border border-t py-12" aria-label={w("record.in-label")}>
         <ul className="type-body flex flex-col gap-2">
           <li>
+            <Link to={localize("/record/catalogue")} className="link-underline">
+              {w("record.catalogue")}
+            </Link>
+          </li>
+          <li>
+            <Link to={localize("/record/papers")} className="link-underline">
+              {w("record.house-papers")}
+            </Link>
+          </li>
+          <li>
+            <Link to={localize("/record/offer")} className="link-underline">
+              {w("record.offer")}
+            </Link>
+          </li>
+          <li>
             <Link to={localize("/record/deposits")} className="link-underline">
               {w("record.deposit-register")}
             </Link>

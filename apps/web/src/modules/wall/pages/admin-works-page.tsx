@@ -12,6 +12,7 @@ import {
   type AdminWork,
 } from "../api/use-wall-admin";
 import { ImageUploader } from "../components/image-uploader";
+import { useAdminRooms } from "../api/use-house-admin";
 import { WorkTermsForm } from "./admin-dealings-page";
 import {
   RecordForm,
@@ -42,7 +43,10 @@ const EVENT_KINDS = [
   "rehoused",
 ].map((k) => ({ value: k, label: k[0]!.toUpperCase() + k.slice(1) }));
 
-function workSpecs(people: Array<{ id: string | null; name: string | null }>): FieldSpec[] {
+function workSpecs(
+  people: Array<{ id: string | null; name: string | null }>,
+  rooms: Array<{ id: string | null; name: string | null }>,
+): FieldSpec[] {
   return [
     { key: "title", label: "Title", type: "text", required: true },
     { key: "title_ne", label: "Title in Nepali", type: "text" },
@@ -53,6 +57,13 @@ function workSpecs(people: Array<{ id: string | null; name: string | null }>): F
       type: "select",
       required: true,
       options: people.map((p) => ({ value: p.id as string, label: p.name as string })),
+    },
+    {
+      key: "room_id",
+      label: "Where it hangs now",
+      type: "select",
+      options: rooms.map((r) => ({ value: r.id as string, label: r.name as string })),
+      hint: "Leave empty when it is not hanging. Moving a work here does not write to its life: add a shown or rehoused line below when it matters.",
     },
     { key: "year", label: "Year", type: "number" },
     { key: "medium", label: "Medium", type: "text" },
@@ -121,10 +132,14 @@ const mm = (v: string | boolean | undefined): number | null => {
 export function AdminWorksPage() {
   const works = useAdminWorks();
   const people = useAdminPeople();
+  const rooms = useAdminRooms();
   const save = useSaveWork();
   const [editing, setEditing] = React.useState<AdminWork | null>(null);
   const [isNew, setIsNew] = React.useState(false);
-  const specs = React.useMemo(() => workSpecs(people.data ?? []), [people.data]);
+  const specs = React.useMemo(
+    () => workSpecs(people.data ?? [], rooms.data ?? []),
+    [people.data, rooms.data],
+  );
   const showForm = isNew || editing != null;
 
   return (
@@ -209,6 +224,7 @@ export function AdminWorksPage() {
                       image_licence: s(v["image_licence"]),
                       may_show_after_sale: v["may_show_after_sale"],
                       published: v["published"],
+                      room_id: s(v["room_id"]),
                     },
                   },
                   { onSuccess: () => undefined },

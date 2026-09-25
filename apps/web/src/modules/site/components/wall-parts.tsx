@@ -2,10 +2,20 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import { formatBikramSambatDate, formatKathmanduDate } from "@paz/utils";
 import { publicMediaUrl, useSiteInfo } from "../api/use-site";
-import type { ImageVariant, WallWorkImage } from "../api/use-wall";
+import type { ImageVariant } from "../api/use-wall";
 import { useLanguage, useLocalizedPath } from "../language";
 import { Mark } from "./mark";
 import { useWording, type WordingKey } from "../wording";
+
+/** What a picture needs: the shape shared by a work's frames, a room's photographs and a thing's. */
+export type PictureSource = {
+  original_path: string | null;
+  width: number | null;
+  height: number | null;
+  variants: unknown;
+  alt: string | null;
+  photographer: string | null;
+};
 
 /**
  * A work's picture: responsive sizes, modern format with a fallback,
@@ -19,7 +29,7 @@ export function WorkPicture({
   eager = false,
   fullSizeLink = false,
 }: {
-  image: WallWorkImage;
+  image: PictureSource;
   sizes: string;
   eager?: boolean;
   fullSizeLink?: boolean;

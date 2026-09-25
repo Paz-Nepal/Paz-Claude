@@ -22,6 +22,7 @@ function useSettings() {
 }
 
 function displayValue(value: unknown): string {
+  if (value == null) return "";
   if (typeof value === "string") return value;
   if (typeof value === "number") return String(value);
   return JSON.stringify(value ?? "");

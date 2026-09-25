@@ -64,10 +64,19 @@ const TERM_SPECS: FieldSpec[] = [
     options: [
       { value: "term", label: "Term" },
       { value: "spelling", label: "Spelling" },
+      { value: "sought", label: "Sought: a word the house cannot yet explain" },
     ],
   },
-  { key: "definition", label: "Meaning", type: "textarea", required: true, rows: 3 },
+  {
+    key: "definition",
+    label: "Meaning",
+    type: "textarea",
+    rows: 3,
+    hint: "Required for a term or a spelling. Leave empty for a sought word.",
+  },
   { key: "definition_ne", label: "Meaning in Nepali", type: "textarea", rows: 3 },
+  { key: "term_new", label: "Word in Nepal Bhasa", type: "text" },
+  { key: "definition_new", label: "Meaning in Nepal Bhasa", type: "textarea", rows: 3 },
 ];
 
 /** The shared lexicon and the spelling list's public face (/words). */
@@ -95,8 +104,10 @@ export function AdminGlossaryPage() {
               kind: v["kind"],
               term: s(v["term"]),
               term_ne: s(v["term_ne"]),
+              term_new: s(v["term_new"]),
               definition: s(v["definition"]),
               definition_ne: s(v["definition_ne"]),
+              definition_new: s(v["definition_new"]),
             },
           })
         }
@@ -105,7 +116,8 @@ export function AdminGlossaryPage() {
         {(terms.data ?? []).map((t) => (
           <li key={t.id}>
             <span className="font-medium">{t.term}</span>
-            <span className="text-muted-foreground"> · {t.kind}</span>: {t.definition}
+            <span className="text-muted-foreground"> · {t.kind}</span>
+            {t.definition ? `: ${t.definition}` : ""}
           </li>
         ))}
       </ul>

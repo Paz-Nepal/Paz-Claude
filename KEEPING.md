@@ -213,6 +213,91 @@ line under each, in both languages) are kept under **Friends tiers**. A tier
 someone has applied under cannot be removed; untick **Offered on the Friends
 form** to stop offering it.
 
+## The house as a place, and what people offer
+
+Everything here is on the desk and stands empty until the house fills it.
+A section with nothing in it says so in one plain sentence (Admin, Wording).
+
+**The house** (Admin, The house). Tabs across the top:
+
+- _Rooms_: name, where in the house, a line about it, and its photographs
+  (each needs a description and the photographer's name). Publish a room only
+  when it exists as described. A room called `studio` also shows who is
+  making there.
+- _Things_: each chair, pot or shelf, where it came from, who gave it, which
+  room it is in, and whether a visitor may use it. A giver's name is shown
+  only if you tick that they said yes.
+- _Would welcome_: what the house is asking for, things and books. Untick
+  "Still wanted" when it arrives.
+- _Reading room_: the books on the shelves.
+- _Studio_: who is making in the studio this month. The current month is shown
+  on the home page.
+- _The year_: the days the house keeps. Lunar days move, so each year enter the
+  date for each day (nothing is worked out for you).
+- _Today_: the one line that says whether anyone is home. Save it to set the
+  time, clear it to hide it. It needs permission to change settings.
+
+**Hanging work.** On a work (Admin, Works) pick the room it hangs in. The Wall
+can then be seen by room. A painter is _early_ or _signed_ (Admin, People). An
+early painter's work shows one house price, which is the setting
+`wall.early_price_minor` (in paisa; NPR 7,000 is 700000). It is empty until the
+house decides, and nothing is shown while it is empty.
+
+**Offers** (Admin, Offers). One place for what people send through the site: a
+painter showing their work, a Sattal proposal, a Table kept elsewhere, a thing
+or a book, a word the house is looking for, a request to leave. You see the
+kinds that belong to what you keep. Mark one read to tidy the list. A Table
+kept elsewhere is then entered under Commons, "Report a Table kept elsewhere",
+and confirmed like any other. No offer sends email.
+
+**The Record** (Admin, The Record).
+
+- _Catalogue_: add an accession, then record the giver's consent as dated
+  lines (they are never edited, only added to). A number (PTN-0001 and on) is
+  given by the button once an agreement is on file, and is never changed or
+  reused. The first part is always the consents. Add parts, and for a part you
+  open online add its fingerprint and file so both are shown together.
+- One accession has one ruling. If material comes under different rulings,
+  make separate accessions.
+- No account of the content is shown until a holding opens. A holding closed to
+  everyone must say the date it opens.
+- If a giver withdraws, use the withdraw button. The number stays as a gap with
+  no name.
+- The closed layer (giver, witness, how the family is reached) is shown only to
+  the Keeper.
+- _Listening_: record a listening. Names are kept for the number of days in the
+  setting `record.listening_names_days`, then only the count remains. Nothing
+  is stripped while that setting is empty.
+- _The house's papers_: the house's own deeds and minutes, numbered HP-0001 and
+  on, apart from the catalogue.
+
+**The Press.**
+
+- _Where the pigeons went_ (Admin, Pigeon reach): copies by country for each
+  Pigeon Post edition. There is nowhere to write a name.
+- A Paper can have a reading: on the Paper's details, upload an MP3 or Ogg and
+  name the reader.
+- _Objects_ (Admin, Objects): the Papers and the Pigeon Post as printed
+  objects, and prints. There is no checkout; each one carries an enquiry that
+  reaches you as a message. A price is shown only if you set one.
+- The Sattal's rate is the setting `sattal.rate_minor`. It is empty until set.
+
+**Encounters.** An Encounter can belong to a _series_ (for example
+`the-painting-afternoon`, whose page is `/afternoons/the-painting-afternoon`)
+and can carry a note on what it costs. _Places tended_ (Admin, Places tended)
+records each hiti or chautari and each visit: the date, how many came (a count,
+never names) and before and after photographs.
+
+**Checking a certificate or a hallmark.** `/verify` takes the number printed on
+a certificate and shows only what the house already says on the work's page.
+The Guild page checks a mark against the register. Neither shows a buyer or a
+price paid.
+
+**Pages the house writes** (Admin, Desk, type Page). Each of these stays a
+plain "not written yet" until you publish a page with the same slug:
+`at-the-house`, `finding-the-house`, `neighbours` (Nepali is shown first),
+`sattal-writing`, `a-table-elsewhere`, `leaving`.
+
 ## The mark
 
 The house's mark is undrawn, so every place it belongs is left empty rather than

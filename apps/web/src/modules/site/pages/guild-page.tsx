@@ -7,6 +7,7 @@ import { PageHero } from "../components/paz-editorial";
 import { DocumentHead } from "../components/document-head";
 import { TranslationNotice } from "../components/translation-notice";
 import { useWording } from "../wording";
+import { HallmarkCheck } from "./verify-pages";
 
 /**
  * Site audit, 18 Sept 2026: "Two of the six organs, the Guild and the
@@ -56,6 +57,7 @@ export function GuildPage() {
         </div>
       )}
       <GuildRegister />
+      <HallmarkCheck />
     </div>
   );
 }

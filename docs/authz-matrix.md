@@ -79,6 +79,7 @@ dependency order.
 | `encounters.manage` | super_admin, administrator, editor | Add and edit Encounters on the public calendar. |
 | `mail.manage` | super_admin, administrator, editor | Read the Brief subscriber list and send the Brief. |
 | `site.wording.manage` | super_admin, administrator, editor | Reword the fixed lines of the public site: menus, footer, page intros, form labels, empty sections. |
+| `house.manage` | super_admin, administrator, editor | Keep the house as a place: rooms and their photographs, things and where they came from, what the house would welcome, books, studio months, the days the house keeps. |
 | `safeguarding.read` | super_admin | Read concerns raised through the safeguarding route. Held by one named person, never by the people a concern might be about. |
 
 ## Adding a new permission

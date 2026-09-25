@@ -8,6 +8,10 @@ export interface SettingsRegistry {
   "site.name": string;
   "site.tagline": string;
   "site.contact_email": string;
+  "house.status": string;
+  "house.status_ne": string;
+  /** ISO time the status was last set; written by api.set_house_status. */
+  "house.status_set_at": string;
   "email.sender_name": string;
   "email.sender_address": string;
 }

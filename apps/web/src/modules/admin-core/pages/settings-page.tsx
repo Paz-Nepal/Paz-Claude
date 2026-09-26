@@ -4,6 +4,7 @@ import { Button, Field, Input, StatePanel } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { supabase } from "@/lib/supabase";
 import { selectAll } from "@/lib/paged";
+import { SitePublishingPanel } from "../components/site-publishing-panel";
 
 interface SettingRow {
   key: string;
@@ -84,6 +85,7 @@ export function SettingsPage() {
   return (
     <div className="max-w-standard flex flex-col gap-6">
       <h1 className="font-serif text-2xl">Institutional settings</h1>
+      <SitePublishingPanel />
       {settings.isPending && (
         <p role="status" className="text-muted-foreground">
           Loading…

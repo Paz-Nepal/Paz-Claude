@@ -49,8 +49,11 @@ describe("the wording register", () => {
   });
 
   it("has every key the static pages ask for", () => {
-    // Tests run from apps/web; the script sits at the repository root.
-    const script = readFileSync(resolve(process.cwd(), "../../scripts/prerender.mjs"), "utf8");
+    // Tests run from apps/web; the renderer sits with the Edge Functions.
+    const script = readFileSync(
+      resolve(process.cwd(), "../../supabase/functions/_shared/render-site.mjs"),
+      "utf8",
+    );
     const asked = [...script.matchAll(/(?:say|wHtml)\("([a-z0-9.-]+)"/g)].map((m) => m[1]);
     const inTables = [...script.matchAll(/"((?:[a-z]+)\.[a-z0-9-]+)"/g)]
       .map((m) => m[1] as string)
@@ -62,6 +65,18 @@ describe("the wording register", () => {
       );
     expect(asked.length).toBeGreaterThan(20);
     for (const key of [...asked, ...inTables]) expect(WORDING, key).toHaveProperty([key as string]);
+  });
+});
+
+describe("the render-site copy", () => {
+  it("is the same register the app reads, so the pages written on publish say the same things", () => {
+    const app = readFileSync(resolve(process.cwd(), "src/modules/site/wording.json"), "utf8");
+    const edge = readFileSync(
+      resolve(process.cwd(), "../../supabase/functions/_shared/wording.json"),
+      "utf8",
+    );
+    // If this fails: pnpm sync:wording
+    expect(edge).toBe(app);
   });
 });
 

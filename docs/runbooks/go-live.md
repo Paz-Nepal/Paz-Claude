@@ -179,8 +179,8 @@ against the deployed project (`scripts/prerender.mjs` writes it from what it
 actually wrote, and fails the build if an entry or a public route has no file;
 reads `apps/web/.env.local`/`.env.production.local` automatically),
 so it's a separate step from the plain asset build CI also runs
-(and CI has no Supabase credentials to run it with). `pnpm sitemap`
-and `pnpm feeds` both write into `apps/web/dist/`, so run them after
+(and CI has no Supabase credentials to run it with). `pnpm prerender`
+writes the pages, sitemap and feeds into `apps/web/dist/`, so run it after
 `pnpm build`, not instead of it, and before zipping/uploading `dist/`.
 
 Upload the _contents_ of `dist/` (not the folder itself) to your static

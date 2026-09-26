@@ -131,6 +131,51 @@ export type Database = {
         };
         Relationships: [];
       };
+      site_render_state: {
+        Row: {
+          dirty: boolean;
+          dirty_since: string | null;
+          endpoint: string | null;
+          id: number;
+          last_files: number | null;
+          last_finished_at: string | null;
+          last_message: string | null;
+          last_ok: boolean | null;
+          last_started_at: string | null;
+          running_since: string | null;
+          secret: string;
+          shell_hash: string | null;
+        };
+        Insert: {
+          dirty?: boolean;
+          dirty_since?: string | null;
+          endpoint?: string | null;
+          id?: number;
+          last_files?: number | null;
+          last_finished_at?: string | null;
+          last_message?: string | null;
+          last_ok?: boolean | null;
+          last_started_at?: string | null;
+          running_since?: string | null;
+          secret?: string;
+          shell_hash?: string | null;
+        };
+        Update: {
+          dirty?: boolean;
+          dirty_since?: string | null;
+          endpoint?: string | null;
+          id?: number;
+          last_files?: number | null;
+          last_finished_at?: string | null;
+          last_message?: string | null;
+          last_ok?: boolean | null;
+          last_started_at?: string | null;
+          running_since?: string | null;
+          secret?: string;
+          shell_hash?: string | null;
+        };
+        Relationships: [];
+      };
       site_wording: {
         Row: {
           en: string | null;
@@ -3411,6 +3456,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      site_publishing_status: {
+        Row: {
+          connected: boolean | null;
+          dirty: boolean | null;
+          last_files: number | null;
+          last_finished_at: string | null;
+          last_message: string | null;
+          last_ok: boolean | null;
+          running_since: string | null;
+        };
+        Insert: {
+          connected?: never;
+          dirty?: boolean | null;
+          last_files?: number | null;
+          last_finished_at?: string | null;
+          last_message?: string | null;
+          last_ok?: boolean | null;
+          running_since?: string | null;
+        };
+        Update: {
+          connected?: never;
+          dirty?: boolean | null;
+          last_files?: number | null;
+          last_finished_at?: string | null;
+          last_message?: string | null;
+          last_ok?: boolean | null;
+          running_since?: string | null;
+        };
+        Relationships: [];
+      };
       terms_versions: {
         Row: {
           deposit_ref: string | null;
@@ -4452,6 +4527,15 @@ export type Database = {
         };
         Returns: Database["programs"]["Enums"]["registration_status"];
       };
+      register_guest_for_session: {
+        Args: {
+          p_email: string;
+          p_full_name: string;
+          p_phone: string;
+          p_session: string;
+        };
+        Returns: Database["programs"]["Enums"]["registration_status"];
+      };
       register_media: {
         Args: {
           p_alt: string;
@@ -4484,6 +4568,7 @@ export type Database = {
         };
         Returns: string;
       };
+      request_site_render: { Args: never; Returns: undefined };
       resolve_item_comment: {
         Args: { p_comment: string };
         Returns: Database["publishing"]["Tables"]["item_comments"]["Row"];
@@ -4701,6 +4786,17 @@ export type Database = {
         Returns: Database["membership"]["Enums"]["member_status"];
       };
       site_info: { Args: never; Returns: Json };
+      site_render_begin: { Args: { p_shell_hash: string }; Returns: boolean };
+      site_render_finish: {
+        Args: {
+          p_files: number;
+          p_message: string;
+          p_ok: boolean;
+          p_shell_hash: string;
+        };
+        Returns: undefined;
+      };
+      site_render_secret: { Args: never; Returns: string };
       site_wording: {
         Args: never;
         Returns: {

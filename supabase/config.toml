@@ -190,3 +190,8 @@ verify_jwt = true
 # requires the service-role key.
 [functions.strip-listening-names]
 verify_jwt = true
+
+# Called by pg_cron every thirty seconds, authenticated by a secret the
+# database made for itself (migration 0090), not by a JWT.
+[functions.render-site]
+verify_jwt = false

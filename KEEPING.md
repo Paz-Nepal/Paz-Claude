@@ -118,20 +118,19 @@ copy words into them from elsewhere. The words are the house's.
 
 ## Publishing the pages
 
-After anything changes that readers should see, one person runs this
-once, on a computer with the project on it:
+**Content needs nothing.** Anything you publish or change in the desk goes
+live by itself within about a minute: every page, the sitemap, the feeds and the
+plain text copies are written by the site from the database. You do not build
+or upload anything. Admin, Settings shows whether it is up to date and has a
+button to publish everything again. How it works, and what to do if it stalls,
+is in `docs/runbooks/publish-instantly.md`.
 
-```bash
-pnpm site
-```
-
-Then upload the contents of `apps/web/dist/` to the web host,
-replacing what is there. That is the whole job. It builds the app fresh, then writes every page,
-the sitemap, the feeds, and plain text copies of everything deposited
-(`record/<number>/text.txt`, `chronicle.txt`, `record.txt`).
-
-The very first time on a new computer, `docs/runbooks/go-live.md` says
-what to install and which keys to set.
+**Only code needs an upload.** When a developer changes the app itself, one
+person runs `pnpm site` on a computer with the project on it and uploads the
+contents of `apps/web/dist/` to the web host (`docs/runbooks/deploy.md`). The
+pages in `dist/` are the fallback the host serves if the live copy is ever
+unavailable. The very first time on a new computer, `docs/runbooks/go-live.md`
+says what to install and which keys to set.
 
 ## Two rulings, recorded
 

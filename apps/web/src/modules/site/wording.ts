@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import registry from "./wording.json";
+import defaults from "virtual:wording-defaults";
 import { useLanguage, type Lang } from "./language";
 
 /**
@@ -32,9 +32,11 @@ export type WordingEntry = {
   ne?: string;
 };
 
-export type WordingKey = keyof typeof registry;
-export const WORDING = registry as Record<WordingKey, WordingEntry>;
-export const WORDING_KEYS = Object.keys(registry) as WordingKey[];
+export type WordingKey = keyof typeof import("./wording.json");
+
+/** The words alone, served by the wording plugin; see wording-registry.ts for the desk's view. */
+export type WordingDefault = { en: string; ne?: string };
+export const DEFAULTS = defaults as Record<WordingKey, WordingDefault>;
 
 export type WordingOverride = { key: string; en: string | null; ne: string | null };
 type Vars = Record<string, string | number | null | undefined>;
@@ -63,7 +65,7 @@ export function resolveWording(
   overrides: ReadonlyMap<string, WordingOverride> | undefined,
   vars?: Vars,
 ): string {
-  const entry = WORDING[key];
+  const entry = DEFAULTS[key];
   const o = overrides?.get(key);
   const en = o?.en ?? entry?.en ?? key;
   const text = lang === "ne" ? (o?.ne ?? entry?.ne ?? en) : en;

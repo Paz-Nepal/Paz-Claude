@@ -35,7 +35,9 @@ Deno.serve(async (req) => {
   });
   if (!allowed) return jsonError("Too many requests. Try again later.", 429);
 
-  const { data, error } = await supabase.schema("api").rpc("brief_confirm", { p_token: body.token });
+  const { data, error } = await supabase
+    .schema("api")
+    .rpc("brief_confirm", { p_token: body.token });
   if (error) return jsonError("The link is not valid", 400);
   if (!data) return jsonError("The link is not valid", 404);
 

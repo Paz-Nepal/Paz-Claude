@@ -28,7 +28,10 @@ function bodyText(doc: any): string {
     }
   };
   walk(doc);
-  return parts.join("").replace(/\n{3,}/g, "\n\n").trim();
+  return parts
+    .join("")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 Deno.serve(async (req) => {
@@ -65,7 +68,12 @@ Deno.serve(async (req) => {
     .schema("api")
     .rpc("get_brief", { p_slug: body.slug })
     .maybeSingle();
-  const item = itemData as { id: string; title: string; body: unknown; deposit_ref: string | null } | null;
+  const item = itemData as {
+    id: string;
+    title: string;
+    body: unknown;
+    deposit_ref: string | null;
+  } | null;
   if (itemError || !item || !item.deposit_ref) {
     return jsonError("That Brief has not been deposited", 400);
   }

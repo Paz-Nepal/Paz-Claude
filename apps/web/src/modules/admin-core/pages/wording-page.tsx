@@ -3,9 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Badge, Button, Field, Input, StatePanel, Textarea } from "@paz/ui";
 import { toAppError } from "@paz/types";
 import { supabase } from "@/lib/supabase";
+import { WORDING, WORDING_KEYS } from "@/modules/site/wording-registry";
 import {
-  WORDING,
-  WORDING_KEYS,
   placeholdersOf,
   useSiteWording,
   type WordingKey,

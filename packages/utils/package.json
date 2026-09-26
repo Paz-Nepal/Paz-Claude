@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "@paz/config": "workspace:*",
-    "vitest": "^2.1.0"
+    "vitest": "^3.2.6"
   },
   "scripts": {
     "test": "vitest run",

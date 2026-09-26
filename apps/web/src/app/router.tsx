@@ -12,474 +12,407 @@ import { HomePage } from "@/modules/site";
  * split. `eslint-plugin-boundaries` permits `app` → module internals; only
  * module-to-module imports are restricted to index.ts.
  */
-const SignInPage = React.lazy(() =>
-  import("@/modules/auth-core/pages/sign-in-page").then((m) => ({ default: m.SignInPage })),
-);
-const MfaEnrollPage = React.lazy(() =>
-  import("@/modules/auth-core/pages/mfa-enroll-page").then((m) => ({ default: m.MfaEnrollPage })),
-);
-const AccountPage = React.lazy(() =>
-  import("@/modules/auth-core/pages/account-page").then((m) => ({ default: m.AccountPage })),
-);
-const ProtectedRoute = React.lazy(() =>
-  import("@/modules/auth-core/components/protected-route").then((m) => ({
-    default: m.ProtectedRoute,
-  })),
-);
-const AdminLayout = React.lazy(() =>
-  import("@/modules/admin-core/components/admin-layout").then((m) => ({
-    default: m.AdminLayout,
-  })),
-);
-const DeskPage = React.lazy(() =>
-  import("@/modules/publishing/pages/desk-page").then((m) => ({ default: m.DeskPage })),
-);
-const ItemEditorPage = React.lazy(() =>
-  import("@/modules/publishing/pages/item-editor-page").then((m) => ({
-    default: m.ItemEditorPage,
-  })),
-);
-const MediaPage = React.lazy(() =>
-  import("@/modules/publishing/pages/media-page").then((m) => ({ default: m.MediaPage })),
-);
-const SettingsPage = React.lazy(() =>
-  import("@/modules/admin-core/pages/settings-page").then((m) => ({ default: m.SettingsPage })),
-);
-const WordingPage = React.lazy(() =>
-  import("@/modules/admin-core/pages/wording-page").then((m) => ({ default: m.WordingPage })),
-);
-const AdminTiersPage = React.lazy(() =>
-  import("@/modules/membership/pages/admin-tiers-page").then((m) => ({
-    default: m.AdminTiersPage,
-  })),
-);
-const ArticlePage = React.lazy(() =>
-  import("@/modules/site/pages/article-page").then((m) => ({ default: m.ArticlePage })),
-);
-const CmsPage = React.lazy(() =>
-  import("@/modules/site/pages/cms-page").then((m) => ({ default: m.CmsPage })),
-);
-const SearchPage = React.lazy(() =>
-  import("@/modules/site/pages/search-page").then((m) => ({ default: m.SearchPage })),
-);
-const PressPage = React.lazy(() =>
-  import("@/modules/site/pages/press-page").then((m) => ({ default: m.PressPage })),
-);
-const HousePage = React.lazy(() =>
-  import("@/modules/site/pages/house-page").then((m) => ({ default: m.HousePage })),
-);
-const HearthPage = React.lazy(() =>
-  import("@/modules/site/pages/hearth-page").then((m) => ({ default: m.HearthPage })),
-);
-const GuildPage = React.lazy(() =>
-  import("@/modules/site/pages/guild-page").then((m) => ({ default: m.GuildPage })),
-);
-const TreasuryPage = React.lazy(() =>
-  import("@/modules/site/pages/treasury-page").then((m) => ({ default: m.TreasuryPage })),
-);
-const RecordOrganPage = React.lazy(() =>
-  import("@/modules/site/pages/record-organ-page").then((m) => ({
-    default: m.RecordOrganPage,
-  })),
-);
-const PapersIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/papers-index-page").then((m) => ({
-    default: m.PapersIndexPage,
-  })),
-);
-const PaperPage = React.lazy(() =>
-  import("@/modules/site/pages/paper-page").then((m) => ({ default: m.PaperPage })),
-);
-const BriefIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/brief-index-page").then((m) => ({ default: m.BriefIndexPage })),
-);
-const BriefPage = React.lazy(() =>
-  import("@/modules/site/pages/brief-page").then((m) => ({ default: m.BriefPage })),
-);
-const DispatchIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/dispatch-index-page").then((m) => ({
-    default: m.DispatchIndexPage,
-  })),
-);
-const DispatchPage = React.lazy(() =>
-  import("@/modules/site/pages/dispatch-page").then((m) => ({ default: m.DispatchPage })),
-);
-const PigeonPostIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/pigeon-post-index-page").then((m) => ({
-    default: m.PigeonPostIndexPage,
-  })),
-);
-const PigeonPostPage = React.lazy(() =>
-  import("@/modules/site/pages/pigeon-post-page").then((m) => ({
-    default: m.PigeonPostPage,
-  })),
-);
-const AnnualIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/annual-index-page").then((m) => ({
-    default: m.AnnualIndexPage,
-  })),
-);
-const AnnualPage = React.lazy(() =>
-  import("@/modules/site/pages/annual-page").then((m) => ({ default: m.AnnualPage })),
-);
-const RecordPage = React.lazy(() =>
-  import("@/modules/site/pages/record-page").then((m) => ({ default: m.RecordPage })),
-);
-const ApplyPage = React.lazy(() =>
-  import("@/modules/membership/pages/apply-page").then((m) => ({ default: m.ApplyPage })),
-);
-const DirectoryPage = React.lazy(() =>
-  import("@/modules/membership/pages/directory-page").then((m) => ({ default: m.DirectoryPage })),
-);
-const AcceptInvitationPage = React.lazy(() =>
-  import("@/modules/membership/pages/accept-invitation-page").then((m) => ({
-    default: m.AcceptInvitationPage,
-  })),
-);
-const ApplicationsPage = React.lazy(() =>
-  import("@/modules/membership/pages/applications-page").then((m) => ({
-    default: m.ApplicationsPage,
-  })),
-);
-const MembersPage = React.lazy(() =>
-  import("@/modules/membership/pages/members-page").then((m) => ({ default: m.MembersPage })),
-);
-const MemberDetailPage = React.lazy(() =>
-  import("@/modules/membership/pages/member-detail-page").then((m) => ({
-    default: m.MemberDetailPage,
-  })),
-);
-const MemberCardPage = React.lazy(() =>
-  import("@/modules/membership/pages/member-card-page").then((m) => ({
-    default: m.MemberCardPage,
-  })),
-);
-const VerifyCardPage = React.lazy(() =>
-  import("@/modules/membership/pages/verify-card-page").then((m) => ({
-    default: m.VerifyCardPage,
-  })),
-);
-const CalendarPage = React.lazy(() =>
-  import("@/modules/programs/pages/calendar-page").then((m) => ({ default: m.CalendarPage })),
-);
-const ProgramPage = React.lazy(() =>
-  import("@/modules/programs/pages/program-page").then((m) => ({ default: m.ProgramPage })),
-);
-const MyRegistrationsPage = React.lazy(() =>
-  import("@/modules/programs/pages/my-registrations-page").then((m) => ({
-    default: m.MyRegistrationsPage,
-  })),
-);
-const AdminProgramsPage = React.lazy(() =>
-  import("@/modules/programs/pages/admin-programs-page").then((m) => ({
-    default: m.AdminProgramsPage,
-  })),
-);
-const ProgramEditorPage = React.lazy(() =>
-  import("@/modules/programs/pages/program-editor-page").then((m) => ({
-    default: m.ProgramEditorPage,
-  })),
-);
-const SessionRosterPage = React.lazy(() =>
-  import("@/modules/programs/pages/session-roster-page").then((m) => ({
-    default: m.SessionRosterPage,
-  })),
-);
-const OrganizationsPage = React.lazy(() =>
-  import("@/modules/crm/pages/organizations-page").then((m) => ({ default: m.OrganizationsPage })),
-);
-const RelationshipsPage = React.lazy(() =>
-  import("@/modules/crm/pages/relationships-page").then((m) => ({ default: m.RelationshipsPage })),
-);
-const RelationshipDetailPage = React.lazy(() =>
-  import("@/modules/crm/pages/relationship-detail-page").then((m) => ({
-    default: m.RelationshipDetailPage,
-  })),
-);
-const PledgesPage = React.lazy(() =>
-  import("@/modules/crm/pages/pledges-page").then((m) => ({ default: m.PledgesPage })),
-);
-const WallPage = React.lazy(() =>
-  import("@/modules/site/pages/wall-page").then((m) => ({ default: m.WallPage })),
-);
-const PersonPage = React.lazy(() =>
-  import("@/modules/site/pages/person-page").then((m) => ({ default: m.PersonPage })),
-);
-const WorkPage = React.lazy(() =>
-  import("@/modules/site/pages/work-page").then((m) => ({ default: m.WorkPage })),
-);
-const ShowPage = React.lazy(() =>
-  import("@/modules/site/pages/show-page").then((m) => ({ default: m.ShowPage })),
-);
-const SattalIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/sattal-pages").then((m) => ({ default: m.SattalIndexPage })),
-);
-const SattalPiecePage = React.lazy(() =>
-  import("@/modules/site/pages/sattal-pages").then((m) => ({ default: m.SattalPiecePage })),
-);
-const ChroniclePage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.ChroniclePage })),
-);
-const WordsPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.WordsPage })),
-);
-const CommonsPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CommonsPage })),
-);
-const CanonIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CanonIndexPage })),
-);
-const CanonDocRoute = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CanonDocRoute })),
-);
-const AVoicePage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.AVoicePage })),
-);
-const DepositRoute = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.DepositRoute })),
-);
-const NamePage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.NamePage })),
-);
-const TablePage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.TablePage })),
-);
-const LookingForPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.LookingForPage })),
-);
-const PrivacyPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.PrivacyPage })),
-);
-const AdminPeoplePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-people-page").then((m) => ({ default: m.AdminPeoplePage })),
-);
-const AdminWorksPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-works-page").then((m) => ({ default: m.AdminWorksPage })),
-);
-const AdminShowsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-shows-page").then((m) => ({ default: m.AdminShowsPage })),
-);
-const AdminSattalPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-sattal-page").then((m) => ({ default: m.AdminSattalPage })),
-);
-const AdminChroniclePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-chronicle-page").then((m) => ({
-    default: m.AdminChroniclePage,
-  })),
-);
-const AdminVoicePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-misc-pages").then((m) => ({ default: m.AdminVoicePage })),
-);
-const AdminGlossaryPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-misc-pages").then((m) => ({ default: m.AdminGlossaryPage })),
-);
-const TermsIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.TermsIndexPage })),
-);
-const TermsDocPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.TermsDocPage })),
-);
-const HandsPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.HandsPage })),
-);
-const HandPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.HandPage })),
-);
-const EncountersPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.EncountersPage })),
-);
-const EncounterPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.EncounterPage })),
-);
-const SafeguardingPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.SafeguardingPage })),
-);
-const ChildrenPhotographyPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.ChildrenPhotographyPage })),
-);
-const BriefConfirmPage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.BriefConfirmPage })),
-);
-const BriefUnsubscribePage = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.BriefUnsubscribePage })),
-);
-const CustodianPage = React.lazy(() =>
-  import("@/modules/site/pages/house-pages").then((m) => ({ default: m.CustodianPage })),
-);
-const FriendsTermsNote = React.lazy(() =>
-  import("@/modules/site/pages/more-pages").then((m) => ({ default: m.FriendsTermsNote })),
-);
-const AdminRolesPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminRolesPage })),
-);
-const AdminEncountersPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({
-    default: m.AdminEncountersPage,
-  })),
-);
-const AdminTreasuryPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminTreasuryPage })),
-);
-const AdminGuildPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminGuildPage })),
-);
-const AdminCommonsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminCommonsPage })),
-);
-const AdminConcernsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-house-pages").then((m) => ({ default: m.AdminConcernsPage })),
-);
-const AdminDealingsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({
-    default: m.AdminDealingsPage,
-  })),
-);
-const CertificatePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({ default: m.CertificatePage })),
-);
-const InvoicePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-dealings-page").then((m) => ({ default: m.InvoicePage })),
-);
-const AdminBriefPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-brief-page").then((m) => ({ default: m.AdminBriefPage })),
-);
-const DashboardPage = React.lazy(() =>
-  import("@/modules/analytics/pages/dashboard-page").then((m) => ({ default: m.DashboardPage })),
-);
-const SendAPigeonPage = React.lazy(() =>
-  import("@/modules/site/pages/send-a-pigeon-page").then((m) => ({
-    default: m.SendAPigeonPage,
-  })),
-);
-const ResolveNotFoundPage = React.lazy(() =>
-  import("@/modules/site/pages/resolve-not-found-page").then((m) => ({
-    default: m.ResolveNotFoundPage,
-  })),
-);
-const ContactPage = React.lazy(() =>
-  import("@/modules/site/pages/contact-page").then((m) => ({ default: m.ContactPage })),
-);
-const PigeonSubmissionsPage = React.lazy(() =>
-  import("@/modules/publishing/pages/pigeon-submissions-page").then((m) => ({
-    default: m.PigeonSubmissionsPage,
-  })),
+/**
+ * A route component loaded on its own chunk. Written once so the router reads
+ * as a list of pages, not a wall of dynamic imports. `name` must be an export
+ * of the module, and the component must take no required props.
+ */
+type ComponentKeys<M> = {
+  [K in keyof M]: M[K] extends React.ComponentType<never> ? K : never;
+}[keyof M];
+
+type LazyOf<C> =
+  C extends React.ComponentType<infer P>
+    ? React.LazyExoticComponent<React.ComponentType<P>>
+    : never;
+
+function lazyPage<M, K extends ComponentKeys<M>>(load: () => Promise<M>, name: K): LazyOf<M[K]> {
+  // React.lazy wants ComponentType<any>; the cast is confined here and the
+  // component keeps its own prop types on the way out.
+  return React.lazy(async () => ({
+    default: (await load())[name] as unknown as React.ComponentType,
+  })) as unknown as LazyOf<M[K]>;
+}
+
+const SignInPage = lazyPage(() => import("@/modules/auth-core/pages/sign-in-page"), "SignInPage");
+const MfaEnrollPage = lazyPage(
+  () => import("@/modules/auth-core/pages/mfa-enroll-page"),
+  "MfaEnrollPage",
+);
+const AccountPage = lazyPage(() => import("@/modules/auth-core/pages/account-page"), "AccountPage");
+const ProtectedRoute = lazyPage(
+  () => import("@/modules/auth-core/components/protected-route"),
+  "ProtectedRoute",
+);
+const AdminLayout = lazyPage(
+  () => import("@/modules/admin-core/components/admin-layout"),
+  "AdminLayout",
+);
+const DeskPage = lazyPage(() => import("@/modules/publishing/pages/desk-page"), "DeskPage");
+const ItemEditorPage = lazyPage(
+  () => import("@/modules/publishing/pages/item-editor-page"),
+  "ItemEditorPage",
+);
+const MediaPage = lazyPage(() => import("@/modules/publishing/pages/media-page"), "MediaPage");
+const SettingsPage = lazyPage(
+  () => import("@/modules/admin-core/pages/settings-page"),
+  "SettingsPage",
+);
+const WordingPage = lazyPage(
+  () => import("@/modules/admin-core/pages/wording-page"),
+  "WordingPage",
+);
+const AdminTiersPage = lazyPage(
+  () => import("@/modules/membership/pages/admin-tiers-page"),
+  "AdminTiersPage",
+);
+const ArticlePage = lazyPage(() => import("@/modules/site/pages/article-page"), "ArticlePage");
+const CmsPage = lazyPage(() => import("@/modules/site/pages/cms-page"), "CmsPage");
+const SearchPage = lazyPage(() => import("@/modules/site/pages/search-page"), "SearchPage");
+const PressPage = lazyPage(() => import("@/modules/site/pages/press-page"), "PressPage");
+const HousePage = lazyPage(() => import("@/modules/site/pages/house-page"), "HousePage");
+const HearthPage = lazyPage(() => import("@/modules/site/pages/hearth-page"), "HearthPage");
+const GuildPage = lazyPage(() => import("@/modules/site/pages/guild-page"), "GuildPage");
+const TreasuryPage = lazyPage(() => import("@/modules/site/pages/treasury-page"), "TreasuryPage");
+const RecordOrganPage = lazyPage(
+  () => import("@/modules/site/pages/record-organ-page"),
+  "RecordOrganPage",
+);
+const PapersIndexPage = lazyPage(
+  () => import("@/modules/site/pages/papers-index-page"),
+  "PapersIndexPage",
+);
+const PaperPage = lazyPage(() => import("@/modules/site/pages/paper-page"), "PaperPage");
+const BriefIndexPage = lazyPage(
+  () => import("@/modules/site/pages/brief-index-page"),
+  "BriefIndexPage",
+);
+const BriefPage = lazyPage(() => import("@/modules/site/pages/brief-page"), "BriefPage");
+const DispatchIndexPage = lazyPage(
+  () => import("@/modules/site/pages/dispatch-index-page"),
+  "DispatchIndexPage",
+);
+const DispatchPage = lazyPage(() => import("@/modules/site/pages/dispatch-page"), "DispatchPage");
+const PigeonPostIndexPage = lazyPage(
+  () => import("@/modules/site/pages/pigeon-post-index-page"),
+  "PigeonPostIndexPage",
+);
+const PigeonPostPage = lazyPage(
+  () => import("@/modules/site/pages/pigeon-post-page"),
+  "PigeonPostPage",
+);
+const AnnualIndexPage = lazyPage(
+  () => import("@/modules/site/pages/annual-index-page"),
+  "AnnualIndexPage",
+);
+const AnnualPage = lazyPage(() => import("@/modules/site/pages/annual-page"), "AnnualPage");
+const RecordPage = lazyPage(() => import("@/modules/site/pages/record-page"), "RecordPage");
+const ApplyPage = lazyPage(() => import("@/modules/membership/pages/apply-page"), "ApplyPage");
+const DirectoryPage = lazyPage(
+  () => import("@/modules/membership/pages/directory-page"),
+  "DirectoryPage",
+);
+const AcceptInvitationPage = lazyPage(
+  () => import("@/modules/membership/pages/accept-invitation-page"),
+  "AcceptInvitationPage",
+);
+const ApplicationsPage = lazyPage(
+  () => import("@/modules/membership/pages/applications-page"),
+  "ApplicationsPage",
+);
+const MembersPage = lazyPage(
+  () => import("@/modules/membership/pages/members-page"),
+  "MembersPage",
+);
+const MemberDetailPage = lazyPage(
+  () => import("@/modules/membership/pages/member-detail-page"),
+  "MemberDetailPage",
+);
+const MemberCardPage = lazyPage(
+  () => import("@/modules/membership/pages/member-card-page"),
+  "MemberCardPage",
+);
+const VerifyCardPage = lazyPage(
+  () => import("@/modules/membership/pages/verify-card-page"),
+  "VerifyCardPage",
+);
+const CalendarPage = lazyPage(
+  () => import("@/modules/programs/pages/calendar-page"),
+  "CalendarPage",
+);
+const ProgramPage = lazyPage(() => import("@/modules/programs/pages/program-page"), "ProgramPage");
+const MyRegistrationsPage = lazyPage(
+  () => import("@/modules/programs/pages/my-registrations-page"),
+  "MyRegistrationsPage",
+);
+const AdminProgramsPage = lazyPage(
+  () => import("@/modules/programs/pages/admin-programs-page"),
+  "AdminProgramsPage",
+);
+const ProgramEditorPage = lazyPage(
+  () => import("@/modules/programs/pages/program-editor-page"),
+  "ProgramEditorPage",
+);
+const SessionRosterPage = lazyPage(
+  () => import("@/modules/programs/pages/session-roster-page"),
+  "SessionRosterPage",
+);
+const OrganizationsPage = lazyPage(
+  () => import("@/modules/crm/pages/organizations-page"),
+  "OrganizationsPage",
+);
+const RelationshipsPage = lazyPage(
+  () => import("@/modules/crm/pages/relationships-page"),
+  "RelationshipsPage",
+);
+const RelationshipDetailPage = lazyPage(
+  () => import("@/modules/crm/pages/relationship-detail-page"),
+  "RelationshipDetailPage",
+);
+const PledgesPage = lazyPage(() => import("@/modules/crm/pages/pledges-page"), "PledgesPage");
+const WallPage = lazyPage(() => import("@/modules/site/pages/wall-page"), "WallPage");
+const PersonPage = lazyPage(() => import("@/modules/site/pages/person-page"), "PersonPage");
+const WorkPage = lazyPage(() => import("@/modules/site/pages/work-page"), "WorkPage");
+const ShowPage = lazyPage(() => import("@/modules/site/pages/show-page"), "ShowPage");
+const SattalIndexPage = lazyPage(
+  () => import("@/modules/site/pages/sattal-pages"),
+  "SattalIndexPage",
+);
+const SattalPiecePage = lazyPage(
+  () => import("@/modules/site/pages/sattal-pages"),
+  "SattalPiecePage",
+);
+const ChroniclePage = lazyPage(() => import("@/modules/site/pages/house-pages"), "ChroniclePage");
+const WordsPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "WordsPage");
+const CommonsPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "CommonsPage");
+const CanonIndexPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "CanonIndexPage");
+const CanonDocRoute = lazyPage(() => import("@/modules/site/pages/house-pages"), "CanonDocRoute");
+const AVoicePage = lazyPage(() => import("@/modules/site/pages/house-pages"), "AVoicePage");
+const DepositRoute = lazyPage(() => import("@/modules/site/pages/house-pages"), "DepositRoute");
+const NamePage = lazyPage(() => import("@/modules/site/pages/house-pages"), "NamePage");
+const TablePage = lazyPage(() => import("@/modules/site/pages/house-pages"), "TablePage");
+const LookingForPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "LookingForPage");
+const PrivacyPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "PrivacyPage");
+const AdminPeoplePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-people-page"),
+  "AdminPeoplePage",
+);
+const AdminWorksPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-works-page"),
+  "AdminWorksPage",
+);
+const AdminShowsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-shows-page"),
+  "AdminShowsPage",
+);
+const AdminSattalPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-sattal-page"),
+  "AdminSattalPage",
+);
+const AdminChroniclePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-chronicle-page"),
+  "AdminChroniclePage",
+);
+const AdminVoicePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-misc-pages"),
+  "AdminVoicePage",
+);
+const AdminGlossaryPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-misc-pages"),
+  "AdminGlossaryPage",
+);
+const TermsIndexPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "TermsIndexPage");
+const TermsDocPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "TermsDocPage");
+const HandsPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "HandsPage");
+const HandPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "HandPage");
+const EncountersPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "EncountersPage");
+const EncounterPage = lazyPage(() => import("@/modules/site/pages/more-pages"), "EncounterPage");
+const SafeguardingPage = lazyPage(
+  () => import("@/modules/site/pages/more-pages"),
+  "SafeguardingPage",
+);
+const ChildrenPhotographyPage = lazyPage(
+  () => import("@/modules/site/pages/more-pages"),
+  "ChildrenPhotographyPage",
+);
+const BriefConfirmPage = lazyPage(
+  () => import("@/modules/site/pages/more-pages"),
+  "BriefConfirmPage",
+);
+const BriefUnsubscribePage = lazyPage(
+  () => import("@/modules/site/pages/more-pages"),
+  "BriefUnsubscribePage",
+);
+const CustodianPage = lazyPage(() => import("@/modules/site/pages/house-pages"), "CustodianPage");
+const FriendsTermsNote = lazyPage(
+  () => import("@/modules/site/pages/more-pages"),
+  "FriendsTermsNote",
+);
+const AdminRolesPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminRolesPage",
+);
+const AdminEncountersPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminEncountersPage",
+);
+const AdminTreasuryPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminTreasuryPage",
+);
+const AdminGuildPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminGuildPage",
+);
+const AdminCommonsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminCommonsPage",
+);
+const AdminConcernsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-house-pages"),
+  "AdminConcernsPage",
+);
+const AdminDealingsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-dealings-page"),
+  "AdminDealingsPage",
+);
+const CertificatePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-dealings-page"),
+  "CertificatePage",
+);
+const InvoicePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-dealings-page"),
+  "InvoicePage",
+);
+const AdminBriefPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-brief-page"),
+  "AdminBriefPage",
+);
+const DashboardPage = lazyPage(
+  () => import("@/modules/analytics/pages/dashboard-page"),
+  "DashboardPage",
+);
+const SendAPigeonPage = lazyPage(
+  () => import("@/modules/site/pages/send-a-pigeon-page"),
+  "SendAPigeonPage",
+);
+const ResolveNotFoundPage = lazyPage(
+  () => import("@/modules/site/pages/resolve-not-found-page"),
+  "ResolveNotFoundPage",
+);
+const ContactPage = lazyPage(() => import("@/modules/site/pages/contact-page"), "ContactPage");
+const PigeonSubmissionsPage = lazyPage(
+  () => import("@/modules/publishing/pages/pigeon-submissions-page"),
+  "PigeonSubmissionsPage",
 );
 
-const RoomsPage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.RoomsPage })),
+const RoomsPage = lazyPage(() => import("@/modules/site/pages/place-pages"), "RoomsPage");
+const RoomRoute = lazyPage(() => import("@/modules/site/pages/place-pages"), "RoomRoute");
+const ThingsPage = lazyPage(() => import("@/modules/site/pages/place-pages"), "ThingsPage");
+const ReadingRoomPage = lazyPage(
+  () => import("@/modules/site/pages/place-pages"),
+  "ReadingRoomPage",
 );
-const RoomRoute = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.RoomRoute })),
+const TheYearPage = lazyPage(() => import("@/modules/site/pages/place-pages"), "TheYearPage");
+const AtTheHousePage = lazyPage(() => import("@/modules/site/pages/place-pages"), "AtTheHousePage");
+const FindingTheHousePage = lazyPage(
+  () => import("@/modules/site/pages/place-pages"),
+  "FindingTheHousePage",
 );
-const ThingsPage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.ThingsPage })),
+const NeighboursPage = lazyPage(() => import("@/modules/site/pages/place-pages"), "NeighboursPage");
+const CataloguePage = lazyPage(
+  () => import("@/modules/site/pages/record-catalogue-pages"),
+  "CataloguePage",
 );
-const ReadingRoomPage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.ReadingRoomPage })),
+const HousePapersPage = lazyPage(
+  () => import("@/modules/site/pages/record-catalogue-pages"),
+  "HousePapersPage",
 );
-const TheYearPage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.TheYearPage })),
+const VerifyPage = lazyPage(() => import("@/modules/site/pages/verify-pages"), "VerifyPage");
+const VerifyWorkPage = lazyPage(
+  () => import("@/modules/site/pages/verify-pages"),
+  "VerifyWorkPage",
 );
-const AtTheHousePage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.AtTheHousePage })),
+const PigeonWherePage = lazyPage(
+  () => import("@/modules/site/pages/reach-pages"),
+  "PigeonWherePage",
 );
-const FindingTheHousePage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.FindingTheHousePage })),
+const ObjectsPage = lazyPage(() => import("@/modules/site/pages/reach-pages"), "ObjectsPage");
+const PlacesIndexPage = lazyPage(
+  () => import("@/modules/site/pages/reach-pages"),
+  "PlacesIndexPage",
 );
-const NeighboursPage = React.lazy(() =>
-  import("@/modules/site/pages/place-pages").then((m) => ({ default: m.NeighboursPage })),
+const PlaceRoute = lazyPage(() => import("@/modules/site/pages/reach-pages"), "PlaceRoute");
+const AfternoonsRoute = lazyPage(
+  () => import("@/modules/site/pages/reach-pages"),
+  "AfternoonsRoute",
 );
-const CataloguePage = React.lazy(() =>
-  import("@/modules/site/pages/record-catalogue-pages").then((m) => ({ default: m.CataloguePage })),
+const WallOfferPage = lazyPage(() => import("@/modules/site/pages/offer-pages"), "WallOfferPage");
+const SattalWritingPage = lazyPage(
+  () => import("@/modules/site/pages/offer-pages"),
+  "SattalWritingPage",
 );
-const HousePapersPage = React.lazy(() =>
-  import("@/modules/site/pages/record-catalogue-pages").then((m) => ({
-    default: m.HousePapersPage,
-  })),
+const TableElsewherePage = lazyPage(
+  () => import("@/modules/site/pages/offer-pages"),
+  "TableElsewherePage",
 );
-const VerifyPage = React.lazy(() =>
-  import("@/modules/site/pages/verify-pages").then((m) => ({ default: m.VerifyPage })),
-);
-const VerifyWorkPage = React.lazy(() =>
-  import("@/modules/site/pages/verify-pages").then((m) => ({ default: m.VerifyWorkPage })),
-);
-const PigeonWherePage = React.lazy(() =>
-  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PigeonWherePage })),
-);
-const ObjectsPage = React.lazy(() =>
-  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.ObjectsPage })),
-);
-const PlacesIndexPage = React.lazy(() =>
-  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PlacesIndexPage })),
-);
-const PlaceRoute = React.lazy(() =>
-  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.PlaceRoute })),
-);
-const AfternoonsRoute = React.lazy(() =>
-  import("@/modules/site/pages/reach-pages").then((m) => ({ default: m.AfternoonsRoute })),
-);
-const WallOfferPage = React.lazy(() =>
-  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.WallOfferPage })),
-);
-const SattalWritingPage = React.lazy(() =>
-  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.SattalWritingPage })),
-);
-const TableElsewherePage = React.lazy(() =>
-  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.TableElsewherePage })),
-);
-const LeavingPage = React.lazy(() =>
-  import("@/modules/site/pages/offer-pages").then((m) => ({ default: m.LeavingPage })),
-);
+const LeavingPage = lazyPage(() => import("@/modules/site/pages/offer-pages"), "LeavingPage");
 
-const SectionLayout = React.lazy(() =>
-  import("@/modules/wall/components/section-layout").then((m) => ({ default: m.SectionLayout })),
+const SectionLayout = lazyPage(
+  () => import("@/modules/wall/components/section-layout"),
+  "SectionLayout",
 );
-const AdminHouseTodayPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({
-    default: m.AdminHouseTodayPage,
-  })),
+const AdminHouseTodayPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminHouseTodayPage",
 );
-const AdminRoomsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminRoomsPage })),
+const AdminRoomsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminRoomsPage",
 );
-const AdminThingsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminThingsPage })),
+const AdminThingsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminThingsPage",
 );
-const AdminWantedPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminWantedPage })),
+const AdminWantedPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminWantedPage",
 );
-const AdminBooksPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminBooksPage })),
+const AdminBooksPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminBooksPage",
 );
-const AdminStudioPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminStudioPage })),
+const AdminStudioPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminStudioPage",
 );
-const AdminDaysPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-place-pages").then((m) => ({ default: m.AdminDaysPage })),
+const AdminDaysPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-place-pages"),
+  "AdminDaysPage",
 );
-const AdminCataloguePage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-record-pages").then((m) => ({
-    default: m.AdminCataloguePage,
-  })),
+const AdminCataloguePage = lazyPage(
+  () => import("@/modules/wall/pages/admin-record-pages"),
+  "AdminCataloguePage",
 );
-const AdminHousePapersPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-record-pages").then((m) => ({
-    default: m.AdminHousePapersPage,
-  })),
+const AdminHousePapersPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-record-pages"),
+  "AdminHousePapersPage",
 );
-const AdminOffersPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-offers-page").then((m) => ({ default: m.AdminOffersPage })),
+const AdminOffersPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-offers-page"),
+  "AdminOffersPage",
 );
-const AdminPlacesPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-press-pages").then((m) => ({ default: m.AdminPlacesPage })),
+const AdminPlacesPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-press-pages"),
+  "AdminPlacesPage",
 );
-const AdminPigeonReachPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-press-pages").then((m) => ({
-    default: m.AdminPigeonReachPage,
-  })),
+const AdminPigeonReachPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-press-pages"),
+  "AdminPigeonReachPage",
 );
-const AdminObjectsPage = React.lazy(() =>
-  import("@/modules/wall/pages/admin-press-pages").then((m) => ({ default: m.AdminObjectsPage })),
+const AdminObjectsPage = lazyPage(
+  () => import("@/modules/wall/pages/admin-press-pages"),
+  "AdminObjectsPage",
 );
 
 function withSuspense(element: React.ReactNode) {

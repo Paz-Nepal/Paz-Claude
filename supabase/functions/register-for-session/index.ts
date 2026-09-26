@@ -7,6 +7,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { sendEmail } from "../_shared/send-email.ts";
+import { checkRateLimit } from "../_shared/rate-limit.ts";
 
 interface RegisterBody {
   sessionId: string;
@@ -57,12 +58,36 @@ Deno.serve(async (req) => {
     return jsonError("Session not found", 404);
   }
 
-  const { data: status, error } = await supabase.schema("api").rpc("register_for_session", {
-    p_session: body.sessionId,
-    p_full_name: body.fullName,
-    p_email: body.email,
-    p_phone: body.phone,
-  });
+  // A known person registers as themselves. A guest goes through the
+  // service-role function, so this function's rate limit is the only way in
+  // (migration 0089).
+  const { data: userData } = await supabase.auth.getUser();
+  let status: unknown;
+  let error: { message: string } | null;
+  if (userData.user) {
+    ({ data: status, error } = await supabase.schema("api").rpc("register_for_session", {
+      p_session: body.sessionId,
+      p_full_name: body.fullName,
+      p_email: body.email,
+      p_phone: body.phone,
+    }));
+  } else {
+    const service = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+    const { allowed } = await checkRateLimit(service, req, "register-for-session", {
+      maxCount: 10,
+      windowMinutes: 60,
+    });
+    if (!allowed) return jsonError("Too many registrations. Try again later.", 429);
+    ({ data: status, error } = await service.schema("api").rpc("register_guest_for_session", {
+      p_session: body.sessionId,
+      p_full_name: body.fullName,
+      p_email: body.email,
+      p_phone: body.phone,
+    }));
+  }
 
   if (error) {
     return jsonError(error.message, 400);

@@ -5,9 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 // wording.ts reads the house's rewordings through the Supabase client; these
 // tests only exercise the register and the resolution rules.
 vi.mock("@/lib/supabase", () => ({ supabase: {} }));
+import { WORDING, WORDING_KEYS } from "./wording-registry";
 import {
-  WORDING,
-  WORDING_KEYS,
   fillPlaceholders,
   placeholdersOf,
   resolveWording,

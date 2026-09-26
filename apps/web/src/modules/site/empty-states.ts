@@ -1,4 +1,4 @@
-import { WORDING, useWording, type WordingKey } from "./wording";
+import { DEFAULTS, useWording, type WordingKey } from "./wording";
 
 /**
  * One written sentence per section, for the day a section is open and
@@ -35,5 +35,5 @@ export function useEmptyState() {
 
 /** The default sentence only, for code outside the page tree. Prefer useEmptyState(). */
 export function emptyState(key: EmptyStateKey): string {
-  return WORDING[KEYS[key]].en;
+  return DEFAULTS[KEYS[key]].en;
 }

@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { existsSync } from "node:fs";
+import { wordingDefaults } from "./wording-plugin";
 
 // See Frontend Implementation Review §5.5: the admin route tree is lazy
 // loaded (app/router.tsx), so route-level code-splitting keeps the public
@@ -24,12 +25,16 @@ export default defineConfig({
   define: { __MARK__: JSON.stringify(markPresent) },
   plugins: [
     react(),
+    wordingDefaults(),
     {
       name: "paz-mark-favicon",
       transformIndexHtml(html) {
         return markPresent
-          ? html.replace("</head>", `  <link rel="icon" type="image/svg+xml" href="/mark.svg" />
-  </head>`)
+          ? html.replace(
+              "</head>",
+              `  <link rel="icon" type="image/svg+xml" href="/mark.svg" />
+  </head>`,
+            )
           : html;
       },
     },

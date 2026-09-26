@@ -55,7 +55,8 @@ export function AdminHouseTodayPage() {
       <h2 className="font-serif text-2xl">The house today</h2>
       <p className="text-muted-foreground text-sm">
         Whether anyone is home. Saving replaces the line and stamps the time. Clear it and nothing
-        is shown. It is never written into the static pages of the site, since it changes by the hour.
+        is shown. It is never written into the static pages of the site, since it changes by the
+        hour.
       </p>
       {current ? (
         <p className="text-sm">Showing now: {current}</p>

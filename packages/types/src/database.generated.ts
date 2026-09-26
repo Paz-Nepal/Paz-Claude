@@ -4455,6 +4455,7 @@ export type Database = {
           isSetofReturn: false;
         };
       };
+      notify_address: { Args: { p_kind: string }; Returns: string };
       person_timeline: {
         Args: { p_person: string };
         Returns: {

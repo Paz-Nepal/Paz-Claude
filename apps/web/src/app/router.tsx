@@ -358,6 +358,7 @@ const TableElsewherePage = lazyPage(
 );
 const LeavingPage = lazyPage(() => import("@/modules/site/pages/offer-pages"), "LeavingPage");
 
+const LaunchPage = lazyPage(() => import("@/modules/admin-core/pages/launch-page"), "LaunchPage");
 const SectionLayout = lazyPage(
   () => import("@/modules/wall/components/section-layout"),
   "SectionLayout",
@@ -604,6 +605,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to="/admin/dashboard" replace /> },
           { path: "dashboard", element: withSuspense(<DashboardPage />) },
+          { path: "launch", element: withSuspense(<LaunchPage />) },
           {
             path: "desk",
             element: withSuspense(<ProtectedRoute permission="publishing.item.create" />),

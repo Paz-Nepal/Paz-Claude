@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Field, Input, StatePanel, type RichTextNode } from "@paz/ui";
@@ -61,6 +61,10 @@ const AUTOSAVE_DEBOUNCE_MS = 3_000;
 
 function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   const navigate = useNavigate();
+  // A new item can arrive with its type, slug and title already chosen (the
+  // launch checklist links straight to "write this page").
+  const [presets] = useSearchParams();
+  const presetType = presets.get("type") as ItemType | null;
   const saveItem = useSaveItem();
   const autosaveItem = useAutosaveItem();
   const discardDraft = useDiscardDraft();
@@ -76,7 +80,9 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   const [featuredMediaPath, setFeaturedMediaPath] = React.useState<string | null>(
     existing?.featured_media_path ?? null,
   );
-  const [slugTouched, setSlugTouched] = React.useState(Boolean(existing));
+  const [slugTouched, setSlugTouched] = React.useState(
+    Boolean(existing) || Boolean(presets.get("slug")),
+  );
 
   const {
     register,
@@ -88,9 +94,9 @@ function ItemEditorForm({ existing }: { existing: ItemDetail | null }) {
   } = useForm<ItemMetadataInput>({
     resolver: zodResolver(itemMetadataSchema),
     defaultValues: {
-      type: existing?.type ?? "article",
-      title: existing?.title ?? "",
-      slug: existing?.slug ?? "",
+      type: existing?.type ?? presetType ?? "article",
+      title: existing?.title ?? presets.get("title") ?? "",
+      slug: existing?.slug ?? presets.get("slug") ?? "",
       subtitle: existing?.subtitle ?? "",
       summary: existing?.summary ?? "",
       titleNe: existing?.title_ne ?? "",

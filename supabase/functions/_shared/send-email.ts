@@ -16,6 +16,7 @@ import {
   renderMembershipInvitation,
   renderMembershipRenewalNotice,
   renderSessionRegistration,
+  renderSomethingWaiting,
   type BriefConfirmationData,
   type BriefIssueData,
   type ContactMessageReceivedData,
@@ -24,6 +25,7 @@ import {
   type MembershipInvitationData,
   type MembershipRenewalNoticeData,
   type SessionRegistrationData,
+  type SomethingWaitingData,
 } from "./email-templates.ts";
 
 export type EmailTemplate =
@@ -34,7 +36,8 @@ export type EmailTemplate =
   | { name: "session-registration"; data: SessionRegistrationData }
   | { name: "contact-message-received"; data: ContactMessageReceivedData }
   | { name: "membership-renewal-notice"; data: MembershipRenewalNoticeData }
-  | { name: "membership-invitation"; data: MembershipInvitationData };
+  | { name: "membership-invitation"; data: MembershipInvitationData }
+  | { name: "something-waiting"; data: SomethingWaitingData };
 
 function render(template: EmailTemplate) {
   switch (template.name) {
@@ -54,6 +57,8 @@ function render(template: EmailTemplate) {
       return renderMembershipInvitation(template.data);
     case "session-registration":
       return renderSessionRegistration(template.data);
+    case "something-waiting":
+      return renderSomethingWaiting(template.data);
   }
 }
 

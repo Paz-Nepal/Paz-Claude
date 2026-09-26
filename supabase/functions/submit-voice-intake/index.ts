@@ -2,12 +2,13 @@
 // Specification 10, /a-voice). Wraps api.submit_voice_intake, which is
 // granted to service_role only, so this function and its rate limit are
 // the only way in. Nothing is published, listed or searchable; the rows
-// are readable only by authenticated staff holding crm.voice.read. No
-// email goes anywhere: the intake is an intake, never a notification, and
-// never a directory.
+// are readable only by authenticated staff holding crm.voice.read. The only
+// email is a one-line "something is waiting" with nothing of the voice in it:
+// the intake is never a directory.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { notifyWaiting } from "../_shared/notify-waiting.ts";
 
 interface VoiceIntakeBody {
   writerName: string;
@@ -67,6 +68,8 @@ Deno.serve(async (req) => {
   if (error) {
     return jsonError(error.message, 400);
   }
+
+  await notifyWaiting(supabase, "desk");
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,

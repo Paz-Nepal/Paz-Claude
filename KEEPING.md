@@ -212,6 +212,24 @@ line under each, in both languages) are kept under **Friends tiers**. A tier
 someone has applied under cannot be removed; untick **Offered on the Friends
 form** to stop offering it.
 
+## Before opening, and who is told
+
+**Before opening** (Admin, the first item under Start here) lists every page the
+house still has to write and every section still empty, with a link to fix each.
+Ticked means done. The last part lists what cannot be seen from the desk (a
+second person who can sign in, a real backup and restore, the domain decision)
+so it is not forgotten.
+
+**Who is told.** When a safeguarding concern, an offer, a voice or a request to
+leave arrives, one email says only "something is waiting on the desk, sign in".
+It never carries what was written. Two settings say who receives it:
+
+- `notify.concerns_email`: the one named holder for safeguarding concerns. A
+  concern is never sent anywhere else, so while this is empty no one is told.
+  Set it.
+- `notify.desk_email`: everything else. While it is empty the site's contact
+  address is used.
+
 ## The house as a place, and what people offer
 
 Everything here is on the desk and stands empty until the house fills it.

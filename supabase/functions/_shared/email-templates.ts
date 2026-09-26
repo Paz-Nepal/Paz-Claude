@@ -208,6 +208,31 @@ export function renderContactMessageReceived(data: ContactMessageReceivedData): 
   return { subject, text, html };
 }
 
+export interface SomethingWaitingData {
+  /** "concern" is a safeguarding concern; "desk" is an offer, a voice or a request to leave. */
+  what: "concern" | "desk";
+}
+
+/**
+ * Tells one person that something is waiting on the desk. It never carries
+ * what was written, who wrote it, or how many: for a safeguarding concern in
+ * particular, the message must reveal nothing to anyone who might read it over
+ * a shoulder or in a shared inbox.
+ */
+export function renderSomethingWaiting(data: SomethingWaitingData): EmailContent {
+  const subject = "Something is waiting on the desk";
+  const line =
+    data.what === "concern"
+      ? "Something that needs your attention is waiting. Sign in to the desk to read it."
+      : "Something is waiting on the desk. Sign in to read it.";
+  const text = [line, "", "This message never contains what was written."].join("\n");
+  const html = wrapHtml(`
+    <p>${escapeHtml(line)}</p>
+    <p>This message never contains what was written.</p>
+  `);
+  return { subject, text, html };
+}
+
 export interface MembershipRenewalNoticeData {
   fullName: string;
   tierName: string;

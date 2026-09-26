@@ -1,11 +1,13 @@
 // Raising a safeguarding concern (Build Programme 12). Stores the concern
 // where only the one named holder of safeguarding.read can read it, so a
 // concern never passes through the person it might be about. No email goes
-// anywhere: the intake is never a notification to the wider staff.
+// to the wider staff: the only message is a one-line "something is waiting" to
+// the one address named for concerns, and it carries none of what was written.
 // api.submit_concern is granted to service_role only.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { notifyWaiting } from "../_shared/notify-waiting.ts";
 
 interface ConcernBody {
   writerName?: string;
@@ -48,6 +50,9 @@ Deno.serve(async (req) => {
     p_body: body.body,
   });
   if (error) return jsonError(error.message, 400);
+
+  // Tells the one named holder that a concern is waiting, with nothing of it.
+  await notifyWaiting(supabase, "concern");
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,

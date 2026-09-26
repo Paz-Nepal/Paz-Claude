@@ -12,6 +12,9 @@ export interface SettingsRegistry {
   "wall.early_price_minor": string | number | null;
   "sattal.rate_minor": string | number | null;
   "record.listening_names_days": string | number | null;
+  /** Who is told, with no content, that something is waiting. Empty means no one / the contact address. */
+  "notify.concerns_email": string | null;
+  "notify.desk_email": string | null;
   "house.status": string;
   "house.status_ne": string;
   /** ISO time the status was last set; written by api.set_house_status. */

@@ -2,11 +2,13 @@
 // their work, a Sattal proposal, a Table kept elsewhere, a thing or a book
 // given, a word the house is looking for, a request to leave. Wraps
 // api.submit_offer, which is granted to service_role only, so this function
-// and its rate limit are the only way in. No email goes anywhere: an offer
-// is read at the desk by whoever holds the permission for its kind.
+// and its rate limit are the only way in. The only email is a one-line
+// "something is waiting" with nothing of the offer in it; the offer itself is
+// read at the desk by whoever holds the permission for its kind.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { corsHeaders } from "../_shared/cors.ts";
 import { checkRateLimit } from "../_shared/rate-limit.ts";
+import { notifyWaiting } from "../_shared/notify-waiting.ts";
 
 const KINDS = ["painter", "sattal", "table", "thing", "book", "word", "leaving"] as const;
 type Kind = (typeof KINDS)[number];
@@ -91,6 +93,9 @@ Deno.serve(async (req) => {
   if (error) {
     return jsonError(error.message, 400);
   }
+
+  // One line to the desk address: something is waiting. Nothing of the offer.
+  await notifyWaiting(supabase, "desk");
 
   return new Response(JSON.stringify({ ok: true }), {
     status: 200,

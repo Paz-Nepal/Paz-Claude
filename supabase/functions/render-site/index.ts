@@ -64,7 +64,13 @@ Deno.serve(async (req) => {
   }
 
   const siteUrl = (Deno.env.get("SITE_URL") ?? "https://paz.com.np").replace(/\/$/, "");
-  const shellRes = await fetch(`${siteUrl}/app.html`, { headers: { "Cache-Control": "no-cache" } });
+  // The shell comes from the app bucket (where `pnpm publish:app` puts it),
+  // and from the web host only if it is not there yet.
+  const appShell = `${supabaseUrl}/storage/v1/object/public/app/app.html`;
+  let shellRes = await fetch(appShell, { headers: { "Cache-Control": "no-cache" } });
+  if (!shellRes.ok) {
+    shellRes = await fetch(`${siteUrl}/app.html`, { headers: { "Cache-Control": "no-cache" } });
+  }
   if (!shellRes.ok) return json({ error: `app shell unavailable (${shellRes.status})` }, 502);
   const baseHtml = await shellRes.text();
   const shellHash = await sha256(baseHtml);

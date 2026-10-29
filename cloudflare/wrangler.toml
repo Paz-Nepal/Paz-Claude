@@ -5,6 +5,8 @@ compatibility_date = "2026-01-01"
 # The pages the render-site Edge Function writes (public bucket `site`).
 [vars]
 SITE_BUCKET_URL = "https://eczmttndsbockxkklqoe.supabase.co/storage/v1/object/public/site"
+# The app itself: scripts, styles, fonts and the shell (`pnpm publish:app`).
+APP_BUCKET_URL = "https://eczmttndsbockxkklqoe.supabase.co/storage/v1/object/public/app"
 
 # Answer paz.com.np through the Worker. Anything it does not have a page for
 # goes straight on to the web host. Route patterns need the zone to be on this

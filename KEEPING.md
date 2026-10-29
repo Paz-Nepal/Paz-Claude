@@ -125,12 +125,12 @@ or upload anything. Admin, Settings shows whether it is up to date and has a
 button to publish everything again. How it works, and what to do if it stalls,
 is in `docs/runbooks/publish-instantly.md`.
 
-**Only code needs an upload.** When a developer changes the app itself, one
-person runs `pnpm site` on a computer with the project on it and uploads the
-contents of `apps/web/dist/` to the web host (`docs/runbooks/deploy.md`). The
-pages in `dist/` are the fallback the host serves if the live copy is ever
-unavailable. The very first time on a new computer, `docs/runbooks/go-live.md`
-says what to install and which keys to set.
+**Only code needs a deploy, and it is two commands.** When a developer changes
+the app itself, run `pnpm site` and then `pnpm publish:app` on a computer with
+the project on it. Nothing is uploaded to the web host: the Cloudflare Worker
+serves the app from storage, and the host's copy is only a fallback
+(`docs/runbooks/deploy.md`). The very first time on a new computer,
+`docs/runbooks/go-live.md` says what to install and which keys to set.
 
 ## Two rulings, recorded
 

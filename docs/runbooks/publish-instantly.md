@@ -17,15 +17,28 @@ within about a minute. Nobody runs `pnpm site`, nobody uploads anything.
 3. A **Cloudflare Worker** (`cloudflare/worker.mjs`) answers page requests for
    `paz.com.np` from that bucket, keeping a 30 second copy at Cloudflare. It
    also adds the security headers the host's `.htaccess` sets.
-4. Anything the Worker has no page for (the app's scripts, fonts, `/admin`, a
-   path only the app knows) goes straight on to the web host, as before. The
-   pages that `pnpm site` puts in `dist/` stay on the host as a fallback, so the
-   worst case is exactly today's site, never a broken one.
+4. Anything the Worker finds in neither bucket goes straight on to the web
+   host. The files `pnpm site` puts in `dist/` stay on the host as a fallback,
+   so the worst case is the site as it was, never a broken one.
 
-The app itself (the React code) still reaches the host only by an upload. That
-is the only thing that ever needs one, and only when a developer changes code.
-When that upload changes the app's files, the next tick re-renders every page so
-they point at the new files.
+The app itself (the React code) is served the same way, from a second public
+bucket, `app`. After a developer changes code:
+
+```bash
+pnpm site            # build, then write the pages
+pnpm publish:app     # send the app's files to the `app` bucket
+```
+
+`publish:app` sends styles, scripts and fonts first and the shell (`app.html`)
+last, and fetches each file back to check it arrived intact. If anything is
+missing it stops before the shell, so readers keep the previous version. Older
+hashed files stay, so a page someone already has open keeps working. Within a
+minute the next tick rewrites every page against the new shell. There is no FTP
+and no web host upload in this path; the host keeps its last copy only as a
+fallback.
+
+The Worker also answers the app's own addresses (`/admin`, a work published a
+moment ago) with that shell, so they never depend on the host either.
 
 ## Setting it up (once)
 
@@ -63,14 +76,18 @@ when it last published, and a button to publish everything again. In SQL,
 - **"Unknown wording key".** Someone added a line of wording in the code but did
   not update the function's copy. Run `pnpm sync:wording`, then
   `supabase functions deploy render-site`.
+- **First time, or after the Worker is redeployed:** run `pnpm publish:app --hold-shell`
+  first (everything but the shell), deploy the Worker, then run `pnpm publish:app`.
+- **An upload is refused (403 from Cloudflare):** the storage gateway is behind a
+  firewall that blocks a burst of uploads. Wait a few minutes and run
+  `pnpm publish:app` again; it skips what already arrived.
 - **To switch it off,** remove the Worker route in Cloudflare (or
   `npx wrangler delete`). The site goes back to serving the files on the host.
 - **To stop the clock,** `select cron.unschedule('render-site');`.
 
 ## What is deliberately not here
 
-- Changes to the app's code still go through the upload in `deploy.md`.
-- The pages in `dist/` are still built by `pnpm site` and uploaded with the app.
-  They are the fallback, not the source of truth.
+- The host is no longer in the path. What `deploy.md` describes (an FTP upload
+  of `dist/`) is the fallback copy, worth refreshing now and then so it matches.
 - Nothing here sends email or tells anyone. It only keeps the public pages in
   step with the database.

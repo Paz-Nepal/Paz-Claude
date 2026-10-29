@@ -19,6 +19,7 @@
     "prerender": "node scripts/prerender.mjs apps/web/dist",
     "site": "node scripts/clean-dist.mjs && pnpm build && pnpm prerender",
     "sync:wording": "node -e \"require('fs').copyFileSync('apps/web/src/modules/site/wording.json','supabase/functions/_shared/wording.json')\"",
+    "publish:app": "node scripts/publish-app.mjs",
     "check:deployed": "node scripts/check-deployed.mjs",
     "check:palette": "node scripts/check-palette.mjs",
     "lcp": "node scripts/check-lcp-budget.mjs",
